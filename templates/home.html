@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel - Home</title>
+    <link rel="icon" type="image/png" href="/static/cropped_logo.png">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='home.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='icons.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="WCRE Logo">
+            </div>
+            <ul>
+                <li><a href="#"><span class="custom-icon-dashboard"></span> DASHBOARD</a></li>
+                <li><a href="{{ url_for('view_listings') }}"><span class="custom-icon-listings"></span> LISTINGS</a></li>
+                <li><a href="#"><span class="custom-icon-sales"></span> SALES</a></li>
+                <li><a href="#"><span class="custom-icon-leases"></span> LEASES</a></li>
+            </ul>
+            <div class="user-info">
+                <img class="user-profile-pic" src="{{ current_user.profile_picture_url }}" alt="User Profile Picture">
+                <div class="user-details">
+                    <div class="user-name">{{ current_user.fullname }}</div>
+                    <div class="user-role">{{ current_user.role }}</div>
+                </div>
+                <a href="{{ url_for('logout') }}" class="logout-icon"></a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
