@@ -1,33 +1,28 @@
+from tkinter import Tk, filedialog
 from pymongo import MongoClient
-from gridfs import GridFS
-from bson import ObjectId
+from bson.objectid import ObjectId
 
-def mongo_file_upload(db_name, collection_name, file_path, connection_string, listing_id):
-    client = MongoClient(connection_string)
-    db = client[db_name]
+# Connect to MongoDB
+connection_string = 'mongodb+srv://nathanwolf100:s2UHWRzrxdSM8v6C@admin-panel.dvrgnkx.mongodb.net/'
+client = MongoClient(connection_string, tls=True, tlsAllowInvalidCertificates=True, serverSelectionTimeoutMS=5000)
+db = client['wcre_panel']
+listings = db['listings']
 
-    # GridFS collection
-    fs = GridFS(db, collection_name)
+# Function to store the PDF file in the associated listing document
+def store_pdf_in_listing(file_path, listing_id):
+    with open(file_path, 'rb') as file:
+        file_content = file.read()
 
-    # Open the file in read-binary mode
-    with open(file_path, "rb") as f:
-        # Convert to bytes
-        file_data = f.read()
+        # Update the associated listing with the PDF file content
+        listings.update_one(
+            {'_id': ObjectId(listing_id)},
+            {'$set': {'pdf_file': file_content}}
+        )
 
-    # Now store the data in MongoDB
-    file_id = fs.put(file_data)
+        print(f"PDF file uploaded to the associated listing: {listing_id}")
 
-    # Now, add the file_id to the relevant document in the listings collection
-    listings = db['listings']  # access the 'listings' collection
-    listings.update_one({"_id": ObjectId(listing_id)}, {"$set": {"pdf_file_id": file_id}})
-    
-    return file_id
-
-if __name__ == "__main__":
-    connection_string = 'mongodb+srv://nathanwolf100:s2UHWRzrxdSM8v6C@admin-panel.dvrgnkx.mongodb.net/'  # Replace this with your MongoDB connection string.
-    db_name = 'wcre_panel'
-    collection_name = 'listings'
-    file_path = '/Users/natewolf/Desktop/listing1.pdf'
-    listing_id = '6493668783d118f89f8dbf3b'  # Replace with your listing id in MongoDB
-    file_id = mongo_file_upload(db_name, collection_name, file_path, connection_string, listing_id)
-    print(f"File uploaded with ID: {file_id}")
+root = Tk()
+root.withdraw()
+pdf_file_path = filedialog.askopenfilename(title='Select PDF File', filetypes=[('PDF Files', '*.pdf')])
+listing_id = input("Enter the listing ID: ")
+store_pdf_in_listing(pdf_file_path, listing_id)

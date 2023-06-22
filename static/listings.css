@@ -12,28 +12,71 @@ body {
   height: 100vh;
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+.sidebar {
+  width: 250px;
+  background-color: #222831;
 }
 
-ul li {
-  padding: 10px;
+.content {
+  flex-grow: 1;
+  padding: 20px;
+  overflow: auto;
+}
+
+.centered-table {
+  margin-left: 220px;
+  margin-right: auto;
+  margin-top: 40px; /* Adjust the margin-top value to move the table up */
+  width: auto;
+  border-collapse: collapse;
+  margin-bottom: 10px; /* Adjust the margin-bottom value to reduce the space below the table */
+}
+
+
+.centered-table th,
+.centered-table td {
+  border: 1px solid #ddd;
+  padding: 3px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.centered-table td.brokers {
+  white-space: normal;
+}
+
+.centered-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.centered-table th {
+  background-color: #1c92d2;
+  color: white;
+}
+
+.centered-table tr:nth-child(even) {
+  background-color: #f2fcfe;
+}
+
+.pagination {
   display: flex;
-  align-items: center;
-  transition: background-color 0.3s ease;
+  justify-content: flex-end;
+  padding-left: 10px;
 }
 
-ul li a {
-  color: #fff;
+.pagination a {
+  margin: 0 10px;
   text-decoration: none;
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-  font-weight: bold;
+  color: #0056b3;
 }
 
-ul li a span {
-  margin-right: 10px;
+.pagination a:hover {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+.pagination .active {
+  color: #0056b3;
 }

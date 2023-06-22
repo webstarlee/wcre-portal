@@ -9,12 +9,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet">
-    <style>
-        /* Add the font-family rule for the sidebar */
-        .sidebar {
-            font-family: 'Noto Sans', sans-serif;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
@@ -36,6 +30,35 @@
                 </div>
                 <a href="{{ url_for('logout') }}" class="logout-icon"></a>
             </div>
+        </div>
+        <div class="content">
+            <table class="centered-table">
+                <tr>
+                    <th>Street</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Type</th>
+                    <th>Owner</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Brokers</th>
+                    <th>Listing Agreement</th>
+                </tr>
+                {% for listing in listings %}
+                <tr>
+                    <td>{{ listing.listing_street }}</td>
+                    <td>{{ listing.listing_city }}</td>
+                    <td>{{ listing.listing_state }}</td>
+                    <td>{{ listing.listing_type }}</td>
+                    <td>{{ listing.listing_owner }}</td>
+                    <td><a href="mailto:{{ listing.listing_email }}">{{ listing.listing_email }}</a></td>
+                    <td><a href="tel:{{ listing.listing_phone }}">{{ listing.listing_phone }}</a></td>
+                    <td class="brokers">{{ ", ".join(listing.brokers) }}</td>
+                    <td><a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Download</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+            {{ pagination.links }}
         </div>
     </div>
 </body>
