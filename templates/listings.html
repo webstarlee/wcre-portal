@@ -16,17 +16,48 @@
                 $('#loading').hide();
             }, 2000);
         });
-    </script>
-    <script type="text/javascript">
+
         $(document).ready(function() {
-        $('#search-form').on('submit', function(e) {
-            e.preventDefault();
-            var searchTerm = $('#search-input').val().toLowerCase();
-            $('.centered-table tbody tr').each(function() {
-            var listing = $(this).text().toLowerCase();
-            $(this).toggle(listing.indexOf(searchTerm) > -1);
+            $('#add-listing-button').click(function() {
+                $('#add-listing-modal').css('display', 'flex');
+            });
+
+            $('.close').click(function() {
+                $('#add-listing-modal').css('display', 'none');
+            });
+
+            $('.next-step').click(function() {
+                var currentStep = $(this).closest('.modal-step');
+                var nextStep = currentStep.next('.modal-step');
+                currentStep.removeClass('active-step');
+                nextStep.addClass('active-step');
+            });
+
+            $('.prev-step').click(function() {
+                var currentStep = $(this).closest('.modal-step');
+                var prevStep = currentStep.prev('.modal-step');
+                currentStep.removeClass('active-step');
+                prevStep.addClass('active-step');
+            });
+
+            $('#add-listing-modal form').submit(function(e) {
+                e.preventDefault(); // Prevent default form submission
+
+                // Process form data or perform any desired actions here
+
+                // Optionally, you can hide the modal after form submission
+                $('#add-listing-modal').css('display', 'none');
             });
         });
+
+        $(document).ready(function() {
+            $('#search-input').on('input', function() {
+                var searchTerm = $(this).val().toLowerCase();
+                $('.centered-table tbody tr').each(function() {
+                    var listing = $(this).text().toLowerCase();
+                    $(this).toggle(listing.indexOf(searchTerm) > -1);
+                });
+            });
         });
     </script>
 </head>
@@ -57,6 +88,7 @@
         <div class="content">
             <form id="search-form" class="search-form">
                 <input type="text" id="search-input" placeholder="Search Listings..." />
+                <button id="add-listing-button" type="button">Add Listing</button>
             </form>
             <table class="centered-table">
                 <thead>
@@ -90,6 +122,96 @@
             </table>            
             {{ pagination.links }}
         </div>
+        <div id="add-listing-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div id="step1" class="modal-step active-step">
+                    <h2 class="modal-step-title">New Listing - Address Information</h2>
+                    <form>
+                        <div class="form-group">
+                            <label for="listing-street">Street:</label>
+                            <input type="text" id="listing-street" name="listing-street" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="listing-city">City:</label>
+                            <input type="text" id="listing-city" name="listing-city" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="listing-state">State:</label>
+                            <select id="listing-state" name="listing-state" required>
+                                <option value="PA">PA</option>
+                                <option value="NJ">NJ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="listing-type">Type:</label>
+                            <select id="listing-type" name="listing-type" required>
+                                <option value="Office">Office</option>
+                                <option value="Industrial">Industrial</option>
+                                <option value="Flex">Flex</option>
+                                <option value="Retail">Retail</option>
+                                <option value="Medical">Medical</option>
+                                <option value="Land">Land</option>
+                            </select>
+                        </div>
+                        <button class="next-step" type="button">Next</button>
+                    </form>
+                </div>
+                <div id="step2" class="modal-step">
+                    <h2 class="modal-step-title">New Listing - Owner Information</h2>
+                    <form>
+                        <div class="form-group">
+                            <label for="listing-owner-name">Owner Name:</label>
+                            <input type="text" id="listing-owner-name" name="listing-owner-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="listing-owner-email">Owner Email:</label>
+                            <input type="text" id="listing-owner-email" name="listing-owner-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="listing-owner-phone">Owner Phone Number:</label>
+                            <input type="text" id="listing-owner-phone" name="listing-owner-phone" required>
+                        </div>
+                        <button class="prev-step" type="button">Previous</button>
+                        <button class="next-step" type="button">Next</button>
+                    </form>
+                </div>
+                <div id="step3" class="modal-step">
+                    <h2 class="modal-step-title">New Listing - General Information</h2>
+                    <form>
+                        <div class="form-group">
+                            <label for="listing-type">Listing Type:</label>
+                            <select id="listing-type" name="listing-type" required>
+                                <option value="Sale">Sale</option>
+                                <option value="Lease">Lease</option>
+                                <option value="Sale and Lease">Sale and Lease</option>
+                                <option value="Sublease">Sublease</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="investment-sale">Investment Sale:</label>
+                            <select id="investment-sale" name="investment-sale" required>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="listing-brokers">Brokers:</label>
+                            <div id="listing-brokers">
+                                <input type="checkbox" id="broker1" name="broker1" value="Broker 1">
+                                <label for="broker1">Broker 1</label><br>
+                                <input type="checkbox" id="broker2" name="broker2" value="Broker 2">
+                                <label for="broker2">Broker 2</label><br>
+                                <input type="checkbox" id="broker3" name="broker3" value="Broker 3">
+                                <label for="broker3">Broker 3</label><br>
+                            </div>
+                        </div>
+                        <button class="prev-step" type="button">Previous</button>
+                        <button id="submit-listing">Submit Listing</button>
+                    </form>
+                </div>
+            </div>
+        </div>                                     
     </div>
 </body>
 </html>

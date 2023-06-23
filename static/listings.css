@@ -50,12 +50,102 @@ body {
 
 .search-form {
   text-align: right;
-  margin-bottom: 20px; /* Adjust the margin-bottom value as needed */
+  margin-bottom: 20px;
 }
 
 #search-input {
-  padding: 5px;
-  border: 1px solid #ddd;
+  padding: 10px;
+  border: none;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  width: 200px;
+}
+
+#search-input:focus {
+  outline: none;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+}
+
+/* add listing */
+
+#add-listing-button {
+  background-color: #f0f0f0;
+  border: none;
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+#add-listing-button:hover {
+  background-color: #ddd;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  animation-name: fade-in;
+  animation-duration: 1s;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background: linear-gradient(to right, #1c92d2, #f2fcfe);
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+  border-radius: 4px;
+  color: white;
+}
+
+#add-listing-modal.modal {
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.close {
+  color: #888;
+  float: right;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: #000;
+}
+
+/* Existing CSS styles */
+
+.modal-step {
+  display: none;
+}
+
+.active-step {
+  display: block;
 }
 
 /* table */
@@ -63,7 +153,7 @@ body {
 .centered-table {
   margin-left: 220px;
   margin-right: auto;
-  margin-top: 0; /* Adjust the margin-top value as needed */
+  margin-top: 0;
   width: auto;
   border-collapse: collapse;
   margin-bottom: 10px;
@@ -82,7 +172,7 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   height: 5px;
-  line-height: 1; /* Adjust the line-height value as needed */
+  line-height: 1;
 }
 
 .centered-table td {
