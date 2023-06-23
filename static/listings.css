@@ -47,7 +47,7 @@ body {
 .centered-table {
   margin-left: 220px;
   margin-right: auto;
-  margin-top: 40px; /* Adjust the margin-top value to move the table up */
+  margin-top: 50px; /* Adjust the margin-top value to move the table up */
   width: auto;
   border-collapse: collapse;
   margin-bottom: 10px; /* Adjust the margin-bottom value to reduce the space below the table */
