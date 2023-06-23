@@ -9,16 +9,15 @@ from bson.objectid import ObjectId
 from bson.errors import InvalidId
 from gridfs import GridFS
 from io import BytesIO
+import os
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key'
-
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-connection_string = 'mongodb+srv://nathanwolf100:s2UHWRzrxdSM8v6C@admin-panel.dvrgnkx.mongodb.net/'
-
+connection_string = os.getenv('MONGODB_URI') 
 client = MongoClient(connection_string, tls=True, tlsAllowInvalidCertificates=True, serverSelectionTimeoutMS=5000)
 
 try:
