@@ -10,56 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript">
-        $(window).on('load', function() {
-            setTimeout(function() {
-                $('#loading').hide();
-            }, 2000);
-        });
-
-        $(document).ready(function() {
-            $('#add-listing-button').click(function() {
-                $('#add-listing-modal').css('display', 'flex');
-            });
-
-            $('.close').click(function() {
-                $('#add-listing-modal').css('display', 'none');
-            });
-
-            $('.next-step').click(function() {
-                var currentStep = $(this).closest('.modal-step');
-                var nextStep = currentStep.next('.modal-step');
-                currentStep.removeClass('active-step');
-                nextStep.addClass('active-step');
-            });
-
-            $('.prev-step').click(function() {
-                var currentStep = $(this).closest('.modal-step');
-                var prevStep = currentStep.prev('.modal-step');
-                currentStep.removeClass('active-step');
-                prevStep.addClass('active-step');
-            });
-
-            $('#add-listing-modal form').submit(function(e) {
-                e.preventDefault(); // Prevent default form submission
-
-                // Process form data or perform any desired actions here
-
-                // Optionally, you can hide the modal after form submission
-                $('#add-listing-modal').css('display', 'none');
-            });
-        });
-
-        $(document).ready(function() {
-            $('#search-input').on('input', function() {
-                var searchTerm = $(this).val().toLowerCase();
-                $('.centered-table tbody tr').each(function() {
-                    var listing = $(this).text().toLowerCase();
-                    $(this).toggle(listing.indexOf(searchTerm) > -1);
-                });
-            });
-        });
-    </script>
+    <script src="/static/js/script.js"></script>
 </head>
 <body>
     <div id="loading">
@@ -83,7 +34,7 @@
                     <div class="user-role">{{ current_user.role }}</div>
                 </div>
                 <a href="{{ url_for('logout') }}" class="logout-icon"></a>
-            </div>
+            </div>        
         </div>    
         <div class="content">
             <form id="search-form" class="search-form">
@@ -127,7 +78,7 @@
                 <span class="close">&times;</span>
                 <div id="step1" class="modal-step active-step">
                     <h2 class="modal-step-title">New Listing - Address Information</h2>
-                    <form>
+                    <form class="modal-form">
                         <div class="form-group">
                             <label for="listing-street">Street:</label>
                             <input type="text" id="listing-street" name="listing-street" required>
@@ -154,31 +105,28 @@
                                 <option value="Land">Land</option>
                             </select>
                         </div>
-                        <button class="next-step" type="button">Next</button>
                     </form>
                 </div>
                 <div id="step2" class="modal-step">
                     <h2 class="modal-step-title">New Listing - Owner Information</h2>
-                    <form>
+                    <form class="modal-form">
                         <div class="form-group">
                             <label for="listing-owner-name">Owner Name:</label>
                             <input type="text" id="listing-owner-name" name="listing-owner-name" required>
                         </div>
                         <div class="form-group">
                             <label for="listing-owner-email">Owner Email:</label>
-                            <input type="text" id="listing-owner-email" name="listing-owner-email" required>
+                            <input type="email" id="listing-owner-email" name="listing-owner-email" required>
                         </div>
                         <div class="form-group">
                             <label for="listing-owner-phone">Owner Phone Number:</label>
-                            <input type="text" id="listing-owner-phone" name="listing-owner-phone" required>
-                        </div>
-                        <button class="prev-step" type="button">Previous</button>
-                        <button class="next-step" type="button">Next</button>
+                            <input type="tel" id="listing-owner-phone" name="listing-owner-phone" required>
+                          </div>                          
                     </form>
-                </div>
+                </div>                
                 <div id="step3" class="modal-step">
                     <h2 class="modal-step-title">New Listing - General Information</h2>
-                    <form>
+                    <form class="modal-form">
                         <div class="form-group">
                             <label for="listing-type">Listing Type:</label>
                             <select id="listing-type" name="listing-type" required>
@@ -191,25 +139,51 @@
                         <div class="form-group">
                             <label for="investment-sale">Investment Sale:</label>
                             <select id="investment-sale" name="investment-sale" required>
-                                <option value="Yes">Yes</option>
                                 <option value="No">No</option>
+                                <option value="Yes">Yes</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="listing-brokers">Brokers:</label>
+                            <label for="listing-brokers"><b>Brokers:</b></label>
                             <div id="listing-brokers">
-                                <input type="checkbox" id="broker1" name="broker1" value="Broker 1">
-                                <label for="broker1">Broker 1</label><br>
-                                <input type="checkbox" id="broker2" name="broker2" value="Broker 2">
-                                <label for="broker2">Broker 2</label><br>
-                                <input type="checkbox" id="broker3" name="broker3" value="Broker 3">
-                                <label for="broker3">Broker 3</label><br>
+                                <div class="checkbox-line">
+                                    <label for="broker1" class="broker-label">
+                                        <input type="checkbox" id="broker1" name="broker1" value="Jason Wolf">
+                                        Jason Wolf
+                                    </label>
+                                </div>
+                                <div class="checkbox-line">
+                                    <label for="broker2" class="broker-label">
+                                        <input type="checkbox" id="broker2" name="broker2" value="Evan Zweben">
+                                        Evan Zweben
+                                    </label>
+                                </div>
+                                <div class="checkbox-line">
+                                    <label for="broker3" class="broker-label">
+                                        <input type="checkbox" id="broker3" name="broker3" value="Erin Warwick">
+                                        Erin Warwick
+                                    </label>
+                                </div>
+                                <div class="checkbox-line">
+                                    <label for="broker4" class="broker-label">
+                                        <input type="checkbox" id="broker4" name="broker4" value="Todd Monahan">
+                                        Todd Monahan
+                                    </label>
+                                </div>
+                                <div class="checkbox-line">
+                                    <label for="broker5" class="broker-label">
+                                        <input type="checkbox" id="broker5" name="broker5" value="John T. Mozzillo">
+                                        John T. Mozzillo
+                                    </label>
+                                </div>
                             </div>
-                        </div>
-                        <button class="prev-step" type="button">Previous</button>
-                        <button id="submit-listing">Submit Listing</button>
+                        </div>                                                                                                                                                                                       
                     </form>
                 </div>
+                <div class="modal-navigation">
+                    <button class="minimal-button prev-step">Previous</button>
+                    <button class="minimal-button next-step">Next</button>
+                </div>                
             </div>
         </div>                                     
     </div>

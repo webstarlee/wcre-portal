@@ -68,7 +68,7 @@ body {
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
 }
 
-/* add listing */
+/* add listing button */
 
 #add-listing-button {
   background-color: #f0f0f0;
@@ -83,6 +83,8 @@ body {
 #add-listing-button:hover {
   background-color: #ddd;
 }
+
+/* listing modal */
 
 .modal {
   display: none;
@@ -110,20 +112,105 @@ body {
   }
 }
 
+.modal-step-title {
+  text-align: center;
+  color: black;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-group {
+  margin-bottom: 10px;
+  width: 60%;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  box-sizing: border-box;
+}
+
+.modal-navigation {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.modal-navigation .prev-step {
+  position: absolute;
+  bottom: 10px;
+  left: 10px; 
+}
+
+.modal-navigation .next-step {
+  position: absolute;
+  bottom: 10px; 
+  right: 10px; 
+}
+
+.minimal-button {
+  background-color: #f0f0f0;
+  border: none;
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 15px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+  align-self: center;
+}
+
+.minimal-button:hover {
+  background-color: #ddd;
+}
+
+
 .modal-content {
   background: linear-gradient(to right, #1c92d2, #f2fcfe);
   margin: auto;
   padding: 20px;
   border: 1px solid #888;
-  width: 50%;
+  width: 50%; /* Updated width */
+  height: 70%; /* Updated height */
   border-radius: 4px;
   color: white;
+  position: absolute; /* Added for positioning */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center the modal */
+  overflow: auto; /* Enable scrolling if content exceeds the modal height */
 }
 
 #add-listing-modal.modal {
   display: none;
   justify-content: center;
   align-items: center;
+}
+
+.checkbox-line {
+  display: flex;
+  align-items: center;
+}
+
+.broker-label {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.broker-label input[type="checkbox"] {
+  margin-right: 10px;
 }
 
 .close {
@@ -137,8 +224,6 @@ body {
 .close:hover {
   color: #000;
 }
-
-/* Existing CSS styles */
 
 .modal-step {
   display: none;

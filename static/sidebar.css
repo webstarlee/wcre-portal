@@ -1,97 +1,111 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap');
 
 .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 200px;
-    background-color: #135182;
-    color: #fff;
-  }
-  
-  .sidebar-header {
-    padding: 10px;
-    text-align: center;
-  }
-  
-  .sidebar-header img {
-    width: 80px;
-    height: auto;
-  }
-  
-  ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  ul li {
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    transition: background-color 0.3s ease;
-  }
-  
-  ul li a {
-    color: #fff;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    font-size: 16px;
-    font-weight: bold;
-  }
-  
-  ul li:hover {
-    background-color: #0f4068;
-  }
-  
-  ul li a span {
-    margin-right: 10px;
-  }
-  
-  .user-info {
-    position: absolute;
-    bottom: 20px;
-    left: 0;
-    padding: 0 20px;
-    background-color: #135182;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: #fff;
-  }
-  
-  .user-details {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .user-name {
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  .user-role {
-    font-size: 14px;
-  }
-  
-  .logout-icon {
-    background-image: url('../static/icons/logout.png');
-    width: 20px;
-    height: 20px;
-    background-size: cover;
-    background-repeat: no-repeat;
-    cursor: pointer;
-    margin-left: 14.5px;
-  }
-  
-  .user-profile-pic {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-right: 10px;
-    object-fit: cover;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 200px;
+  background-color: #135182;
+  color: #fff;
+}
+
+.sidebar-header {
+  padding: 10px;
+  text-align: center;
+}
+
+.sidebar-header img {
+  width: 80px;
+  height: auto;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+ul li {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+ul li a {
+  color: #fff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+ul li:hover {
+  background-color: #0f4068;
+}
+
+ul li a span {
+  margin-right: 10px;
+}
+
+.custom-icon-dashboard,
+.custom-icon-listings,
+.custom-icon-sales,
+.custom-icon-leases {
+  background-size: 24px;
+  background-repeat: no-repeat;
+  color: white;
+  background-position: left center;
+  display: inline-block;
+  vertical-align: middle;
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+.user-info {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  padding: 0 20px;
+  background-color: #135182;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.user-name {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.user-role {
+  font-size: 14px;
+}
+
+.logout-icon {
+  background-image: url('../static/icons/logout.png');
+  width: 20px;
+  height: 20px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  margin-left: 14.5px;
+}
+
+.user-profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+}

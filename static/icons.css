@@ -1,15 +1,15 @@
 .custom-icon-dashboard {
-  background-image: url('../static/icons/dashboard.png');
+  background-image: url('/static/icons/dashboard.png');
 }
 
 .custom-icon-listings {
-  background-image: url('../static/icons/listings.png');
+  background-image: url('/static/icons/listings.png');
 }
 
 .custom-icon-sales {
-  background-image: url('../static/icons/sales.png');
+  background-image: url('/static/icons/sales.png');
 }
 
 .custom-icon-leases {
-  background-image: url('../static/icons/leases.png');
+  background-image: url('/static/icons/leases.png');
 }
