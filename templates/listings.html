@@ -10,12 +10,23 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script type="text/javascript">
         $(window).on('load', function() {
             setTimeout(function() {
                 $('#loading').hide();
             }, 2000);
+        });
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+        $('#search-form').on('submit', function(e) {
+            e.preventDefault();
+            var searchTerm = $('#search-input').val().toLowerCase();
+            $('.centered-table tbody tr').each(function() {
+            var listing = $(this).text().toLowerCase();
+            $(this).toggle(listing.indexOf(searchTerm) > -1);
+            });
+        });
         });
     </script>
 </head>
@@ -44,32 +55,39 @@
             </div>
         </div>    
         <div class="content">
+            <form id="search-form" class="search-form">
+                <input type="text" id="search-input" placeholder="Search Listings..." />
+            </form>
             <table class="centered-table">
-                <tr>
-                    <th>Street</th>
-                    <th>City</th>
-                    <th>State</th>
-                    <th>Type</th>
-                    <th>Owner</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Brokers</th>
-                    <th>Listing Agreement</th>
-                </tr>
-                {% for listing in listings %}
-                <tr>
-                    <td>{{ listing.listing_street }}</td>
-                    <td>{{ listing.listing_city }}</td>
-                    <td>{{ listing.listing_state }}</td>
-                    <td>{{ listing.listing_type }}</td>
-                    <td>{{ listing.listing_owner }}</td>
-                    <td><a href="mailto:{{ listing.listing_email }}">{{ listing.listing_email }}</a></td>
-                    <td><a href="tel:{{ listing.listing_phone }}">{{ listing.listing_phone }}</a></td>
-                    <td class="brokers">{{ ", ".join(listing.brokers) }}</td>
-                    <td><a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Download</a></td>
-                </tr>
-                {% endfor %}
-            </table>
+                <thead>
+                    <tr>
+                        <th>Street</th>
+                        <th>City</th>
+                        <th>State</th>
+                        <th>Type</th>
+                        <th>Owner</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Brokers</th>
+                        <th>Listing Agreement</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for listing in listings %}
+                    <tr>
+                        <td>{{ listing.listing_street }}</td>
+                        <td>{{ listing.listing_city }}</td>
+                        <td>{{ listing.listing_state }}</td>
+                        <td>{{ listing.listing_type }}</td>
+                        <td>{{ listing.listing_owner }}</td>
+                        <td><a href="mailto:{{ listing.listing_email }}">{{ listing.listing_email }}</a></td>
+                        <td><a href="tel:{{ listing.listing_phone }}">{{ listing.listing_phone }}</a></td>
+                        <td class="brokers">{{ ", ".join(listing.brokers) }}</td>
+                        <td><a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Download</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>            
             {{ pagination.links }}
         </div>
     </div>

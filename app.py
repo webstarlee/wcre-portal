@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, make_response, render_template, redirect, url_for, request
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from pymongo import MongoClient
 from flask_bcrypt import Bcrypt
@@ -77,7 +77,7 @@ def download_listing_pdf(listing_id):
 def view_listings():
     if current_user.is_authenticated:
         page, per_page, _ = get_page_args(page_parameter='page', per_page_parameter='per_page')
-        per_page = 14
+        per_page = 12
         total, listings_data = (listings.count_documents({}), 
                                 listings.find().skip((page-1)*per_page).limit(per_page)) if current_user.role == 'Admin' else (
                                     listings.count_documents({"brokers": {"$in": [current_user.fullname]}}), 
