@@ -1,0 +1,17 @@
+INFO:root:Connected to MongoDB successfully
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+INFO:root:Connected to MongoDB successfully
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 106-926-725
+INFO:werkzeug: * Detected change in '/Users/natewolf/Desktop/Personal/Code/wcre_admin_panel/app.py', reloading
+INFO:werkzeug: * Restarting with stat
+INFO:root:Connected to MongoDB successfully
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 106-926-725
+INFO:werkzeug:127.0.0.1 - - [23/Jun/2023 18:00:39] "GET /login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [23/Jun/2023 18:00:39] "[36mGET /static/login.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [23/Jun/2023 18:00:39] "[36mGET /static/logo.png HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [23/Jun/2023 18:00:39] "[36mGET /static/cropped_logo.png HTTP/1.1[0m" 304 -
