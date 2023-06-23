@@ -34,20 +34,36 @@ def load_user(username):
 def login_page():
     return redirect(url_for('login'))
 
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     if request.method == 'POST':
+#         user = load_user(request.form['username'])
+#         if user and bcrypt.check_password_hash(user.password, request.form['password']):
+#             login_user(user)
+#             return redirect(url_for('home'))
+#         return render_template('login.html', error='Invalid username or password')
+#     return render_template('login.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         user = load_user(request.form['username'])
         if user and bcrypt.check_password_hash(user.password, request.form['password']):
             login_user(user)
-            return redirect(url_for('home'))
+            return redirect(url_for('view_listings'))  # Change the redirect URL
         return render_template('login.html', error='Invalid username or password')
     return render_template('login.html')
+
+
+# @app.route('/home')
+# @login_required
+# def home():
+#     return render_template('home.html') if current_user.is_authenticated else redirect(url_for('login'))
 
 @app.route('/home')
 @login_required
 def home():
-    return render_template('home.html') if current_user.is_authenticated else redirect(url_for('login'))
+    return redirect('view_listings') if current_user.is_authenticated else redirect(url_for('login'))
 
 @app.route('/logout')
 @login_required
