@@ -2,7 +2,6 @@ from flask import Flask, make_response, render_template, redirect, url_for, requ
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from pymongo import MongoClient
 from flask_bcrypt import Bcrypt
-from pymongo.errors import ServerSelectionTimeoutError
 from models import User
 from flask_paginate import Pagination, get_page_args
 from bson.objectid import ObjectId
