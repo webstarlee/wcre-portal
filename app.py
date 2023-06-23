@@ -1,6 +1,6 @@
 import os
 import logging
-from flask import Flask, jsonify, make_response, render_template, redirect, url_for, request
+from flask import Flask, make_response, render_template, redirect, url_for, request
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from pymongo import MongoClient
 from flask_bcrypt import Bcrypt
@@ -20,13 +20,8 @@ try:
     login_manager.login_view = 'login'
     bcrypt = Bcrypt(app)
     mongodb_uri = os.environ.get('MONGODB_URI')
-    log_folder = 'logs'
-    log_file = 'log.log'
-    log_path = os.path.join(log_folder, log_file)
-    os.makedirs(log_folder, exist_ok=True)
-    logging.basicConfig(filename=log_path, level=logging.INFO)
 except Exception as e:
-    logging.error(f"Error Starting Flask App: {str(e)}")
+    print(f"Error Starting Flask App: {str(e)}")
 
 try:
     client = MongoClient(mongodb_uri, tls=True, tlsAllowInvalidCertificates=True, serverSelectionTimeoutMS=5000)
@@ -34,9 +29,9 @@ try:
     users = db['users']
     listings = db['listings']
     fs = GridFS(db)
-    logging.info("Connected to MongoDB successfully")
+    print("Connected to MongoDB successfully")
 except Exception as e:
-    logging.error(f"Error connecting to MongoDB: {str(e)}")
+    print(f"Error connecting to MongoDB: {str(e)}")
 
 @app.route('/')
 def login_page():
