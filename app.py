@@ -48,7 +48,7 @@ def login():
         user = load_user(request.form['username'])
         if user and bcrypt.check_password_hash(user.password, request.form['password']):
             login_user(user)
-            return redirect(url_for('home'))
+            return redirect(url_for('view_listings'))
         else:
             return render_template('login.html', error='Invalid Username or Password')
     return render_template('login.html')
@@ -58,10 +58,10 @@ def load_user(username):
     u = users.find_one({"username": username})
     return User(u['username'], u['password'], u['role'], u['fullname'], u.get('profile_picture_url')) if u else None
 
-@app.route('/home')
+@app.route('/dashboard')
 @login_required
-def home():
-    return render_template('home.html')
+def dashboard():
+    return render_template('dashboard.html')
 
 @app.route('/logout')
 @login_required
