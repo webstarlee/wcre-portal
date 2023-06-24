@@ -150,13 +150,13 @@ body {
 .modal-navigation .prev-step {
   position: absolute;
   bottom: 10px;
-  left: 10px; 
+  left: 10px;
 }
 
 .modal-navigation .next-step {
   position: absolute;
-  bottom: 10px; 
-  right: 10px; 
+  bottom: 10px;
+  right: 10px;
 }
 
 .minimal-button {
@@ -215,7 +215,7 @@ body {
 /* upload listing agreement */
 
 #upload-listing-agreement {
-  margin-top: 20px;  /* Adjust this value to move the button lower */
+  margin-top: 20px; /* Adjust this value to move the button lower */
   background-color: #f0f0f0;
   border: none;
   color: #333;
@@ -237,13 +237,12 @@ body {
   color: #f0f0f0;
   border-radius: 4px;
   font-size: 14px;
-  margin-top: 10px;  /* Adjust this value to move the tooltip lower relative to the button */
+  margin-top: 10px; /* Adjust this value to move the tooltip lower relative to the button */
 }
 
 #upload-listing-agreement:hover + .agreement-tooltip {
   display: block;
 }
-
 
 .close {
   color: #888;
@@ -318,15 +317,41 @@ body {
   color: white;
 }
 
-.centered-table th:nth-child(1) { width: 100px; }
-.centered-table th:nth-child(2) { width: 200px; }
-.centered-table th:nth-child(3) { width: 100px; }
-.centered-table th:nth-child(4) { width: 80px; }
-.centered-table th:nth-child(5) { width: 100px; }
-.centered-table th:nth-child(6) { width: 150px; }
-.centered-table th:nth-child(7) { width: 100px; }
-.centered-table th:nth-child(8) { width: 150px; }
-.centered-table th:nth-child(9) { width: 150px; }
+.centered-table th:nth-child(1) {
+  width: 100px;
+}
+
+.centered-table th:nth-child(2) {
+  width: 200px;
+}
+
+.centered-table th:nth-child(3) {
+  width: 100px;
+}
+
+.centered-table th:nth-child(4) {
+  width: 80px;
+}
+
+.centered-table th:nth-child(5) {
+  width: 100px;
+}
+
+.centered-table th:nth-child(6) {
+  width: 150px;
+}
+
+.centered-table th:nth-child(7) {
+  width: 100px;
+}
+
+.centered-table th:nth-child(8) {
+  width: 150px;
+}
+
+.centered-table th:nth-child(9) {
+  width: 150px;
+}
 
 /* pagination */
 
@@ -349,4 +374,23 @@ body {
 
 .pagination .active {
   color: #0056b3;
+}
+
+/* Open Map button */
+
+#open-map-button {
+  background-color: #f0f0f0;
+  border: none;
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  position: absolute;
+  top: 20px;
+  left: 240px;
+}
+
+#open-map-button:hover {
+  background-color: #ddd;
 }

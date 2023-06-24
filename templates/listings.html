@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
 </head>
 <body>
     <div id="loading">
@@ -37,10 +38,13 @@
             </div>        
         </div>    
         <div class="content">
-            <form id="search-form" class="search-form">
+            <div class="top-bar">
+              <form id="search-form" class="search-form">
                 <input type="text" id="search-input" placeholder="Search Listings..." />
                 <button id="add-listing-button" type="button">Add Listing</button>
-            </form>
+              </form>
+              <button id="open-map-button" type="button">Open Listings Map</button>
+            </div>
             <table class="centered-table">
                 <thead>
                     <tr>
