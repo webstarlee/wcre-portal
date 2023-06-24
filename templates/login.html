@@ -1,24 +1,34 @@
 <!DOCTYPE html>
-<html>
-<head>
+<html lang="es" dir="ltr">
+  <head>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta charset="utf-8">
     <title>Admin Portal - Login</title>
     <link rel="icon" type="image/png" href="/static/cropped_logo.png">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='login.css') }}">
-</head>
-<body>
-    <div class="container">
-        <img class="logo" src="{{ url_for('static', filename='logo.png') }}" alt="WCRE Logo">
-        <h1>Welcome to the WCRE Portal</h1>
-        <form action="{{ url_for('login') }}" method="post">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-            {% if error %}
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div class="main">
+      <div class="container a-container" id="a-container">
+        <form class="form" id="a-form" action="{{ url_for('login') }}" method="post">
+          <h2 class="form_title title">WCRE Management Portal</h2>
+          <input class="form__input" type="text" placeholder="Username" id="username" name="username" required>
+          <input class="form__input" type="password" placeholder="Password" id="password" name="password" required>
+          {% if error %}
                 <p class="error">{{ error }}</p>
-            {% endif %}
-            <input type="submit" value="Login">
+          {% endif %}
+          <button class="form__button button submit" type="submit">SIGN IN</button>
         </form>
+      </div>
+      <div class="switch" id="switch-cnt">
+        <div class="switch__circle"></div>
+        <div class="switch__circle switch__circle--t"></div>
+        <div class="switch__container" id="switch-c1">
+          <h2 class="switch__title title">Welcome Back</h2>
+          <p class="switch__description description">Please Enter Your Credentials to Log In to the WCRE Portal.</p>
+        </div>
+      </div>
     </div>
-</body>
+  </body>
 </html>

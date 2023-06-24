@@ -43,11 +43,9 @@ def login():
         user = load_user(request.form['username'])
         if user and bcrypt.check_password_hash(user.password, request.form['password']):
             login_user(user)
-            log_message = f"User {user.username} logged in successfully"
-            logging.info(log_message)
-            return redirect(url_for('view_listings'))
-        logging.info("Invalid username or password")
-        return render_template('login.html', error='Invalid username or password')
+            return redirect(url_for('home'))
+        else:
+            return render_template('login.html', error='Invalid Username or Password')
     return render_template('login.html')
 
 @login_manager.user_loader
@@ -58,7 +56,7 @@ def load_user(username):
 @app.route('/home')
 @login_required
 def home():
-    return redirect(url_for('view_listings')) if current_user.is_authenticated else redirect(url_for('login'))
+    return render_template('home.html')
 
 @app.route('/logout')
 @login_required

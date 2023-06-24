@@ -31,6 +31,26 @@
                 <a href="{{ url_for('logout') }}" class="logout-icon"></a>
             </div>
         </div>
+        <div class="content">
+            <div class="dashboard">
+                <div class="dashboard-card">
+                    <div class="card-title">Total Listings</div>
+                    <div class="card-content">{{ total_listings }}</div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-title">Site Traffic</div>
+                    <div class="card-content" id="site-traffic"></div> <!-- To be filled with Google Analytics data -->
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-title">Other Information</div>
+                    <div class="card-content">{{ other_info }}</div>
+                </div>
+            </div>
+        </div>
     </div>
+    <!-- Google Analytics script would go here -->
+    <script>
+        // Google Analytics data fetching would go here
+    </script>
 </body>
 </html>
