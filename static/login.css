@@ -106,7 +106,6 @@
     width: 400px;
     padding: 50px;
     z-index: 200;
-    transition: 1.25s;
     background-color: #ecf0f3;
     overflow: hidden;
     box-shadow: 4px 4px 10px #d1d9e6, -4px -4px 10px #f9f9f9;
