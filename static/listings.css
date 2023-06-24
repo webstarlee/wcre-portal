@@ -202,6 +202,17 @@ body {
   align-items: center;
 }
 
+.brokers {
+  white-space: nowrap;
+}
+
+.broker-name {
+  display: block;
+  white-space: nowrap;
+}
+
+
+
 .broker-label {
   display: flex;
   align-items: center;
@@ -287,7 +298,7 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  height: 5px;
+  height: 50px;
   line-height: 1;
 }
 
@@ -306,10 +317,6 @@ body {
 .centered-table tr:hover {
   background-color: rgb(57, 112, 206);
   cursor: pointer;
-}
-
-.centered-table td.brokers {
-  white-space: normal;
 }
 
 .centered-table th {

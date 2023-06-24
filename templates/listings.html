@@ -69,7 +69,11 @@
                         <td>{{ listing.listing_owner }}</td>
                         <td><a href="mailto:{{ listing.listing_email }}">{{ listing.listing_email }}</a></td>
                         <td><a href="tel:{{ listing.listing_phone }}">{{ listing.listing_phone }}</a></td>
-                        <td class="brokers">{{ ", ".join(listing.brokers) }}</td>
+                        <td class="brokers">
+                            {% for broker in listing.brokers %}
+                              <span class="broker-name">{{ broker }}</span>
+                            {% endfor %}
+                          </td>                          
                         <td><a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Download</a></td>
                     </tr>
                     {% endfor %}
