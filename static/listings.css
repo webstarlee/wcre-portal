@@ -175,7 +175,6 @@ body {
   background-color: #ddd;
 }
 
-
 .modal-content {
   background: linear-gradient(to right, #1c92d2, #f2fcfe);
   margin: auto;
@@ -212,6 +211,39 @@ body {
 .broker-label input[type="checkbox"] {
   margin-right: 10px;
 }
+
+/* upload listing agreement */
+
+#upload-listing-agreement {
+  margin-top: 20px;  /* Adjust this value to move the button lower */
+  background-color: #f0f0f0;
+  border: none;
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+#upload-listing-agreement:hover {
+  background-color: #ddd;
+}
+
+.agreement-tooltip {
+  display: none;
+  position: absolute;
+  padding: 10px;
+  background: #333;
+  color: #f0f0f0;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-top: 10px;  /* Adjust this value to move the tooltip lower relative to the button */
+}
+
+#upload-listing-agreement:hover + .agreement-tooltip {
+  display: block;
+}
+
 
 .close {
   color: #888;

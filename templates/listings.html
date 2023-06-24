@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="/static/js/script.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </head>
 <body>
     <div id="loading">
@@ -121,65 +121,76 @@
                         <div class="form-group">
                             <label for="listing-owner-phone">Owner Phone Number:</label>
                             <input type="tel" id="listing-owner-phone" name="listing-owner-phone" required>
-                          </div>                          
+                        </div>                          
                     </form>
                 </div>                
                 <div id="step3" class="modal-step">
                     <h2 class="modal-step-title">New Listing - General Information</h2>
-                    <form class="modal-form">
-                        <div class="form-group">
-                            <label for="listing-type">Listing Type:</label>
-                            <select id="listing-type" name="listing-type" required>
-                                <option value="Sale">Sale</option>
-                                <option value="Lease">Lease</option>
-                                <option value="Sale and Lease">Sale and Lease</option>
-                                <option value="Sublease">Sublease</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="investment-sale">Investment Sale:</label>
-                            <select id="investment-sale" name="investment-sale" required>
-                                <option value="No">No</option>
-                                <option value="Yes">Yes</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="listing-brokers"><b>Brokers:</b></label>
-                            <div id="listing-brokers">
-                                <div class="checkbox-line">
-                                    <label for="broker1" class="broker-label">
-                                        <input type="checkbox" id="broker1" name="broker1" value="Jason Wolf">
-                                        Jason Wolf
-                                    </label>
-                                </div>
-                                <div class="checkbox-line">
-                                    <label for="broker2" class="broker-label">
-                                        <input type="checkbox" id="broker2" name="broker2" value="Evan Zweben">
-                                        Evan Zweben
-                                    </label>
-                                </div>
-                                <div class="checkbox-line">
-                                    <label for="broker3" class="broker-label">
-                                        <input type="checkbox" id="broker3" name="broker3" value="Erin Warwick">
-                                        Erin Warwick
-                                    </label>
-                                </div>
-                                <div class="checkbox-line">
-                                    <label for="broker4" class="broker-label">
-                                        <input type="checkbox" id="broker4" name="broker4" value="Todd Monahan">
-                                        Todd Monahan
-                                    </label>
-                                </div>
-                                <div class="checkbox-line">
-                                    <label for="broker5" class="broker-label">
-                                        <input type="checkbox" id="broker5" name="broker5" value="John T. Mozzillo">
-                                        John T. Mozzillo
-                                    </label>
-                                </div>
+                    <form id="submit-listing-form" class="modal-form" action="{{ url_for('submit_listing') }}" method="POST">
+                      <div class="form-group">
+                        <label for="listing-type">Listing Type:</label>
+                        <select id="listing-type" name="listing-type" required>
+                          <option value="Sale">Sale</option>
+                          <option value="Lease">Lease</option>
+                          <option value="Sale and Lease">Sale and Lease</option>
+                          <option value="Sublease">Sublease</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="investment-sale">Investment Sale:</label>
+                        <select id="investment-sale" name="investment-sale" required>
+                          <option value="No">No</option>
+                          <option value="Yes">Yes</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="listing-brokers"><b>Brokers:</b></label>
+                        <div id="listing-brokers">
+                            <div class="checkbox-line">
+                                <label for="broker1" class="broker-label">
+                                    <input type="checkbox" id="broker1" name="broker1" value="Jason Wolf">
+                                    Jason Wolf
+                                </label>
                             </div>
-                        </div>                                                                                                                                                                                       
+                            <div class="checkbox-line">
+                                <label for="broker2" class="broker-label">
+                                    <input type="checkbox" id="broker2" name="broker2" value="Evan Zweben">
+                                    Evan Zweben
+                                </label>
+                            </div>
+                            <div class="checkbox-line">
+                                <label for="broker3" class="broker-label">
+                                    <input type="checkbox" id="broker3" name="broker3" value="Erin Warwick">
+                                    Erin Warwick
+                                </label>
+                            </div>
+                            <div class="checkbox-line">
+                                <label for="broker4" class="broker-label">
+                                    <input type="checkbox" id="broker4" name="broker4" value="Todd Monahan">
+                                    Todd Monahan
+                                </label>
+                            </div>
+                            <div class="checkbox-line">
+                                <label for="broker5" class="broker-label">
+                                    <input type="checkbox" id="broker5" name="broker5" value="John T. Mozzillo">
+                                    John T. Mozzillo
+                                </label>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <button id="upload-listing-agreement" type="button">Upload Listing Agreement</button>
+                        <input id="listing-agreement" type="file" style="display:none;" accept=".pdf">
+                        <input id="listing-agreement-file-id" name="listing-agreement-file-id" type="hidden">
+                        <div class="agreement-tooltip">Please upload the signed agreement here.</div>
+                        <div id="upload-error-message" class="error-message"></div>
+                      </div>
+                      <div class="modal-navigation">
+                        <button class="minimal-button prev-step">Previous</button>
+                        <button id="submit-listing-button" type="submit" class="minimal-button next-step">Submit Listing</button>
+                    </div>
                     </form>
-                </div>
+                  </div>                  
                 <div class="modal-navigation">
                     <button class="minimal-button prev-step">Previous</button>
                     <button class="minimal-button next-step">Next</button>

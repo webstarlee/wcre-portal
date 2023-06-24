@@ -4,7 +4,6 @@ $(window).on('load', function() {
     }, 2000);
 });
 
-
 $(document).ready(function() {
     const ownerPhoneInput = document.getElementById('listing-owner-phone');
     ownerPhoneInput.addEventListener('input', formatPhoneNumber);
@@ -28,6 +27,67 @@ $(document).ready(function() {
         $('#add-listing-modal').css('display', 'none');
     });
 
+    var fileInput = document.getElementById('listing-agreement');
+    var uploadButton = document.getElementById('upload-listing-agreement');
+    var uploadErrorMessage = document.getElementById('upload-error-message');
+    
+    uploadButton.addEventListener('click', function(e) {
+        fileInput.click();
+    });
+    
+    fileInput.addEventListener('change', function(e) {
+        var file = this.files[0];
+        var formData = new FormData();
+        formData.append('file', file);
+        
+        $.ajax({
+            url: '/upload_pdf',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                if (data.success) {
+                    uploadButton.textContent = 'Document Uploaded ✔';
+                    uploadButton.disabled = true;
+                    document.getElementById('listing-agreement-file-id').value = data.fileId;
+                    uploadErrorMessage.textContent = ''; // Clear any previous error message
+                } else {
+                    uploadErrorMessage.textContent = 'Error: ' + data.error;
+                }
+            },
+            error: function(xhr, status, error) {
+                uploadErrorMessage.textContent = 'Error: ' + error;
+            }
+        });
+    });
+
+    $('#submit-listing-form').on('submit', function(e) {
+        console.log("in here");
+        e.preventDefault();
+        $('#add-listing-modal').css('display', 'none');
+
+        // Get all the form data
+        var formData = new FormData(this);
+
+        // Submit the form data to the server
+        $.ajax({
+            url: '/submit_listing',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                console.log("Listing Uploaded Successfully");
+                // Optionally, you can redirect to the listings page upon successful submission
+                window.location.href = '/listings';
+            },
+            error: function(xhr, status, error) {
+                console.log("Error Uploading Listing");
+            }
+        });
+    });
+
     $('.next-step').on('click', function() {
         var currentStep = $('.active-step');
         var nextStep = currentStep.next('.modal-step');
@@ -35,7 +95,7 @@ $(document).ready(function() {
         if (nextStep.length) {
             currentStep.removeClass('active-step');
             nextStep.addClass('active-step');
-            $('.prev-step').css('visibility', 'visible'); /* show the previous button when not on the first step */
+            $('.prev-step').css('visibility', 'visible');
         }
     
         if (!nextStep.next('.modal-step').length) {
@@ -50,18 +110,12 @@ $(document).ready(function() {
         if (prevStep.length) {
             currentStep.removeClass('active-step');
             prevStep.addClass('active-step');
-            $('.next-step').text('Next'); /* change the submit button back to 'next' when not on the last step */
+            $('.next-step').text('Next');
         }
     
         if (!prevStep.prev('.modal-step').length) {
-            // we are at the first step, hide the 'previous' button
             $(this).css('visibility', 'hidden');
         }
-    });
-
-    $('#add-listing-modal form').submit(function(e) {
-        e.preventDefault();
-        $('#add-listing-modal').css('display', 'none');
     });
 
     $('#search-input').on('input', function() {

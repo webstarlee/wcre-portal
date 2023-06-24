@@ -1,5 +1,4 @@
 import os
-import logging
 from flask import Flask, make_response, render_template, redirect, url_for, request
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from pymongo import MongoClient
@@ -10,7 +9,13 @@ from bson.objectid import ObjectId
 from bson.errors import InvalidId
 from gridfs import GridFS
 from dotenv import load_dotenv
+from werkzeug.utils import secure_filename
 
+ALLOWED_EXTENSIONS = {'pdf'}
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 try:
     app = Flask(__name__)
@@ -94,6 +99,66 @@ def view_listings():
         pagination = Pagination(page=page, per_page=per_page, total=total, css_framework='bootstrap4')
         return render_template('listings.html', listings=listings_data, pagination=pagination)
     return redirect(url_for('login'))
+
+@app.route('/upload_pdf', methods=['POST'])
+@login_required
+def upload_pdf():
+    if 'file' not in request.files:
+        return {"success": False, "error": "No File Part"}
+    file = request.files['file']
+    if file.filename == '':
+        return {"success": False, "error": "No Selected File"}
+    
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file_binary_data = file.read()
+        fs = GridFS(db)
+        file_id = fs.put(file_binary_data, filename=filename)
+        return {"success": True, "fileId": str(file_id)}
+    else:
+        return {"success": False, "error": "Allowed file types are .pdf"}
+
+@app.route('/submit_listing', methods=['POST'])
+@login_required
+def submit_listing():
+    print("in here")
+    if request.method == 'POST':
+        listing_street = request.form.get('listing-street')
+        listing_city = request.form.get('listing-city')
+        listing_state = request.form.get('listing-state')
+        listing_type = request.form.get('listing-type')
+        listing_owner = request.form.get('listing-owner-name')
+        listing_email = request.form.get('listing-owner-email')
+        listing_phone = request.form.get('listing-owner-phone')
+        listing_brokers = request.form.getlist('broker-checkbox')
+        listing_agreement_file_id = request.form.get('listing-agreement-file-id')
+        
+        # Create a new listing document
+        new_listing = {
+            "listing_street": listing_street,
+            "listing_city": listing_city,
+            "listing_state": listing_state,
+            "listing_type": listing_type,
+            "listing_owner": listing_owner,
+            "listing_email": listing_email,
+            "listing_phone": listing_phone,
+            "brokers": listing_brokers,
+            "pdf_file": {
+                "$binary": {
+                    "base64": listing_agreement_file_id,
+                    "subType": "00"
+                }
+            }
+        }
+        
+        result = listings.insert_one(new_listing)
+        
+        if result.inserted_id:
+            return redirect(url_for('view_listings'))
+        else:
+            return 'Error occurred while submitting the listing'
+
+    return redirect(url_for('view_listings'))
 
 if __name__ == "__main__":
     app.run(debug=True)
