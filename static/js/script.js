@@ -1,9 +1,3 @@
-$(window).on('load', function() {
-    setTimeout(function() {
-        $('#loading').hide();
-    }, 2000);
-});
-
 $(document).ready(function() {
     const ownerPhoneInput = document.getElementById('listing-owner-phone');
     ownerPhoneInput.addEventListener('input', formatPhoneNumber);
