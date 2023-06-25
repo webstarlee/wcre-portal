@@ -94,7 +94,7 @@ ul li a span {
 }
 
 .logout-icon {
-  background-image: url('../static/icons/logout.png');
+  background-image: url('/static/icons/logout.png');
   width: 20px;
   height: 20px;
   background-size: cover;

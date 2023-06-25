@@ -138,7 +138,6 @@ def submit_listing():
         listing_brokers = request.form.getlist('broker-checkbox')
         listing_agreement_file_id = request.form.get('listing-agreement-file-id')
         
-        # Create a new listing document
         new_listing = {
             "listing_street": listing_street,
             "listing_city": listing_city,
