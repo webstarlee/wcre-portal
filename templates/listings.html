@@ -48,10 +48,10 @@
             <table class="centered-table">
                 <thead>
                     <tr>
+                        <th>Type</th>
                         <th>Street</th>
                         <th>City</th>
                         <th>State</th>
-                        <th>Type</th>
                         <th>Owner</th>
                         <th>Email</th>
                         <th>Phone</th>
@@ -62,10 +62,10 @@
                 <tbody>
                     {% for listing in listings %}
                     <tr>
+                        <td style="padding-right: 10px;">{{ listing.listing_type }}</td>
                         <td>{{ listing.listing_street }}</td>
                         <td>{{ listing.listing_city }}</td>
                         <td>{{ listing.listing_state }}</td>
-                        <td>{{ listing.listing_type }}</td>
                         <td>{{ listing.listing_owner }}</td>
                         <td><a href="mailto:{{ listing.listing_email }}">{{ listing.listing_email }}</a></td>
                         <td><a href="tel:{{ listing.listing_phone }}">{{ listing.listing_phone }}</a></td>
