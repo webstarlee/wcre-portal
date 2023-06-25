@@ -60,8 +60,6 @@ $(document).ready(function() {
         console.log("in here");
         e.preventDefault();
         $('#add-listing-modal').css('display', 'none');
-
-        // Get all the form data
         var formData = new FormData(this);
 
         // Submit the form data to the server
@@ -81,6 +79,13 @@ $(document).ready(function() {
             }
         });
     });
+
+    $ (function() {
+        $( "#listing-start-date" ).datepicker();
+        $( "#listing-end-date" ).datepicker();
+        } 
+    );
+
 
     $('.next-step').on('click', function() {
         var currentStep = $('.active-step');
