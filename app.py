@@ -131,28 +131,31 @@ def submit_listing():
         listing_street = request.form.get('listing-street')
         listing_city = request.form.get('listing-city')
         listing_state = request.form.get('listing-state')
-        listing_type = request.form.get('listing-type')
+        listing_property_type = request.form.get('listing-property-type')
         listing_owner = request.form.get('listing-owner-name')
         listing_email = request.form.get('listing-owner-email')
         listing_phone = request.form.get('listing-owner-phone')
         listing_brokers = request.form.getlist('broker-checkbox')
         listing_agreement_file_id = request.form.get('listing-agreement-file-id')
+        listing_start_date = request.form.get('listing-start-date')
+        listing_end_date = request.form.get('listing-end-date')
         
         new_listing = {
             "listing_street": listing_street,
             "listing_city": listing_city,
             "listing_state": listing_state,
-            "listing_type": listing_type,
             "listing_owner": listing_owner,
             "listing_email": listing_email,
-            "listing_phone": listing_phone,
+            "listing_phone": listing_phone,    
             "brokers": listing_brokers,
             "pdf_file": {
                 "$binary": {
                     "base64": listing_agreement_file_id,
                     "subType": "00"
                 }
-            }
+            },
+            "listing_end_date": listing_end_date,
+            "listing_start_date": listing_start_date
         }
         
         result = listings.insert_one(new_listing)

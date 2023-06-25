@@ -27,7 +27,7 @@
             <table class="centered-table">
                 <thead>
                     <tr>
-                        <th>Type</th>
+                        <th>Property Type</th>
                         <th>Start Date</th>
                         <th>End Date</th>
                         <th>Price</th>
@@ -44,7 +44,7 @@
                 <tbody>
                     {% for listing in listings %}
                     <tr>
-                        <td style="padding-right: 10px;">{{ listing.listing_type }}</td>
+                        <td style="padding-right: 10px;">{{ listing.listing_property_type }}</td>
                         <td>{{ listing.listing_start_date }}</td>
                         <td><a href="{{ url_for('create_ics', listing_id=listing._id) }}">{{ listing.listing_end_date }}</a></td>
                         <td>{{ listing.listing_price }}</td>
@@ -88,8 +88,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="listing-type">Type:</label>
-                            <select id="listing-type" name="listing-type" required>
+                            <label for="listing-property-type">Type:</label>
+                            <select id="listing-property-type" name="listing-property-type" required>
                                 <option value="Office">Office</option>
                                 <option value="Industrial">Industrial</option>
                                 <option value="Flex">Flex</option>
@@ -178,16 +178,12 @@
                         <div class="agreement-tooltip">Please upload the signed agreement here.</div>
                         <div id="upload-error-message" class="error-message"></div>
                       </div>
-                      <div class="modal-navigation">
-                        <button class="minimal-button prev-step">Previous</button>
-                        <button id="submit-listing-button" type="submit" class="minimal-button next-step">Submit Listing</button>
-                    </div>
                     </form>
                   </div>                  
-                <div class="modal-navigation">
+                  <div class="modal-navigation">
                     <button class="minimal-button prev-step">Previous</button>
-                    <button class="minimal-button next-step">Next</button>
-                </div>                
+                    <button id="next-button" class="minimal-button next-step" type="button">Next</button>
+                </div>                            
             </div>
         </div>                                     
     </div>
