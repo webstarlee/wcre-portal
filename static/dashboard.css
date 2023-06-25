@@ -9,7 +9,12 @@ body {
 
 .container {
   display: flex;
+  align-items: flex-start; /* Add this line */
   height: 100vh;
+}
+
+.content {
+    margin-left: 250px; /* Add this line */
 }
 
 ul {
@@ -36,4 +41,80 @@ ul li a {
 
 ul li a span {
   margin-right: 10px;
+}
+
+/* dashboard */
+
+.dashboard {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin: 20px;
+}
+
+.dashboard-card {
+  width: 200px; /* Or whatever width you prefer */
+  height: 100px; /* Or whatever height you prefer */
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px 5px rgba(0, 0, 0, 0.15); /* This adds a 'glow' effect */
+  margin: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add this line */
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 10px;
+}
+
+.card-content {
+  font-size: 16px;
+  font-weight: normal;
+  color: #333333;
+}
+
+.card-number {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333333;
+  margin-right: 5px;
+}
+
+
+.dashboard-card:hover {
+  transform: scale(1.05); /* Slightly enlarge the card */
+  box-shadow: 0px 0px 30px 10px rgba(0, 0, 0, 0.30); /* Increase the glow */
+}
+
+.dashboard-card-large {
+  width: 400px; /* Adjust as needed */
+  height: 300px; /* Adjust this value for larger height */
+  /* Rest of the styles are same as before */
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px 5px rgba(0, 0, 0, 0.15);
+  margin: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dashboard-card-large:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 0px 30px 10px rgba(0, 0, 0, 0.30);
+}
+
+
+.dashboard-card-large.wider {
+  width: 600px; /* Adjust as needed */
 }

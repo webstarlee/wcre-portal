@@ -53,7 +53,8 @@ ul li a span {
 .custom-icon-dashboard,
 .custom-icon-listings,
 .custom-icon-sales,
-.custom-icon-leases {
+.custom-icon-leases,
+.custom-icon-brokers {
   background-size: 24px;
   background-repeat: no-repeat;
   color: white;

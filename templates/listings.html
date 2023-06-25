@@ -27,6 +27,7 @@
                 <li><a href="{{ url_for('view_listings') }}"><span class="custom-icon-listings"></span> LISTINGS</a></li>
                 <li><a href="#"><span class="custom-icon-sales"></span> SALES</a></li>
                 <li><a href="#"><span class="custom-icon-leases"></span> LEASES</a></li>
+                <li><a href="#"><span class="custom-icon-brokers"></span> BROKERS</a></li>
             </ul>
             <div class="user-info">
                 <img class="user-profile-pic" src="{{ current_user.profile_picture_url }}" alt="User Profile Picture">
@@ -49,6 +50,9 @@
                 <thead>
                     <tr>
                         <th>Type</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Price</th>
                         <th>Street</th>
                         <th>City</th>
                         <th>State</th>
@@ -63,6 +67,9 @@
                     {% for listing in listings %}
                     <tr>
                         <td style="padding-right: 10px;">{{ listing.listing_type }}</td>
+                        <td>{{ listing.listing_start_date }}</td>
+                        <td><a href="{{ url_for('create_ics', listing_id=listing._id) }}">{{ listing.listing_end_date }}</a></td>
+                        <td>{{ listing.listing_price }}</td>
                         <td>{{ listing.listing_street }}</td>
                         <td>{{ listing.listing_city }}</td>
                         <td>{{ listing.listing_state }}</td>

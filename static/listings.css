@@ -298,6 +298,7 @@ body {
   text-overflow: ellipsis;
   height: 50px;
   line-height: 1;
+  font-size: 12px;
 }
 
 .centered-table td {

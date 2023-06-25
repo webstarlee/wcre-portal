@@ -13,3 +13,7 @@
 .custom-icon-leases {
   background-image: url('/static/icons/leases.png');
 }
+
+.custom-icon-brokers {
+  background-image: url('/static/icons/user.png');
+}

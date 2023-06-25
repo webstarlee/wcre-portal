@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 from flask import Flask, make_response, render_template, redirect, url_for, request
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
@@ -10,6 +11,10 @@ from bson.errors import InvalidId
 from gridfs import GridFS
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
+from flask import Flask, Response
+from ics import Calendar, Event
+import arrow
+
 
 ALLOWED_EXTENSIONS = {'pdf'}
 
@@ -159,6 +164,21 @@ def submit_listing():
             return 'Error occurred while submitting the listing'
 
     return redirect(url_for('view_listings'))
+
+@app.route('/create_ics/<listing_id>')
+@login_required
+def create_ics(listing_id):
+    listing = listings.find_one({"_id": ObjectId(listing_id)})
+
+    c = Calendar()
+    e = Event()
+    e.name = "Listing End Date: " + listing['listing_street']
+    e.begin = arrow.get(listing['listing_end_date'], 'MM/DD/YYYY').format('YYYY-MM-DD')
+    e.make_all_day()
+    c.events.add(e)
+    response = Response(c.serialize(), mimetype="text/calendar")
+    response.headers['Content-Disposition'] = 'attachment; filename=event.ics'
+    return response
 
 if __name__ == "__main__":
     app.run(debug=True)

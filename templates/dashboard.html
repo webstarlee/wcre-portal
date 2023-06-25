@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
@@ -21,6 +22,7 @@
                 <li><a href="{{ url_for('view_listings') }}"><span class="custom-icon-listings"></span> LISTINGS</a></li>
                 <li><a href="#"><span class="custom-icon-sales"></span> SALES</a></li>
                 <li><a href="#"><span class="custom-icon-leases"></span> LEASES</a></li>
+                <li><a href="#"><span class="custom-icon-brokers"></span> BROKERS</a></li>
             </ul>
             <div class="user-info">
                 <img class="user-profile-pic" src="{{ current_user.profile_picture_url }}" alt="User Profile Picture">
@@ -35,22 +37,69 @@
             <div class="dashboard">
                 <div class="dashboard-card">
                     <div class="card-title">Total Listings</div>
-                    <div class="card-content">{{ total_listings }}</div>
+                    <div class="card-content"><span class="card-number">156</span> Properties</div> <!-- Fake number -->
                 </div>
                 <div class="dashboard-card">
-                    <div class="card-title">Site Traffic</div>
-                    <div class="card-content" id="site-traffic"></div> <!-- To be filled with Google Analytics data -->
+                    <div class="card-title">Total Sales</div>
+                    <div class="card-content"><span class="card-number">98</span> Properties</div> <!-- Fake number -->
                 </div>
                 <div class="dashboard-card">
-                    <div class="card-title">Other Information</div>
-                    <div class="card-content">{{ other_info }}</div>
+                    <div class="card-title">Total Leases</div>
+                    <div class="card-content"><span class="card-number">75</span> Properties</div> <!-- Fake number -->
                 </div>
+                <div class="dashboard-card">
+                    <div class="card-title">Total Clients</div>
+                    <div class="card-content"><span class="card-number">223</span> Clients</div> <!-- Fake number -->
+                </div>
+                
+                <div class="dashboard-card-large wider">
+                    <div class="card-title">Sales Performance</div>
+                    <div class="card-content">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>                           
+                <div class="dashboard-card-large">
+                    <div class="card-title">TBD</div>
+                    <div class="card-content">Content TBD</div>
+                </div>                                           
             </div>
         </div>
     </div>
-    <!-- Google Analytics script would go here -->
-    <script>
-        // Google Analytics data fetching would go here
-    </script>
 </body>
+<script>
+    var ctx = document.getElementById('salesChart').getContext('2d');
+    var salesChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            datasets: [{
+                label: 'Sales',
+                data: [12, 19, 3, 5, 2, 3, 7],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                tension: 0.4 // This makes the line curvy
+            }]
+        },
+        options: {
+            responsive: true,
+            aspectRatio: 2, // Adjust the aspect ratio as needed
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            elements: {
+                point:{
+                    radius: 0 // This will make the point invisible
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false // This will hide the legend
+                }
+            }
+        }
+    });
+</script>
 </html>

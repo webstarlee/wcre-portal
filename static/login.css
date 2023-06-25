@@ -120,3 +120,18 @@
     width: 400px;
     padding: 50px 55px;
   }
+
+  .logo {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto 300px; /* 20px bottom margin to add some space between the logo and the heading */
+  }
+
+  .corfac-logo {
+    display: block;
+    max-width: 50%;  /* Adjust this percentage to resize your logo */
+    height: auto;
+    margin: 0 auto -50px; /* 20px bottom margin to add some space between the logo and the heading */
+  }
+  
