@@ -75,3 +75,5 @@ websocket-client==1.5.1
 Werkzeug==2.3.4
 yarl==1.8.2
 pytz==2023.3
+ics==0.7.2
+arrow==1.2.3
