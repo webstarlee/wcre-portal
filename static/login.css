@@ -15,7 +15,9 @@
     font-size: 12px;
     background: linear-gradient(to right, #1c92d2, #f2fcfe);
     color: #a0a5a8;
+    overflow: hidden; /* Prevents scrolling */
   }
+  
   /**/
   .main {
     position: relative;
