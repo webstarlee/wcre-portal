@@ -1,4 +1,3 @@
-from datetime import timedelta
 import os
 from flask import Flask, make_response, render_template, redirect, url_for, request
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
@@ -14,10 +13,10 @@ from werkzeug.utils import secure_filename
 from flask import Flask, Response
 from ics import Calendar, Event
 import arrow
+from datetime import datetime
 
 
 ALLOWED_EXTENSIONS = {'pdf'}
-
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -53,7 +52,7 @@ def login():
         user = load_user(request.form['username'])
         if user and bcrypt.check_password_hash(user.password, request.form['password']):
             login_user(user)
-            return redirect(url_for('view_listings'))
+            return redirect(url_for('dashboard'))
         else:
             return render_template('login.html', error='Invalid Username or Password')
     return render_template('login.html')
@@ -66,7 +65,9 @@ def load_user(username):
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    total_listings = listings.count_documents({})
+    greeting_msg = f"{greeting()}, {current_user.fullname.split()[0]}!"
+    return render_template('dashboard.html', total_listings=total_listings, greeting_msg=greeting_msg)
 
 @app.route('/logout')
 @login_required
@@ -171,7 +172,6 @@ def submit_listing():
 @login_required
 def create_ics(listing_id):
     listing = listings.find_one({"_id": ObjectId(listing_id)})
-
     c = Calendar()
     e = Event()
     e.name = "Listing End Date: " + listing['listing_street']
@@ -181,6 +181,15 @@ def create_ics(listing_id):
     response = Response(c.serialize(), mimetype="text/calendar")
     response.headers['Content-Disposition'] = 'attachment; filename=event.ics'
     return response
+
+def greeting():
+    current_time = datetime.now()
+    if current_time.hour < 12:
+        return "Good Morning"
+    elif 12 <= current_time.hour < 18:
+        return "Good Afternoon"
+    else:
+        return "Good Evening"
 
 if __name__ == "__main__":
     app.run(debug=True)

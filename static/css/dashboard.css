@@ -45,12 +45,20 @@ ul li a span {
 
 /* dashboard */
 
+.greeting {
+  font-size: 28px;
+  font-weight: 500;
+  font-family: 'Arial', sans-serif;
+  margin-bottom: 10px; /* Adjust this as per your needs */
+}
+
 .dashboard {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
-  margin: 20px;
+  margin: 10px; /* Reduce this to move cards up */
 }
+
 
 .dashboard-card {
   width: 200px; /* Or whatever width you prefer */
@@ -59,6 +67,7 @@ ul li a span {
   border-radius: 10px;
   box-shadow: 0px 0px 15px 5px rgba(0, 0, 0, 0.15); /* This adds a 'glow' effect */
   margin: 20px;
+  position: relative;
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -117,4 +126,25 @@ ul li a span {
 
 .dashboard-card-large.wider {
   width: 600px; /* Adjust as needed */
+}
+
+.card-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #333333; /* Adjust the color */
+  text-decoration: none; /* Removes the underline */
+  position: absolute; /* Positions the icon relative to the card */
+  right: 10px; /* Adjust as necessary */
+  top: 10px; /* Adjust as necessary */
+}
+
+.card-icon img {
+  width: 20px; /* Adjust as necessary */
+  height: 20px; /* Adjust as necessary */
+}
+
+
+.card-icon:hover {
+  color: #1c92d2; /* Changes the color of the icon on hover */
 }
