@@ -62,8 +62,6 @@ def load_user(username):
     u = users.find_one({"username": username})
     return User(u['username'], u['password'], u['role'], u['fullname'], u.get('profile_picture_url')) if u else None
 
-# ...
-
 def greeting(current_time):
     if current_time.hour < 12:
         return "Good Morning"
