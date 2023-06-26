@@ -66,8 +66,10 @@ def load_user(username):
 @login_required
 def dashboard():
     total_listings = listings.count_documents({})
-    greeting_msg = f"{greeting()}, {current_user.fullname.split()[0]}!"
+    current_time = datetime.now()
+    greeting_msg = f"{greeting(current_time)}, {current_user.fullname.split()[0]}!"
     return render_template('dashboard.html', total_listings=total_listings, greeting_msg=greeting_msg)
+
 
 @app.route('/logout')
 @login_required
@@ -182,14 +184,14 @@ def create_ics(listing_id):
     response.headers['Content-Disposition'] = 'attachment; filename=event.ics'
     return response
 
-def greeting():
-    current_time = datetime.now()
+def greeting(current_time):
     if current_time.hour < 12:
         return "Good Morning"
     elif 12 <= current_time.hour < 18:
         return "Good Afternoon"
     else:
         return "Good Evening"
+
 
 if __name__ == "__main__":
     app.run(debug=True)
