@@ -136,7 +136,6 @@ def upload_pdf():
 @app.route('/submit_listing', methods=['POST'])
 @login_required
 def submit_listing():
-    print("in here")
     if request.method == 'POST':
         listing_street = request.form.get('listing-street')
         listing_city = request.form.get('listing-city')
@@ -145,10 +144,16 @@ def submit_listing():
         listing_owner = request.form.get('listing-owner-name')
         listing_email = request.form.get('listing-owner-email')
         listing_phone = request.form.get('listing-owner-phone')
-        listing_brokers = request.form.getlist('broker-checkbox')
-        listing_agreement_file_id = request.form.get('listing-agreement-file-id')
+        listing_brokers = request.form.getlist('brokers')
+        listing_agreement_file = request.files.get('listing-agreement')
         listing_start_date = request.form.get('listing-start-date')
         listing_end_date = request.form.get('listing-end-date')
+        
+        if listing_agreement_file and allowed_file(listing_agreement_file.filename):
+            listing_agreement_filename = secure_filename(listing_agreement_file.filename)
+            listing_agreement_file_id = fs.put(listing_agreement_file.read(), filename=listing_agreement_filename)
+        else:
+            listing_agreement_file_id = None
         
         new_listing = {
             "listing_street": listing_street,
@@ -156,20 +161,20 @@ def submit_listing():
             "listing_state": listing_state,
             "listing_owner": listing_owner,
             "listing_email": listing_email,
-            "listing_phone": listing_phone,    
+            "listing_phone": listing_phone,
             "brokers": listing_brokers,
             "pdf_file": {
                 "$binary": {
-                    "base64": listing_agreement_file_id,
+                    "base64": str(listing_agreement_file_id) if listing_agreement_file_id else "",
                     "subType": "00"
                 }
             },
             "listing_end_date": listing_end_date,
-            "listing_start_date": listing_start_date
+            "listing_start_date": listing_start_date,
+            "listing_property_type": listing_property_type
         }
         
         result = listings.insert_one(new_listing)
-        
         if result.inserted_id:
             return redirect(url_for('view_listings'))
         else:

@@ -24,16 +24,16 @@ $(document).ready(function() {
     var fileInput = document.getElementById('listing-agreement');
     var uploadButton = document.getElementById('upload-listing-agreement');
     var uploadErrorMessage = document.getElementById('upload-error-message');
-    
+
     uploadButton.addEventListener('click', function(e) {
         fileInput.click();
     });
-    
+
     fileInput.addEventListener('change', function(e) {
         var file = this.files[0];
         var formData = new FormData();
         formData.append('file', file);
-        
+
         $.ajax({
             url: '/upload_pdf',
             type: 'POST',
@@ -57,12 +57,12 @@ $(document).ready(function() {
     });
 
     $('#submit-listing-form').on('submit', function(e) {
-        console.log("in here");
         e.preventDefault();
         $('#add-listing-modal').css('display', 'none');
         var formData = new FormData(this);
+        var file = $('#listing-agreement')[0].files[0];
+        formData.append('file', file);
 
-        // Submit the form data to the server
         $.ajax({
             url: '/submit_listing',
             type: 'POST',
@@ -71,7 +71,6 @@ $(document).ready(function() {
             contentType: false,
             success: function(response) {
                 console.log("Listing Uploaded Successfully");
-                // Optionally, you can redirect to the listings page upon successful submission
                 window.location.href = '/listings';
             },
             error: function(xhr, status, error) {
@@ -80,38 +79,43 @@ $(document).ready(function() {
         });
     });
 
-    $ (function() {
-        $( "#listing-start-date" ).datepicker();
-        $( "#listing-end-date" ).datepicker();
-        } 
-    );
-
+    $(function() {
+        $("#listing-start-date").datepicker();
+        $("#listing-end-date").datepicker();
+    });
 
     $('.next-step').on('click', function() {
         var currentStep = $('.active-step');
         var nextStep = currentStep.next('.modal-step');
-    
+
         if (nextStep.length) {
             currentStep.removeClass('active-step');
             nextStep.addClass('active-step');
             $('.prev-step').css('visibility', 'visible');
+
+            if (!nextStep.next('.modal-step').length) {
+                $(this).text('Submit Listing');
+            } else {
+                $(this).text('Next');
+            }
         }
-    
-        if (!nextStep.next('.modal-step').length) {
-            $(this).text('Submit Listing');
+        else {
+            $('#submit-listing-form').submit();
         }
     });
-    
+
+
+
     $('.prev-step').on('click', function() {
         var currentStep = $('.active-step');
         var prevStep = currentStep.prev('.modal-step');
-    
+
         if (prevStep.length) {
             currentStep.removeClass('active-step');
             prevStep.addClass('active-step');
             $('.next-step').text('Next');
         }
-    
+
         if (!prevStep.prev('.modal-step').length) {
             $(this).css('visibility', 'hidden');
         }

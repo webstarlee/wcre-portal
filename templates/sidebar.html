@@ -1,20 +1,35 @@
 <div class="sidebar">
     <div class="sidebar-header">
-        <img src="{{ url_for('static', filename='icons/logo.png') }}" alt="WCRE Logo">
+      <img src="{{ url_for('static', filename='icons/logo.png') }}" alt="WCRE Logo">
     </div>
     <ul>
-        <li><a href="{{ url_for('dashboard') }}"><span class="custom-icon-dashboard"></span> DASHBOARD</a></li>
-        <li><a href="{{ url_for('view_listings') }}"><span class="custom-icon-listings"></span> LISTINGS</a></li>
-        <li><a href="#"><span class="custom-icon-sales"></span> SALES</a></li>
-        <li><a href="#"><span class="custom-icon-leases"></span> LEASES</a></li>
-        <li><a href="#"><span class="custom-icon-brokers"></span> BROKERS</a></li>
+      <li>
+        <a href="{{ url_for('dashboard') }}">
+          <span class="custom-icon-dashboard"></span> DASHBOARD </a>
+      </li>
+      <li>
+        <a href="{{ url_for('view_listings') }}">
+          <span class="custom-icon-listings"></span> LISTINGS </a>
+      </li>
+      <li>
+        <a href="#">
+          <span class="custom-icon-sales"></span> SALES </a>
+      </li>
+      <li>
+        <a href="#">
+          <span class="custom-icon-leases"></span> LEASES </a>
+      </li>
+      <li>
+        <a href="#">
+          <span class="custom-icon-brokers"></span> BROKERS </a>
+      </li>
     </ul>
     <div class="user-info">
-        <img class="user-profile-pic" src="{{ current_user.profile_picture_url }}" alt="User Profile Picture">
-        <div class="user-details">
-            <div class="user-name">{{ current_user.fullname }}</div>
-            <div class="user-role">{{ current_user.role }}</div>
-        </div>
-        <a href="{{ url_for('logout') }}" class="logout-icon"></a>
-    </div>        
-</div> 
+      <img class="user-profile-pic" src="{{ current_user.profile_picture_url }}" alt="User Profile Picture">
+      <div class="user-details">
+        <div class="user-name">{{ current_user.fullname }}</div>
+        <div class="user-role">{{ current_user.role }}</div>
+      </div>
+      <a href="{{ url_for('logout') }}" class="logout-icon"></a>
+    </div>
+  </div>

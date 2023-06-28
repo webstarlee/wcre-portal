@@ -14,13 +14,8 @@
         <form class="form" id="a-form" action="{{ url_for('login') }}" method="post">
           <h2 class="form_title title">WCRE Management Portal</h2>
           <input class="form__input" type="text" placeholder="Username" id="username" name="username" required>
-          <input class="form__input" type="password" placeholder="Password" id="password" name="password" required>
-          {% if error %}
-                <p class="error">{{ error }}</p>
-          {% endif %}
-          <button class="form__button button submit" type="submit">SIGN IN</button>
+          <input class="form__input" type="password" placeholder="Password" id="password" name="password" required> {% if error %} <p class="error">{{ error }}</p> {% endif %} <button class="form__button button submit" type="submit">SIGN IN</button>
         </form>
-        
       </div>
       <div class="switch" id="switch-cnt">
         <div class="switch__circle"></div>
