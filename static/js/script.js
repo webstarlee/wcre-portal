@@ -13,14 +13,6 @@ $(document).ready(function() {
         return formattedNumber;
     }
 
-    $('#add-listing-button').click(function() {
-        $('#add-listing-modal').css('display', 'flex');
-    });
-
-    $('.close').click(function() {
-        $('#add-listing-modal').css('display', 'none');
-    });
-
     var fileInput = document.getElementById('listing-agreement');
     var uploadButton = document.getElementById('upload-listing-agreement');
     var uploadErrorMessage = document.getElementById('upload-error-message');
@@ -54,6 +46,14 @@ $(document).ready(function() {
                 uploadErrorMessage.textContent = 'Error: ' + error;
             }
         });
+    });
+
+    $('#add-listing-button').click(function() {
+        $('#add-listing-modal').css('display', 'flex');
+    });
+
+    $('.close').click(function() {
+        $('#add-listing-modal').css('display', 'none');
     });
 
     $('#submit-listing-form').on('submit', function(e) {
@@ -98,8 +98,7 @@ $(document).ready(function() {
             } else {
                 $(this).text('Next');
             }
-        }
-        else {
+        } else {
             $('#submit-listing-form').submit();
         }
     });

@@ -13,7 +13,6 @@ from werkzeug.utils import secure_filename
 from flask import Flask, Response
 from ics import Calendar, Event
 import arrow
-from datetime import datetime
 
 
 ALLOWED_EXTENSIONS = {'pdf'}
@@ -179,7 +178,6 @@ def submit_listing():
             return redirect(url_for('view_listings'))
         else:
             return 'Error occurred while submitting the listing'
-
     return redirect(url_for('view_listings'))
 
 @app.route('/create_ics/<listing_id>')
