@@ -1,146 +1,101 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap');
-body {
-	font-family: 'Noto Sans', sans-serif;
-	margin: 0;
-	padding: 0;
-	background: linear-gradient(to right, #1c92d2, #f2fcfe);
+@import url(https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap);
+body{
+    font-family:'Noto Sans',sans-serif;
+    margin:0;
+    padding:0;
+    background:linear-gradient(to right,#1c92d2,#f2fcfe)
 }
-.container {
-	display: flex;
-	align-items: flex-start;
-	/* Add this line */
-	height: 100vh;
+.container{
+    display:flex;
+    align-items:flex-start;
+    height:100vh
 }
-.content {
-	margin-left: 250px;
-	/* Add this line */
+.content{
+    margin-left:250px
 }
-ul {
-	list-style-type: none;
-	padding: 0;
-	margin: 0;
+.greeting{
+    font-size:28px;
+    font-weight:500;
+    font-family:Arial,sans-serif;
+    margin-bottom:10px
 }
-ul li {
-	padding: 10px;
-	display: flex;
-	align-items: center;
-	transition: background-color 0.3s ease;
+.dashboard{
+    display:flex;
+    justify-content:space-around;
+    flex-wrap:wrap;
+    margin:10px
 }
-ul li a {
-	color: #fff;
-	text-decoration: none;
-	display: flex;
-	align-items: center;
-	font-size: 16px;
-	font-weight: bold;
+.dashboard-card{
+    width:200px;
+    height:100px;
+    background:#fff;
+    border-radius:10px;
+    box-shadow:0 0 15px 5px rgba(0,0,0,.15);
+    margin:20px;
+    position:relative;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    transition:transform .3s ease,box-shadow .3s ease
 }
-ul li a span {
-	margin-right: 10px;
+.card-title{
+    font-size:16px;
+    font-weight:600;
+    color:#333;
+    margin-bottom:10px
 }
-/* dashboard */
-.greeting {
-	font-size: 28px;
-	font-weight: 500;
-	font-family: 'Arial', sans-serif;
-	margin-bottom: 10px;
-	/* Adjust this as per your needs */
+.card-content{
+    font-size:16px;
+    font-weight:400;
+    color:#333
 }
-.dashboard {
-	display: flex;
-	justify-content: space-around;
-	flex-wrap: wrap;
-	margin: 10px;
-	/* Reduce this to move cards up */
+.card-number{
+    font-size:24px;
+    font-weight:700;
+    color:#333;
+    margin-right:5px
 }
-.dashboard-card {
-	width: 200px;
-	/* Or whatever width you prefer */
-	height: 100px;
-	/* Or whatever height you prefer */
-	background: #ffffff;
-	border-radius: 10px;
-	box-shadow: 0px 0px 15px 5px rgba(0, 0, 0, 0.15);
-	/* This adds a 'glow' effect */
-	margin: 20px;
-	position: relative;
-	padding: 20px;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	transition: transform 0.3s ease, box-shadow 0.3s ease;
-	/* Add this line */
+.dashboard-card:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 30px 10px rgba(0,0,0,.3)
 }
-.card-title {
-	font-size: 16px;
-	font-weight: 600;
-	color: #333333;
-	margin-bottom: 10px;
+.dashboard-card-large{
+    width:400px;
+    height:300px;
+    background:#fff;
+    border-radius:10px;
+    box-shadow:0 0 15px 5px rgba(0,0,0,.15);
+    margin:20px;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    transition:transform .3s ease,box-shadow .3s ease
 }
-.card-content {
-	font-size: 16px;
-	font-weight: normal;
-	color: #333333;
+.dashboard-card-large:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 30px 10px rgba(0,0,0,.3)
 }
-.card-number {
-	font-size: 24px;
-	font-weight: bold;
-	color: #333333;
-	margin-right: 5px;
+.dashboard-card-large.wider{
+    width:600px
 }
-.dashboard-card:hover {
-	transform: scale(1.05);
-	/* Slightly enlarge the card */
-	box-shadow: 0px 0px 30px 10px rgba(0, 0, 0, 0.30);
-	/* Increase the glow */
+.card-icon{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:#333;
+    text-decoration:none;
+    position:absolute;
+    right:10px;
+    top:10px
 }
-.dashboard-card-large {
-	width: 400px;
-	/* Adjust as needed */
-	height: 300px;
-	/* Adjust this value for larger height */
-	/* Rest of the styles are same as before */
-	background: #ffffff;
-	border-radius: 10px;
-	box-shadow: 0px 0px 15px 5px rgba(0, 0, 0, 0.15);
-	margin: 20px;
-	padding: 20px;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	transition: transform 0.3s ease, box-shadow 0.3s ease;
+.card-icon img{
+    width:20px;
+    height:20px
 }
-.dashboard-card-large:hover {
-	transform: scale(1.05);
-	box-shadow: 0px 0px 30px 10px rgba(0, 0, 0, 0.30);
-}
-.dashboard-card-large.wider {
-	width: 600px;
-	/* Adjust as needed */
-}
-.card-icon {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	color: #333333;
-	/* Adjust the color */
-	text-decoration: none;
-	/* Removes the underline */
-	position: absolute;
-	/* Positions the icon relative to the card */
-	right: 10px;
-	/* Adjust as necessary */
-	top: 10px;
-	/* Adjust as necessary */
-}
-.card-icon img {
-	width: 20px;
-	/* Adjust as necessary */
-	height: 20px;
-	/* Adjust as necessary */
-}
-.card-icon:hover {
-	color: #1c92d2;
-	/* Changes the color of the icon on hover */
+.card-icon:hover{
+    color:#1c92d2
 }

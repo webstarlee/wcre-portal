@@ -51,10 +51,10 @@ $(document).ready(function() {
     $('#add-listing-button').click(function() {
         $('#add-listing-modal').css('display', 'flex');
     });
-
+    
     $('.close').click(function() {
         $('#add-listing-modal').css('display', 'none');
-    });
+    });    
 
     $('#submit-listing-form').on('submit', function(e) {
         e.preventDefault();
