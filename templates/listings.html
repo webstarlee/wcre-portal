@@ -1,201 +1,186 @@
 <!DOCTYPE html>
 <html>
-   <head>
-      <title>Admin Portal - Listings</title>
-      <link rel="icon" type="image/png" href="/static/icons/cropped_logo.png">
-      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/listings.css') }}">
-      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidebar.css') }}">
-      <link rel="stylesheet" href="{{ url_for('static', filename='css/icons.css') }}">
-      <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-      <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet">
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-      <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-      <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-      <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-   </head>
-   <body>
-      <div class="container">
-         {% include 'sidebar.html' %} 
-         <div class="content">
-            <div class="top-bar">
-               <form id="search-form" class="search-form">
-                  <input type="text" id="search-input" placeholder="Search Listings..." />
-                  <button id="add-listing-button" type="button">Add Listing</button>
-               </form>
-               <button id="open-map-button" type="button">Open Listings Map</button>
-            </div>
-            <table class="centered-table">
-            <thead>
-               <tr>
-                  <th>Property Type</th>
-                  <th>Start Date</th>
-                  <th>End Date</th>
-                  <th>Price</th>
-                  <th>Street</th>
-                  <th>City</th>
-                  <th>State</th>
-                  <th>Owner</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Brokers</th>
-                  <th>Listing Agreement</th>
-               </tr>
-            </thead>
-            <tbody>
-               {% for listing in listings %}
-               <tr>
-                  <td style="padding-right: 10px;">{{ listing.listing_property_type }}</td>
-                  <td>{{ listing.listing_start_date }}</td>
-                  <td>
-                     <a href="{{ url_for('create_ics', listing_id=listing._id) }}">{{ listing.listing_end_date }}</a>
-                  </td>
-                  <td>{{ listing.listing_price }}</td>
-                  <td>{{ listing.listing_street }}</td>
-                  <td>{{ listing.listing_city }}</td>
-                  <td>{{ listing.listing_state }}</td>
-                  <td>{{ listing.listing_owner }}</td>
-                  <td>
-                     <a href="mailto:{{ listing.listing_email }}">{{ listing.listing_email }}</a>
-                  </td>
-                  <td>
-                     <a href="tel:{{ listing.listing_phone }}">{{ listing.listing_phone }}</a>
-                  </td>
-                  <td class="brokers">
-                     {% for broker in listing.brokers %}
-                     <span class="broker-name">{{ broker }}</span>
-                     {% endfor %}
-                  </td>
-                  <td>
-                     <form class="listing-form" action="{{ url_for('submit_listing') }}" method="POST">
-                        <a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Download</a>
-                     </form>
-                  </td>
-               </tr>
-               {% endfor %}
-            </tbody>
-            {{ pagination.links }}
-         </div>
-         <div id="add-listing-modal" class="modal">
-            <div class="modal-content">
-               <span class="close">&times;</span>
-               <div id="step1" class="modal-step active-step">
-                  <h2 class="modal-step-title">New Listing - Address Information</h2>
-                  <form class="modal-form">
-                     <div class="form-group">
-                        <label for="listing-street">Street:</label>
-                        <input type="text" id="listing-street" name="listing-street" required>
-                     </div>
-                     <div class="form-group">
-                        <label for="listing-city">City:</label>
-                        <input type="text" id="listing-city" name="listing-city" required>
-                     </div>
-                     <div class="form-group">
-                        <label for="listing-state">State:</label>
-                        <select id="listing-state" name="listing-state" required>
-                           <option value="PA">PA</option>
-                           <option value="NJ">NJ</option>
-                        </select>
-                     </div>
-                     <div class="form-group">
-                        <label for="listing-property-type">Property Type:</label>
-                        <select id="listing-property-type" name="listing-property-type" required>
-                           <option value="Office">Office</option>
-                           <option value="Industrial">Industrial</option>
-                           <option value="Flex">Flex</option>
-                           <option value="Retail">Retail</option>
-                           <option value="Medical">Medical</option>
-                           <option value="Land">Land</option>
-                        </select>
-                     </div>
-                  </form>
-               </div>
-               <div id="step2" class="modal-step">
-                  <h2 class="modal-step-title">New Listing - Owner Information</h2>
-                  <form class="modal-form">
-                     <div class="form-group">
-                        <label for="listing-owner-name">Owner Name:</label>
-                        <input type="text" id="listing-owner-name" name="listing-owner-name" required>
-                     </div>
-                     <div class="form-group">
-                        <label for="listing-owner-email">Owner Email:</label>
-                        <input type="email" id="listing-owner-email" name="listing-owner-email" required>
-                     </div>
-                     <div class="form-group">
-                        <label for="listing-owner-phone">Owner Phone Number:</label>
-                        <input type="tel" id="listing-owner-phone" name="listing-owner-phone" required>
-                     </div>
-                  </form>
-               </div>
-               <div id="step3" class="modal-step">
-                  <h2 class="modal-step-title">New Listing - General Information</h2>
-                  <form id="submit-listing-form" class="modal-form" action="{{ url_for('submit_listing') }}" method="POST">
-                     <div class="form-group">
-                        <label for="listing-type">Listing Type:</label>
-                        <select id="listing-type" name="listing-type" required>
-                           <option value="Sale">Sale</option>
-                           <option value="Lease">Lease</option>
-                           <option value="Sale and Lease">Sale and Lease</option>
-                           <option value="Sublease">Sublease</option>
-                        </select>
-                     </div>
-                     <div class="form-group">
-                        <label for="investment-sale">Investment Sale:</label>
-                        <select id="investment-sale" name="investment-sale" required>
-                           <option value="No">No</option>
-                           <option value="Yes">Yes</option>
-                        </select>
-                     </div>
-                     <div class="form-group">
-                        <label for="listing-start-date">Listing Start Date:</label>
-                        <input type="text" id="listing-start-date" name="listing-start-date" required>
-                     </div>
-                     <div class="form-group">
-                        <label for="listing-end-date">Listing End Date:</label>
-                        <input type="text" id="listing-end-date" name="listing-end-date" required>
-                     </div>
-                     <div class="form-group">
-                        <label for="listing-brokers">
-                        <b>Brokers:</b>
-                        </label>
-                        <div id="listing-brokers">
-                           <div class="checkbox-line">
-                              <label for="broker1" class="broker-label">
-                              <input type="checkbox" id="broker1" name="broker1" value="Jason Wolf"> Jason Wolf </label>
-                           </div>
-                           <div class="checkbox-line">
-                              <label for="broker2" class="broker-label">
-                              <input type="checkbox" id="broker2" name="broker2" value="Evan Zweben"> Evan Zweben </label>
-                           </div>
-                           <div class="checkbox-line">
-                              <label for="broker3" class="broker-label">
-                              <input type="checkbox" id="broker3" name="broker3" value="Erin Warwick"> Erin Warwick </label>
-                           </div>
-                           <div class="checkbox-line">
-                              <label for="broker4" class="broker-label">
-                              <input type="checkbox" id="broker4" name="broker4" value="Todd Monahan"> Todd Monahan </label>
-                           </div>
-                           <div class="checkbox-line">
-                              <label for="broker5" class="broker-label">
-                              <input type="checkbox" id="broker5" name="broker5" value="John T. Mozzillo"> John T. Mozzillo </label>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="form-group">
-                        <button id="upload-listing-agreement" type="button">Upload Listing Agreement</button>
-                        <input id="listing-agreement" type="file" style="display:none;" accept=".pdf">
-                        <input id="listing-agreement-file-id" name="listing-agreement-file-id" type="hidden">
-                        <div class="agreement-tooltip">Please upload the signed agreement here.</div>
-                        <div id="upload-error-message" class="error-message"></div>
-                     </div>
-                  </form>
-               </div>
-               <div class="modal-navigation">
-                  <button class="minimal-button prev-step" type="button">Previous</button>
-                  <button id="next-button" class="minimal-button next-step" type="button">Next</button>
-               </div>
-            </div>
-         </div>
+  <head>
+    <title>Admin Portal - Listings</title>
+    <link rel="icon" type="image/png" href="/static/icons/cropped_logo.png">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/listings.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/icons.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  </head>
+  <body>
+    <div class="container"> {% include 'sidebar.html' %} <div class="content">
+        <div class="top-bar">
+          <form id="search-form" class="search-form">
+            <input type="text" id="search-input" placeholder="Search Listings..." />
+            <button id="add-listing-button" type="button">Add Listing</button>
+          </form>
+          <button id="open-map-button" type="button">Open Listings Map</button>
+        </div>
+        <table class="centered-table">
+          <thead>
+            <tr>
+              <th>Property Type</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Price</th>
+              <th>Street</th>
+              <th>City</th>
+              <th>State</th>
+              <th>Owner</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Brokers</th>
+              <th>Listing Agreement</th>
+            </tr>
+          </thead>
+          <tbody> {% for listing in listings %} <tr>
+              <td style="padding-right: 10px;">{{ listing.listing_property_type }}</td>
+              <td>{{ listing.listing_start_date }}</td>
+              <td>
+                <a href="{{ url_for('create_ics', listing_id=listing._id) }}">{{ listing.listing_end_date }}</a>
+              </td>
+              <td>{{ listing.listing_price }}</td>
+              <td>{{ listing.listing_street }}</td>
+              <td>{{ listing.listing_city }}</td>
+              <td>{{ listing.listing_state }}</td>
+              <td>{{ listing.listing_owner }}</td>
+              <td>
+                <a href="mailto:{{ listing.listing_email }}">{{ listing.listing_email }}</a>
+              </td>
+              <td>
+                <a href="tel:{{ listing.listing_phone }}">{{ listing.listing_phone }}</a>
+              </td>
+              <td class="brokers"> {% for broker in listing.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
+              <td>
+                <form class="listing-form" action="{{ url_for('submit_listing') }}" method="POST">
+                  <a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Download</a>
+                </form>
+              </td>
+            </tr> {% endfor %} </tbody>
+          {{ pagination.links }}
       </div>
-   </body>
+      <div id="add-listing-modal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <form id="submit-listing-form" class="modal-form" action="{{ url_for('submit_listing') }}" method="POST">
+            <div id="step1" class="modal-step active-step">
+              <h2 class="modal-step-title">New Listing - Address Information</h2>
+              <div class="form-group">
+                <label for="listing-street">Street:</label>
+                <input type="text" id="listing-street" name="listing-street" required>
+              </div>
+              <div class="form-group">
+                <label for="listing-city">City:</label>
+                <input type="text" id="listing-city" name="listing-city" required>
+              </div>
+              <div class="form-group">
+                <label for="listing-state">State:</label>
+                <select id="listing-state" name="listing-state" required>
+                  <option value="PA">PA</option>
+                  <option value="NJ">NJ</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="listing-property-type">Property Type:</label>
+                <select id="listing-property-type" name="listing-property-type" required>
+                  <option value="Office">Office</option>
+                  <option value="Industrial">Industrial</option>
+                  <option value="Flex">Flex</option>
+                  <option value="Retail">Retail</option>
+                  <option value="Medical">Medical</option>
+                  <option value="Land">Land</option>
+                </select>
+              </div>
+            </div>
+            <div id="step2" class="modal-step">
+              <h2 class="modal-step-title">New Listing - Owner Information</h2>
+              <div class="form-group">
+                <label for="listing-owner-name">Owner Name:</label>
+                <input type="text" id="listing-owner-name" name="listing-owner-name" required>
+              </div>
+              <div class="form-group">
+                <label for="listing-owner-email">Owner Email:</label>
+                <input type="email" id="listing-owner-email" name="listing-owner-email" required>
+              </div>
+              <div class="form-group">
+                <label for="listing-owner-phone">Owner Phone Number:</label>
+                <input type="tel" id="listing-owner-phone" name="listing-owner-phone" required>
+              </div>
+            </div>
+            <div id="step3" class="modal-step">
+              <h2 class="modal-step-title">New Listing - General Information</h2>
+              <div class="form-group">
+                <label for="listing-type">Listing Type:</label>
+                <select id="listing-type" name="listing-type" required>
+                  <option value="Sale">Sale</option>
+                  <option value="Lease">Lease</option>
+                  <option value="Sale and Lease">Sale and Lease</option>
+                  <option value="Sublease">Sublease</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="investment-sale">Investment Sale:</label>
+                <select id="investment-sale" name="investment-sale" required>
+                  <option value="No">No</option>
+                  <option value="Yes">Yes</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="listing-start-date">Listing Start Date:</label>
+                <input type="text" id="listing-start-date" name="listing-start-date" required>
+              </div>
+              <div class="form-group">
+                <label for="listing-end-date">Listing End Date:</label>
+                <input type="text" id="listing-end-date" name="listing-end-date" required>
+              </div>
+              <div class="form-group">
+                <label for="listing-brokers">
+                  <b>Brokers:</b>
+                </label>
+                <div id="listing-brokers">
+                  <div class="checkbox-line">
+                    <label for="broker1" class="broker-label">
+                      <input type="checkbox" id="broker1" name="brokers[]" value="Jason Wolf"> Jason Wolf </label>
+                  </div>
+                  <div class="checkbox-line">
+                    <label for="broker2" class="broker-label">
+                      <input type="checkbox" id="broker2" name="brokers[]" value="Evan Zweben"> Evan Zweben </label>
+                  </div>
+                  <div class="checkbox-line">
+                    <label for="broker3" class="broker-label">
+                      <input type="checkbox" id="broker3" name="brokers[]" value="Erin Warwick"> Erin Warwick </label>
+                  </div>
+                  <div class="checkbox-line">
+                    <label for="broker4" class="broker-label">
+                      <input type="checkbox" id="broker4" name="brokers[]" value="Todd Monahan"> Todd Monahan </label>
+                  </div>
+                  <div class="checkbox-line">
+                    <label for="broker5" class="broker-label">
+                      <input type="checkbox" id="broker5" name="brokers[]" value="John T. Mozzillo"> John T. Mozzillo </label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <button id="upload-listing-agreement" type="button">Upload Listing Agreement</button>
+                <input id="listing-agreement" type="file" style="display:none;" accept=".pdf">
+                <input id="listing-agreement-file-id" name="listing-agreement-file-id" type="hidden">
+                <div class="agreement-tooltip">Please upload the signed agreement here.</div>
+                <div id="upload-error-message" class="error-message"></div>
+              </div>
+            </div>
+            <div class="modal-navigation">
+              <button class="minimal-button prev-step" type="button">Previous</button>
+              <button id="next-button" class="minimal-button next-step" type="button">Next</button>
+            </div>
+          </form>
+        </div>
+      </div>
+  </body>
 </html>

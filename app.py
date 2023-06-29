@@ -136,6 +136,7 @@ def upload_pdf():
 @login_required
 def submit_listing():
     if request.method == 'POST':
+        print(request.form)
         listing_street = request.form.get('listing-street')
         listing_city = request.form.get('listing-city')
         listing_state = request.form.get('listing-state')
@@ -143,7 +144,7 @@ def submit_listing():
         listing_owner = request.form.get('listing-owner-name')
         listing_email = request.form.get('listing-owner-email')
         listing_phone = request.form.get('listing-owner-phone')
-        listing_brokers = request.form.getlist('brokers')
+        listing_brokers = request.form.getlist('brokers[]')
         listing_agreement_file = request.files.get('listing-agreement')
         listing_start_date = request.form.get('listing-start-date')
         listing_end_date = request.form.get('listing-end-date')

@@ -56,6 +56,14 @@ $(document).ready(function() {
         $('#add-listing-modal').css('display', 'none');
     });    
 
+    $('.modal').click(function() {
+        $(this).css('display', 'none');
+    });
+    
+    $('.modal-content').click(function(event) {
+        event.stopPropagation();
+    });    
+
     $('#submit-listing-form').on('submit', function(e) {
         e.preventDefault();
         $('#add-listing-modal').css('display', 'none');
@@ -87,12 +95,12 @@ $(document).ready(function() {
     $('.next-step').on('click', function() {
         var currentStep = $('.active-step');
         var nextStep = currentStep.next('.modal-step');
-
+    
         if (nextStep.length) {
             currentStep.removeClass('active-step');
             nextStep.addClass('active-step');
-            $('.prev-step').css('visibility', 'visible');
-
+            $('.prev-step').css('visibility', 'visible'); // Add this line
+    
             if (!nextStep.next('.modal-step').length) {
                 $(this).text('Submit Listing');
             } else {
@@ -102,9 +110,7 @@ $(document).ready(function() {
             $('#submit-listing-form').submit();
         }
     });
-
-
-
+    
     $('.prev-step').on('click', function() {
         var currentStep = $('.active-step');
         var prevStep = currentStep.prev('.modal-step');
