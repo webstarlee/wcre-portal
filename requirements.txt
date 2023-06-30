@@ -77,3 +77,5 @@ yarl==1.8.2
 pytz==2023.3
 ics==0.7.2
 arrow==1.2.3
+flask_mail==0.9.1
+premailer==3.10.0
