@@ -132,16 +132,45 @@ def view_listings():
             page_parameter="page", per_page_parameter="per_page"
         )
         per_page = 12
-        total, listings_data = (listings.count_documents({}),
-                                listings.find().skip((page-1)*per_page).limit(per_page)) if current_user.role == 'Admin' else (
-                                    listings.count_documents({"brokers": {"$in": [current_user.fullname]}}),
-                                    listings.find({"brokers": {"$in": [current_user.fullname]}}).skip((page-1)*per_page).limit(per_page)
-                                )
-        pagination = Pagination(page=page, per_page=per_page, total=total, css_framework='bootstrap4')
-        return render_template('listings.html', listings=listings_data, pagination=pagination)
-    return redirect(url_for('login'))
+        total, listings_data = (
+            (
+                listings.count_documents({}),
+                listings.find().skip((page - 1) * per_page).limit(per_page),
+            )
+            if current_user.role == "Admin"
+            else (
+                listings.count_documents({"brokers": {"$in": [current_user.fullname]}}),
+                listings.find({"brokers": {"$in": [current_user.fullname]}})
+                .skip((page - 1) * per_page)
+                .limit(per_page),
+            )
+        )
+        pagination = Pagination(
+            page=page, per_page=per_page, total=total, css_framework="bootstrap4"
+        )
+        return render_template(
+            "listings.html", listings=listings_data, pagination=pagination
+        )
+    return redirect(url_for("login"))
 
-@app.route('/upload_pdf', methods=['POST'])
+
+@app.route("/download_listing_pdf/<listing_id>", methods=["GET"])
+@login_required
+def download_listing_pdf(listing_id):
+    listing = listings.find_one({"_id": ObjectId(listing_id)})
+    if not listing:
+        return "No listing found", 404
+    pdf_file_base64 = listing.get("pdf_file_base64")
+    if not pdf_file_base64:
+        return "No PDF found for this listing", 404
+    pdf_file_data = base64.b64decode(pdf_file_base64)
+    response = make_response(pdf_file_data)
+    response.headers.set("Content-Type", "application/pdf")
+    response.headers.set("Content-Disposition", "attachment", filename="listing.pdf")
+    return response
+
+
+@app.route("/upload_pdf", methods=["POST"])
 @login_required
 def upload_pdf():
     if "file" not in request.files:
