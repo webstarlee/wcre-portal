@@ -38,13 +38,16 @@ $(document).ready(function() {
         $('.next-step').text('Next');
     }
 
-    $('#add-listing-button').click(function() {
-        $('#add-listing-modal').css('display', 'flex');
+    // Open modal
+    $("#add-listing-button").click(function() {
+        $("body").addClass("modal-open");
+        $("#add-listing-modal").show();
     });
-
-    $('.close').click(function() {
-        $('#add-listing-modal').css('display', 'none');
-        resetForm(); // Call the resetForm function when the modal is closed
+    
+    // Close modal
+    $("#add-listing-modal .close").click(function() {
+        $("body").removeClass("modal-open");
+        $("#add-listing-modal").hide();
     });
 
     $('.modal').click(function() {
@@ -108,59 +111,15 @@ $(document).ready(function() {
         }, 2000);
     }
 
-    fileInput.addEventListener('change', function(e) {
-        var file = this.files[0];
-        var formData = new FormData();
-        formData.append('file', file);
+    function showSuccessNotification(message) {
+        var successNotification = $('#success-notification');
+        successNotification.text(message);
+        successNotification.addClass('show');
 
-        $.ajax({
-            url: '/upload_pdf',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(data) {
-                if (data.success) {
-                    uploadButton.textContent = 'Document Uploaded ✔';
-                    uploadButton.disabled = true;
-                    document.getElementById('listing-agreement-file-base64').value = data.fileBase64;
-                    uploadErrorMessage.textContent = ''; // Clear any previous error message
-                } else {
-                    uploadErrorMessage.textContent = 'Error: ' + data.error;
-                }
-            },
-            error: function(xhr, status, error) {
-                uploadErrorMessage.textContent = 'Error: ' + error;
-            }
-        });
-    });
-
-    $('#submit-listing-form').on('submit', function(e) {
-        e.preventDefault();
-        $('#add-listing-modal').css('display', 'none');
-
-        if (validateStep() && validateBrokers()) {
-            var formData = new FormData(this);
-            var fileBase64 = $('#listing-agreement-file-base64').val();
-            formData.append('fileBase64', fileBase64);
-
-            $.ajax({
-                url: '/submit_listing',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    console.log("Listing Uploaded Successfully");
-                    window.location.href = '/listings';
-                },
-                error: function(xhr, status, error) {
-                    console.log("Error Uploading Listing");
-                }
-            });
-        }
-    });
-
+        setTimeout(function() {
+            successNotification.removeClass('show');
+        }, 2000);
+    }
 
     $('.next-step').on('click', function() {
         var currentStep = $('.active-step');
@@ -205,5 +164,60 @@ $(document).ready(function() {
         }
 
         currentStep.find('input:required, select:required').removeClass('error');
+    });
+
+    fileInput.addEventListener('change', function(e) {
+        var file = this.files[0];
+        var formData = new FormData();
+        formData.append('file', file);
+
+        $.ajax({
+            url: '/upload_pdf',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                if (data.success) {
+                    uploadButton.textContent = 'Document Uploaded ✔';
+                    showSuccessNotification('Document Uploaded Successfully');
+                    uploadButton.disabled = true;
+                    document.getElementById('listing-agreement-file-base64').value = data.fileBase64;
+                    uploadErrorMessage.textContent = '';
+                } else {
+                    showErrorNotification('Error Uploading Document');
+                }
+            },
+            error: function(xhr, status, error) {
+                showErrorNotification('Error Uploading Document');
+            }
+        });
+    });
+
+    $('#submit-listing-form').on('submit', function(e) {
+        e.preventDefault();
+        $('#add-listing-modal').css('display', 'none');
+
+        if (validateStep() && validateBrokers()) {
+            var formData = new FormData(this);
+            var fileBase64 = $('#listing-agreement-file-base64').val();
+            formData.append('fileBase64', fileBase64);
+
+            $.ajax({
+                url: '/submit_listing',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    console.log("Listing Uploaded Successfully");
+                    window.location.href = '/listings';
+                },
+                error: function(xhr, status, error) {
+                    showErrorNotification('Error Uploading Listing');
+                    console.log("Error Uploading Listing");
+                }
+            });
+        }
     });
 });
