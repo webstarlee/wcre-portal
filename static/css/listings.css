@@ -388,3 +388,64 @@ body{
       transform: translateY(0);
     }
   }
+
+  .action-modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #F2F2F2;
+    border-radius: 5px;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 80%;
+    max-width: 500px;
+    text-align: center;
+}
+
+.action-modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #9da1a1;
+    border-radius: 10px;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1);
+    padding: 5px;
+    width: 150px;
+    text-align: center;
+}
+
+.action-modal button {
+    display: block;
+    border: none;
+    color: #fff;
+    padding: 5px 10px;
+    margin-top: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-radius: 3px;
+    width: 100%;
+    text-align: center;
+    line-height: 1.5;
+}
+
+#delete-button {
+    background-color: #f44336;
+}
+
+#delete-button:hover {
+    background-color: #e33f2e;
+}
+
+#edit-button {
+    background-color: #4CAF50;
+}
+
+#edit-button:hover {
+    background-color: #45a049;
+}

@@ -32,8 +32,8 @@ try:
     app = Flask(__name__)
     app.config['MAIL_SERVER']='smtp.gmail.com'
     app.config['MAIL_PORT'] = 465
-    app.config['MAIL_USERNAME'] = 'nathanwolf100@gmail.com'
-    app.config['MAIL_PASSWORD'] = 'jvmxhembhfasqokl'
+    app.config['MAIL_USERNAME'] = os.getenv("EMAIL_USER")
+    app.config['MAIL_PASSWORD'] = os.getenv("EMAIL_PW")
     app.config['MAIL_USE_TLS'] = False
     app.config['MAIL_USE_SSL'] = True
     mail = Mail(app)
@@ -240,8 +240,21 @@ def submit_listing():
             msg.html = transform(email_content)
             mail.send(msg)
     else:
-        return "Error occurred while submitting the listing"
+        return "Error Occured While Submitting The Listing"
     return redirect(url_for("view_listings"))
+
+@app.route("/delete_listing/<listing_id>", methods=["GET"])
+@login_required
+def delete_listing(listing_id):
+    try:
+        result = listings.delete_one({"_id": ObjectId(listing_id)})
+    except:
+        return {"success": False, "message": "Listing Not Found or Couldn't Be Deleted"}, 404
+    else:
+        if result.deleted_count > 0:
+            return {"success": True}, 200
+        else:
+            return {"success": False, "message": "Listing Not Found or Couldn't Be Deleted"}, 404
 
 @app.route("/create_ics/<listing_id>")
 @login_required

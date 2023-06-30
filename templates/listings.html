@@ -45,7 +45,7 @@
             </thead>
             <tbody>
                {% for listing in listings %} 
-               <tr>
+               <tr data-listing-id="{{ listing._id }}">
                   <td>{{ listing.listing_property_type }}</td>
                   <td>{{ listing.listing_type }}</td>
                   <td>{{ listing.listing_start_date }}</td>
@@ -83,9 +83,13 @@
          <table>
          {{ pagination.links }}
       </div>
+      <div id="error-notification" class="error-notification"></div>
+      <div id="success-notification" class="success-notification"></div>
+      <div id="action-modal" class="action-modal">
+         <button id="delete-button">Delete Listing</button>
+         <button id="edit-button">Edit Listing</button>
+     </div>
       <div id="add-listing-modal" class="modal">
-        <div id="error-notification" class="error-notification"></div>
-        <div id="success-notification" class="success-notification"></div>
          <div class="modal-content">
             <span class="close">&times;</span>
             <form id="submit-listing-form" class="modal-form" action="{{ url_for('submit_listing') }}" method="POST">

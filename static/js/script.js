@@ -24,6 +24,8 @@ $(document).ready(function() {
         $("#listing-end-date").datepicker();
     });
 
+
+    // RESET FORM DATA
     function resetForm() {
         // Reset all form fields to their initial state
         $('#submit-listing-form')[0].reset();
@@ -38,13 +40,13 @@ $(document).ready(function() {
         $('.next-step').text('Next');
     }
 
-    // Open modal
+    // OPEN MODAL
     $("#add-listing-button").click(function() {
         $("body").addClass("modal-open");
         $("#add-listing-modal").show();
     });
     
-    // Close modal
+    // CLOSE MODAL
     $("#add-listing-modal .close").click(function() {
         $("body").removeClass("modal-open");
         $("#add-listing-modal").hide();
@@ -52,7 +54,7 @@ $(document).ready(function() {
 
     $('.modal').click(function() {
         $(this).css('display', 'none');
-        resetForm(); // Call the resetForm function when the modal is closed
+        resetForm();
     });
 
     function validateStep() {
@@ -84,6 +86,7 @@ $(document).ready(function() {
         return isValid;
     }
 
+    // SEARCH INPUT
     $('#search-input').on('input', function() {
         var searchTerm = $(this).val().toLowerCase();
         $('.centered-table tbody tr').each(function() {
@@ -101,6 +104,8 @@ $(document).ready(function() {
         event.stopPropagation();
     });
 
+
+    // SHOW ERROR NOTI
     function showErrorNotification(message) {
         var errorNotification = $('#error-notification');
         errorNotification.text(message);
@@ -111,7 +116,9 @@ $(document).ready(function() {
         }, 2000);
     }
 
+    // SHOW SUCCESS NOTI
     function showSuccessNotification(message) {
+        console.log('showSuccessNotification called with message:', message);
         var successNotification = $('#success-notification');
         successNotification.text(message);
         successNotification.addClass('show');
@@ -121,6 +128,9 @@ $(document).ready(function() {
         }, 2000);
     }
 
+
+
+    // NEXT STEP
     $('.next-step').on('click', function() {
         var currentStep = $('.active-step');
         var nextStep = currentStep.next('.modal-step');
@@ -148,7 +158,7 @@ $(document).ready(function() {
         }
     });
 
-
+    // PREV STEP
     $('.prev-step').on('click', function() {
         var currentStep = $('.active-step');
         var prevStep = currentStep.prev('.modal-step');
@@ -166,6 +176,8 @@ $(document).ready(function() {
         currentStep.find('input:required, select:required').removeClass('error');
     });
 
+
+    // UPLOAD DOCUMENT
     fileInput.addEventListener('change', function(e) {
         var file = this.files[0];
         var formData = new FormData();
@@ -194,6 +206,55 @@ $(document).ready(function() {
         });
     });
 
+    // OPEN ACTION MODAL
+    $('.centered-table tbody tr').on('contextmenu', function(e) {
+        e.preventDefault();
+        const actionModal = $('#action-modal');
+        actionModal.css({top: e.pageY + 'px', left: e.pageX + 'px'}).show();
+        $(this).focus();
+    });
+    
+    $(document).bind('click', function(e) {
+        const actionModal = $('#action-modal');
+        if (!$(e.target).closest(actionModal).length) {
+            actionModal.hide();
+        }
+    });
+
+    let listing_id = null;
+    $('.centered-table tbody tr').on('contextmenu', function(e) {
+        e.preventDefault(); 
+        listing_id = $(this).data('listing-id');
+        console.log('Listing id:', listing_id);
+    });
+    
+
+    $('#delete-button').click(function() {        
+        console.log(listing_id);
+        const selectedRow = $('.centered-table tbody tr[data-listing-id="' + listing_id + '"]');
+        const deleteModal = $('#action-modal'); // assuming this is the ID of your deletion modal
+    
+        $.ajax({
+            url: '/delete_listing/' + listing_id,
+            type: 'GET',
+            success: function(data) {
+                if(data.success) {
+                    showErrorNotification('Listing Deleted');
+                    selectedRow.remove();
+                    deleteModal.hide(); // hide the modal
+                    console.log('Listing Deleted Successfully');
+                } else {
+                    console.error('Failed to Delete Listing: ' + data.message);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Failed to delete listing.');
+            }
+        });
+    });
+    
+
+    // SUBMIT LISTING
     $('#submit-listing-form').on('submit', function(e) {
         e.preventDefault();
         $('#add-listing-modal').css('display', 'none');
@@ -210,8 +271,11 @@ $(document).ready(function() {
                 processData: false,
                 contentType: false,
                 success: function(response) {
+                    showSuccessNotification('Listing Uploaded - Refreshing');
                     console.log("Listing Uploaded Successfully");
-                    window.location.href = '/listings';
+                    setTimeout(function() {
+                        window.location.href = '/listings';
+                    }, 2000);
                 },
                 error: function(xhr, status, error) {
                     showErrorNotification('Error Uploading Listing');
