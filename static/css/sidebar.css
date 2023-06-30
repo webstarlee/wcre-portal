@@ -41,7 +41,7 @@ ul li:hover{
 ul li a span{
     margin-right:10px
 }
-.custom-icon-brokers,.custom-icon-dashboard,.custom-icon-leases,.custom-icon-listings,.custom-icon-sales{
+.custom-icon-brokers,.custom-icon-dashboard,.custom-icon-leases,.custom-icon-listings,.custom-icon-sales, .custom-icon-marketing{
     background-size:24px;
     background-repeat:no-repeat;
     color:#fff;

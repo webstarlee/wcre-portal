@@ -144,7 +144,6 @@ body{
 .broker-name{
     display:block;
     white-space:nowrap;
-    margin-left:5px
 }
 .broker-label{
     display:flex;
@@ -155,6 +154,7 @@ body{
 .broker-label input[type=checkbox]{
     margin-right:10px
 }
+
 .modal-step{
     display:none
 }
@@ -173,19 +173,6 @@ body{
 }
 #upload-listing-agreement:hover{
     background-color:#ddd
-}
-.agreement-tooltip{
-    display:none;
-    position:absolute;
-    padding:10px;
-    background:#333;
-    color:#f0f0f0;
-    border-radius:4px;
-    font-size:14px;
-    margin-top:10px
-}
-#upload-listing-agreement:hover+.agreement-tooltip{
-    display:block
 }
 .close{
     color:#888;
@@ -217,13 +204,13 @@ body{
 .centered-table td,.centered-table th{
     border:1px solid #ddd;
     padding:3px;
-    text-align:left;
+    text-align:center;
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
     height:50px;
     line-height:1;
-    font-size:12px
+    font-size:11.5px
 }
 .centered-table td{
     cursor:default

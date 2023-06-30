@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>New Listing Notification</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+
+      h1 {
+        color: #333;
+      }
+
+      p {
+        color: #555;
+        margin-top: 10px;
+      }
+
+      .listing-details {
+        margin-top: 20px;
+      }
+
+      .listing-label {
+        font-weight: bold;
+      }
+
+      .listing-value {
+        margin-left: 10px;
+      }
+
+      .listing-label,
+      .listing-value {
+        display: inline-block;
+        vertical-align: top;
+      }
+
+      .listing-brokers {
+        margin-top: 10px;
+      }
+
+      .listing-brokers p {
+        margin: 5px 0;
+        font-weight: normal;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>A New Listed Has Been Uploaded to The WCRE Portal By {{ current_user.fullname }}:</h1>
+      
+      <div class="listing-details">
+        <p>
+          <span class="listing-label">Property Type:</span>
+          <span class="listing-value">{{ listing.listing_property_type }}</span>
+        </p>
+        <p>
+          <span class="listing-label">Start Date:</span>
+          <span class="listing-value">{{ listing.listing_start_date }}</span>
+        </p>
+        <p>
+          <span class="listing-label">End Date:</span>
+          <span class="listing-value">{{ listing.listing_end_date }}</span>
+        </p>
+        <p>
+          <span class="listing-label">Price:</span>
+          <span class="listing-value">{{ listing.listing_price }}</span>
+        </p>
+        <p>
+          <span class="listing-label">Street:</span>
+          <span class="listing-value">{{ listing.listing_street }}</span>
+        </p>
+        <p>
+          <span class="listing-label">City:</span>
+          <span class="listing-value">{{ listing.listing_city }}</span>
+        </p>
+        <p>
+          <span class="listing-label">State:</span>
+          <span class="listing-value">{{ listing.listing_state }}</span>
+        </p>
+        <p>
+          <span class="listing-label">Owner:</span>
+          <span class="listing-value">{{ listing.listing_owner }}</span>
+        </p>
+        <p>
+          <span class="listing-label">Email:</span>
+          <span class="listing-value">{{ listing.listing_email }}</span>
+        </p>
+        <p>
+          <span class="listing-label">Phone:</span>
+          <span class="listing-value">{{ listing.listing_phone }}</span>
+        </p>
+        <div class="listing-brokers">
+          <span class="listing-label">Brokers:</span>
+          {% for broker in listing.brokers %}
+            <p>{{ broker }}</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

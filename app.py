@@ -1,6 +1,12 @@
 import os
 from flask import Flask, make_response, render_template, redirect, url_for, request
-from flask_login import LoginManager, login_user, logout_user, current_user, login_required
+from flask_login import (
+    LoginManager,
+    login_user,
+    logout_user,
+    current_user,
+    login_required,
+)
 from pymongo import MongoClient
 from flask_bcrypt import Bcrypt
 from models import User
@@ -13,53 +19,83 @@ from werkzeug.utils import secure_filename
 from flask import Flask, Response
 from ics import Calendar, Event
 import arrow
+import base64
+from flask_mail import Mail, Message
+from premailer import transform
 
 
-ALLOWED_EXTENSIONS = {'pdf'}
+
+
+ALLOWED_EXTENSIONS = {"pdf"}
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 try:
     app = Flask(__name__)
+    app.config['MAIL_SERVER']='smtp.gmail.com'
+    app.config['MAIL_PORT'] = 465
+    app.config['MAIL_USERNAME'] = 'nathanwolf100@gmail.com'
+    app.config['MAIL_PASSWORD'] = 'jvmxhembhfasqokl'
+    app.config['MAIL_USE_TLS'] = False
+    app.config['MAIL_USE_SSL'] = True
+    mail = Mail(app)
     load_dotenv()
-    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
     login_manager = LoginManager(app)
-    login_manager.login_view = 'login'
+    login_manager.login_view = "login"
     bcrypt = Bcrypt(app)
-    mongodb_uri = os.environ.get('MONGODB_URI')
+    mongodb_uri = os.environ.get("MONGODB_URI")
 except Exception as e:
     print(f"Error Starting Flask App: {str(e)}")
 
 try:
-    client = MongoClient(mongodb_uri, tls=True, tlsAllowInvalidCertificates=True, serverSelectionTimeoutMS=5000)
-    db = client['wcre_panel']
-    users = db['users']
-    listings = db['listings']
+    client = MongoClient(
+        mongodb_uri,
+        tls=True,
+        tlsAllowInvalidCertificates=True,
+        serverSelectionTimeoutMS=5000,
+    )
+    db = client["wcre_panel"]
+    users = db["users"]
+    listings = db["listings"]
     fs = GridFS(db)
     print("Connected to MongoDB successfully")
 except Exception as e:
     print(f"Error connecting to MongoDB: {str(e)}")
 
-@app.route('/')
-def login_page():
-    return redirect(url_for('login'))
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route("/")
+def login_page():
+    return redirect(url_for("login"))
+
+
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    if request.method == 'POST':
-        user = load_user(request.form['username'])
-        if user and bcrypt.check_password_hash(user.password, request.form['password']):
+    if request.method == "POST":
+        user = load_user(request.form["username"])
+        if user and bcrypt.check_password_hash(user.password, request.form["password"]):
             login_user(user)
-            return redirect(url_for('dashboard'))
+            return redirect(url_for("dashboard"))
         else:
-            return render_template('login.html', error='Invalid Username or Password')
-    return render_template('login.html')
+            return render_template("login.html", error="Invalid Username or Password")
+    return render_template("login.html")
+
 
 @login_manager.user_loader
 def load_user(username):
     u = users.find_one({"username": username})
-    return User(u['username'], u['password'], u['role'], u['fullname'], u.get('profile_picture_url')) if u else None
+    return (
+        User(
+            u["username"],
+            u["password"],
+            u["role"],
+            u["fullname"],
+            u.get("profile_picture_url"),
+        )
+        if u
+        else None
+    )
+
 
 def greeting(current_time):
     if current_time.hour < 12:
@@ -69,41 +105,32 @@ def greeting(current_time):
     else:
         return "Good Evening"
 
-@app.route('/dashboard')
+
+@app.route("/dashboard")
 @login_required
 def dashboard():
     total_listings = listings.count_documents({})
-    current_time = arrow.now('EST')
+    current_time = arrow.now("EST")
     greeting_msg = f"{greeting(current_time)}, {current_user.fullname.split()[0]}!"
-    return render_template('dashboard.html', total_listings=total_listings, greeting_msg=greeting_msg)
+    return render_template(
+        "dashboard.html", total_listings=total_listings, greeting_msg=greeting_msg
+    )
 
-@app.route('/logout')
+
+@app.route("/logout")
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('login'))
+    return redirect(url_for("login"))
 
-@app.route('/listings/download/<listing_id>')
-@login_required
-def download_listing_pdf(listing_id):
-    if current_user.is_authenticated:
-        try:
-            listing = listings.find_one({"_id": ObjectId(listing_id)})
-            if listing and "pdf_file" in listing:
-                response = make_response(listing["pdf_file"])
-                response.headers.set('Content-Type', 'application/pdf')
-                response.headers.set('Content-Disposition', 'attachment', filename=f"{listing_id}.pdf")
-                return response
-            return 'Listing or PDF file not found'
-        except InvalidId:
-            return 'Invalid listing ID'
-    return redirect(url_for('login'))
 
-@app.route('/listings')
+@app.route("/listings")
 @login_required
 def view_listings():
     if current_user.is_authenticated:
-        page, per_page, _ = get_page_args(page_parameter='page', per_page_parameter='per_page')
+        page, per_page, _ = get_page_args(
+            page_parameter="page", per_page_parameter="per_page"
+        )
         per_page = 12
         total, listings_data = (listings.count_documents({}),
                                 listings.find().skip((page-1)*per_page).limit(per_page)) if current_user.role == 'Admin' else (
@@ -117,44 +144,47 @@ def view_listings():
 @app.route('/upload_pdf', methods=['POST'])
 @login_required
 def upload_pdf():
-    if 'file' not in request.files:
+    if "file" not in request.files:
         return {"success": False, "error": "No File Part"}
-    file = request.files['file']
-    if file.filename == '':
+    file = request.files["file"]
+    if file.filename == "":
         return {"success": False, "error": "No Selected File"}
-    
+
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file_binary_data = file.read()
-        fs = GridFS(db)
-        file_id = fs.put(file_binary_data, filename=filename)
-        return {"success": True, "fileId": str(file_id)}
+        file_base64_data = base64.b64encode(file_binary_data).decode()
+        return {"success": True, "fileBase64": file_base64_data}
     else:
-        return {"success": False, "error": "Allowed file types are .pdf"}
+        return {"success": False, "error": "Allowed File Types Are .pdf"}
 
-@app.route('/submit_listing', methods=['POST'])
+
+@app.route("/submit_listing", methods=["POST"])
 @login_required
 def submit_listing():
-    if request.method == 'POST':
-        print(request.form)
-        listing_street = request.form.get('listing-street')
-        listing_city = request.form.get('listing-city')
-        listing_state = request.form.get('listing-state')
-        listing_property_type = request.form.get('listing-property-type')
-        listing_owner = request.form.get('listing-owner-name')
-        listing_email = request.form.get('listing-owner-email')
-        listing_phone = request.form.get('listing-owner-phone')
-        listing_brokers = request.form.getlist('brokers[]')
-        listing_agreement_file = request.files.get('listing-agreement')
-        listing_start_date = request.form.get('listing-start-date')
-        listing_end_date = request.form.get('listing-end-date')
-        
-        if listing_agreement_file and allowed_file(listing_agreement_file.filename):
-            listing_agreement_filename = secure_filename(listing_agreement_file.filename)
-            listing_agreement_file_id = fs.put(listing_agreement_file.read(), filename=listing_agreement_filename)
-        else:
-            listing_agreement_file_id = None
-        
+    if request.method == "POST":
+        listing_street = request.form.get("listing-street")
+        listing_city = request.form.get("listing-city")
+        listing_state = request.form.get("listing-state")
+        listing_owner = request.form.get("listing-owner-name")
+        listing_email = request.form.get("listing-owner-email")
+        listing_phone = request.form.get("listing-owner-phone")
+        listing_brokers = request.form.getlist("brokers[]")
+        listing_end_date = request.form.get("listing-end-date")
+        listing_start_date = request.form.get("listing-start-date")
+        listing_agreement_file_base64 = request.form.get(
+            "listing-agreement-file-base64"
+        )
+        listing_property_type = request.form.get("listing-property-type")
+        listing_type = request.form.get("listing-type")
+        listing_investment_sale = request.form.get("investment-sale")
+        listing_price = request.form.get("listing-price")
+
+        if listing_state == "NJ":
+            listing_state = "New Jersey"
+        elif listing_state == "PA":
+            listing_state == "Pennsylvania"
+
         new_listing = {
             "listing_street": listing_street,
             "listing_city": listing_city,
@@ -163,36 +193,41 @@ def submit_listing():
             "listing_email": listing_email,
             "listing_phone": listing_phone,
             "brokers": listing_brokers,
-            "pdf_file": {
-                "$binary": {
-                    "base64": str(listing_agreement_file_id) if listing_agreement_file_id else "",
-                    "subType": "00"
-                }
-            },
+            "pdf_file_base64": listing_agreement_file_base64,
             "listing_end_date": listing_end_date,
             "listing_start_date": listing_start_date,
-            "listing_property_type": listing_property_type
+            "listing_property_type": listing_property_type,
+            "listing_type": listing_type,
+            "listing_investment_sale": listing_investment_sale,
+            "listing_price": "$" + listing_price,
         }
-        
+
         result = listings.insert_one(new_listing)
         if result.inserted_id:
-            return redirect(url_for('view_listings'))
-        else:
-            return 'Error occurred while submitting the listing'
-    return redirect(url_for('view_listings'))
+            msg = Message(
+                "A New Listing Has Been Uploaded - WCRE Portal",
+                sender="nathanwolf100@gmail.com",
+                recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"]
+            )
+            email_content = render_template('email_new_listing.html', listing=new_listing)
+            msg.html = transform(email_content)
+            mail.send(msg)
+    else:
+        return "Error occurred while submitting the listing"
+    return redirect(url_for("view_listings"))
 
-@app.route('/create_ics/<listing_id>')
+@app.route("/create_ics/<listing_id>")
 @login_required
 def create_ics(listing_id):
     listing = listings.find_one({"_id": ObjectId(listing_id)})
     c = Calendar()
     e = Event()
-    e.name = "Listing End Date: " + listing['listing_street']
-    e.begin = arrow.get(listing['listing_end_date'], 'MM/DD/YYYY').format('YYYY-MM-DD')
+    e.name = "Listing End Date: " + listing["listing_street"]
+    e.begin = arrow.get(listing["listing_end_date"], "MM/DD/YYYY").format("YYYY-MM-DD")
     e.make_all_day()
     c.events.add(e)
     response = Response(c.serialize(), mimetype="text/calendar")
-    response.headers['Content-Disposition'] = 'attachment; filename=event.ics'
+    response.headers["Content-Disposition"] = "attachment; filename=event.ics"
     return response
 
 if __name__ == "__main__":

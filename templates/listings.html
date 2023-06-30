@@ -27,6 +27,7 @@
           <thead>
             <tr>
               <th>Property Type</th>
+              <th>Listing Type</th>
               <th>Start Date</th>
               <th>End Date</th>
               <th>Price</th>
@@ -41,7 +42,8 @@
             </tr>
           </thead>
           <tbody> {% for listing in listings %} <tr>
-              <td style="padding-right: 10px;">{{ listing.listing_property_type }}</td>
+              <td>{{ listing.listing_property_type }}</td>
+              <td>{{ listing.listing_type }}</td>
               <td>{{ listing.listing_start_date }}</td>
               <td>
                 <a href="{{ url_for('create_ics', listing_id=listing._id) }}">{{ listing.listing_end_date }}</a>
@@ -57,12 +59,20 @@
               <td>
                 <a href="tel:{{ listing.listing_phone }}">{{ listing.listing_phone }}</a>
               </td>
-              <td class="brokers"> {% for broker in listing.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
+              <td class="brokers">
+              {% for broker in listing.brokers %}
+                <span class="broker-name">{{ broker }}</span>
+              {% endfor %}
+            </td>
               <td>
                 <form class="listing-form" action="{{ url_for('submit_listing') }}" method="POST">
-                  <a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Download</a>
+                  {% if listing.pdf_file_base64 %}
+                    <a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Download</a>
+                  {% else %}
+                    No File Found
+                  {% endif %}
                 </form>
-              </td>
+              </td>              
             </tr> {% endfor %} </tbody>
           {{ pagination.links }}
       </div>
@@ -163,15 +173,22 @@
                   </div>
                   <div class="checkbox-line">
                     <label for="broker5" class="broker-label">
-                      <input type="checkbox" id="broker5" name="brokers[]" value="John T. Mozzillo"> John T. Mozzillo </label>
+                      <input type="checkbox" id="broker5" name="brokers[]" value="John Mozzillo"> John Mozzillo </label>
+                  </div>
+                  <div class="checkbox-line">
+                    <label for="broker6" class="broker-label">
+                      <input type="checkbox" id="broker6" name="brokers[]" value="Ryan Barikian"> Ryan Barikian </label>
+                  </div>
+                  <div class="checkbox-line">
+                    <label for="broker7" class="broker-label">
+                      <input type="checkbox" id="broker7" name="brokers[]" value="Bethany Brown"> Bethany Brown </label>
                   </div>
                 </div>
               </div>
               <div class="form-group">
                 <button id="upload-listing-agreement" type="button">Upload Listing Agreement</button>
                 <input id="listing-agreement" type="file" style="display:none;" accept=".pdf">
-                <input id="listing-agreement-file-id" name="listing-agreement-file-id" type="hidden">
-                <div class="agreement-tooltip">Please upload the signed agreement here.</div>
+                <input type="hidden" id="listing-agreement-file-base64" name="listing-agreement-file-base64">
                 <div id="upload-error-message" class="error-message"></div>
               </div>
             </div>

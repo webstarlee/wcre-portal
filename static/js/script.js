@@ -25,7 +25,7 @@ $(document).ready(function() {
         var file = this.files[0];
         var formData = new FormData();
         formData.append('file', file);
-
+    
         $.ajax({
             url: '/upload_pdf',
             type: 'POST',
@@ -36,7 +36,7 @@ $(document).ready(function() {
                 if (data.success) {
                     uploadButton.textContent = 'Document Uploaded ✔';
                     uploadButton.disabled = true;
-                    document.getElementById('listing-agreement-file-id').value = data.fileId;
+                    document.getElementById('listing-agreement-file-base64').value = data.fileBase64;
                     uploadErrorMessage.textContent = ''; // Clear any previous error message
                 } else {
                     uploadErrorMessage.textContent = 'Error: ' + data.error;
@@ -68,9 +68,9 @@ $(document).ready(function() {
         e.preventDefault();
         $('#add-listing-modal').css('display', 'none');
         var formData = new FormData(this);
-        var file = $('#listing-agreement')[0].files[0];
-        formData.append('file', file);
-
+        var fileBase64 = $('#listing-agreement-file-base64').val();
+        formData.append('fileBase64', fileBase64);
+    
         $.ajax({
             url: '/submit_listing',
             type: 'POST',
@@ -87,6 +87,7 @@ $(document).ready(function() {
         });
     });
 
+
     $(function() {
         $("#listing-start-date").datepicker();
         $("#listing-end-date").datepicker();
@@ -99,7 +100,7 @@ $(document).ready(function() {
         if (nextStep.length) {
             currentStep.removeClass('active-step');
             nextStep.addClass('active-step');
-            $('.prev-step').css('visibility', 'visible'); // Add this line
+            $('.prev-step').css('visibility', 'visible');
     
             if (!nextStep.next('.modal-step').length) {
                 $(this).text('Submit Listing');
