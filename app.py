@@ -24,8 +24,6 @@ from flask_mail import Mail, Message
 from premailer import transform
 
 
-
-
 ALLOWED_EXTENSIONS = {"pdf"}
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -234,7 +232,7 @@ def submit_listing():
         result = listings.insert_one(new_listing)
         if result.inserted_id:
             msg = Message(
-                "A New Listing Has Been Uploaded - WCRE Portal",
+                "WCRE Portal - A New Listing Has Been Submitted",
                 sender="nathanwolf100@gmail.com",
                 recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"]
             )

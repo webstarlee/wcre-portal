@@ -11,9 +11,10 @@ body{
 }
 .content{
     flex-grow:1;
-    padding:20px;
-    overflow:auto
+    padding: 20px 40px 20px 20px;  /* top right bottom left */
+    overflow:auto;
 }
+
 .search-form{
     text-align:right;
     margin-bottom:20px
@@ -133,11 +134,6 @@ body{
 .minimal-button:hover{
     background-color:#ddd
 }
-.checkbox-line{
-    display:flex;
-    align-items:center;
-    margin-bottom:10px
-}
 .brokers{
     white-space:nowrap
 }
@@ -145,14 +141,24 @@ body{
     display:block;
     white-space:nowrap;
 }
-.broker-label{
-    display:flex;
-    align-items:center;
-    white-space:nowrap;
-    font-size:14px
+#listing-brokers {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
 }
-.broker-label input[type=checkbox]{
-    margin-right:10px
+.checkbox-line {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.broker-label {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    font-size: 12px;
+}
+.broker-label input[type=checkbox] {
+    margin-right: 10px;
 }
 
 .modal-step{
@@ -287,4 +293,22 @@ body{
 }
 #open-map-button:hover{
     background-color:#ddd
+}
+
+.notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f44336;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 4px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 9999;
+}
+
+.notification.show {
+    opacity: 1;
 }
