@@ -228,7 +228,7 @@ def submit_listing():
             "listing_property_type": listing_property_type,
             "listing_type": listing_type,
             "listing_investment_sale": listing_investment_sale,
-            "listing_price": "$" + listing_price,
+            "listing_price": listing_price,
         }
 
         result = listings.insert_one(new_listing)
