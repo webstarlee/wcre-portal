@@ -207,11 +207,16 @@ $(document).ready(function() {
     });
 
     // OPEN ACTION MODAL
-    $('.centered-table tbody tr').on('contextmenu', function(e) {
-        e.preventDefault();
-        const actionModal = $('#action-modal');
-        actionModal.css({top: e.pageY + 'px', left: e.pageX + 'px'}).show();
-        $(this).focus();
+    $(document).ready(function() {
+        var isAdmin = $('body').data('is-admin') === 'True';
+g        $('.centered-table tbody tr').on('contextmenu', function(e) {
+            if (isAdmin) { // Check if user is an admin
+                e.preventDefault();
+                const actionModal = $('#action-modal');
+                actionModal.css({top: e.pageY + 'px', left: e.pageX + 'px'}).show();
+                $(this).focus();
+            }
+        });
     });
     
     $(document).bind('click', function(e) {

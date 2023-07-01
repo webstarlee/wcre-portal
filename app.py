@@ -125,6 +125,7 @@ def logout():
 @app.route("/listings")
 @login_required
 def view_listings():
+    is_admin = current_user.role == "Admin"
     if current_user.is_authenticated:
         page, per_page, _ = get_page_args(
             page_parameter="page", per_page_parameter="per_page"
@@ -147,7 +148,7 @@ def view_listings():
             page=page, per_page=per_page, total=total, css_framework="bootstrap4"
         )
         return render_template(
-            "listings.html", listings=listings_data, pagination=pagination
+            "listings.html", listings=listings_data, pagination=pagination, is_admin=is_admin
         )
     return redirect(url_for("login"))
 
