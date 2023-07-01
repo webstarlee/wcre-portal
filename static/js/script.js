@@ -209,7 +209,7 @@ $(document).ready(function() {
     // OPEN ACTION MODAL
     $(document).ready(function() {
         var isAdmin = $('body').data('is-admin') === 'True';
-g        $('.centered-table tbody tr').on('contextmenu', function(e) {
+            $('.centered-table tbody tr').on('contextmenu', function(e) {
             if (isAdmin) { // Check if user is an admin
                 e.preventDefault();
                 const actionModal = $('#action-modal');
