@@ -45,7 +45,7 @@ $(document).ready(function() {
         $("body").addClass("modal-open");
         $("#add-listing-modal").show();
     });
-    
+
     // CLOSE MODAL
     $("#add-listing-modal .close").click(function() {
         $("body").removeClass("modal-open");
@@ -82,9 +82,22 @@ $(document).ready(function() {
         } else {
             $('#listing-brokers').removeClass('error');
         }
-
         return isValid;
     }
+
+    function validateDates() {
+        var startDateInput = $('#listing-start-date');
+        var isValid = startDateInput.val().trim().length > 0;
+        console.log(isValid)
+
+        if (!isValid) {
+            $('#listing-start-date').addClass('error');
+        } else {
+            $('#listing-start-date').removeClass('error');
+        }
+        return isValid;
+    }
+
 
     // SEARCH INPUT
     $('#search-input').on('input', function() {
@@ -117,9 +130,9 @@ $(document).ready(function() {
     }
 
     // SHOW SUCCESS NOTI
-    function showSuccessNotification(message) {
+    function showSuccessNotificationModal(message) {
         console.log('showSuccessNotification called with message:', message);
-        var successNotification = $('#success-notification');
+        var successNotification = $('#success-notification-modal');
         successNotification.text(message);
         successNotification.addClass('show');
 
@@ -128,7 +141,16 @@ $(document).ready(function() {
         }, 2000);
     }
 
+    // SHOW ERROR NOTI - MODAL
+    function showErrorNotificationModal(message) {
+        var errorNotification = $('#error-notification-modal');
+        errorNotification.text(message);
+        errorNotification.addClass('show');
 
+        setTimeout(function() {
+            errorNotification.removeClass('show');
+        }, 2000);
+    }
 
     // NEXT STEP
     $('.next-step').on('click', function() {
@@ -147,13 +169,13 @@ $(document).ready(function() {
                     $(this).text('Next');
                 }
             } else {
-                showErrorNotification('Please Fill Out All Required Fields');
+                showErrorNotificationModal('Please Fill Out All Required Fields');
             }
         } else {
             if (validateBrokers()) {
                 $('#submit-listing-form').submit();
             } else {
-                showErrorNotification('Please Fill Out All Required Fields');
+                showErrorNotificationModal('Please Fill Out All Required Fields');
             }
         }
     });
@@ -192,16 +214,16 @@ $(document).ready(function() {
             success: function(data) {
                 if (data.success) {
                     uploadButton.textContent = 'Document Uploaded ✔';
-                    showSuccessNotification('Document Uploaded Successfully');
+                    showSuccessNotificationModal('Document Uploaded Successfully');
                     uploadButton.disabled = true;
                     document.getElementById('listing-agreement-file-base64').value = data.fileBase64;
                     uploadErrorMessage.textContent = '';
                 } else {
-                    showErrorNotification('Error Uploading Document');
+                    showErrorNotificationModal('Error Uploading Document');
                 }
             },
             error: function(xhr, status, error) {
-                showErrorNotification('Error Uploading Document');
+                showErrorNotificationModal('Error Uploading Document');
             }
         });
     });
@@ -209,16 +231,19 @@ $(document).ready(function() {
     // OPEN ACTION MODAL
     $(document).ready(function() {
         var isAdmin = $('body').data('is-admin') === 'True';
-            $('.centered-table tbody tr').on('contextmenu', function(e) {
+        $('.centered-table tbody tr').on('contextmenu', function(e) {
             if (isAdmin) { // Check if user is an admin
                 e.preventDefault();
                 const actionModal = $('#action-modal');
-                actionModal.css({top: e.pageY + 'px', left: e.pageX + 'px'}).show();
+                actionModal.css({
+                    top: e.pageY + 'px',
+                    left: e.pageX + 'px'
+                }).show();
                 $(this).focus();
             }
         });
     });
-    
+
     $(document).bind('click', function(e) {
         const actionModal = $('#action-modal');
         if (!$(e.target).closest(actionModal).length) {
@@ -228,22 +253,22 @@ $(document).ready(function() {
 
     let listing_id = null;
     $('.centered-table tbody tr').on('contextmenu', function(e) {
-        e.preventDefault(); 
+        e.preventDefault();
         listing_id = $(this).data('listing-id');
         console.log('Listing id:', listing_id);
     });
-    
 
-    $('#delete-button').click(function() {        
+
+    $('#delete-button').click(function() {
         console.log(listing_id);
         const selectedRow = $('.centered-table tbody tr[data-listing-id="' + listing_id + '"]');
         const deleteModal = $('#action-modal'); // assuming this is the ID of your deletion modal
-    
+
         $.ajax({
             url: '/delete_listing/' + listing_id,
             type: 'GET',
             success: function(data) {
-                if(data.success) {
+                if (data.success) {
                     showErrorNotification('Listing Deleted');
                     selectedRow.remove();
                     deleteModal.hide(); // hide the modal
@@ -257,14 +282,14 @@ $(document).ready(function() {
             }
         });
     });
-    
+
 
     // SUBMIT LISTING
     $('#submit-listing-form').on('submit', function(e) {
         e.preventDefault();
         $('#add-listing-modal').css('display', 'none');
 
-        if (validateStep() && validateBrokers()) {
+        if (validateStep() && validateBrokers() && validateDates()) {
             var formData = new FormData(this);
             var fileBase64 = $('#listing-agreement-file-base64').val();
             formData.append('fileBase64', fileBase64);
@@ -276,14 +301,14 @@ $(document).ready(function() {
                 processData: false,
                 contentType: false,
                 success: function(response) {
-                    showSuccessNotification('Listing Uploaded - Refreshing');
+                    showSuccessNotificationModal('Listing Uploaded - Refreshing');
                     console.log("Listing Uploaded Successfully");
                     setTimeout(function() {
                         window.location.href = '/listings';
                     }, 2000);
                 },
                 error: function(xhr, status, error) {
-                    showErrorNotification('Error Uploading Listing');
+                    showErrorNotificationModal('Error Uploading Listing');
                     console.log("Error Uploading Listing");
                 }
             });

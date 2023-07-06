@@ -26,60 +26,60 @@
             <button id="open-map-button" type="button">Open Listings Map</button>
          </div>
          <table class="centered-table">
-            <thead>
-               <tr>
-                  <th>Property Type</th>
-                  <th>Listing Type</th>
-                  <th>Start Date</th>
-                  <th>End Date</th>
-                  <th>Price</th>
-                  <th>Street</th>
-                  <th>City</th>
-                  <th>State</th>
-                  <th>Owner</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Brokers</th>
-                  <th>Listing Agreement</th>
-               </tr>
-            </thead>
-            <tbody>
-               {% for listing in listings %} 
-               <tr data-listing-id="{{ listing._id }}">
-                  <td>{{ listing.listing_property_type }}</td>
-                  <td>{{ listing.listing_type }}</td>
-                  <td>{{ listing.listing_start_date }}</td>
-                  <td>
-                     <a href="{{ url_for('create_ics', listing_id=listing._id) }}">{{ listing.listing_end_date }}</a>
-                  </td>
-                  <td>{{ listing.listing_price }}</td>
-                  <td>{{ listing.listing_street }}</td>
-                  <td>{{ listing.listing_city }}</td>
-                  <td>{{ listing.listing_state }}</td>
-                  <td>{{ listing.listing_owner }}</td>
-                  <td>
-                     <a href="mailto:{{ listing.listing_email }}">{{ listing.listing_email }}</a>
-                  </td>
-                  <td>
-                     <a href="tel:{{ listing.listing_phone }}">{{ listing.listing_phone }}</a>
-                  </td>
-                  <td class="brokers">
-                     {% for broker in listing.brokers %}
-                     <span class="broker-name">{{ broker }}</span>
-                     {% endfor %}
-                  </td>
-                  <td>
-                     <form class="listing-form" action="{{ url_for('submit_listing') }}" method="POST">
-                        {% if listing.pdf_file_base64 %}
-                        <a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Download</a>
-                        {% else %}
-                        No File Found
-                        {% endif %}
-                     </form>
-                  </td>
-               </tr>
-               {% endfor %} 
-            </tbody>
+         <thead>
+            <tr>
+               <th>Property Type</th>
+               <th>Listing Type</th>
+               <th>Start Date</th>
+               <th>End Date</th>
+               <th>Price</th>
+               <th>Street</th>
+               <th>City</th>
+               <th>State</th>
+               <th>Owner</th>
+               <th>Email</th>
+               <th>Phone</th>
+               <th>Brokers</th>
+               <th>Listing Agreement</th>
+            </tr>
+         </thead>
+         <tbody>
+            {% for listing in listings %} 
+            <tr data-listing-id="{{ listing._id }}">
+               <td>{{ listing.listing_property_type }}</td>
+               <td>{{ listing.listing_type }}</td>
+               <td>{{ listing.listing_start_date }}</td>
+               <td>
+                  <a href="{{ url_for('create_ics', listing_id=listing._id) }}">{{ listing.listing_end_date }}</a>
+               </td>
+               <td>{{ listing.listing_price }}</td>
+               <td>{{ listing.listing_street }}</td>
+               <td>{{ listing.listing_city }}</td>
+               <td>{{ listing.listing_state }}</td>
+               <td>{{ listing.listing_owner }}</td>
+               <td>
+                  <a href="mailto:{{ listing.listing_email }}">{{ listing.listing_email }}</a>
+               </td>
+               <td>
+                  <a href="tel:{{ listing.listing_phone }}">{{ listing.listing_phone }}</a>
+               </td>
+               <td class="brokers">
+                  {% for broker in listing.brokers %}
+                  <span class="broker-name">{{ broker }}</span>
+                  {% endfor %}
+               </td>
+               <td>
+                  <form class="listing-form" action="{{ url_for('submit_listing') }}" method="POST">
+                     {% if listing.pdf_file_base64 %}
+                     <a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Download</a>
+                     {% else %}
+                     No File Found
+                     {% endif %}
+                  </form>
+               </td>
+            </tr>
+            {% endfor %} 
+         </tbody>
          <table>
          {{ pagination.links }}
       </div>
@@ -88,8 +88,10 @@
       <div id="action-modal" class="action-modal">
          <button id="delete-button">Delete Listing</button>
          <button id="edit-button">Edit Listing</button>
-     </div>
+      </div>
       <div id="add-listing-modal" class="modal">
+         <div id="error-notification-modal" class="error-notification-modal"></div>
+         <div id="success-notification-modal" class="success-notification-modal"></div>
          <div class="modal-content">
             <span class="close">&times;</span>
             <form id="submit-listing-form" class="modal-form" action="{{ url_for('submit_listing') }}" method="POST">
@@ -161,7 +163,7 @@
                   </div>
                   <div class="form-group">
                      <label for="listing-end-date">Listing End Date:</label>
-                     <input type="text" id="listing-end-date" name="listing-end-date" required>
+                     <input type="text" id="listing-end-date" name="listing-end-date">
                   </div>
                   <div class="form-group">
                      <div id="listing-brokers">

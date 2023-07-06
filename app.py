@@ -1,5 +1,5 @@
 import os
-from flask import Flask, make_response, render_template, redirect, url_for, request
+from flask import Flask, jsonify, make_response, render_template, redirect, url_for, request
 from flask_login import (
     LoginManager,
     login_user,
@@ -114,6 +114,16 @@ def dashboard():
         "dashboard.html", total_listings=total_listings, greeting_msg=greeting_msg
     )
 
+@app.route("/marketing")
+@login_required
+def marketing():
+    greeting_msg = f"Marketing Dashboard - Brochure View"
+    brochure_types = ['Office', 'Industrial', 'Investments', 'Healthcare', 'Retail']
+    brochure_counts = {}
+    for brochure_type in brochure_types:
+        brochure_counts[brochure_type] = db[brochure_type.lower() + "_brochures"].count_documents({})
+    return render_template("marketing.html", brochure_types=brochure_types, brochure_counts=brochure_counts, greeting_msg=greeting_msg)
+
 
 @app.route("/logout")
 @login_required
@@ -185,6 +195,11 @@ def upload_pdf():
         return {"success": True, "fileBase64": file_base64_data}
     else:
         return {"success": False, "error": "Allowed File Types Are .pdf"}
+    
+@app.route("/marketing/brochures/<brochure_type>", methods=["GET"])
+@login_required
+def handle_brochures(brochure_type):
+    ## implement this
 
 
 @app.route("/submit_listing", methods=["POST"])

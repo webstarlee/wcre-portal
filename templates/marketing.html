@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Admin Portal - Marketing</title>
+      <link rel="icon" type="image/png" href="/static/icons/cropped_logo.png">
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/marketing.css') }}">
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidebar.css') }}">
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/icons.css') }}">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+      <a href="#" class="card-icon" data-brochure-type="{{ brochure_type }}"><img src="/static/icons/view.png" alt="View"></a>
+   </head>
+   <body>
+      <div class="container">
+         {% include 'sidebar.html' %}
+         <div class="content">
+            <h2 class="greeting">{{ greeting_msg }}</h2>
+            <div class="dashboard">
+               {% for brochure_type in brochure_types %}
+               <div class="dashboard-card">
+                  <div class="card-title">{{ brochure_type }}</div>
+                  <div class="card-content"><span class="card-number">{{ brochure_counts[brochure_type] }}</span> Brochures</div>
+                  <a href="{{ url_for('handle_brochures', brochure_type=brochure_type) }}" class="card-icon"><img src="/static/icons/view.png" alt="View"></a>
+               </div>            
+               {% endfor %}
+            </div>
+         </div>
+         <div class="modal" id="brochure-modal">
+            <div class="modal-content">
+               <span class="close">&times;</span>
+               <h3 class="modal-title">Brochure Files - {{ brochure_type }}</h3>
+               <ul class="brochure-list">
+                  {% for brochure in brochures %}
+                  <li>{{ brochure.brochure_name }}</li>
+                  {% endfor %}
+               </ul>
+            </div>
+         </div>
+      </div>
+      <script>
+         $(document).ready(function() {
+            $('.card-icon').on('click', function(e) {
+               e.preventDefault();
+               var modal = document.getElementById('brochure-modal');
+               modal.style.display = "block";
+            });
+            $('.close, .modal').on('click', function() {
+               var modal = document.getElementById('brochure-modal');
+               modal.style.display = "none";
+            });
+         });
+      </script>
+   </body>
+</html>
