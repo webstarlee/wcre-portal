@@ -108,7 +108,6 @@ $(document).ready(function() {
         });
     });
 
-
     uploadButton.addEventListener('click', function(e) {
         fileInput.click();
     });
@@ -282,7 +281,6 @@ $(document).ready(function() {
             }
         });
     });
-
 
     // SUBMIT LISTING
     $('#submit-listing-form').on('submit', function(e) {

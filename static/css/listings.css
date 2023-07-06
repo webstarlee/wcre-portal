@@ -190,12 +190,6 @@ body{
 .close:hover{
     color:#000
 }
-.modal-step{
-    display:none
-}
-.active-step{
-    display:block
-}
 .centered-table{
     margin-left:220px;
     margin-right:auto;
@@ -294,7 +288,6 @@ body{
 #open-map-button:hover{
     background-color:#ddd
 }
-
 .error-notification {
     position: fixed;
     top: 20px;
@@ -308,7 +301,6 @@ body{
     transition: opacity 0.3s;
     z-index: 9999;
 }
-
 .success-notification {
     position: fixed;
     top: 20px;
@@ -370,30 +362,6 @@ body{
     height: 100%;
     background-color: rgba(0, 0, 0, 0.6);
     overflow: auto;
-  }
-  
-  .modal-content {
-    background: #fff;
-    margin: auto;
-    padding: 20px;
-    border-radius: 8px;
-    color: #333;
-    position: relative;
-    width: 60%;
-    max-width: 500px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  }
-  
-  .close {
-    color: #888;
-    float: right;
-    font-size: 24px;
-    font-weight: 700;
-    cursor: pointer;
-  }
-  
-  .close:hover {
-    color: #000;
   }
 
   body.modal-open {

@@ -94,7 +94,6 @@ def load_user(username):
         else None
     )
 
-
 def greeting(current_time):
     if current_time.hour < 12:
         return "Good Morning"
@@ -102,7 +101,6 @@ def greeting(current_time):
         return "Good Afternoon"
     else:
         return "Good Evening"
-
 
 @app.route("/dashboard")
 @login_required
@@ -195,7 +193,52 @@ def upload_pdf():
         return {"success": True, "fileBase64": file_base64_data}
     else:
         return {"success": False, "error": "Allowed File Types Are .pdf"}
+    
+@app.route("/get_brochures")
+@login_required
+def get_brochures():
+    brochure_type = request.args.get('brochure_type')
+    brochures = list(db[brochure_type.lower() + "_brochures"].find({}))
+    for brochure in brochures:
+        brochure['_id'] = str(brochure['_id'])  # Convert ObjectId to string
+    return jsonify(brochures)
 
+@app.route("/upload_brochure_pdf", methods=["POST"])
+@login_required
+def upload_brochure_pdf():
+    if "file" not in request.files:
+        return {"success": False, "error": "No File Part"}
+    file = request.files["file"]
+    if file.filename == "":
+        return {"success": False, "error": "No Selected File"}
+
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file_binary_data = file.read()
+        file_base64_data = base64.b64encode(file_binary_data).decode()
+        return {"success": True, "fileBase64": file_base64_data}
+    else:
+        return {"success": False, "error": "Allowed File Types Are .pdf"}
+    
+@app.route("/submit_brochure", methods=["POST"])
+@login_required
+def submit_brochure():
+    if request.method == "POST":
+        brochure_file_base64 = request.form.get(
+            "brochure-file-base64"
+        )
+        brochure_type = request.form.get("brochure-type")
+
+        new_listing = {
+            "brochure_type": brochure_type,
+            "pdf_file_base64": brochure_file_base64,
+        }
+        result = listings.insert_one(new_listing)
+        if result.inserted_id:
+            return redirect(url_for('marketing'))
+    else:
+        return "Error Occured While Submitting The Listing"
+    return redirect(url_for("marketing"))
 
 @app.route("/submit_listing", methods=["POST"])
 @login_required
