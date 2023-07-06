@@ -43,15 +43,23 @@
             </div>
          </div>
       </div>
+      <div id="error-notification" class="error-notification"></div>
+      <div id="success-notification" class="success-notification"></div>
       <div id="upload-brochure-modal" class="modal">
+         <div id="error-notification-modal" class="error-notification-modal"></div>
+         <div id="success-notification-modal" class="success-notification-modal"></div>
          <div class="modal-content">
              <span class="close">&times;</span>
-             <form id="upload-brochure-form" class="modal-form" action="{{ url_for('submit_brochure') }}" method="POST" enctype="multipart/form-data">
+             <form id="submit-brochure-form" class="modal-form" action="{{ url_for('submit_brochure') }}" method="POST">
                  <div class="modal-step active-step">
                      <h2 class="modal-step-title">Upload New Brochure</h2>
                      <div class="form-group">
+                        <label for="brochure-name">Brochure Name:</label>
+                        <input type="text" id="brochure-name" name="brochure-name" required>
+                     </div>
+                     <div class="form-group">
                          <label for="brochure-type">Brochure Type:</label>
-                         <select id="listing-property-type" name="listing-property-type" required>
+                         <select id="brochure-type" name="brochure-type" required>
                            <option value="Office">Office</option>
                            <option value="Industrial">Industrial</option>
                            <option value="Investments">Investments</option>
@@ -65,7 +73,7 @@
                         <input type="hidden" id="brochure-file-base64" name="brochure-file-base64">
                      </div>
                      <div class="modal-navigation">
-                        <button id="submit-button" class="minimal-button submit-step" type="button">Upload Brochure</button>
+                        <button id="submit-button" class="minimal-button submit-step" type="submit">Upload Brochure</button>
                      </div>                     
                  </div>
              </form>
@@ -73,6 +81,9 @@
      </div>
       <script>
          $(document).ready(function() {
+            var fileInput = document.getElementById('brochure-file');
+            var uploadButton = document.getElementById('upload-brochure-file');
+            var uploadErrorMessage = document.getElementById('upload-error-message');
             $('.card-icon').on('click', function(e) {
                e.preventDefault();
                var brochureType = $(this).parent().find('.card-title').text();
@@ -89,25 +100,82 @@
                      modal.style.display = "block";
                });
             });
+            // SHOW ERROR NOTI
+            function showErrorNotification(message) {
+               var errorNotification = $('#error-notification');
+               errorNotification.text(message);
+               errorNotification.addClass('show');
+
+               setTimeout(function() {
+                     errorNotification.removeClass('show');
+               }, 2000);
+            }
+
+            // SHOW SUCCESS NOTI
+            function showSuccessNotificationModal(message) {
+               console.log('showSuccessNotification called with message:', message);
+               var successNotification = $('#success-notification-modal');
+               successNotification.text(message);
+               successNotification.addClass('show');
+
+               setTimeout(function() {
+                     successNotification.removeClass('show');
+               }, 2000);
+            }
+
+            // SHOW ERROR NOTI - MODAL
+            function showErrorNotificationModal(message) {
+               var errorNotification = $('#error-notification-modal');
+               errorNotification.text(message);
+               errorNotification.addClass('show');
+
+               setTimeout(function() {
+                     errorNotification.removeClass('show');
+               }, 2000);
+            }
+
             // OPEN MODAL
             $('#upload-brochure-button').on('click', function() {
                $('body').addClass('modal-open');
                $('#upload-brochure-modal').css('display', 'flex');
             });
-            // Close Upload Modal
-            $('.close, #upload-brochure-modal').on('click', function(e) {
-               if (e.target === this) {
-                  $('body').removeClass('modal-open');
-                  $(this).closest('.modal').css('display', 'none');
-               }
+            // CLOSE MODAL
+            $("#brochure-modal .close").click(function() {
+               $("#brochure-modal").hide();
             });
-            // UPLOAD DOCUMENT
+
+            
+            
+            $('.modal').click(function() {
+               $(this).css('display', 'none');
+               resetForm();
+            });
+
+            function resetForm() {
+               $('#submit-brochure-form')[0].reset();
+               $('#brochure-file-base64').val('');
+               $('#upload-brochure-file').text('Upload Brochure File');
+               $('#upload-brochure-file').prop('disabled', false);
+               $('.error').removeClass('error');
+               $('.modal-step').removeClass('active-step');
+               $('.modal-step:first').addClass('active-step');
+            }
+
+            uploadButton.addEventListener('click', function(e) {
+               fileInput.click();
+            });
+
+            $('.modal-content').click(function(event) {
+               event.stopPropagation();
+            });
+
+            // Handle brochure file button click
             fileInput.addEventListener('change', function(e) {
                var file = this.files[0];
                var formData = new FormData();
                formData.append('file', file);
                $.ajax({
-                     url: '/upload_brochure_pdf',
+                     url: '/upload_pdf',
                      type: 'POST',
                      data: formData,
                      processData: false,
@@ -118,7 +186,6 @@
                            showSuccessNotificationModal('Document Uploaded Successfully');
                            uploadButton.disabled = true;
                            document.getElementById('brochure-file-base64').value = data.fileBase64;
-                           uploadErrorMessage.textContent = '';
                         } else {
                            showErrorNotificationModal('Error Uploading Document');
                         }
@@ -130,21 +197,26 @@
             });
 
             // Handle Form Submission
-            $('#upload-brochure-form').on('submit', function(e) {
+            $('#submit-brochure-form').on('submit', function(e) {
                e.preventDefault();
-               var formData = new FormData();
-               formData.append('brochure-type', $('#brochure-type').val());
-               formData.append('brochure-file', $('#brochure-file')[0].files[0]);
+               $('#upload-brochure-modal').css('display', 'none');
+               var formData = new FormData(this);
+               var fileBase64 = $('#listing-agreement-file-base64').val();
+               formData.append('fileBase64', fileBase64);
+               
                $.ajax({
-                  url: '{{ url_for("submit_brochure") }}',
+                  url: '/submit_brochure',
                   type: 'POST',
                   data: formData,
                   processData: false,
                   contentType: false,
-                  success: function(data) {
-                     alert('Brochure uploaded successfully!');
-                     $('#upload-brochure-modal').css('display', 'none');
-                     location.reload();
+                  success: function(response) {
+                     console.log("Brochure Uploaded Successfully");
+                        window.location.href = '/marketing';
+                  },
+                  error: function(xhr, status, error) {
+                     showErrorNotificationModal('Error Uploading Brochure');
+                     console.log("Error Uploading Brochure");
                   }
                });
             });

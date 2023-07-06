@@ -106,21 +106,20 @@ def greeting(current_time):
 @login_required
 def dashboard():
     total_listings = listings.count_documents({})
+    office_brochures = db.office_brochures.count_documents({})
+    industrial_brochures = db.industrial_brochures.count_documents({})
+    retail_brochures = db.retail_brochures.count_documents({})
+    investments_brochures = db.investments_brochures.count_documents({})
+    healthcare = db.healthcare_brochures.count_documents({})
+    total_brochures = office_brochures + industrial_brochures + retail_brochures + investments_brochures + healthcare
     current_time = arrow.now("EST")
     greeting_msg = f"{greeting(current_time)}, {current_user.fullname.split()[0]}!"
     return render_template(
-        "dashboard.html", total_listings=total_listings, greeting_msg=greeting_msg
+        "dashboard.html", 
+        total_listings=total_listings, 
+        total_brochures=total_brochures,
+        greeting_msg=greeting_msg
     )
-
-@app.route("/marketing")
-@login_required
-def marketing():
-    greeting_msg = f"Marketing Dashboard - Brochure View"
-    brochure_types = ['Office', 'Industrial', 'Investments', 'Healthcare', 'Retail']
-    brochure_counts = {}
-    for brochure_type in brochure_types:
-        brochure_counts[brochure_type] = db[brochure_type.lower() + "_brochures"].count_documents({})
-    return render_template("marketing.html", brochure_types=brochure_types, brochure_counts=brochure_counts, greeting_msg=greeting_msg)
 
 
 @app.route("/logout")
@@ -160,6 +159,25 @@ def view_listings():
         )
     return redirect(url_for("login"))
 
+@app.route("/get_brochures")
+@login_required
+def get_brochures():
+    brochure_type = request.args.get('brochure_type')
+    brochures = list(db[brochure_type.lower() + "_brochures"].find({}))
+    for brochure in brochures:
+        brochure['_id'] = str(brochure['_id'])
+    return jsonify(brochures)
+
+@app.route("/marketing")
+@login_required
+def marketing():
+    greeting_msg = f"Marketing Dashboard - Brochure View"
+    brochure_types = ['Office', 'Industrial', 'Investments', 'Healthcare', 'Retail']
+    brochure_counts = {}
+    for brochure_type in brochure_types:
+        brochure_counts[brochure_type] = db[brochure_type.lower() + "_brochures"].count_documents({})
+    return render_template("marketing.html", brochure_types=brochure_types, brochure_counts=brochure_counts, greeting_msg=greeting_msg)
+
 
 @app.route("/download_listing_pdf/<listing_id>", methods=["GET"])
 @login_required
@@ -174,6 +192,21 @@ def download_listing_pdf(listing_id):
     response = make_response(pdf_file_data)
     response.headers.set("Content-Type", "application/pdf")
     response.headers.set("Content-Disposition", "attachment", filename="listing.pdf")
+    return response
+
+@app.route("/download_brochure_pdf/<listing_id>", methods=["GET"])
+@login_required
+def download_brochure_pdf(listing_id):
+    listing = listings.find_one({"_id": ObjectId(listing_id)})
+    if not listing:
+        return "No brochure found", 404
+    pdf_file_base64 = listing.get("pdf_file_base64")
+    if not pdf_file_base64:
+        return "No PDF found for this brochure", 404
+    pdf_file_data = base64.b64decode(pdf_file_base64)
+    response = make_response(pdf_file_data)
+    response.headers.set("Content-Type", "application/pdf")
+    response.headers.set("Content-Disposition", "attachment", filename="brochure.pdf")
     return response
 
 
@@ -193,15 +226,6 @@ def upload_pdf():
         return {"success": True, "fileBase64": file_base64_data}
     else:
         return {"success": False, "error": "Allowed File Types Are .pdf"}
-    
-@app.route("/get_brochures")
-@login_required
-def get_brochures():
-    brochure_type = request.args.get('brochure_type')
-    brochures = list(db[brochure_type.lower() + "_brochures"].find({}))
-    for brochure in brochures:
-        brochure['_id'] = str(brochure['_id'])  # Convert ObjectId to string
-    return jsonify(brochures)
 
 @app.route("/upload_brochure_pdf", methods=["POST"])
 @login_required
@@ -224,21 +248,22 @@ def upload_brochure_pdf():
 @login_required
 def submit_brochure():
     if request.method == "POST":
-        brochure_file_base64 = request.form.get(
-            "brochure-file-base64"
-        )
+        brochure_file_base64 = request.form.get("brochure-file-base64")
         brochure_type = request.form.get("brochure-type")
+        brochure_name = request.form.get("brochure-name")  # Change the key to "brochure-name"
 
-        new_listing = {
+        new_brochure = {
+            "brochure_name": brochure_name,
             "brochure_type": brochure_type,
             "pdf_file_base64": brochure_file_base64,
         }
-        result = listings.insert_one(new_listing)
+        result = db[brochure_type.lower() + "_brochures"].insert_one(new_brochure)
         if result.inserted_id:
             return redirect(url_for('marketing'))
     else:
         return "Error Occured While Submitting The Listing"
     return redirect(url_for("marketing"))
+
 
 @app.route("/submit_listing", methods=["POST"])
 @login_required
