@@ -195,11 +195,6 @@ def upload_pdf():
         return {"success": True, "fileBase64": file_base64_data}
     else:
         return {"success": False, "error": "Allowed File Types Are .pdf"}
-    
-@app.route("/marketing/brochures/<brochure_type>", methods=["GET"])
-@login_required
-def handle_brochures(brochure_type):
-    ## implement this
 
 
 @app.route("/submit_listing", methods=["POST"])
