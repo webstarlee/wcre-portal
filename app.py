@@ -22,6 +22,7 @@ import arrow
 import base64
 from flask_mail import Mail, Message
 from premailer import transform
+from flask_talisman import Talisman
 
 
 ALLOWED_EXTENSIONS = {"pdf"}
@@ -349,5 +350,6 @@ def create_ics(listing_id):
     response.headers["Content-Disposition"] = "attachment; filename=event.ics"
     return response
 
+Talisman(app, content_security_policy=None)
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=6969, debug=True)
