@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
 
 body {
   font-family: "Noto Sans", sans-serif;
@@ -27,21 +27,22 @@ body {
   position: fixed;
   top: 20px;
   right: 40px;
-  white-space: nowrap;
+  white-space: wrap;
 }
 #upload-brochure-button:hover {
   background-color: #ddd;
 }
-.greeting {
-  font-size: 28px;
-  font-weight: 500;
-  font-family: Arial, sans-serif;
-  margin-bottom: 10px;
+.greeting{
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  margin-bottom:10px;
+  text-transform: uppercase;
 }
 .dashboard {
   display: flex;
   justify-content: space-around;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   margin: 10px;
   padding-bottom: 20px;
 }
