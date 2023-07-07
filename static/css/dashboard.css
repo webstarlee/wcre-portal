@@ -19,84 +19,13 @@ body{
     font-size: 30px;
     margin-bottom:10px;
     text-transform: uppercase;
+    color: black;
 }
-.dashboard{
-    display:flex;
-    justify-content:space-around;
-    flex-wrap:wrap;
-    margin:10px
+.card {
+    border-radius: 20px;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25);
+    transition: all 0.3s ease 0s;
 }
-.dashboard-card{
-    width:200px;
-    height:100px;
-    background:#fff;
-    border-radius:10px;
-    box-shadow:0 0 15px 5px rgba(0,0,0,.15);
-    margin:20px;
-    position:relative;
-    padding:20px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    transition:transform .3s ease,box-shadow .3s ease
-}
-.card-title{
-    font-size:16px;
-    font-weight:600;
-    color:#333;
-    margin-bottom:10px
-}
-.card-content{
-    font-size:16px;
-    font-weight:400;
-    color:#333
-}
-.card-number{
-    font-size:24px;
-    font-weight:700;
-    color:#333;
-    margin-right:5px
-}
-.dashboard-card:hover{
-    transform:scale(1.05);
-    box-shadow:0 0 30px 10px rgba(0,0,0,.3)
-}
-.dashboard-card-large{
-    width:400px;
-    height:300px;
-    background:#fff;
-    border-radius:10px;
-    box-shadow:0 0 15px 5px rgba(0,0,0,.15);
-    margin:20px;
-    padding:20px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    transition:transform .3s ease,box-shadow .3s ease
-}
-.dashboard-card-large:hover{
-    transform:scale(1.05);
-    box-shadow:0 0 30px 10px rgba(0,0,0,.3)
-}
-.dashboard-card-large.wider{
-    width:600px
-}
-.card-icon{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    color:#333;
-    text-decoration:none;
-    position:absolute;
-    right:10px;
-    top:10px
-}
-.card-icon img{
-    width:20px;
-    height:20px
-}
-.card-icon:hover{
-    color:#1c92d2
+.card:hover {
+    transform: translateY(-10px);
 }
