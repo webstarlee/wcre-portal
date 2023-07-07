@@ -79,4 +79,4 @@ ics==0.7.2
 arrow==1.2.3
 flask_mail==0.9.1
 premailer==3.10.0
-talisman==0.1.0
+flask-talisman==1.0.0
