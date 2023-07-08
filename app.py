@@ -35,15 +35,12 @@ import time
 
 
 ALLOWED_EXTENSIONS = {"pdf"}
-
-
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
 try:
     app = Flask(__name__)
-    app.config["MAIL_SERVER"] = "smtp.gmail.com"
+    app.config["MAIL_SERVER"] = "smtpout.secureserver.net"
     app.config["MAIL_PORT"] = 465
     app.config["MAIL_USERNAME"] = os.getenv("EMAIL_USER")
     app.config["MAIL_PASSWORD"] = os.getenv("EMAIL_PW")
