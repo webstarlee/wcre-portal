@@ -1,5 +1,13 @@
 import os
-from flask import Flask, jsonify, make_response, render_template, redirect, url_for, request
+from flask import (
+    Flask,
+    jsonify,
+    make_response,
+    render_template,
+    redirect,
+    url_for,
+    request,
+)
 from flask_login import (
     LoginManager,
     login_user,
@@ -27,17 +35,20 @@ import time
 
 
 ALLOWED_EXTENSIONS = {"pdf"}
+
+
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
 try:
     app = Flask(__name__)
-    app.config['MAIL_SERVER']='smtp.gmail.com'
-    app.config['MAIL_PORT'] = 465
-    app.config['MAIL_USERNAME'] = os.getenv("EMAIL_USER")
-    app.config['MAIL_PASSWORD'] = os.getenv("EMAIL_PW")
-    app.config['MAIL_USE_TLS'] = False
-    app.config['MAIL_USE_SSL'] = True
+    app.config["MAIL_SERVER"] = "smtp.gmail.com"
+    app.config["MAIL_PORT"] = 465
+    app.config["MAIL_USERNAME"] = os.getenv("EMAIL_USER")
+    app.config["MAIL_PASSWORD"] = os.getenv("EMAIL_PW")
+    app.config["MAIL_USE_TLS"] = False
+    app.config["MAIL_USE_SSL"] = True
     mail = Mail(app)
     load_dotenv()
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
@@ -96,6 +107,7 @@ def load_user(username):
         else None
     )
 
+
 def greeting(current_time):
     if current_time.hour < 12:
         return "Good Morning"
@@ -103,6 +115,7 @@ def greeting(current_time):
         return "Good Afternoon"
     else:
         return "Good Evening"
+
 
 @app.route("/dashboard")
 @login_required
@@ -113,14 +126,20 @@ def dashboard():
     retail_brochures = db.retail_brochures.count_documents({})
     investments_brochures = db.investments_brochures.count_documents({})
     healthcare = db.healthcare_brochures.count_documents({})
-    total_brochures = office_brochures + industrial_brochures + retail_brochures + investments_brochures + healthcare
+    total_brochures = (
+        office_brochures
+        + industrial_brochures
+        + retail_brochures
+        + investments_brochures
+        + healthcare
+    )
     current_time = arrow.now("EST")
     greeting_msg = f"{greeting(current_time)}, {current_user.fullname.split()[0]}!"
     return render_template(
-        "dashboard.html", 
-        total_listings=total_listings, 
+        "dashboard.html",
+        total_listings=total_listings,
         total_brochures=total_brochures,
-        greeting_msg=greeting_msg
+        greeting_msg=greeting_msg,
     )
 
 
@@ -157,28 +176,40 @@ def view_listings():
             page=page, per_page=per_page, total=total, css_framework="bootstrap4"
         )
         return render_template(
-            "listings.html", listings=listings_data, pagination=pagination, is_admin=is_admin
+            "listings.html",
+            listings=listings_data,
+            pagination=pagination,
+            is_admin=is_admin,
         )
     return redirect(url_for("login"))
+
 
 @app.route("/get_brochures")
 @login_required
 def get_brochures():
-    brochure_type = request.args.get('brochure_type')
+    brochure_type = request.args.get("brochure_type")
     brochures = list(db[brochure_type.lower() + "_brochures"].find({}))
     for brochure in brochures:
-        brochure['_id'] = str(brochure['_id'])
+        brochure["_id"] = str(brochure["_id"])
     return jsonify(brochures)
+
 
 @app.route("/marketing")
 @login_required
 def marketing():
     greeting_msg = f"Marketing Dashboard - Brochure View"
-    brochure_types = ['Office', 'Industrial', 'Investments', 'Healthcare', 'Retail']
+    brochure_types = ["Office", "Industrial", "Investments", "Healthcare", "Retail"]
     brochure_counts = {}
     for brochure_type in brochure_types:
-        brochure_counts[brochure_type] = db[brochure_type.lower() + "_brochures"].count_documents({})
-    return render_template("marketing.html", brochure_types=brochure_types, brochure_counts=brochure_counts, greeting_msg=greeting_msg)
+        brochure_counts[brochure_type] = db[
+            brochure_type.lower() + "_brochures"
+        ].count_documents({})
+    return render_template(
+        "marketing.html",
+        brochure_types=brochure_types,
+        brochure_counts=brochure_counts,
+        greeting_msg=greeting_msg,
+    )
 
 
 @app.route("/download_listing_pdf/<listing_id>", methods=["GET"])
@@ -195,6 +226,7 @@ def download_listing_pdf(listing_id):
     response.headers.set("Content-Type", "application/pdf")
     response.headers.set("Content-Disposition", "attachment", filename="listing.pdf")
     return response
+
 
 @app.route("/download_brochure_pdf/<listing_id>", methods=["GET"])
 @login_required
@@ -229,6 +261,7 @@ def upload_pdf():
     else:
         return {"success": False, "error": "Allowed File Types Are .pdf"}
 
+
 @app.route("/upload_brochure_pdf", methods=["POST"])
 @login_required
 def upload_brochure_pdf():
@@ -245,7 +278,8 @@ def upload_brochure_pdf():
         return {"success": True, "fileBase64": file_base64_data}
     else:
         return {"success": False, "error": "Allowed File Types Are .pdf"}
-    
+
+
 @app.route("/submit_brochure", methods=["POST"])
 @login_required
 def submit_brochure():
@@ -265,11 +299,12 @@ def submit_brochure():
             return "Error Occured While Submitting The Brochure"
         else:
             if result.inserted_id:
-                print("submitted")
-                return make_response({"status": "success", "redirect": url_for("marketing")}, 200)
+                return make_response(
+                    {"status": "success", "redirect": url_for("marketing")}, 200
+                )
             else:
-                return "Error Occured While Submitting The Listing"
-        
+                return "Error Occured While Submitting The Brochure"
+
 
 @app.route("/submit_listing", methods=["POST"])
 @login_required
@@ -324,18 +359,26 @@ def submit_listing():
                     msg = Message(
                         "WCRE Portal - A New Listing Has Been Submitted",
                         sender="nathanwolf100@gmail.com",
-                        recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"]
+                        recipients=[
+                            "nathanwolf100@gmail.com",
+                            "jason.wolf@wolfcre.com",
+                        ],
                     )
-                    email_content = render_template('email_new_listing.html', listing=new_listing)
+                    email_content = render_template(
+                        "email_new_listing.html", listing=new_listing
+                    )
                     msg.html = transform(email_content)
                     mail.send(msg)
                 except Exception as e:
                     print(e)
                     print("Error Sending Email")
                 else:
-                    return make_response({"status": "success", "redirect": url_for("view_listings")}, 200)
+                    return make_response(
+                        {"status": "success", "redirect": url_for("view_listings")}, 200
+                    )
             else:
                 return "Error Occured While Submitting The Listing"
+
 
 @app.route("/delete_listing/<listing_id>", methods=["GET"])
 @login_required
@@ -343,12 +386,19 @@ def delete_listing(listing_id):
     try:
         result = listings.delete_one({"_id": ObjectId(listing_id)})
     except:
-        return {"success": False, "message": "Listing Not Found or Couldn't Be Deleted"}, 404
+        return {
+            "success": False,
+            "message": "Listing Not Found or Couldn't Be Deleted",
+        }, 404
     else:
         if result.deleted_count > 0:
             return {"success": True}, 200
         else:
-            return {"success": False, "message": "Listing Not Found or Couldn't Be Deleted"}, 404
+            return {
+                "success": False,
+                "message": "Listing Not Found or Couldn't Be Deleted",
+            }, 404
+
 
 @app.route("/create_ics/<listing_id>")
 @login_required
@@ -364,6 +414,7 @@ def create_ics(listing_id):
     response.headers["Content-Disposition"] = "attachment; filename=event.ics"
     return response
 
+
 Talisman(app, content_security_policy=None)
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=6969, debug=True)
+    app.run(host="0.0.0.0", port=6969, debug=True)

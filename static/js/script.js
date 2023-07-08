@@ -323,27 +323,27 @@ $(document).ready(function() {
             formData.append('fileBase64', fileBase64);
 
             $.ajax({
-                url: '/submit_listing',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                dataType: 'json',
-            })
-            .done(function(response, jqXHR){
-                if(response.status === "success") {
-                    showSuccessNotification('Listed Uploaded Successfully');
-                    console.log("Listing Uploaded Successfully");
-                    window.location.href = response.redirect;
-                } else {
-                    showErrorNotification('Unexpected status code: ' + jqXHR.status);
-                    console.log("Unexpected status code: " + jqXHR.status);
-                }
-            })
-            .fail(function(textStatus, errorThrown){
-                showErrorNotification('Error Uploading Listing');
-                console.log("Error Uploading Listing: ", textStatus, errorThrown);
-            });                      
+                    url: '/submit_listing',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                })
+                .done(function(response, jqXHR) {
+                    if (response.status === "success") {
+                        showSuccessNotification('Listed Uploaded Successfully');
+                        console.log("Listing Uploaded Successfully");
+                        window.location.href = response.redirect;
+                    } else {
+                        showErrorNotification('Unexpected status code: ' + jqXHR.status);
+                        console.log("Unexpected status code: " + jqXHR.status);
+                    }
+                })
+                .fail(function(textStatus, errorThrown) {
+                    showErrorNotification('Error Uploading Listing');
+                    console.log("Error Uploading Listing: ", textStatus, errorThrown);
+                });
         }
     });
 });
