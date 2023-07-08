@@ -23,6 +23,7 @@ import base64
 from flask_mail import Mail, Message
 from premailer import transform
 from flask_talisman import Talisman
+import time
 
 
 ALLOWED_EXTENSIONS = {"pdf"}
@@ -251,20 +252,24 @@ def submit_brochure():
     if request.method == "POST":
         brochure_file_base64 = request.form.get("brochure-file-base64")
         brochure_type = request.form.get("brochure-type")
-        brochure_name = request.form.get("brochure-name")  # Change the key to "brochure-name"
+        brochure_name = request.form.get("brochure-name")
 
         new_brochure = {
             "brochure_name": brochure_name,
             "brochure_type": brochure_type,
             "pdf_file_base64": brochure_file_base64,
         }
-        result = db[brochure_type.lower() + "_brochures"].insert_one(new_brochure)
-        if result.inserted_id:
-            return redirect(url_for('marketing'))
-    else:
-        return "Error Occured While Submitting The Listing"
-    return redirect(url_for("marketing"))
-
+        try:
+            result = db[brochure_type.lower() + "_brochures"].insert_one(new_brochure)
+        except:
+            return "Error Occured While Submitting The Brochure"
+        else:
+            if result.inserted_id:
+                print("submitted")
+                return make_response({"status": "success", "redirect": url_for("marketing")}, 200)
+            else:
+                return "Error Occured While Submitting The Listing"
+        
 
 @app.route("/submit_listing", methods=["POST"])
 @login_required
@@ -309,19 +314,28 @@ def submit_listing():
             "listing_price": listing_price,
         }
 
-        result = listings.insert_one(new_listing)
-        if result.inserted_id:
-            msg = Message(
-                "WCRE Portal - A New Listing Has Been Submitted",
-                sender="nathanwolf100@gmail.com",
-                recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"]
-            )
-            email_content = render_template('email_new_listing.html', listing=new_listing)
-            msg.html = transform(email_content)
-            mail.send(msg)
-    else:
-        return "Error Occured While Submitting The Listing"
-    return redirect(url_for("view_listings"))
+        try:
+            result = listings.insert_one(new_listing)
+        except:
+            return "Error Occured While Submitting The Listing"
+        else:
+            if result.inserted_id:
+                try:
+                    msg = Message(
+                        "WCRE Portal - A New Listing Has Been Submitted",
+                        sender="nathanwolf100@gmail.com",
+                        recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"]
+                    )
+                    email_content = render_template('email_new_listing.html', listing=new_listing)
+                    msg.html = transform(email_content)
+                    mail.send(msg)
+                except Exception as e:
+                    print(e)
+                    print("Error Sending Email")
+                else:
+                    return make_response({"status": "success", "redirect": url_for("view_listings")}, 200)
+            else:
+                return "Error Occured While Submitting The Listing"
 
 @app.route("/delete_listing/<listing_id>", methods=["GET"])
 @login_required
