@@ -1,7 +1,6 @@
 $(document).ready(function() {
     var fileInput = document.getElementById('listing-agreement');
     var uploadButton = document.getElementById('upload-listing-agreement');
-    var uploadErrorMessage = document.getElementById('upload-error-message');
     const ownerPhoneInput = document.getElementById('listing-owner-phone');
     ownerPhoneInput.addEventListener('input', formatPhoneNumber);
     const listingPriceInput = document.getElementById('listing-price');
@@ -45,7 +44,6 @@ $(document).ready(function() {
         $("#listing-start-date").datepicker();
         $("#listing-end-date").datepicker();
     });
-
 
     // RESET FORM DATA
     function resetForm() {
@@ -119,7 +117,6 @@ $(document).ready(function() {
         }
         return isValid;
     }
-
 
     // SEARCH INPUT
     $('#search-input').on('input', function() {

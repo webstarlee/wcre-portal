@@ -233,10 +233,10 @@ def documents():
 def download_listing_pdf(listing_id):
     listing = listings.find_one({"_id": ObjectId(listing_id)})
     if not listing:
-        return "No listing found", 404
+        return "No Listing Found", 404
     pdf_file_base64 = listing.get("pdf_file_base64")
     if not pdf_file_base64:
-        return "No PDF found for this listing", 404
+        return "No PDF Found for This Listing", 404
     pdf_file_data = base64.b64decode(pdf_file_base64)
     response = make_response(pdf_file_data)
     response.headers.set("Content-Type", "application/pdf")
@@ -268,9 +268,7 @@ def upload_pdf():
     file = request.files["file"]
     if file.filename == "":
         return {"success": False, "error": "No Selected File"}
-
     if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
         file_binary_data = file.read()
         file_base64_data = base64.b64encode(file_binary_data).decode()
         return {"success": True, "fileBase64": file_base64_data}
@@ -374,7 +372,7 @@ def submit_listing():
                 try:
                     msg = Message(
                         "WCRE Portal - A New Listing Has Been Submitted",
-                        sender="nathanwolf100@gmail.com",
+                        sender="portal@wolfcre.com",
                         recipients=[
                             "nathanwolf100@gmail.com",
                             "jason.wolf@wolfcre.com",
@@ -414,7 +412,7 @@ def delete_listing(listing_id):
                 "success": False,
                 "message": "Listing Not Found or Couldn't Be Deleted",
             }, 404
-
+        
 
 @app.route("/create_ics/<listing_id>")
 @login_required
