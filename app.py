@@ -25,6 +25,8 @@ from gridfs import GridFS
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 from flask import Flask, Response
+from datetime import datetime
+import pytz
 from ics import Calendar, Event
 import arrow
 import base64
@@ -83,6 +85,16 @@ def login():
         user = load_user(request.form["username"])
         if user and bcrypt.check_password_hash(user.password, request.form["password"]):
             login_user(user)
+            logins = db['logins']
+            now_utc = datetime.now(pytz.timezone('UTC'))
+            now_est = now_utc.astimezone(pytz.timezone('US/Eastern'))
+            formatted_est = now_est.strftime('%Y-%m-%d %I:%M:%S %p %Z')
+            log_entry = {
+                'username': request.form["username"],
+                'login_time': formatted_est,
+                'ip_address': request.remote_addr,
+            }
+            logins.insert_one(log_entry)
             return redirect(url_for("dashboard"))
         else:
             return render_template("login.html", error="Invalid Username or Password")
