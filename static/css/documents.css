@@ -1,22 +1,40 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
 
-body {
-  font-family: "Noto Sans", sans-serif;
-  margin: 0;
-  padding: 0;
-  background: linear-gradient(to right, #1c92d2, #f2fcfe);
+body{
+  font-family:'Noto Sans',sans-serif;
+  margin:0;
+  padding:0;
+  background:linear-gradient(to right,#1c92d2,#f2fcfe)
 }
-.container {
-  display: flex;
-  align-items: flex-start;
-  height: 100vh;
-  overflow-x: hidden;
+.container{
+  display:flex;
+  align-items:flex-start;
+  height:100vh
 }
-.content {
-  margin-left: 250px;
-  flex-grow: 1;
+.content{
+  margin-left: 125px;
 }
-#upload-brochure-button {
+.greeting{
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  margin-bottom:10px;
+  text-transform: uppercase;
+  color: black;
+}
+.card {
+  border-radius: 20px;
+  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease 0s;
+}
+.card:hover {
+  transform: translateY(-10px);
+}
+.col {
+  margin-bottom: 30px; /*adjust as needed*/
+}
+
+#upload-document-button {
   background-color: #f0f0f0;
   border: none;
   color: #333;
@@ -25,80 +43,14 @@ body {
   font-size: 14px;
   cursor: pointer;
   position: fixed;
-  top: 20px;
+  top: 5px;
   right: 40px;
   white-space: wrap;
 }
-#upload-brochure-button:hover {
+#upload-document-button:hover {
   background-color: #ddd;
 }
-.greeting{
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 700;
-  font-size: 30px;
-  margin-bottom:10px;
-  text-transform: uppercase;
-}
-.dashboard {
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  margin: 10px;
-  padding-bottom: 20px;
-}
-.dashboard-card {
-  width: 150px;
-  height: 100px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 0 15px 5px rgba(0, 0, 0, 0.15);
-  margin: 20px;
-  position: relative;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.card-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 10px;
-}
-.card-content {
-  font-size: 16px;
-  font-weight: 400;
-  color: #333;
-}
-.card-number {
-  font-size: 24px;
-  font-weight: 700;
-  color: #333;
-  margin-right: 5px;
-}
-.dashboard-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 30px 10px rgba(0, 0, 0, 0.3);
-}
-.card-icon {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #333;
-  text-decoration: none;
-  position: absolute;
-  right: 10px;
-  top: 10px;
-}
-.card-icon img {
-  width: 20px;
-  height: 20px;
-}
-.card-icon:hover {
-  color: #1c92d2;
-}
+
 .modal {
   display: none;
   position: fixed;
@@ -185,7 +137,7 @@ body {
 .active-step {
   display: block;
 }
-#upload-brochure-file {
+#upload-document-file {
   margin-top: 1px;
   background-color: #f0f0f0;
   border: none;
@@ -195,7 +147,7 @@ body {
   font-size: 14px;
   cursor: pointer;
 }
-#upload-brochure-file:hover {
+#upload-document-file:hover {
   background-color: #ddd;
 }
 .close {
@@ -209,7 +161,7 @@ body {
   color: #000;
 }
 
-#upload-brochure-modal {
+#upload-document-modal {
   display: none;
   position: fixed;
   z-index: 9999;
@@ -225,7 +177,7 @@ body.modal-open {
   overflow: hidden;
 }
 
-.modal-open #upload-brochure-modal {
+.modal-open #upload-document-modal {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -251,15 +203,15 @@ body.modal-open {
   font-weight: bold;
   margin-bottom: 10px;
 }
-.brochure-list {
+.document-list {
   list-style-type: none;
   padding: 0;
   margin: 0;
 }
-.brochure-list li {
+.document-list li {
   margin-bottom: 5px;
 }
-.brochure-list li:hover {
+.document-list li:hover {
   background-color: #ddd;
 }
 .download-button {

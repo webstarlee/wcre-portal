@@ -7,7 +7,8 @@ body{
 }
 .container{
     display:flex;
-    height:100vh
+    height:100vh;
+    overflow: auto;
 }
 .content{
     flex-grow:1;
@@ -191,7 +192,7 @@ body{
     color:#000
 }
 .centered-table{
-    margin-left:220px;
+    margin-left: -20px;
     margin-right:auto;
     margin-top:0;
     width:auto;

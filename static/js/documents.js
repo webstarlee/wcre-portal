@@ -1,6 +1,6 @@
 $(document).ready(function() {
-    var fileInput = document.getElementById('brochure-file');
-    var uploadButton = document.getElementById('upload-brochure-file');
+    var fileInput = document.getElementById('document-file');
+    var uploadButton = document.getElementById('upload-document-file');
 
     // SHOW ERROR NOTI
     function showErrorNotification(message) {
@@ -46,9 +46,9 @@ $(document).ready(function() {
     }
 
     // OPEN MODAL
-    $('#upload-brochure-button').on('click', function() {
+    $('#upload-document-button').on('click', function() {
         $('body').addClass('modal-open');
-        $('#upload-brochure-modal').css('display', 'flex');
+        $('#upload-document-modal').css('display', 'flex');
     });
     // CLOSE MODAL
     $(".close").click(function(e) {
@@ -63,10 +63,10 @@ $(document).ready(function() {
     });
 
     function resetForm() {
-        $('#submit-brochure-form')[0].reset();
-        $('#brochure-file-base64').val('');
-        $('#upload-brochure-file').text('Upload Brochure File');
-        $('#upload-brochure-file').prop('disabled', false);
+        $('#submit-document-form')[0].reset();
+        $('#document-file-base64').val('');
+        $('#upload-document-file').text('Upload Document File');
+        $('#upload-document-file').prop('disabled', false);
         $('.error').removeClass('error');
         $('.modal-step').removeClass('active-step');
         $('.modal-step:first').addClass('active-step');
@@ -80,7 +80,7 @@ $(document).ready(function() {
         event.stopPropagation();
     });
 
-    // Handle brochure file button click
+    // Handle document file button click
     fileInput.addEventListener('change', function(e) {
         var file = this.files[0];
         var formData = new FormData();
@@ -96,7 +96,7 @@ $(document).ready(function() {
                     uploadButton.textContent = 'Document Uploaded ✔';
                     showSuccessNotificationModal('Document Uploaded Successfully');
                     uploadButton.disabled = true;
-                    document.getElementById('brochure-file-base64').value = data.fileBase64;
+                    document.getElementById('document-file-base64').value = data.fileBase64;
                 } else {
                     showErrorNotificationModal('Error Uploading Document');
                 }
@@ -108,22 +108,22 @@ $(document).ready(function() {
     });
 
     // Handle Form Submission
-    $('#submit-brochure-form').on('submit', function(e) {
+    $('#submit-document-form').on('submit', function(e) {
         // Check if a file has been uploaded
-        if ($('#brochure-file')[0].files.length === 0) {
+        if ($('#document-file')[0].files.length === 0) {
             e.preventDefault();
             showErrorNotificationModal('Please Upload a PDF File');
             return;
         }
 
         e.preventDefault();
-        $('#upload-brochure-modal').css('display', 'none');
+        $('#upload-document-modal').css('display', 'none');
         var formData = new FormData(this);
-        var fileBase64 = $('#brochure-file-base64').val();
+        var fileBase64 = $('#document-file-base64').val();
         formData.append('fileBase64', fileBase64);
 
         $.ajax({
-                url: '/submit_brochure',
+                url: '/submit_document',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -133,8 +133,8 @@ $(document).ready(function() {
             .done(function(response, jqXHR) {
                 if (response.status === "success") {
                     console.log("SUCCESS")
-                    showSuccessNotification('Brochure Uploaded Successfully');
-                    console.log("Brochure Uploaded Successfully");
+                    showSuccessNotification('Document Uploaded Successfully');
+                    console.log("Document Uploaded Successfully");
                     window.location.href = response.redirect;
                 } else {
                     showErrorNotification('Unexpected status code: ' + jqXHR.status);
@@ -142,8 +142,8 @@ $(document).ready(function() {
                 }
             })
             .fail(function(textStatus, errorThrown) {
-                showErrorNotification('Error Uploading Brochure');
-                console.log("Error Uploading Brochure: ", textStatus, errorThrown);
+                showErrorNotification('Error Uploading Document');
+                console.log("Error Uploading Document: ", textStatus, errorThrown);
             });
     });
 });

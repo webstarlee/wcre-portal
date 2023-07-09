@@ -1,91 +1,93 @@
 <!DOCTYPE html>
 <html>
    <head>
-      <title>Admin Portal - Dashboard</title>
-      <link rel="icon" type="image/png" href="/static/icons/cropped_logo.png">
-      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard.css') }}">
-      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidebar.css') }}">
-      <link rel="stylesheet" href="{{ url_for('static', filename='css/icons.css') }}">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-      <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-      <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet">
-      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>Admin Portal - Dashboard</title>
+    <link rel="icon" type="image/png" href="/static/icons/cropped_logo.png">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/icons.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
    </head>
    <body>
-      <div class="container">
+      <div class="container-fluid">
+      <div class="row">
          {% include 'sidebar.html' %}
-         <div class="content">
-            <h2 class="greeting">{{ greeting_msg }}</h2>
-            <div class="dashboard">
-               <div class="dashboard-card">
-                  <div class="card-title">Total Listings</div>
-                  <div class="card-content"><span class="card-number">{{ total_listings }}</span> Properties</div>
-                  <a href="/listings" class="card-icon"><img src="/static/icons/view.png" alt="View"></a> <!-- Replace '/listings' with the actual URL -->
-               </div>
-               <div class="dashboard-card">
-                  <div class="card-title">Total Sales</div>
-                  <div class="card-content"><span class="card-number">98</span> Sales</div>
-                  <a href="/sales" class="card-icon"><img src="/static/icons/view.png" alt="View"></a>
-               </div>
-               <div class="dashboard-card">
-                  <div class="card-title">Total Leases</div>
-                  <div class="card-content"><span class="card-number">75</span> Leases</div>
-                  <a href="/leases" class="card-icon"><img src="/static/icons/view.png" alt="View"></a>
-               </div>
-               <div class="dashboard-card">
-                  <div class="card-title">Total Brochures</div>
-                  <div class="card-content"><span class="card-number">{{ total_brochures }}</span> Brochures</div>
-                  <a href="/marketing" class="card-icon"><img src="/static/icons/view.png" alt="View"></a> <!-- Replace '/listings' with the actual URL -->
-               </div>
-               <div class="dashboard-card-large wider">
-                  <div class="card-title">Sales Performance</div>
-                  <div class="card-content">
-                     <canvas id="salesChart"></canvas>
+         <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+            <h2 class="greeting mt-3">{{ greeting_msg }}</h2>
+            <div class="row row-cols-1 row-cols-md-4 mt-4 g-4">
+               <div class="col">
+                  <div class="card h-100">
+                     <div class="card-body">
+                        <h5 class="card-title">Total Listings</h5>
+                        <p class="card-text"><span class="card-number">{{ total_listings }}</span> Properties</p>
+                     </div>
+                     <div class="card-footer">
+                        <a href="/listings" class="btn btn-primary"><i class="fas fa-eye"></i> View</a>
+                     </div>
                   </div>
                </div>
-               <div class="dashboard-card-large">
-                  <div class="card-title">TBD</div>
-                  <div class="card-content">Content TBD</div>
+               <div class="col">
+                  <div class="card h-100">
+                     <div class="card-body">
+                        <h5 class="card-title">Total Sales</h5>
+                        <p class="card-text"><span class="card-number">98</span> Sales</p>
+                     </div>
+                     <div class="card-footer">
+                        <a href="/sales" class="btn btn-primary"><i class="fas fa-eye"></i> View</a>
+                     </div>
+                  </div>
+               </div>
+               <div class="col">
+                  <div class="card h-100">
+                     <div class="card-body">
+                        <h5 class="card-title">Total Leases</h5>
+                        <p class="card-text"><span class="card-number">75</span> Leases</p>
+                     </div>
+                     <div class="card-footer">
+                        <a href="/leases" class="btn btn-primary"><i class="fas fa-eye"></i> View</a>
+                     </div>
+                  </div>
+               </div>
+               <div class="col">
+                  <div class="card h-100">
+                     <div class="card-body">
+                        <h5 class="card-title">Total Documents</h5>
+                        <p class="card-text"><span class="card-number">{{ total_documents }}</span> Documents</p>
+                     </div>
+                     <div class="card-footer">
+                        <a href="/ocuments" class="btn btn-primary"><i class="fas fa-eye"></i> View</a>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="row mt-4">
+               <div class="col-lg-8 d-flex">
+                  <div class="card flex-fill">
+                     <div class="card-body">
+                        <h5 class="card-title">Sales Performance</h5>
+                        <canvas id="salesChart"></canvas>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-lg-4 d-flex">
+                  <div class="card flex-fill">
+                     <div class="card-body">
+                        <h5 class="card-title">TBD</h5>
+                        <p class="card-text">Content TBD</p>
+                     </div>
+                  </div>
                </div>
             </div>
          </div>
       </div>
    </body>
-   <script>
-      var ctx = document.getElementById('salesChart').getContext('2d');
-      var salesChart = new Chart(ctx, {
-          type: 'line',
-          data: {
-              labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-              datasets: [{
-                  label: 'Sales',
-                  data: [12, 19, 3, 5, 2, 3, 7],
-                  backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                  borderColor: 'rgba(75, 192, 192, 1)',
-                  borderWidth: 1,
-                  tension: 0.4 // This makes the line curvy
-              }]
-          },
-          options: {
-              responsive: true,
-              aspectRatio: 2, // Adjust the aspect ratio as needed
-              scales: {
-                  y: {
-                      beginAtZero: true
-                  }
-              },
-              elements: {
-                  point:{
-                      radius: 0 // This will make the point invisible
-                  }
-              },
-              plugins: {
-                  legend: {
-                      display: false // This will hide the legend
-                  }
-              }
-          }
-      });
-   </script>
 </html>

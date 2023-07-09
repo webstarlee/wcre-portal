@@ -35,13 +35,18 @@ ul li a{
     font-size:16px;
     font-weight:700
 }
-ul li:hover{
-    background-color:#0f4068
+ul li:hover {
+    background-color: #0f4068;
+}
+
+ul li:hover > a {
+    color: #fff;
+    text-decoration: none !important; 
 }
 ul li a span{
     margin-right:10px
 }
-.custom-icon-brokers,.custom-icon-dashboard,.custom-icon-leases,.custom-icon-listings,.custom-icon-sales, .custom-icon-marketing{
+.custom-icon-brokers,.custom-icon-dashboard,.custom-icon-leases,.custom-icon-listings,.custom-icon-sales, .custom-icon-documents{
     background-size:24px;
     background-repeat:no-repeat;
     color:#fff;
