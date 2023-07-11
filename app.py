@@ -295,22 +295,6 @@ def download_sale_pdf(listing_id):
     return response
 
 
-@app.route("/download_document_pdf/<listing_id>", methods=["GET"])
-@login_required
-def download_document_pdf(listing_id):
-    listing = listings.find_one({"_id": ObjectId(listing_id)})
-    if not listing:
-        return "No Document found", 404
-    pdf_file_base64 = listing.get("pdf_file_base64")
-    if not pdf_file_base64:
-        return "No PDF found for this Document", 404
-    pdf_file_data = base64.b64decode(pdf_file_base64)
-    response = make_response(pdf_file_data)
-    response.headers.set("Content-Type", "application/pdf")
-    response.headers.set("Content-Disposition", "attachment", filename="document.pdf")
-    return response
-
-
 @app.route("/upload_pdf", methods=["POST"])
 @login_required
 def upload_pdf():
