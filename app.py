@@ -130,19 +130,19 @@ def greeting(current_time):
 @login_required
 def dashboard():
     total_listings = listings.count_documents({})
-    office_brochures = db["Office Brochures"].count_documents({})
-    industrial_brochures = db["Industrial Brochures"].count_documents({})
-    retail_brochures = db["Retail Brochures"].count_documents({})
-    investments_brochures = db["Investments Brochures"].count_documents({})
-    healthcare = db["Healthcare Brochures"].count_documents({})
+    office_collaterals = db["Office Collaterals"].count_documents({})
+    industrial_collaterals = db["Industrial Collaterals"].count_documents({})
+    retail_collaterals = db["Retail Collaterals"].count_documents({})
+    investment_collaterals = db["Investment Collaterals"].count_documents({})
+    healthcare = db["Healthcare Collaterals"].count_documents({})
     bov_reports = db["BOV Reports"].count_documents({})
     key_marketing_pieces = db["Key Marketing Pieces"].count_documents({})
     quarterly_reports = db["Quarterly Reports"].count_documents({})
     total_documents = (
-        office_brochures
-        + industrial_brochures
-        + retail_brochures
-        + investments_brochures
+        office_collaterals
+        + industrial_collaterals
+        + retail_collaterals
+        + investment_collaterals
         + healthcare
         + bov_reports
         + key_marketing_pieces
@@ -213,8 +213,8 @@ def get_documents():
 @login_required
 def documents():
     greeting_msg = f"Marketing Dashboard - Document View"
-    document_types = ["Office Brochures", "Industrial Brochures", "Investment Brochures", "Healthcare Brochures", 
-                      "Retail Brochures", "BOV Reports", "Quarterly Reports", "Key Marketing Pieces"]
+    document_types = ["Office Collaterals", "Industrial Collaterals", "Investment Collaterals", "Healthcare Collaterals", 
+                      "Retail Collaterals", "BOV Reports", "Quarterly Reports", "Key Marketing Pieces"]
     document_counts = {}
     for document_type in document_types:
         document_counts[document_type] = db[

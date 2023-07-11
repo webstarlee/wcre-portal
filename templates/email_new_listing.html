@@ -101,7 +101,7 @@
         <div class="listing-brokers">
           <span class="listing-label">Brokers:</span>
           {% for broker in listing.brokers %}
-            <p>{{ broker }}</p>
+              <span>{{ broker }}</span>{% if not loop.last %}, {% endif %}
           {% endfor %}
         </div>
       </div>

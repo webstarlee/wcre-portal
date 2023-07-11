@@ -7,7 +7,13 @@ $(document).ready(function() {
     listingPriceInput.addEventListener('input', formatListingPrice);
 
     function formatListingPrice() {
-        let numericValue = listingPriceInput.value.replace(/[^0-9.,]/g, '');
+        let inputText = listingPriceInput.value.trim();
+        if (isNaN(inputText.replace(/[,.$]/g, ''))) {
+            listingPriceInput.value = inputText;
+            return;
+        }
+
+        let numericValue = inputText.replace(/[^0-9.,]/g, '');
         numericValue = numericValue.replace(/\.+/g, '.').replace(/,+/g, ',');
         const parts = numericValue.split('.');
         if (parts.length > 1) {
@@ -25,6 +31,7 @@ $(document).ready(function() {
         const formattedPrice = numberValue ? `$${formattedNumber}${cents}` : '';
         listingPriceInput.value = formattedPrice;
     }
+    
 
     function formatPhoneNumber() {
         let phoneNumber = ownerPhoneInput.value.replace(/\D/g, '');
@@ -94,16 +101,16 @@ $(document).ready(function() {
     }
 
     function validateBrokers() {
-        var selectedBrokers = $('input[name="brokers[]"]:checked');
-        var isValid = selectedBrokers.length > 0;
-
+        var selectedBrokers = $('#listing-brokers').val();  // use the .val() method instead
+        var isValid = selectedBrokers && selectedBrokers.length > 0;
+    
         if (!isValid) {
             $('#listing-brokers').addClass('error');
         } else {
             $('#listing-brokers').removeClass('error');
         }
         return isValid;
-    }
+    }    
 
     function validateDates() {
         var startDateInput = $('#listing-start-date');

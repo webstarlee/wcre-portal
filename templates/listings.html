@@ -62,7 +62,8 @@
               </td>
               <td class="brokers"> {% for broker in listing.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
               <td>
-                <form class="listing-form" action="{{ url_for('submit_listing') }}" method="POST"> {% if listing.pdf_file_base64 %} <a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Download</a> {% else %} No File Found {% endif %} </form>
+                <form class="listing-form" action="{{ url_for('submit_listing') }}" method="POST"> {% if listing.pdf_file_base64 %} <a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Fully Executed</a> 
+                  {% else %} Pending {% endif %} </form>
               </td>
             </tr> {% endfor %} </tbody>
           <table>
@@ -116,6 +117,10 @@
                 <input type="text" id="listing-owner-name" name="listing-owner-name" required>
               </div>
               <div class="form-group">
+                <label for="listing-owner-name">Owner Entity:</label>
+                <input type="text" id="listing-owner-name" name="listing-owner-name">
+              </div>
+              <div class="form-group">
                 <label for="listing-owner-email">Owner Email:</label>
                 <input type="email" id="listing-owner-email" name="listing-owner-email" required>
               </div>
@@ -148,76 +153,26 @@
                 <input type="text" id="listing-end-date" name="listing-end-date" required>
               </div>
               <div class="form-group">
-                <div id="listing-brokers">
-                  <div class="checkbox-line">
-                    <label for="broker1" class="broker-label">
-                      <input type="checkbox" id="broker1" name="brokers[]" value="Jason Wolf"> Jason Wolf </label>
-                  </div>
-                  <div class="checkbox-line">
-                    <label for="broker2" class="broker-label">
-                      <input type="checkbox" id="broker2" name="brokers[]" value="Evan Zweben"> Evan Zweben </label>
-                  </div>
-                  <div class="checkbox-line">
-                    <label for="broker3" class="broker-label">
-                      <input type="checkbox" id="broker3" name="brokers[]" value="Erin Warwick"> Erin Warwick </label>
-                  </div>
-                  <div class="checkbox-line">
-                    <label for="broker4" class="broker-label">
-                      <input type="checkbox" id="broker4" name="brokers[]" value="Todd Monahan"> Todd Monahan </label>
-                  </div>
-                  <div class="checkbox-line">
-                    <label for="broker5" class="broker-label">
-                      <input type="checkbox" id="broker5" name="brokers[]" value="John Mozzillo"> John Mozzillo </label>
-                  </div>
-                  <div class="checkbox-line">
-                    <label for="broker6" class="broker-label">
-                      <input type="checkbox" id="broker6" name="brokers[]" value="Ryan Barikian"> Ryan Barikian </label>
-                  </div>
-                  <div class="checkbox-line">
-                    <label for="broker7" class="broker-label">
-                      <input type="checkbox" id="broker7" name="brokers[]" value="Bethany Brown"> Bethany Brown </label>
-                  </div>
-                  <div class="checkbox-line">
-                    <label for="broker8" class="broker-label">
-                      <input type="checkbox" id="broker8" name="brokers[]" value="Tony Banks"> Tony Banks </label>
-                  </div>
-                  <div class="checkbox-line">
-                    <label for="broker9" class="broker-label">
-                      <input type="checkbox" id="broker9" name="brokers[]" value="Phil Costa"> Phil Costa </label>
-                  </div>
-                  <div class="checkbox-line">
-                    <label for="broker10" class="broker-label">
-                      <input type="checkbox" id="broker10" name="brokers[]" value="Eric Flocco"> Eric Flocco </label>
-                  </div>
-                  <div class="checkbox-line">
-                    <label for="broker11" class="broker-label">
-                      <input type="checkbox" id="broker11" name="brokers[]" value="John Mazurie"> John Mazurie </label>
-                  </div>
-                  <div class="checkbox-line">
-                    <label for="broker12" class="broker-label">
-                      <input type="checkbox" id="broker12" name="brokers[]" value="Brian Goren"> Brian Goren </label>
-                  </div>
-                  <div class="checkbox-line">
-                    <label for="broker13" class="broker-label">
-                      <input type="checkbox" id="broker13" name="brokers[]" value="Julia Brines"> Julia Brines </label>
-                  </div>
-                  <div class="checkbox-line">
-                    <label for="broker14" class="broker-label">
-                      <input type="checkbox" id="broker14" name="brokers[]" value="Brian Propp"> Brian Propp </label>
-                  </div>
-                  <div class="checkbox-line">
-                    <label for="broker15" class="broker-label">
-                      <input type="checkbox" id="broker15" name="brokers[]" value="Sam Newman"> Sam Newman </label>
-                  </div>
-                  <div class="checkbox-line">
-                    <label for="broker16" class="broker-label">
-                      <input type="checkbox" id="broker16" name="brokers[]" value="David Spector"> David Spector </label>
-                  </div>
-                  <div class="checkbox-line">
-                    <label for="broker17" class="broker-label">
-                      <input type="checkbox" id="broker17" name="brokers[]" value="Chemmie Sokolic"> Chemmie Sokolic </label>
-                  </div>
-                </div>
+                <label for="listing-brokers">Brokers:</label>
+                <select id="listing-brokers" name="brokers[]" multiple>
+                  <option value="Jason Wolf">Jason Wolf</option>
+                  <option value="Evan Zweben">Evan Zweben</option>
+                  <option value="Erin Warwick">Erin Warwick</option>
+                  <option value="Todd Monahan">Todd Monahan</option>
+                  <option value="John Mozzillo">John Mozzillo</option>
+                  <option value="Ryan Barikian">Ryan Barikian</option>
+                  <option value="Bethany Brown">Bethany Brown</option>
+                  <option value="Tony Banks">Tony Banks</option>
+                  <option value="Phil Costa">Phil Costa</option>
+                  <option value="Eric Flocco">Eric Flocco</option>
+                  <option value="John Mazurie">John Mazurie</option>
+                  <option value="Brian Goren">Brian Goren</option>
+                  <option value="Julia Brines">Julia Brines</option>
+                  <option value="Brian Propp">Brian Propp</option>
+                  <option value="Sam Newman">Sam Newman</option>
+                  <option value="David Spector">David Spector</option>
+                  <option value="Chemmie Sokolic">Chemmie Sokolic</option>
+                </select>
               </div>
               <div class="form-group">
                 <button id="upload-listing-agreement" type="button">Upload Listing Agreement</button>
