@@ -68,6 +68,7 @@ try:
     db = client["wcre_panel"]
     users = db["users"]
     listings = db["listings"]
+    sales = db["Sales"]
     fs = GridFS(db)
     print("Connected to MongoDB successfully")
 except Exception as e:
@@ -130,6 +131,7 @@ def greeting(current_time):
 @login_required
 def dashboard():
     total_listings = listings.count_documents({})
+    total_sales = sales.count_documents({})
     office_collaterals = db["Office Collaterals"].count_documents({})
     industrial_collaterals = db["Industrial Collaterals"].count_documents({})
     retail_collaterals = db["Retail Collaterals"].count_documents({})
@@ -153,6 +155,7 @@ def dashboard():
     return render_template(
         "dashboard.html",
         total_listings=total_listings,
+        total_sales=total_sales,
         total_documents=total_documents,
         greeting_msg=greeting_msg,
     )
@@ -193,6 +196,39 @@ def view_listings():
         return render_template(
             "listings.html",
             listings=listings_data,
+            pagination=pagination,
+            is_admin=is_admin,
+        )
+    return redirect(url_for("login"))
+
+@app.route("/sales")
+@login_required
+def view_sales():
+    is_admin = current_user.role == "Admin"
+    if current_user.is_authenticated:
+        page, per_page, _ = get_page_args(
+            page_parameter="page", per_page_parameter="per_page"
+        )
+        per_page = 12
+        total, sales_data = (
+            (
+                sales.count_documents({}),
+                sales.find().skip((page - 1) * per_page).limit(per_page),
+            )
+            if current_user.role == "Admin"
+            else (
+                sales.count_documents({"brokers": {"$in": [current_user.fullname]}}),
+                sales.find({"brokers": {"$in": [current_user.fullname]}})
+                .skip((page - 1) * per_page)
+                .limit(per_page),
+            )
+        )
+        pagination = Pagination(
+            page=page, per_page=per_page, total=total, css_framework="bootstrap4"
+        )
+        return render_template(
+            "sales.html",
+            sales=sales_data,
             pagination=pagination,
             is_admin=is_admin,
         )
@@ -241,6 +277,21 @@ def download_listing_pdf(listing_id):
     response = make_response(pdf_file_data)
     response.headers.set("Content-Type", "application/pdf")
     response.headers.set("Content-Disposition", "attachment", filename="listing.pdf")
+    return response
+
+@app.route("/download_sale_pdf/<sale_id>", methods=["GET"])
+@login_required
+def download_sale_pdf(listing_id):
+    listing = listings.find_one({"_id": ObjectId(listing_id)})
+    if not listing:
+        return "No Sale Found", 404
+    pdf_file_base64 = listing.get("pdf_file_base64")
+    if not pdf_file_base64:
+        return "No PDF Found for This Sale", 404
+    pdf_file_data = base64.b64decode(pdf_file_base64)
+    response = make_response(pdf_file_data)
+    response.headers.set("Content-Type", "application/pdf")
+    response.headers.set("Content-Disposition", "attachment", filename="sale.pdf")
     return response
 
 
@@ -392,6 +443,84 @@ def submit_listing():
                     )
             else:
                 return "Error Occured While Submitting The Listing"
+
+@app.route("/submit_sale", methods=["POST"])
+@login_required
+def submit_sale():
+    if request.method == "POST":
+        sale_street = request.form.get("sale-street")
+        sale_city = request.form.get("sale-city")
+        sale_state = request.form.get("sale-state")
+        sale_seller = request.form.get("sale-seller-name")
+        sale_seller_email = request.form.get("sale-seller-email")
+        sale_seller_phone = request.form.get("sale-seller-phone")
+        sale_buyer = request.form.get("sale-buyer-name")
+        sale_buyer_email = request.form.get("sale-buyer-email")
+        sale_buyer_phone = request.form.get("sale-buyer-phone")
+        sale_brokers = request.form.getlist("brokers[]")
+        sale_start_date = request.form.get("sale-start-date")
+        sale_agreement_file_base64 = request.form.get(
+            "sale-agreement-file-base64"
+        )
+        sale_property_type = request.form.get("sale-property-type")
+        sale_type = request.form.get("sale-type")
+        sale_investment_sale = request.form.get("investment-sale")
+        sale_price = request.form.get("sale-price")
+
+        if sale_state == "NJ":
+            sale_state = "New Jersey"
+        elif sale_state == "PA":
+            sale_state == "Pennsylvania"
+
+        new_sale = {
+            "sale_street": sale_street,
+            "sale_city": sale_city,
+            "sale_state": sale_state,
+            "sale_seller": sale_seller ,
+            "sale_seller_email": sale_seller_email,
+            "sale_seller_phone": sale_seller_phone,
+            "sale_buyer": sale_buyer,
+            "sale_buyer_email": sale_buyer_email,
+            "sale_buyer_phone": sale_buyer_phone,
+            "brokers": sale_brokers,
+            "pdf_file_base64": sale_agreement_file_base64,
+            "sale_end_date": sale_end_date,
+            "sale_start_date": sale_start_date,
+            "sale_property_type": sale_property_type,
+            "sale_type": sale_type,
+            "sale_investment_sale": sale_investment_sale,
+            "sale_price": sale_price,
+        }
+
+        try:
+            result = sales.insert_one(new_sale)
+        except:
+            return "Error Occured While Submitting The Sale"
+        else:
+            if result.inserted_id:
+                try:
+                    msg = Message(
+                        "WCRE Portal - A New Sale Has Been Submitted",
+                        sender="portal@wolfcre.com",
+                        recipients=[
+                            "nathanwolf100@gmail.com",
+                            "jason.wolf@wolfcre.com",
+                        ],
+                    )
+                    email_content = render_template(
+                        "email_new_listing.html", listing=new_listing
+                    )
+                    msg.html = transform(email_content)
+                    mail.send(msg)
+                except Exception as e:
+                    print(e)
+                    print("Error Sending Email")
+                else:
+                    return make_response(
+                        {"status": "success", "redirect": url_for("view_sales")}, 200
+                    )
+            else:
+                return "Error Occured While Submitting The sale"
 
 
 @app.route("/delete_listing/<listing_id>", methods=["GET"])
