@@ -46,9 +46,7 @@
               <td>{{ listing.listing_property_type }}</td>
               <td>{{ listing.listing_type }}</td>
               <td>{{ listing.listing_start_date }}</td>
-              <td>
-                <a href="{{ url_for('create_ics', listing_id=listing._id) }}">{{ listing.listing_end_date }}</a>
-              </td>
+              <td><a href="{{ url_for('create_ics', listing_id=listing._id) }}">{{ listing.listing_end_date }}</a></td>
               <td>{{ listing.listing_price }}</td>
               <td>{{ listing.listing_street }}</td>
               <td>{{ listing.listing_city }}</td>
@@ -84,18 +82,18 @@
             <div id="step1" class="modal-step active-step">
               <h2 class="modal-step-title">New Listing - Address Information</h2>
               <div class="form-group">
-                <label for="listing-street">Street:</label>
+                <label for="listing-street">Listing Street:</label>
                 <input type="text" id="listing-street" name="listing-street" required>
               </div>
               <div class="form-group">
-                <label for="listing-city">City:</label>
+                <label for="listing-city">Listing City:</label>
                 <input type="text" id="listing-city" name="listing-city" required>
               </div>
               <div class="form-group">
-                <label for="listing-state">State:</label>
+                <label for="listing-state">Listing State:</label>
                 <select id="listing-state" name="listing-state" required>
-                  <option value="PA">PA</option>
                   <option value="NJ">NJ</option>
+                  <option value="PA">PA</option>
                 </select>
               </div>
               <div class="form-group">
@@ -118,7 +116,7 @@
               </div>
               <div class="form-group">
                 <label for="listing-owner-name">Owner Entity:</label>
-                <input type="text" id="listing-owner-name" name="listing-owner-name">
+                <input type="text" id="listing-owner-name" name="listing-owner-name" required>
               </div>
               <div class="form-group">
                 <label for="listing-owner-email">Owner Email:</label>
