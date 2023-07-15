@@ -211,7 +211,7 @@ $(document).ready(function() {
                 $('.prev-step').css('visibility', 'visible');
 
                 if (!nextStep.next('.modal-step').length) {
-                    $(this).text('Submit sale');
+                    $(this).text('Submit Sale');
                 } else {
                     $(this).text('Next');
                 }
@@ -329,7 +329,7 @@ $(document).ready(function() {
         });
     });
 
-    // SUBMIT sale
+    // SUBMIT Sale
     $('#submit-sale-form').on('submit', function(e) {
         e.preventDefault();
         $('#add-sale-modal').css('display', 'none');

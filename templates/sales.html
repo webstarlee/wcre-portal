@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
     <title>Admin Portal - Sales</title>
     <link rel="icon" type="image/png" href="/static/icons/cropped_logo.png">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sales.css') }}">
@@ -16,12 +18,12 @@
   </head>
   <body data-is-admin="{{ is_admin }}">
     <div class="container"> {% include 'sidebar.html' %} <div class="content">
-        <div class="top-bar">
+        <div class="toolbar">
           <form id="search-form" class="search-form">
             <input type="text" id="search-input" placeholder="Search Sales..." />
+            <button id="open-map-button" type="button">Open Sales Map</button>
             <button id="add-sale-button" type="button">Add Sale</button>
           </form>
-          <button id="open-map-button" type="button">Open Sales Map</button>
         </div>
         <table class="centered-table">
           <thead>
@@ -43,8 +45,7 @@
               <th>Sale Agreement</th>
             </tr>
           </thead>
-          <tbody> {% for sale in sales %} 
-            <tr data-sale-id="{{ sale._id }}">
+          <tbody> {% for sale in sales %} <tr data-sale-id="{{ sale._id }}">
               <td>{{ sale.sale_property_type }}</td>
               <td>{{ sale.sale_type }}</td>
               <td>{{ sale.sale_end_date }}</td>
@@ -61,8 +62,7 @@
               </td>
               <td class="brokers"> {% for broker in sale.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
               <td>
-                <form class="sale-form" action="{{ url_for('submit_sale') }}" method="POST"> {% if sale.pdf_file_base64 %} <a href="{{ url_for('download_sale_pdf', sale_id=sale._id) }}">Fully Executed</a> 
-                  {% else %} Pending {% endif %} </form>
+                <form class="sale-form" action="{{ url_for('submit_sale') }}" method="POST"> {% if sale.pdf_file_base64 %} <a href="{{ url_for('download_sale_pdf', sale_id=sale._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
               </td>
             </tr> {% endfor %} </tbody>
           <table>
@@ -71,8 +71,8 @@
       <div id="error-notification" class="error-notification"></div>
       <div id="success-notification" class="success-notification"></div>
       <div id="action-modal" class="action-modal">
-        <button id="delete-button">Delete sale</button>
-        <button id="edit-button">Edit sale</button>
+        <button id="delete-button">Delete Sale</button>
+        <button id="edit-button">Edit Sale</button>
       </div>
       <div id="add-sale-modal" class="modal">
         <div id="error-notification-modal" class="error-notification-modal"></div>
@@ -129,23 +129,23 @@
               </div>
             </div>
             <div id="step3" class="modal-step">
-                <h2 class="modal-step-title">New Sale - Seller Information</h2>
-                <div class="form-group">
-                  <label for="sale-seller-name">Seller Name:</label>
-                  <input type="text" id="sale-seller-name" name="sale-seller-name" required>
-                </div>
-                <div class="form-group">
-                  <label for="sale-seller-name">Seller Entity:</label>
-                  <input type="text" id="sale-seller-name" name="sale-seller-name" required>
-                </div>
-                <div class="form-group">
-                  <label for="sale-seller-email">Seller Email:</label>
-                  <input type="email" id="sale-seller-email" name="sale-seller-email" required>
-                </div>
-                <div class="form-group">
-                  <label for="sale-seller-phone">Seller Phone Number:</label>
-                  <input type="tel" id="sale-seller-phone" name="sale-seller-phone" required>
-                </div>
+              <h2 class="modal-step-title">New Sale - Seller Information</h2>
+              <div class="form-group">
+                <label for="sale-seller-name">Seller Name:</label>
+                <input type="text" id="sale-seller-name" name="sale-seller-name" required>
+              </div>
+              <div class="form-group">
+                <label for="sale-seller-name">Seller Entity:</label>
+                <input type="text" id="sale-seller-name" name="sale-seller-name" required>
+              </div>
+              <div class="form-group">
+                <label for="sale-seller-email">Seller Email:</label>
+                <input type="email" id="sale-seller-email" name="sale-seller-email" required>
+              </div>
+              <div class="form-group">
+                <label for="sale-seller-phone">Seller Phone Number:</label>
+                <input type="tel" id="sale-seller-phone" name="sale-seller-phone" required>
+              </div>
             </div>
             <div id="step4" class="modal-step">
               <h2 class="modal-step-title">New Sale - General Information</h2>

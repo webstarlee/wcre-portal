@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
     <title>Admin Portal - Listings</title>
     <link rel="icon" type="image/png" href="/static/icons/cropped_logo.png">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/listings.css') }}">
@@ -15,13 +17,14 @@
     <script src="{{ url_for('static', filename='js/listings.js') }}"></script>
   </head>
   <body data-is-admin="{{ is_admin }}">
-    <div class="container"> {% include 'sidebar.html' %} <div class="content">
-        <div class="top-bar">
+    <div class="container"> {% include 'sidebar.html' %} 
+      <div class="content">
+        <div class="toolbar">
           <form id="search-form" class="search-form">
             <input type="text" id="search-input" placeholder="Search Listings..." />
+            <button id="open-map-button" type="button">Open Listings Map</button>
             <button id="add-listing-button" type="button">Add Listing</button>
           </form>
-          <button id="open-map-button" type="button">Open Listings Map</button>
         </div>
         <table class="centered-table">
           <thead>
@@ -33,7 +36,6 @@
               <th>Price</th>
               <th>Street</th>
               <th>City</th>
-              <th>State</th>
               <th>Owner</th>
               <th>Email</th>
               <th>Phone</th>
@@ -41,16 +43,18 @@
               <th>Listing Agreement</th>
             </tr>
           </thead>
-          <tbody> {% for listing in listings %} 
+          <tbody> 
+            {% for listing in listings %} 
             <tr data-listing-id="{{ listing._id }}">
               <td>{{ listing.listing_property_type }}</td>
               <td>{{ listing.listing_type }}</td>
               <td>{{ listing.listing_start_date }}</td>
-              <td><a href="{{ url_for('create_ics', listing_id=listing._id) }}">{{ listing.listing_end_date }}</a></td>
+              <td>
+                <a href="{{ url_for('create_ics', listing_id=listing._id) }}">{{ listing.listing_end_date }}</a>
+              </td>
               <td>{{ listing.listing_price }}</td>
               <td>{{ listing.listing_street }}</td>
               <td>{{ listing.listing_city }}</td>
-              <td>{{ listing.listing_state }}</td>
               <td>{{ listing.listing_owner }}</td>
               <td>
                 <a href="mailto:{{ listing.listing_email }}">{{ listing.listing_email }}</a>
@@ -60,8 +64,7 @@
               </td>
               <td class="brokers"> {% for broker in listing.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
               <td>
-                <form class="listing-form" action="{{ url_for('submit_listing') }}" method="POST"> {% if listing.pdf_file_base64 %} <a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Fully Executed</a> 
-                  {% else %} Pending {% endif %} </form>
+                <form class="listing-form" action="{{ url_for('submit_listing') }}" method="POST"> {% if listing.pdf_file_base64 %} <a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
               </td>
             </tr> {% endfor %} </tbody>
           <table>
