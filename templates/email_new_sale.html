@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>New Sale Notification</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+
+      h1 {
+        color: #333;
+      }
+
+      p {
+        color: #555;
+        margin-top: 10px;
+      }
+
+      .sale-details {
+        margin-top: 20px;
+      }
+
+      .sale-label {
+        font-weight: bold;
+      }
+
+      .sale-value {
+        margin-left: 10px;
+      }
+
+      .sale-label,
+      .sale-value {
+        display: inline-block;
+        vertical-align: top;
+      }
+
+      .sale-brokers {
+        margin-top: 10px;
+      }
+
+      .sale-brokers p {
+        margin: 5px 0;
+        font-weight: normal;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>A New Sale Has Been Uploaded to The WCRE Portal By {{ current_user.fullname }}:</h1>
+      <div class="sale-details">
+        <p>
+          <span class="sale-label">Property Type:</span>
+          <span class="sale-value">{{ sale.sale_property_type }}</span>
+        </p>
+        <p>
+          <span class="sale-label">Closing Date:</span>
+          <span class="sale-value">{{ sale.sale_end_date }}</span>
+        </p>
+        <p>
+          <span class="sale-label">Price:</span>
+          <span class="sale-value">{{ sale.sale_price }}</span>
+        </p>
+        <p>
+          <span class="sale-label">Street:</span>
+          <span class="sale-value">{{ sale.sale_street }}</span>
+        </p>
+        <p>
+          <span class="sale-label">City:</span>
+          <span class="sale-value">{{ sale.sale_city }}</span>
+        </p>
+        <p>
+          <span class="sale-label">Seller:</span>
+          <span class="sale-value">{{ sale.sale_seller }}</span>
+        </p>
+        <p>
+          <span class="sale-label">Buyer:</span>
+          <span class="sale-value">{{ sale.sale_buyer }}</span>
+        </p>
+        <div class="sale-brokers">
+          <span class="sale-label">Brokers:</span>
+          {% for broker in sale.brokers %}
+              <span>{{ broker }}</span>{% if not loop.last %}, {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

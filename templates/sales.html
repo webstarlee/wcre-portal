@@ -32,15 +32,12 @@
               <th>Sale Type</th>
               <th>Closing Date</th>
               <th>Price</th>
-              <th>Street</th>
-              <th>City</th>
-              <th>State</th>
               <th>Square Feet</th>
               <th>Price/SF</th>
-              <th>Buyer</th>
+              <th>Street</th>
+              <th>City</th>
               <th>Seller</th>
-              <th>Email</th>
-              <th>Phone</th>
+              <th>Buyer</th>
               <th>Brokers</th>
               <th>Sale Agreement</th>
             </tr>
@@ -50,15 +47,22 @@
               <td>{{ sale.sale_type }}</td>
               <td>{{ sale.sale_end_date }}</td>
               <td>{{ sale.sale_price }}</td>
+              <td>{{ sale.sale_sqft }}</td>
+              <td>
+                <script>
+                  var price = parseFloat('{{ sale.sale_price.replace("$", "").replace(",", "") }}');
+                  var sqft = parseFloat('{{ sale.sale_sqft.replace(",", "") }}');
+                  var pricePerSqft = price / sqft;
+                  document.write("$" + pricePerSqft.toFixed(2));
+                </script>
+              </td>
               <td>{{ sale.sale_street }}</td>
               <td>{{ sale.sale_city }}</td>
-              <td>{{ sale.sale_state }}</td>
-              <td>{{ sale.sale_buyer }}</td>
               <td>
-                <a href="mailto:{{ sale.sale_email }}">{{ sale.sale_email }}</a>
+                <a href="mailto:{{ sale.sale_seller_email }}">{{ sale.sale_seller }}</a>
               </td>
               <td>
-                <a href="tel:{{ sale.sale_phone }}">{{ sale.sale_phone }}</a>
+                <a href="mailto:{{ sale.sale_buyer_email }}">{{ sale.sale_buyer }}</a>
               </td>
               <td class="brokers"> {% for broker in sale.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
               <td>
@@ -136,7 +140,7 @@
               </div>
               <div class="form-group">
                 <label for="sale-seller-name">Seller Entity:</label>
-                <input type="text" id="sale-seller-name" name="sale-seller-name" required>
+                <input type="text" id="sale-seller-entity" name="sale-seller-entity" required>
               </div>
               <div class="form-group">
                 <label for="sale-seller-email">Seller Email:</label>

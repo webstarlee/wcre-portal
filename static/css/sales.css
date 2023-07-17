@@ -183,18 +183,18 @@
  .active-step{
      display:block 
 }
- #upload-sale-agreement{
-     margin-top:1px;
-     background-color:#f0f0f0;
-     border:none;
-     color:#333;
-     padding:10px 20px;
-     border-radius:4px;
-     font-size:14px;
-     cursor:pointer 
+#upload-sale-agreement{
+    margin-top:1px;
+    background-color:#f0f0f0;
+    border:none;
+    color:#333;
+    padding:10px 20px;
+    border-radius:4px;
+    font-size:14px;
+    cursor:pointer
 }
- #upload-sale-agreement:hover{
-     background-color:#ddd 
+#upload-sale-agreement:hover{
+    background-color:#ddd
 }
  .close{
      color:#888;
@@ -249,7 +249,7 @@
      width:100px 
 }
  .centered-table th:nth-child(2){
-     width:200px 
+     width:100px 
 }
  .centered-table th:nth-child(3){
      width:100px 
@@ -271,6 +271,12 @@
 }
  .centered-table th:nth-child(9){
      width:150px 
+}
+.centered-table th:nth-child(10){
+    width:150px 
+}
+.centered-table th:nth-child(11){
+    width:150px 
 }
  .pagination {
      display: flex;

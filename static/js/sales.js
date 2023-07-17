@@ -315,16 +315,16 @@ $(document).ready(function() {
             type: 'GET',
             success: function(data) {
                 if (data.success) {
-                    showErrorNotification('sale Deleted');
+                    showErrorNotification('Sale Deleted');
                     selectedRow.remove();
                     deleteModal.hide(); // hide the modal
-                    console.log('sale Deleted Successfully');
+                    console.log('Sale Deleted Successfully');
                 } else {
-                    console.error('Failed to Delete sale: ' + data.message);
+                    console.error('Failed to Delete Sale: ' + data.message);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                console.error('Failed to delete sale.');
+                console.error('Failed to delete Sale.');
             }
         });
     });
@@ -349,8 +349,8 @@ $(document).ready(function() {
                 })
                 .done(function(response, jqXHR) {
                     if (response.status === "success") {
-                        showSuccessNotification('Listed Uploaded Successfully');
-                        console.log("sale Uploaded Successfully");
+                        showSuccessNotification('Sale Uploaded Successfully');
+                        console.log("Sale Uploaded Successfully");
                         window.location.href = response.redirect;
                     } else {
                         showErrorNotification('Unexpected status code: ' + jqXHR.status);
@@ -358,8 +358,8 @@ $(document).ready(function() {
                     }
                 })
                 .fail(function(textStatus, errorThrown) {
-                    showErrorNotification('Error Uploading sale');
-                    console.log("Error Uploading sale: ", textStatus, errorThrown);
+                    showErrorNotification('Error Uploading Sale');
+                    console.log("Error Uploading Sale: ", textStatus, errorThrown);
                 });
         }
     });

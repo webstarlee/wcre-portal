@@ -20,7 +20,6 @@ from flask_bcrypt import Bcrypt
 from models import User
 from flask_paginate import Pagination, get_page_args
 from bson.objectid import ObjectId
-from bson.errors import InvalidId
 from gridfs import GridFS
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
@@ -33,12 +32,11 @@ import base64
 from flask_mail import Mail, Message
 from premailer import transform
 from flask_talisman import Talisman
-import time
-
 
 ALLOWED_EXTENSIONS = {"pdf"}
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 try:
     app = Flask(__name__)
@@ -86,14 +84,14 @@ def login():
         user = load_user(request.form["username"])
         if user and bcrypt.check_password_hash(user.password, request.form["password"]):
             login_user(user)
-            logins = db['logins']
-            now_utc = datetime.now(pytz.timezone('UTC'))
-            now_est = now_utc.astimezone(pytz.timezone('US/Eastern'))
-            formatted_est = now_est.strftime('%Y-%m-%d %I:%M:%S %p %Z')
+            logins = db["logins"]
+            now_utc = datetime.now(pytz.timezone("UTC"))
+            now_est = now_utc.astimezone(pytz.timezone("US/Eastern"))
+            formatted_est = now_est.strftime("%Y-%m-%d %I:%M:%S %p %Z")
             log_entry = {
-                'username': request.form["username"],
-                'login_time': formatted_est,
-                'ip_address': request.remote_addr,
+                "username": request.form["username"],
+                "login_time": formatted_est,
+                "ip_address": request.remote_addr,
             }
             logins.insert_one(log_entry)
             return redirect(url_for("dashboard"))
@@ -201,6 +199,7 @@ def view_listings():
         )
     return redirect(url_for("login"))
 
+
 @app.route("/sales")
 @login_required
 def view_sales():
@@ -249,13 +248,19 @@ def get_documents():
 @login_required
 def documents():
     greeting_msg = f"Marketing Dashboard - Document View"
-    document_types = ["Office Collaterals", "Industrial Collaterals", "Investment Collaterals", "Healthcare Collaterals", 
-                      "Retail Collaterals", "BOV Reports", "Quarterly Reports", "Key Marketing Pieces"]
+    document_types = [
+        "Office Collaterals",
+        "Industrial Collaterals",
+        "Investment Collaterals",
+        "Healthcare Collaterals",
+        "Retail Collaterals",
+        "BOV Reports",
+        "Quarterly Reports",
+        "Key Marketing Pieces",
+    ]
     document_counts = {}
     for document_type in document_types:
-        document_counts[document_type] = db[
-            document_type
-        ].count_documents({})
+        document_counts[document_type] = db[document_type].count_documents({})
     return render_template(
         "documents.html",
         document_types=document_types,
@@ -279,13 +284,14 @@ def download_listing_pdf(listing_id):
     response.headers.set("Content-Disposition", "attachment", filename="listing.pdf")
     return response
 
+
 @app.route("/download_sale_pdf/<sale_id>", methods=["GET"])
 @login_required
-def download_sale_pdf(listing_id):
-    listing = listings.find_one({"_id": ObjectId(listing_id)})
-    if not listing:
+def download_sale_pdf(sale_id):
+    sale = sales.find_one({"_id": ObjectId(sale_id)})
+    if not sale:
         return "No Sale Found", 404
-    pdf_file_base64 = listing.get("pdf_file_base64")
+    pdf_file_base64 = sale.get("pdf_file_base64")
     if not pdf_file_base64:
         return "No PDF Found for This Sale", 404
     pdf_file_data = base64.b64decode(pdf_file_base64)
@@ -359,152 +365,136 @@ def submit_document():
 @login_required
 def submit_listing():
     if request.method == "POST":
-        listing_street = request.form.get("listing-street")
-        listing_city = request.form.get("listing-city")
-        listing_state = request.form.get("listing-state")
-        listing_owner = request.form.get("listing-owner-name")
-        listing_email = request.form.get("listing-owner-email")
-        listing_phone = request.form.get("listing-owner-phone")
-        listing_brokers = request.form.getlist("brokers[]")
-        listing_end_date = request.form.get("listing-end-date")
-        listing_start_date = request.form.get("listing-start-date")
-        listing_agreement_file_base64 = request.form.get(
-            "listing-agreement-file-base64"
-        )
-        listing_property_type = request.form.get("listing-property-type")
-        listing_type = request.form.get("listing-type")
-        listing_investment_sale = request.form.get("investment-sale")
-        listing_price = request.form.get("listing-price")
-
-        if listing_state == "NJ":
-            listing_state = "New Jersey"
-        elif listing_state == "PA":
-            listing_state == "Pennsylvania"
-
-        new_listing = {
-            "listing_street": listing_street,
-            "listing_city": listing_city,
-            "listing_state": listing_state,
-            "listing_owner": listing_owner,
-            "listing_email": listing_email,
-            "listing_phone": listing_phone,
-            "brokers": listing_brokers,
-            "pdf_file_base64": listing_agreement_file_base64,
-            "listing_end_date": listing_end_date,
-            "listing_start_date": listing_start_date,
-            "listing_property_type": listing_property_type,
-            "listing_type": listing_type,
-            "listing_investment_sale": listing_investment_sale,
-            "listing_price": listing_price,
-        }
-
         try:
+            listing_street = request.form.get("listing-street")
+            listing_city = request.form.get("listing-city")
+            listing_state = request.form.get("listing-state")
+            listing_owner = request.form.get("listing-owner-name")
+            listing_email = request.form.get("listing-owner-email")
+            listing_phone = request.form.get("listing-owner-phone")
+            listing_brokers = request.form.getlist("brokers[]")
+            listing_end_date = request.form.get("listing-end-date")
+            listing_start_date = request.form.get("listing-start-date")
+            listing_agreement_file_base64 = request.form.get(
+                "listing-agreement-file-base64"
+            )
+            listing_property_type = request.form.get("listing-property-type")
+            listing_type = request.form.get("listing-type")
+            listing_investment_sale = request.form.get("investment-sale")
+            listing_price = request.form.get("listing-price")
+
+            if listing_state == "NJ":
+                listing_state = "New Jersey"
+            elif listing_state == "PA":
+                listing_state = "Pennsylvania"
+
+            new_listing = {
+                "listing_street": listing_street,
+                "listing_city": listing_city,
+                "listing_state": listing_state,
+                "listing_owner": listing_owner,
+                "listing_email": listing_email,
+                "listing_phone": listing_phone,
+                "brokers": listing_brokers,
+                "pdf_file_base64": listing_agreement_file_base64,
+                "listing_end_date": listing_end_date,
+                "listing_start_date": listing_start_date,
+                "listing_property_type": listing_property_type,
+                "listing_type": listing_type,
+                "listing_investment_sale": listing_investment_sale,
+                "listing_price": listing_price,
+            }
+
             result = listings.insert_one(new_listing)
-        except:
-            return "Error Occured While Submitting The Listing"
-        else:
             if result.inserted_id:
-                try:
-                    msg = Message(
-                        "WCRE Portal - A New Listing Has Been Submitted",
-                        sender="portal@wolfcre.com",
-                        recipients=[
-                            "nathanwolf100@gmail.com",
-                            "jason.wolf@wolfcre.com",
-                        ],
-                    )
-                    email_content = render_template(
-                        "email_new_listing.html", listing=new_listing
-                    )
-                    msg.html = transform(email_content)
-                    mail.send(msg)
-                except Exception as e:
-                    print(e)
-                    print("Error Sending Email")
-                else:
-                    return make_response(
-                        {"status": "success", "redirect": url_for("view_listings")}, 200
-                    )
+                msg = Message(
+                    "WCRE Portal - A New Listing Has Been Submitted",
+                    sender="portal@wolfcre.com",
+                    recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
+                )
+                email_content = render_template(
+                    "email_new_listing.html", listing=new_listing
+                )
+                msg.html = transform(email_content)
+                mail.send(msg)
+                return make_response(
+                    {"status": "success", "redirect": url_for("view_listings")}, 200
+                )
             else:
-                return "Error Occured While Submitting The Listing"
+                return "Error Occurred While Submitting The Listing"
+        except Exception as e:
+            print(e)
+            return "Error Occurred While Submitting The Listing"
+    return redirect(url_for("login"))
+
 
 @app.route("/submit_sale", methods=["POST"])
 @login_required
 def submit_sale():
     if request.method == "POST":
-        sale_street = request.form.get("sale-street")
-        sale_city = request.form.get("sale-city")
-        sale_state = request.form.get("sale-state")
-        sale_seller = request.form.get("sale-seller-name")
-        sale_seller_email = request.form.get("sale-seller-email")
-        sale_seller_phone = request.form.get("sale-seller-phone")
-        sale_buyer = request.form.get("sale-buyer-name")
-        sale_buyer_email = request.form.get("sale-buyer-email")
-        sale_buyer_phone = request.form.get("sale-buyer-phone")
-        sale_brokers = request.form.getlist("brokers[]")
-        sale_start_date = request.form.get("sale-start-date")
-        sale_agreement_file_base64 = request.form.get(
-            "sale-agreement-file-base64"
-        )
-        sale_property_type = request.form.get("sale-property-type")
-        sale_type = request.form.get("sale-type")
-        sale_investment_sale = request.form.get("investment-sale")
-        sale_price = request.form.get("sale-price")
-
-        if sale_state == "NJ":
-            sale_state = "New Jersey"
-        elif sale_state == "PA":
-            sale_state == "Pennsylvania"
-
-        new_sale = {
-            "sale_street": sale_street,
-            "sale_city": sale_city,
-            "sale_state": sale_state,
-            "sale_seller": sale_seller ,
-            "sale_seller_email": sale_seller_email,
-            "sale_seller_phone": sale_seller_phone,
-            "sale_buyer": sale_buyer,
-            "sale_buyer_email": sale_buyer_email,
-            "sale_buyer_phone": sale_buyer_phone,
-            "brokers": sale_brokers,
-            "pdf_file_base64": sale_agreement_file_base64,
-            "sale_end_date": sale_end_date,
-            "sale_start_date": sale_start_date,
-            "sale_property_type": sale_property_type,
-            "sale_type": sale_type,
-            "sale_investment_sale": sale_investment_sale,
-            "sale_price": sale_price,
-        }
-
         try:
+            sale_street = request.form.get("sale-street")
+            sale_city = request.form.get("sale-city")
+            sale_state = request.form.get("sale-state")
+            sale_sqft = request.form.get("sale-sqft")
+            sale_seller = request.form.get("sale-seller-name")
+            sale_seller_entity = request.form.get("sale-seller-entity")
+            sale_seller_email = request.form.get("sale-seller-email")
+            sale_seller_phone = request.form.get("sale-seller-phone")
+            sale_buyer = request.form.get("sale-buyer-name")
+            sale_buyer_email = request.form.get("sale-buyer-email")
+            sale_buyer_phone = request.form.get("sale-buyer-phone")
+            sale_brokers = request.form.getlist("brokers[]")
+            sale_end_date = request.form.get("sale-end-date")
+            sale_agreement_file_base64 = request.form.get("sale-agreement-file-base64")
+            sale_property_type = request.form.get("sale-property-type")
+            sale_type = request.form.get("sale-type")
+            sale_price = request.form.get("sale-price")
+
+            if sale_state == "NJ":
+                sale_state = "New Jersey"
+            elif sale_state == "PA":
+                sale_state == "Pennsylvania"
+
+            new_sale = {
+                "sale_street": sale_street,
+                "sale_city": sale_city,
+                "sale_state": sale_state,
+                "sale_property_type": sale_property_type,
+                "sale_sqft": sale_sqft,
+                "sale_seller": sale_seller,
+                "sale_seller_entity": sale_seller_entity,
+                "sale_seller_email": sale_seller_email,
+                "sale_seller_phone": sale_seller_phone,
+                "sale_buyer": sale_buyer,
+                "sale_buyer_email": sale_buyer_email,
+                "sale_buyer_phone": sale_buyer_phone,
+                "brokers": sale_brokers,
+                "pdf_file_base64": sale_agreement_file_base64,
+                "sale_end_date": sale_end_date,
+                "sale_type": sale_type,
+                "sale_price": sale_price,
+            }
+
             result = sales.insert_one(new_sale)
-        except:
-            return "Error Occured While Submitting The Sale"
-        else:
             if result.inserted_id:
-                try:
-                    msg = Message(
-                        "WCRE Portal - A New Sale Has Been Submitted",
-                        sender="portal@wolfcre.com",
-                        recipients=[
-                            "nathanwolf100@gmail.com",
-                            "jason.wolf@wolfcre.com",
-                        ],
-                    )
-                    email_content = render_template(
-                        "email_new_listing.html", listing=new_listing
-                    )
-                    msg.html = transform(email_content)
-                    mail.send(msg)
-                except Exception as e:
-                    print(e)
-                    print("Error Sending Email")
-                else:
-                    return make_response(
-                        {"status": "success", "redirect": url_for("view_sales")}, 200
-                    )
+                msg = Message(
+                    "WCRE Portal - A New Sale Has Been Submitted",
+                    sender="portal@wolfcre.com",
+                    recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
+                )
+                email_content = render_template("email_new_sale.html", sale=new_sale)
+                msg.html = transform(email_content)
+                mail.send(msg)
+                return make_response(
+                    {"status": "success", "redirect": url_for("view_sales")}, 200
+                )
             else:
-                return "Error Occured While Submitting The sale"
+                return "Error Occurred While Submitting The Sale"
+        except Exception as e:
+            print(e)
+            return "Error Occurred While Submitting The Sale"
+    return redirect(url_for("login"))
 
 
 @app.route("/delete_listing/<listing_id>", methods=["GET"])
@@ -525,7 +515,27 @@ def delete_listing(listing_id):
                 "success": False,
                 "message": "Listing Not Found or Couldn't Be Deleted",
             }, 404
-        
+
+
+@app.route("/delete_sale/<sale_id>", methods=["GET"])
+@login_required
+def delete_sale(sale_id):
+    try:
+        result = sales.delete_one({"_id": ObjectId(sale_id)})
+    except:
+        return {
+            "success": False,
+            "message": "Sale Not Found or Couldn't Be Deleted",
+        }, 404
+    else:
+        if result.deleted_count > 0:
+            return {"success": True}, 200
+        else:
+            return {
+                "success": False,
+                "message": "Sale Not Found or Couldn't Be Deleted",
+            }, 404
+
 
 @app.route("/create_ics/<listing_id>")
 @login_required
