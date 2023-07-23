@@ -5,38 +5,37 @@
     <meta charset="utf-8">
     <title>Admin Portal - Login</title>
     <link rel="icon" type="image/png" href="/static/icons/cropped_logo.png">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/login.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
   </head>
   <body>
-    <div id="video-background">
+    <div class="position-fixed top-0 left-0 w-100 h-100 overflow-hidden z-n1">
       <video playsinline="playsinline" autoplay="autoplay" muted="muted" loop="loop">
         <source src="/static/icons/home-2023.mp4" type="video/mp4"> Your browser does not support the video tag.
       </video>
     </div>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-6 col-sm-12 left" id="left-cnt">
-          <div class="logo-container">
-            <img src="/static/icons/logo.png" alt="Logo" class="logo img-fluid">
-          </div>
-          <div class="left__container" id="left-c1">
-            <h2 class="left__title title text-center">Welcome Back</h2>
-            <p class="left__description description text-center">Please Enter Your Credentials to Log In to the WCRE Portal</p>
-            <img src="/static/icons/corfac-logo.png" alt="Corfac Logo" class="corfac-logo img-fluid">
+      <div class="container-fluid d-flex flex-column vh-100">
+        <div class="row m-auto w-100 align-self-center justify-content-center">
+          <div class="card text-center col-xl-3 col-md-6 col-12 p-3">
+            <img src="/static/icons/cropped_logo.png" class="rounded h-auto mx-auto mt-3" width="20%" alt="">
+            <div class="card-body">
+              <h5 class="card-title fw-bold fs-1 mb-3">Sign in to WCRE</h5>
+              <form action="{{ url_for('login') }}" method="post">
+                <div class="mb-4">
+                  <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+                </div>
+                <div class="mb-4">
+                  <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 p-2">Sign In</button>
+              </form>
+            </div>
           </div>
         </div>
-        <div class="col-md-8 col-sm-12 a-container" id="a-container">
-          <form class="form d-flex flex-column align-items-center" id="a-form" action="{{ url_for('login') }}" method="post">
-            <h2 class="form_title title text-center">WCRE Management Portal</h2>
-            <input class="form-control form__input m-3" type="text" placeholder="Username" id="username" name="username" required>
-            <input class="form-control form__input m-3" type="password" placeholder="Password" id="password" name="password" required> {% if error %} <p class="error">{{ error }}</p> {% endif %} <button class="btn btn-primary form__button button submit m-3" type="submit">SIGN IN</button>
-          </form>
+        <div class="row mw-50">
+          <img src="/static/icons/corfac-logo.png" class="col-lg-1 col-md-2 col-4 mx-auto mb-3" alt="">
         </div>
       </div>
-    </div>
   </body>
 </html>
