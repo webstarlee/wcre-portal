@@ -5,6 +5,8 @@ $(document).ready(function() {
     ownerPhoneInput.addEventListener('input', formatPhoneNumber);
     const listingPriceInput = document.getElementById('listing-price');
     listingPriceInput.addEventListener('input', formatListingPrice);
+    const editListingPriceInput = document.getElementById('edit-listing-price');
+    editListingPriceInput.addEventListener('input', formatListingPriceEdit);
 
     function formatListingPrice() {
         let inputText = listingPriceInput.value.trim();
@@ -31,6 +33,32 @@ $(document).ready(function() {
         const formattedPrice = numberValue ? `$${formattedNumber}${cents}` : '';
         listingPriceInput.value = formattedPrice;
     }
+
+    function formatListingPriceEdit() {
+        let inputText = editListingPriceInput.value.trim();
+        if (isNaN(inputText.replace(/[,.$]/g, ''))) {
+            editListingPriceInput.value = inputText;
+            return;
+        }
+
+        let numericValue = inputText.replace(/[^0-9.,]/g, '');
+        numericValue = numericValue.replace(/\.+/g, '.').replace(/,+/g, ',');
+        const parts = numericValue.split('.');
+        if (parts.length > 1) {
+            parts[1] = parts[1].substring(0, 2);
+            numericValue = parts.join('.');
+        }
+        let cents = '';
+        if (numericValue.includes('.')) {
+            [numericValue, cents] = numericValue.split('.');
+            cents = '.' + cents;
+        }
+        numericValue = numericValue.replace(/,/g, '');
+        const numberValue = isNaN(parseFloat(numericValue)) ? 0 : parseFloat(numericValue);
+        const formattedNumber = new Intl.NumberFormat('en-US').format(numberValue);
+        const formattedPrice = numberValue ? `$${formattedNumber}${cents}` : '';
+        editListingPriceInput.value = formattedPrice;
+    }
     
 
     function formatPhoneNumber() {
@@ -52,6 +80,7 @@ $(document).ready(function() {
         $("#listing-end-date").datepicker();
     });
 
+
     // RESET FORM DATA
     function resetForm() {
         // Reset all form fields to their initial state
@@ -69,20 +98,71 @@ $(document).ready(function() {
 
     // OPEN MODAL
     $("#add-listing-button").click(function() {
+		$("body").addClass("modal-open");
+        $("#edit-listing-modal").hide();
+		$("#add-listing-modal").show();
+	});
+
+
+    $("#edit-button").click(function () {
         $("body").addClass("modal-open");
-        $("#add-listing-modal").show();
-    });
-
-    // CLOSE MODAL
-    $("#add-listing-modal .close").click(function() {
-        $("body").removeClass("modal-open");
         $("#add-listing-modal").hide();
+        $("#edit-listing-modal").show();
+            
+        const actionModal = $('#action-modal');
+        actionModal.hide();
+        const selectedRow = $('.centered-table tbody tr[data-listing-id="' + listing_id + '"]');
+        const listingAddress = selectedRow.find('td:nth-child(6)').text().trim();
+        $('#edit-listing-modal .modal-step-title').text('Edit Listing - ' + listingAddress);
+        const listingType = selectedRow.find('td:nth-child(2)').text().trim();
+        const listingPrice = selectedRow.find('td:nth-child(5)').text().trim();
+        $("#edit-listing-type").val(listingType);
+        $("#edit-listing-price").val(listingPrice);
     });
 
-    $('.modal').click(function() {
-        $(this).css('display', 'none');
-        resetForm();
+    $("#submit-button-edit").click(function() {
+        $('#edit-listing-modal').css('display', 'none');
+        var listingType = $("#edit-listing-type").val();
+        var listingPrice = $("#edit-listing-price").val();
+    
+        var data = {
+            'listing_type': listingType,
+            'listing_price': listingPrice,
+        }
+    
+        $.ajax({
+            url: '/edit_listing/' + listing_id,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(response) {
+                if (response.success) {
+                    showSuccessNotification('Listing Edited Successfully');
+                    console.log("Listing Edited Successfully");
+                    location.reload();
+                } else {
+                    showErrorNotificationModal('Error Editing listing');
+                }
+            },
+            error: function(xhr, status, error) {
+                showErrorNotificationModal('Error Editing listing');
+            }
+        });
     });
+    
+
+    $(".add-listing-modal").click(function(e) {
+		if ($(e.target).hasClass("add-listing-modal") || $(e.target).hasClass("close")) {
+			$("body").removeClass("modal-open");
+			$("#add-listing-modal").hide();
+		}
+	});
+	$(".edit-listing-modal").click(function(e) {
+		if ($(e.target).hasClass("edit-listing-modal") || $(e.target).hasClass("close")) {
+			$("body").removeClass("modal-open");
+			$("#edit-listing-modal").hide();
+		}
+	});
 
     function validateStep() {
         var currentStep = $('.active-step');
@@ -262,19 +342,17 @@ $(document).ready(function() {
     });
 
     // OPEN ACTION MODAL
-    $(document).ready(function() {
-        var isAdmin = $('body').data('is-admin') === 'True';
-        $('.centered-table tbody tr').on('contextmenu', function(e) {
-            if (isAdmin) { // Check if user is an admin
-                e.preventDefault();
-                const actionModal = $('#action-modal');
-                actionModal.css({
-                    top: e.pageY + 'px',
-                    left: e.pageX + 'px'
-                }).show();
-                $(this).focus();
-            }
-        });
+    var isAdmin = $('body').data('is-admin') === 'True';
+    $('.centered-table tbody tr').on('contextmenu', function(e) {
+        if (isAdmin) { // Check if user is an admin
+            e.preventDefault();
+            const actionModal = $('#action-modal');
+            actionModal.css({
+                top: e.pageY + 'px',
+                left: e.pageX + 'px'
+            }).show();
+            $(this).focus();
+        }
     });
 
     $(document).bind('click', function(e) {
@@ -336,12 +414,12 @@ $(document).ready(function() {
                 })
                 .done(function(response, jqXHR) {
                     if (response.status === "success") {
-                        showSuccessNotification('Listed Uploaded Successfully');
+                        showSuccessNotification('Listing Uploaded Successfully');
                         console.log("Listing Uploaded Successfully");
                         window.location.href = response.redirect;
                     } else {
-                        showErrorNotification('Unexpected status code: ' + jqXHR.status);
-                        console.log("Unexpected status code: " + jqXHR.status);
+                        showErrorNotification('Unexpected Status Code: ' + jqXHR.status);
+                        console.log("Unexpected Status Code: " + jqXHR.status);
                     }
                 })
                 .fail(function(textStatus, errorThrown) {
