@@ -137,8 +137,8 @@ $(document).ready(function() {
             data: JSON.stringify(data),
             success: function(response) {
                 if (response.success) {
-                    showSuccessNotification('Listing Uploaded Successfully');
-                    console.log("Listing Uploaded Successfully");
+                    showSuccessNotification('Listing Edited Successfully');
+                    console.log("Listing Edited Successfully");
                     location.reload();
                 } else {
                     showErrorNotificationModal('Error Editing listing');
