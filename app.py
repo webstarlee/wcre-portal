@@ -551,6 +551,24 @@ def create_ics(listing_id):
     response.headers["Content-Disposition"] = "attachment; filename=event.ics"
     return response
 
+@app.route("/edit_listing/<listing_id>", methods=["POST"])
+@login_required
+def edit_listing(listing_id):
+    print("in here")
+    data = request.get_json()
+    print(data)
+
+    listing = listings.find_one({"_id": ObjectId(listing_id)})
+    if not listing:
+        return {"success": False, "error": "Listing not found"}
+
+    for field in ['listing_type', 'listing_price']:
+        if field in data:
+            listings.update_one({'_id': ObjectId(listing_id)}, {'$set': {field: data[field]}})
+
+    return {"success": True}
+
+
 
 Talisman(app, content_security_policy=None)
 if __name__ == "__main__":
