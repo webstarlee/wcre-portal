@@ -10,9 +10,9 @@ body{
     align-items:flex-start;
     height:100vh
 }
-.content{
+/* .content{
     margin-left: 125px;
-}
+} */
 .greeting{
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;

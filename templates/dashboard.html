@@ -18,71 +18,73 @@
       <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
    </head>
    <body>
-      <div class="container-fluid">
-      <div class="row">
+      <div class="d-flex">
          {% include 'sidebar.html' %}
-         <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-            <h2 class="greeting mt-3">{{ greeting_msg }}</h2>
-            <div class="row row-cols-1 row-cols-md-4 mt-4 g-4">
-               <div class="col">
-                  <div class="card h-100">
-                     <div class="card-body">
-                        <h5 class="card-title">Total Listings</h5>
-                        <p class="card-text"><span class="card-number">{{ total_listings }}</span> Properties</p>
+         <div class="col">
+            <!-- <p>hello</p> -->
+            <div class="flex-fill mr-2">
+               <h2 class="greeting mt-3">{{ greeting_msg }}</h2>
+               <div class="row row-cols-1 row-cols-md-4 mt-4 g-4">
+                  <div class="col">
+                     <div class="card h-100">
+                        <div class="card-body">
+                           <h5 class="card-title">Total Listings</h5>
+                           <p class="card-text"><span class="card-number">{{ total_listings }}</span> Properties</p>
+                        </div>
+                        <div class="card-footer">
+                           <a href="/listings" class="btn btn-primary"><i class="fas fa-eye"></i> View</a>
+                        </div>
                      </div>
-                     <div class="card-footer">
-                        <a href="/listings" class="btn btn-primary"><i class="fas fa-eye"></i> View</a>
+                  </div>
+                  <div class="col">
+                     <div class="card h-100">
+                        <div class="card-body">
+                           <h5 class="card-title">Total Sales</h5>
+                           <p class="card-text"><span class="card-number">{{ total_sales }}</span> Sales</p>
+                        </div>
+                        <div class="card-footer">
+                           <a href="/sales" class="btn btn-primary"><i class="fas fa-eye"></i> View</a>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col">
+                     <div class="card h-100">
+                        <div class="card-body">
+                           <h5 class="card-title">Total Leases</h5>
+                           <p class="card-text"><span class="card-number">75</span> Leases</p>
+                        </div>
+                        <div class="card-footer">
+                           <a href="/leases" class="btn btn-primary"><i class="fas fa-eye"></i> View</a>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col">
+                     <div class="card h-100">
+                        <div class="card-body">
+                           <h5 class="card-title">Total Documents</h5>
+                           <p class="card-text"><span class="card-number">{{ total_documents }}</span> Documents</p>
+                        </div>
+                        <div class="card-footer">
+                           <a href="/documents" class="btn btn-primary"><i class="fas fa-eye"></i> View</a>
+                        </div>
                      </div>
                   </div>
                </div>
-               <div class="col">
-                  <div class="card h-100">
-                     <div class="card-body">
-                        <h5 class="card-title">Total Sales</h5>
-                        <p class="card-text"><span class="card-number">{{ total_sales }}</span> Sales</p>
-                     </div>
-                     <div class="card-footer">
-                        <a href="/sales" class="btn btn-primary"><i class="fas fa-eye"></i> View</a>
-                     </div>
-                  </div>
-               </div>
-               <div class="col">
-                  <div class="card h-100">
-                     <div class="card-body">
-                        <h5 class="card-title">Total Leases</h5>
-                        <p class="card-text"><span class="card-number">75</span> Leases</p>
-                     </div>
-                     <div class="card-footer">
-                        <a href="/leases" class="btn btn-primary"><i class="fas fa-eye"></i> View</a>
+               <div class="row mt-4">
+                  <div class="col-lg-8 d-flex">
+                     <div class="card flex-fill">
+                        <div class="card-body">
+                           <h5 class="card-title">TBD</h5>
+                           <canvas class="card-text">Content TBD></canvas>
+                        </div>
                      </div>
                   </div>
-               </div>
-               <div class="col">
-                  <div class="card h-100">
-                     <div class="card-body">
-                        <h5 class="card-title">Total Documents</h5>
-                        <p class="card-text"><span class="card-number">{{ total_documents }}</span> Documents</p>
-                     </div>
-                     <div class="card-footer">
-                        <a href="/documents" class="btn btn-primary"><i class="fas fa-eye"></i> View</a>
-                     </div>
-                  </div>
-               </div>
-            </div>
-            <div class="row mt-4">
-               <div class="col-lg-8 d-flex">
-                  <div class="card flex-fill">
-                     <div class="card-body">
-                        <h5 class="card-title">TBD</h5>
-                        <canvas class="card-text">Content TBD></canvas>
-                     </div>
-                  </div>
-               </div>
-               <div class="col-lg-4 d-flex">
-                  <div class="card flex-fill">
-                     <div class="card-body">
-                        <h5 class="card-title">TBD</h5>
-                        <p class="card-text">Content TBD</p>
+                  <div class="col-lg-4 d-flex">
+                     <div class="card flex-fill">
+                        <div class="card-body">
+                           <h5 class="card-title">TBD</h5>
+                           <p class="card-text">Content TBD</p>
+                        </div>
                      </div>
                   </div>
                </div>

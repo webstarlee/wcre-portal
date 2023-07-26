@@ -9,7 +9,7 @@
 		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet">
 	</head>
 	<body>
-		<div class="sidebar">
+		<!-- <div class="sidebar">
 			<div class="sidebar-header">
 				<a href="https://wolfcre.com/">
 					<img src="{{ url_for('static', filename='icons/logo.png') }}" alt="WCRE Logo">
@@ -29,6 +29,37 @@
 					<div class="user-role">{{ current_user.role }}</div>
 				</div>
 				<a href="{{ url_for('logout') }}" class="logout-icon"></a>
+			</div>
+		</div> -->
+		<div class="d-none d-sm-flex col-sm-1 col-lg-2 sidebar flex-column vh-100 pl-0">
+			<a href="https://wolfcre.com/">
+				<img src="{{ url_for('static', filename='icons/cropped_logo.png') }}" class="img-fluid py-2 d-block d-lg-none" alt="">
+				<img src="{{ url_for('static', filename='icons/logo.png') }}" class="img-fluid p-3 d-none d-lg-block" alt="WCRE Logo">
+			</a>
+			
+			<ul class="d-block d-lg-none">
+				<li><a href="{{ url_for('dashboard') }}"><span class="custom-icon-dashboard"></span></a></li>
+				<li><a href="{{ url_for('view_listings') }}"><span class="custom-icon-listings"></span></a></li>
+				<li><a href="{{ url_for('view_sales') }}"><span class="custom-icon-sales"></span></a></li>
+				<li><a href="#"><span class="custom-icon-leases"></span></a></li>
+				<li><a href="{{ url_for('documents') }}"><span class="custom-icon-documents"></span></a></li>
+			</ul>
+
+			<ul class="d-none d-lg-block">
+				<li><a href="{{ url_for('dashboard') }}"><span class="custom-icon-dashboard"></span> DASHBOARD </a></li>
+				<li><a href="{{ url_for('view_listings') }}"><span class="custom-icon-listings"></span> LISTINGS </a></li>
+				<li><a href="{{ url_for('view_sales') }}"><span class="custom-icon-sales"></span> SALES </a></li>
+				<li><a href="#"><span class="custom-icon-leases"></span> LEASES </a></li>
+				<li><a href="{{ url_for('documents') }}"><span class="custom-icon-documents"></span> DOCUMENTS </a></li>
+			</ul>
+
+			<div class="user-info d-flex mt-auto text-left mb-3">
+				<img src="{{ current_user.profile_picture_url }}" class="img-fluid user-profile-pic ml-auto mr-3" alt="">
+				<div class="user-details d-none d-lg-block" style="max-width: 33%">
+					<div class="text-white text-wrap mw-100 text-break">lakjsdk lajskldjaklsdaksdjl</div>
+					<div class="text-light">{{ current_user.role }}</div>
+				</div>
+				<a href="{{ url_for('logout') }}" class="logout-icon m-auto"></a>
 			</div>
 		</div>
 	<body>
