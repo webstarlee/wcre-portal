@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap);
+/* @import url(https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap);
 .sidebar{
     position:fixed;
     top:0;
@@ -94,5 +94,75 @@ ul li a span{
     height:40px;
     border-radius:50%;
     margin-right:10px;
+    object-fit:cover
+} */
+
+.sidebar {
+    background-color: #135182;
+}
+
+@media (min-width: 576px) {
+    .col-1-5 {
+        -ms-flex: 0 0 11.333333%;
+        flex: 0 0 11.333333%;
+        max-width: 11.333333%;
+    }
+}
+
+.custom-icon-brokers,.custom-icon-dashboard,.custom-icon-leases,.custom-icon-listings,.custom-icon-sales, .custom-icon-documents{
+    background-size:24px;
+    background-repeat:no-repeat;
+    color:#fff;
+    background-position:left center;
+    display:inline-block;
+    vertical-align:middle;
+    width:24px;
+    height:24px;
+    margin-right:10px
+}
+
+ul{
+    list-style-type:none;
+    padding:0;
+    margin:0
+}
+ul li{
+    padding:10px;
+    display:flex;
+    align-items:center;
+    transition:background-color .3s ease
+}
+ul li a{
+    color:#fff;
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    font-size:16px;
+    font-weight:700
+}
+ul li:hover {
+    background-color: #0f4068;
+}
+
+ul li:hover > a {
+    color: #fff;
+    text-decoration: none !important; 
+}
+ul li a span{
+    margin-right:10px
+}
+
+.logout-icon{
+    background-image:url(/static/icons/logout.png);
+    width:20px;
+    height:20px;
+    background-size:cover;
+    background-repeat:no-repeat;
+    cursor:pointer;
+}
+.user-profile-pic{
+    width:40px;
+    height:40px;
+    border-radius:50%;
     object-fit:cover
 }
