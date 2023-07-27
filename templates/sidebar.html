@@ -31,7 +31,7 @@
 				<a href="{{ url_for('logout') }}" class="logout-icon"></a>
 			</div>
 		</div> -->
-		<div class="d-none d-sm-flex col-sm-1 col-lg-2 sidebar flex-column vh-100 pl-0">
+		<div class="d-none d-sm-flex col-sm-1 col-lg-2 sidebar flex-column vh-100 px-0">
 			<a href="https://wolfcre.com/">
 				<img src="{{ url_for('static', filename='icons/cropped_logo.png') }}" class="img-fluid py-2 d-block d-lg-none" alt="">
 				<img src="{{ url_for('static', filename='icons/logo.png') }}" class="img-fluid p-3 d-none d-lg-block" alt="WCRE Logo">
@@ -56,7 +56,7 @@
 			<div class="user-info d-flex mt-auto text-left mb-3">
 				<img src="{{ current_user.profile_picture_url }}" class="img-fluid user-profile-pic ml-auto mr-3" alt="">
 				<div class="user-details d-none d-lg-block" style="max-width: 33%">
-					<div class="text-white text-wrap mw-100 text-break">lakjsdk lajskldjaklsdaksdjl</div>
+					<div class="text-white text-wrap mw-100 text-break">{{  current_user.fullname  }}</div>
 					<div class="text-light">{{ current_user.role }}</div>
 				</div>
 				<a href="{{ url_for('logout') }}" class="logout-icon m-auto"></a>
