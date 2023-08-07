@@ -32,10 +32,33 @@ import base64
 from flask_mail import Mail, Message
 from premailer import transform
 from flask_talisman import Talisman
+import logging
+import sentry_sdk
+from flask import Flask
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 ALLOWED_EXTENSIONS = {"pdf"}
+
+
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s: %(message)s",
+    datefmt="%d/%b/%Y %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
+
+
+sentry_sdk.init(
+    dsn="https://903f368e70906f512655f4f4555be8c6@o4505664587694081.ingest.sentry.io/4505664611155968",
+    integrations=[
+        FlaskIntegration(),
+    ],
+    traces_sample_rate=1.0,
+)
 
 
 try:
@@ -98,6 +121,11 @@ def login():
         else:
             return render_template("login.html", error="Invalid Username or Password")
     return render_template("login.html")
+
+
+@app.route("/debug-sentry")
+def trigger_error():
+    division_by_zero = 1 / 0
 
 
 @login_manager.user_loader
@@ -551,6 +579,7 @@ def create_ics(listing_id):
     response.headers["Content-Disposition"] = "attachment; filename=event.ics"
     return response
 
+
 @app.route("/edit_listing/<listing_id>", methods=["POST"])
 @login_required
 def edit_listing(listing_id):
@@ -562,12 +591,13 @@ def edit_listing(listing_id):
     if not listing:
         return {"success": False, "error": "Listing not found"}
 
-    for field in ['listing_type', 'listing_price']:
+    for field in ["listing_type", "listing_price"]:
         if field in data:
-            listings.update_one({'_id': ObjectId(listing_id)}, {'$set': {field: data[field]}})
+            listings.update_one(
+                {"_id": ObjectId(listing_id)}, {"$set": {field: data[field]}}
+            )
 
     return {"success": True}
-
 
 
 Talisman(app, content_security_policy=None)
