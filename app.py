@@ -203,6 +203,7 @@ def view_listings():
             page_parameter="page", per_page_parameter="per_page"
         )
         per_page = 12
+        
         total, listings_data = (
             (
                 listings.count_documents({}),
@@ -224,6 +225,7 @@ def view_listings():
             listings=listings_data,
             pagination=pagination,
             is_admin=is_admin,
+            listing_count=318,
         )
     return redirect(url_for("login"))
 

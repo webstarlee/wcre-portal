@@ -1,176 +1,145 @@
-/* @import url(https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap);
-.sidebar{
-    position:fixed;
-    top:0;
-    left:0;
-    height:100vh;
-    width:200px;
-    background-color:#135182;
-    color:#fff
-}
-.sidebar-header{
-    padding:10px;
-    text-align:center
-}
-.sidebar-header img{
-    width:150px;
-    height:auto
-}
-ul{
-    list-style-type:none;
-    padding:0;
-    margin:0
-}
-ul li{
-    padding:10px;
-    display:flex;
-    align-items:center;
-    transition:background-color .3s ease
-}
-ul li a{
-    color:#fff;
-    text-decoration:none;
-    display:flex;
-    align-items:center;
-    font-size:16px;
-    font-weight:700
-}
-ul li:hover {
-    background-color: #0f4068;
-}
-
-ul li:hover > a {
-    color: #fff;
-    text-decoration: none !important; 
-}
-ul li a span{
-    margin-right:10px
-}
-.custom-icon-brokers,.custom-icon-dashboard,.custom-icon-leases,.custom-icon-listings,.custom-icon-sales, .custom-icon-documents{
-    background-size:24px;
-    background-repeat:no-repeat;
-    color:#fff;
-    background-position:left center;
-    display:inline-block;
-    vertical-align:middle;
-    width:24px;
-    height:24px;
-    margin-right:10px
-}
-.user-info{
-    position:absolute;
-    bottom:20px;
-    left:0;
-    padding:0 20px;
-    background-color:#135182;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    color:#fff
-}
-.user-details{
-    display:flex;
-    flex-direction:column;
-    align-items:flex-start
-}
-.user-name{
-    margin-bottom:5px;
-    font-weight:700
-}
-.user-role{
-    font-size:14px
-}
-.logout-icon{
-    background-image:url(/static/icons/logout.png);
-    width:20px;
-    height:20px;
-    background-size:cover;
-    background-repeat:no-repeat;
-    cursor:pointer;
-    margin-left:14.5px
-}
-.user-profile-pic{
-    width:40px;
-    height:40px;
-    border-radius:50%;
-    margin-right:10px;
-    object-fit:cover
-} */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap');
 
 .sidebar {
-    background-color: #135182;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 200px;
+  background-color: #135182;
+  color: #fff;
 }
 
-@media (min-width: 576px) {
-    .col-1-5 {
-        -ms-flex: 0 0 11.333333%;
-        flex: 0 0 11.333333%;
-        max-width: 11.333333%;
-    }
+.sidebar-header {
+  padding: 10px;
+  text-align: center;
 }
 
-@media (min-width: 992px) {
-    .sidebar {
-        flex: 0 0 16.666667%;
-        max-width: 200px;
-        padding-right: 10px;
-    }
+.sidebar-header img {
+  width: 150px;
+  height: auto;
 }
 
-.custom-icon-brokers,.custom-icon-dashboard,.custom-icon-leases,.custom-icon-listings,.custom-icon-sales, .custom-icon-documents{
-    background-size:24px;
-    background-repeat:no-repeat;
-    color:#fff;
-    background-position:left center;
-    display:inline-block;
-    vertical-align:middle;
-    width:24px;
-    height:24px;
-    margin-right:10px
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
-ul{
-    list-style-type:none;
-    padding:0;
-    margin:0
+ul li {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s ease;
 }
-ul li{
-    padding:10px;
-    display:flex;
-    align-items:center;
-    transition:background-color .3s ease
+
+ul li a {
+  color: #fff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: bold;
+  column-gap: 12px;
 }
-ul li a{
-    color:#fff;
-    text-decoration:none;
-    display:flex;
-    align-items:center;
-    font-size:16px;
-    font-weight:700
-}
+
 ul li:hover {
-    background-color: #0f4068;
+  background-color: #0f4068;
 }
 
-ul li:hover > a {
+ul li a span {
+  margin-right: 10px;
+}
+
+.custom-icon-dashboard,
+.custom-icon-listings,
+.custom-icon-sales,
+.custom-icon-leases,
+.custom-icon-documents {
+  background-size: 24px;
+  background-repeat: no-repeat;
+  color: white;
+  background-position: left center;
+  display: inline-block;
+  vertical-align: middle;
+  width: 24px;
+  margin: 0;
+  height: 24px;
+}
+
+.user-info {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  padding: 0px 14px 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.user-name {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.user-role {
+  font-size: 14px;
+}
+
+.logout-icon {
+  background-image: url('/static/icons/logout.png');
+  width: 20px;
+  height: 20px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.user-profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+.toggle-sidebar-btn{
+  display: none;
+}
+
+
+@media only screen and (max-width: 768px) {
+  .sidebar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: auto;
+    background-color: #135182;
     color: #fff;
-    text-decoration: none !important; 
-}
-ul li a span{
-    margin-right:10px
-}
+    z-index: 1;
+  }
 
-.logout-icon{
-    background-image:url(/static/icons/logout.png);
-    width:20px;
-    height:20px;
-    background-size:cover;
-    background-repeat:no-repeat;
-    cursor:pointer;
-}
-.user-profile-pic{
-    width:40px;
-    height:40px;
-    border-radius:50%;
-    object-fit:cover
+  .toggle-sidebar-btn{
+    display: block;
+  }
+
+  .sidebar-items{
+    display: none;
+  }
+
+  .sidebar-header{
+    display: none;
+  }
+
+  .user-info{
+    display: none;
+  }
 }

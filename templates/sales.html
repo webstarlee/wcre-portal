@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta charset="utf-8">
     <title>Admin Portal - Sales</title>
     <link rel="icon" type="image/png" href="/static/icons/cropped_logo.png">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sales.css') }}">
@@ -12,20 +10,30 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/sales.js') }}"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="{{ url_for('static', filename='js/sales.js') }}"></script>
   </head>
   <body data-is-admin="{{ is_admin }}">
-    <div class="container"> {% include 'sidebar.html' %} <div class="content">
-        <div class="toolbar">
-          <form id="search-form" class="search-form">
-            <input type="text" id="search-input" placeholder="Search Sales..." />
-            <button id="open-map-button" type="button">Open Sales Map</button>
-            <button id="add-sale-button" type="button">Add Sale</button>
-          </form>
-        </div>
-        <table class="centered-table">
+    <div id="error-notification" class="error-notification"></div>
+    <div id="success-notification" class="success-notification"></div> 
+    {% include 'sidebar.html' %} 
+    <div class="content">
+      <div class="toolbar" style="padding: 10px 0; position: relative;">
+        <form id="search-form" class="search-form" style="text-align: start; display: flex;flex-wrap: wrap;column-gap: 20px;row-gap: 10px;justify-content: space-between;position: relative;width: 100%;float: right;">
+          <div class="sales-count-div">
+            <div id="sales-count" style="position: relative; left: 0; flex-shrink: 0;" class="sales-count header-btns">Total Sales: {{ sale_count }}</div>
+          </div>
+          <div style="display: flex;flex-wrap: wrap; column-gap: 20px;row-gap: 10px;">
+            <input type="text" class="sales-count-div" style="flex-shrink: 0;" id="search-input" placeholder="Search Sales..." />
+            <button id="open-map-button" class="header-btns" style="flex-shrink: 0;" type="button">Open Sales Map</button>
+            <button id="delete-all-button" class="header-btns" style="flex-shrink: 0;" type="button">Delete All Sales</button>
+            <button id="add-sale-button" class="header-btns" style="flex-shrink: 0;" type="button">Add Sale</button>
+          </div>
+        </form>
+      </div>
+      <div class="table-div">
+        <table class="centered-table" style="width: 100%; margin: 0;">
           <thead>
             <tr>
               <th>Property Type</th>
@@ -42,7 +50,9 @@
               <th>Sale Agreement</th>
             </tr>
           </thead>
-          <tbody> {% for sale in sales %} <tr data-sale-id="{{ sale._id }}">
+          <tbody> 
+            {% for sale in sales %} 
+            <tr data-sale-id="{{ sale._id }}">
               <td>{{ sale.sale_property_type }}</td>
               <td>{{ sale.sale_type }}</td>
               <td>{{ sale.sale_end_date }}</td>
@@ -72,13 +82,11 @@
           <table>
             {{ pagination.links }}
       </div>
-      <div id="error-notification" class="error-notification"></div>
-      <div id="success-notification" class="success-notification"></div>
       <div id="action-modal" class="action-modal">
         <button id="delete-button">Delete Sale</button>
         <button id="edit-button">Edit Sale</button>
       </div>
-      <div id="add-sale-modal" class="modal">
+      <div id="add-sale-modal" class="add-sale-modal">
         <div id="error-notification-modal" class="error-notification-modal"></div>
         <div id="success-notification-modal" class="success-notification-modal"></div>
         <div class="modal-content">
@@ -205,6 +213,38 @@
               <button id="next-button" class="minimal-button next-step" type="button">Next</button>
             </div>
           </form>
+        </div>
+      </div>
+      <div id="edit-sale-modal" class="edit-sale-modal">
+        <div id="error-notification-modal" class="error-notification-modal"></div>
+        <div id="success-notification-modal" class="success-notification-modal"></div>
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <form id="edit-sale-modal" class="modal-form">
+            <div id="step1" class="modal-step active-step">
+              <h2 class="modal-step-title">Edit sale</h2>
+              <div class="form-group">
+                <label for="edit-sale-type">sale Type:</label>
+                <select id="edit-sale-type" name="edit-sale-type" required>
+                  <option value="Sale">Sale</option>
+                  <option value="Lease">Lease</option>
+                  <option value="Sale and Lease">Sale and Lease</option>
+                  <option value="Sublease">Sublease</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="edit-sale-price">sale Price:</label>
+                <input type="text" id="edit-sale-price" name="edit-sale-price" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <button id="upload-sale-agreement" type="button">Upload Sale Agreement</button>
+              <input id="sale-agreement" type="file" style="display:none;" accept=".pdf">
+              <input type="hidden" id="sale-agreement-file-base64" name="sale-agreement-file-base64">
+            </div>
+            <div class="modal-navigation">
+              <button id="submit-button-edit" class="minimal-button submit-step" type="button">Submit Edit Changes</button>
+            </div>
         </div>
       </div>
   </body>

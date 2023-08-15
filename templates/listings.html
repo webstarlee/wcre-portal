@@ -19,15 +19,21 @@
     <div id="success-notification" class="success-notification"></div> 
     {% include 'sidebar.html' %} 
     <div class="content">
-      <div class="toolbar">
-        <form id="search-form" class="search-form">
-          <input type="text" id="search-input" placeholder="Search Listings..." />
-          <button id="open-map-button" type="button">Open Listings Map</button>
-          <button id="delete-all-button" type="button">Delete All Listings</button>
-          <button id="add-listing-button" type="button">Add Listing</button>
+      <div class="toolbar" style="padding: 10px 0; position: relative;">
+        <form id="search-form" class="search-form" style="text-align: start; display: flex;flex-wrap: wrap;column-gap: 20px;row-gap: 10px;justify-content: space-between;position: relative;width: 100%;float: right;">
+          <div class="listings-count-div">
+            <div id="listings-count" style="position: relative; left: 0; flex-shrink: 0;" class="listings-count header-btns">Total Listings: {{ listing_count }}</div>
+          </div>
+          <div style="display: flex;flex-wrap: wrap; column-gap: 20px;row-gap: 10px;">
+            <input type="text" class="listings-count-div" style="flex-shrink: 0;" id="search-input" placeholder="Search Listings..." />
+            <button id="open-map-button" class="header-btns" style="flex-shrink: 0;" type="button">Open Listings Map</button>
+            <button id="delete-all-button" class="header-btns" style="flex-shrink: 0;" type="button">Delete All Listings</button>
+            <button id="add-listing-button" class="header-btns" style="flex-shrink: 0;" type="button">Add Listing</button>
+          </div>
         </form>
       </div>
-      <table class="centered-table">
+      <div class="table-div">
+        <table class="centered-table" style="width: 100%; margin: 0;">
         <thead>
           <tr>
             <th>Property Type</th>
@@ -67,9 +73,7 @@
             <td>
               <form class="listing-form" action="{{ url_for('submit_listing') }}" method="POST"> {% if listing.pdf_file_base64 %} <a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
             </td>
-          </tr> 
-          {% endfor %} 
-        </tbody>
+          </tr> {% endfor %} </tbody>
         <table>
           {{ pagination.links }}
     </div>
@@ -216,9 +220,8 @@
             <input id="listing-agreement" type="file" style="display:none;" accept=".pdf">
             <input type="hidden" id="listing-agreement-file-base64" name="listing-agreement-file-base64">
           </div>
-            <div class="modal-navigation">
-              <button id="submit-button-edit" class="minimal-button submit-step" type="button">Submit Edit Changes</button>
-            </div>
+          <div class="modal-navigation">
+            <button id="submit-button-edit" class="minimal-button submit-step" type="button">Submit Edit Changes</button>
           </div>
       </div>
     </div>
