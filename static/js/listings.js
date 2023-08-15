@@ -205,14 +205,61 @@ $(document).ready(function() {
         return isValid;
     }
 
-    // SEARCH INPUT
-    $('#search-input').on('input', function() {
-        var searchTerm = $(this).val().toLowerCase();
-        $('.centered-table tbody tr').each(function() {
-            var listing = $(this).text().toLowerCase();
-            $(this).toggle(listing.indexOf(searchTerm) > -1);
-        });
-    });
+    var currentPage = 1;
+	function searchListings(page) {
+		var searchTerm = $('#search-input').val().toLowerCase();
+		$.ajax({
+			url: '/search',
+			method: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				query: searchTerm,
+				page: page
+			}),
+			success: function(search_results_data) {
+				var rows = $.map(search_results_data, function(result) {
+					var $row = $('<tr>').attr('data-listing-id', result._id);
+					$row.append($('<td>').text(result.listing_street));
+					$row.append($('<td>').text(result.listing_city));
+					$row.append($('<td>').text(result.listing_state));
+					$row.append($('<td>').html(result.listing_owner));
+					$row.append($('<td>').html(result.listing_email));
+					$row.append($('<td>').html(result.listing_phone));
+					$row.append($('<td>').text(result.brokers));
+					$row.append($('<td>').text(result.listing_end_date));
+					$row.append($('<td>').html(result.listing_start_date));
+					$row.append($('<td>').html(result.listing_property_type));
+					$row.append($('<td>').html(result.listing_type));
+                    $row.append($('<td>').html(result.listing_price));
+                    $row.append($('<td>').html(result.listingType));
+					return $row;
+				});
+				$('.centered-table tbody').empty().append(rows);
+			},
+			error: function(textStatus, errorThrown) {
+				console.error('Error Fetching Search Results:', textStatus, errorThrown);
+				showErrorNotificationModal("Error Fetching Search Results");
+			}
+		});
+	}
+
+
+	$('#search-input').on('input', function() {
+		currentPage = 1; // Reset to the first page on a new search
+		searchListings(currentPage);
+	});
+
+	$('#next-page').on('click', function() {
+		currentPage++;
+		searchListings(currentPage);
+	});
+
+	$('#prev-page').on('click', function() {
+		if (currentPage > 1) {
+			currentPage--;
+			searchListings(currentPage);
+		}
+	});
 
     uploadButton.addEventListener('click', function(e) {
         fileInput.click();
