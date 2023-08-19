@@ -264,7 +264,7 @@ def view_listings():
             listings=listings_data,
             pagination=pagination,
             is_admin=is_admin,
-            listing_count=318,
+            listing_count=total,
         )
     return redirect(url_for("login"))
 
