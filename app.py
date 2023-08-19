@@ -193,9 +193,9 @@ def logout():
     logout_user()
     return redirect(url_for("login"))
 
-@app.route("/search", methods=["POST"])
+@app.route("/search_listings", methods=["POST"])
 @login_required
-def search():
+def search_listings():
     page = int(request.get_json().get("page", 1))  # Get page number from the request
     items_per_page = 12
     search_query = request.get_json().get("query")

@@ -51,82 +51,85 @@
         </li>
       </ul>
       <div class="user-info">
-        <img class="user-profile-pic" src="{{ current_user.profile_picture_url }}" alt="User Profile Picture">
-        <div class="user-details">
-          <div class="user-name">{{ current_user.fullname }}</div>
-          <div class="user-role">{{ current_user.role }}</div>
+        <div style="display: flex; padding: 8px">
+          <img class="user-profile-pic" src="{{ current_user.profile_picture_url }}" alt="User Profile Picture" />
+          <div class="user-details-wrapper">
+            <div class="user-details">
+              <div class="user-name">{{ current_user.fullname }}</div>
+              <div class="user-role">{{ current_user.role }}</div>
+            </div>
+            <a href="{{ url_for('logout') }}" class="logout-icon"></a>
+          </div>
         </div>
-        <a href="{{ url_for('logout') }}" class="logout-icon"></a>
       </div>
     </div>
-    <body>
-      <html>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script>
-          const sidebarHeader = document.getElementsByClassName("sidebar-header");
-          const sidebarItems = document.getElementsByClassName("sidebar-items");
-          const userInfo = document.getElementsByClassName("user-info");
-          const sidebarBtn = document.getElementById("toggle-sidebar-btn");
-          $(window).on("resize", function() {
-            for (let i = 0; i < sidebarHeader.length; i++) {
-              if ($(window).width() > 752) {
-                $(".sidebar-header")[i].style.display = "block";
-                sidebarBtn.innerHTML = "<";
-              } else {
-                $(".sidebar-header")[i].style.display = "none";
-                sidebarBtn.innerHTML = ">";
-              }
-            }
-            for (let i = 0; i < sidebarHeader.length; i++) {
-              if ($(window).width() > 752) {
-                $(".sidebar-header")[i].style.display = "block";
-              } else {
-                $(".sidebar-header")[i].style.display = "none";
-              }
-            }
-            for (let i = 0; i < sidebarItems.length; i++) {
-              if ($(window).width() > 752) {
-                $(".sidebar-items")[i].style.display = "block";
-              } else {
-                $(".sidebar-items")[i].style.display = "none";
-              }
-            }
-            for (let i = 0; i < userInfo.length; i++) {
-              if ($(window).width() > 752) {
-                $(".user-info")[i].style.display = "block";
-              } else {
-                $(".user-info")[i].style.display = "none";
-              }
-            }
-          });
+  <body>
+<html>
+<script>
+  const sidebarHeader = document.getElementsByClassName("sidebar-header");
+  const sidebarItems = document.getElementsByClassName("sidebar-items");
+  const userInfo = document.getElementsByClassName("user-info");
+  const sidebarBtn = document.getElementById("toggle-sidebar-btn");
+  $(window).on("resize", function() {
+    for (let i = 0; i < sidebarHeader.length; i++) {
+      if ($(window).width() > 752) {
+        $(".sidebar-header")[i].style.display = "block";
+        sidebarBtn.innerHTML = "<";
+      } else {
+        $(".sidebar-header")[i].style.display = "none";
+        sidebarBtn.innerHTML = ">";
+      }
+    }
+    for (let i = 0; i < sidebarHeader.length; i++) {
+      if ($(window).width() > 752) {
+        $(".sidebar-header")[i].style.display = "block";
+      } else {
+        $(".sidebar-header")[i].style.display = "none";
+      }
+    }
+    for (let i = 0; i < sidebarItems.length; i++) {
+      if ($(window).width() > 752) {
+        $(".sidebar-items")[i].style.display = "block";
+      } else {
+        $(".sidebar-items")[i].style.display = "none";
+      }
+    }
+    for (let i = 0; i < userInfo.length; i++) {
+      if ($(window).width() > 752) {
+        $(".user-info")[i].style.display = "block";
+      } else {
+        $(".user-info")[i].style.display = "none";
+      }
+    }
+  });
 
-          function handleSidebar() {
-            const sidebarHeader = document.getElementsByClassName("sidebar-header");
-            const sidebarItems = document.getElementsByClassName("sidebar-items");
-            const userInfo = document.getElementsByClassName("user-info");
-            const sidebarBtn = document.getElementById("toggle-sidebar-btn");
-            for (let i = 0; i < sidebarItems.length; i++) {
-              if (sidebarItems[i].style.display === "block") {
-                sidebarItems[i].style.display = "none";
-                sidebarBtn.innerHTML = ">";
-              } else {
-                sidebarItems[i].style.display = "block";
-                sidebarBtn.innerHTML = "<";
-              }
-            }
-            for (let i = 0; i < userInfo.length; i++) {
-              if (userInfo[i].style.display === "block") {
-                userInfo[i].style.display = "none";
-              } else {
-                userInfo[i].style.display = "block";
-              }
-            }
-            for (let i = 0; i < sidebarHeader.length; i++) {
-              if (sidebarHeader[i].style.display === "block") {
-                sidebarHeader[i].style.display = "none";
-              } else {
-                sidebarHeader[i].style.display = "block";
-              }
-            }
-          }
-        </script>
+  function handleSidebar() {
+    const sidebarHeader = document.getElementsByClassName("sidebar-header");
+    const sidebarItems = document.getElementsByClassName("sidebar-items");
+    const userInfo = document.getElementsByClassName("user-info");
+    const sidebarBtn = document.getElementById("toggle-sidebar-btn");
+    for (let i = 0; i < sidebarItems.length; i++) {
+      if (sidebarItems[i].style.display === "block") {
+        sidebarItems[i].style.display = "none";
+        sidebarBtn.innerHTML = ">";
+      } else {
+        sidebarItems[i].style.display = "block";
+        sidebarBtn.innerHTML = "<";
+      }
+    }
+    for (let i = 0; i < userInfo.length; i++) {
+      if (userInfo[i].style.display === "block") {
+        userInfo[i].style.display = "none";
+      } else {
+        userInfo[i].style.display = "block";
+      }
+    }
+    for (let i = 0; i < sidebarHeader.length; i++) {
+      if (sidebarHeader[i].style.display === "block") {
+        sidebarHeader[i].style.display = "none";
+      } else {
+        sidebarHeader[i].style.display = "block";
+      }
+    }
+  }
+</script>

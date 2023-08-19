@@ -209,7 +209,7 @@ $(document).ready(function() {
 	function searchListings(page) {
 		var searchTerm = $('#search-input').val().toLowerCase();
 		$.ajax({
-			url: '/search',
+			url: '/search_listings',
 			method: 'POST',
 			contentType: 'application/json',
 			data: JSON.stringify({
@@ -219,19 +219,22 @@ $(document).ready(function() {
 			success: function(search_results_data) {
 				var rows = $.map(search_results_data, function(result) {
 					var $row = $('<tr>').attr('data-listing-id', result._id);
-					$row.append($('<td>').text(result.listing_street));
-					$row.append($('<td>').text(result.listing_city));
-					$row.append($('<td>').text(result.listing_state));
+                    $row.append($('<td>').html(result.listing_property_type));
+                    $row.append($('<td>').html(result.listing_type));
+					$row.append($('<td>').html(result.listing_start_date));
+                    $row.append($('<td>').text(result.listing_end_date));
+                    $row.append($('<td>').html(result.listing_price));
+                    $row.append($('<td>').text(result.listing_street));
+                    $row.append($('<td>').text(result.listing_city));
 					$row.append($('<td>').html(result.listing_owner));
 					$row.append($('<td>').html(result.listing_email));
 					$row.append($('<td>').html(result.listing_phone));
 					$row.append($('<td>').text(result.brokers));
-					$row.append($('<td>').text(result.listing_end_date));
-					$row.append($('<td>').html(result.listing_start_date));
-					$row.append($('<td>').html(result.listing_property_type));
-					$row.append($('<td>').html(result.listing_type));
-                    $row.append($('<td>').html(result.listing_price));
-                    $row.append($('<td>').html(result.listingType));
+                    if(result.pdf_file_base64) {
+                        $row.append($('<td>').html('<a href="/download_listing_pdf?listing_id=' + result._id + '">Fully Executed</a>'));
+                    } else {
+                        $row.append($('<td>').text('Pending'));
+                    }
 					return $row;
 				});
 				$('.centered-table tbody').empty().append(rows);
