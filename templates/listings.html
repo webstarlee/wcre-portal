@@ -125,10 +125,6 @@
               <input type="text" id="listing-owner-name" name="listing-owner-name" required>
             </div>
             <div class="form-group">
-              <label for="listing-owner-name">Owner Entity:</label>
-              <input type="text" id="listing-owner-name" name="listing-owner-name" required>
-            </div>
-            <div class="form-group">
               <label for="listing-owner-email">Owner Email:</label>
               <input type="email" id="listing-owner-email" name="listing-owner-email" required>
             </div>
@@ -204,13 +200,12 @@
           <div id="step1" class="modal-step active-step">
             <h2 class="modal-step-title">Edit Listing</h2>
             <div class="form-group">
-              <label for="edit-listing-type">Listing Type:</label>
-              <select id="edit-listing-type" name="edit-listing-type" required>
-                <option value="Sale">Sale</option>
-                <option value="Lease">Lease</option>
-                <option value="Sale and Lease">Sale and Lease</option>
-                <option value="Sublease">Sublease</option>
-              </select>
+              <label for="edit-listing-start-date">Listing Start Date:</label>
+              <input type="text" id="edit-listing-start-date" name="edit-listing-start-date" required>
+            </div>
+            <div class="form-group">
+              <label for="edit-listing-end-date">Listing End Date:</label>
+              <input type="text" id="edit-listing-end-date" name="edit-listing-end-date" required>
             </div>
             <div class="form-group">
               <label for="edit-listing-price">Listing Price:</label>
@@ -218,10 +213,30 @@
             </div>
           </div>
           <div class="form-group">
+            <label for="edit-listing-street">Listing Street:</label>
+            <input type="text" id="edit-listing-street" name="edit-listing-street" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-listing-city">Listing City:</label>
+            <input type="text" id="edit-listing-city" name="edit-listing-city" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-listing-owner-name">Owner Name:</label>
+            <input type="text" id="edit-listing-owner-name" name="edit-listing-owner-name" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-listing-owner-email">Owner Email:</label>
+            <input type="email" id="edit-listing-owner-email" name="edit-listing-owner-email" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-listing-owner-phone">Owner Phone Number:</label>
+            <input type="tel" id="edit-listing-owner-phone" name="edit-listing-owner-phone" required>
+          </div>
+<!--           <div class="form-group">
             <button id="upload-listing-agreement" type="button">Upload Listing Agreement</button>
             <input id="listing-agreement" type="file" style="display:none;" accept=".pdf">
             <input type="hidden" id="listing-agreement-file-base64" name="listing-agreement-file-base64">
-          </div>
+          </div> -->
           <div class="modal-navigation">
             <button id="submit-button-edit" class="minimal-button submit-step" type="button">Submit Edit Changes</button>
           </div>

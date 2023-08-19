@@ -114,20 +114,45 @@ $(document).ready(function() {
         const selectedRow = $('.centered-table tbody tr[data-listing-id="' + listing_id + '"]');
         const listingAddress = selectedRow.find('td:nth-child(6)').text().trim();
         $('#edit-listing-modal .modal-step-title').text('Edit Listing - ' + listingAddress);
-        const listingType = selectedRow.find('td:nth-child(2)').text().trim();
+        const listingStartDate = selectedRow.find('td:nth-child(3)').text().trim();
+        const listingEndDate = selectedRow.find('td:nth-child(4)').text().trim();
         const listingPrice = selectedRow.find('td:nth-child(5)').text().trim();
-        $("#edit-listing-type").val(listingType);
+        const listingStreet = selectedRow.find('td:nth-child(6)').text().trim();
+        const listingCity = selectedRow.find('td:nth-child(7)').text().trim();
+        const listingOwner = selectedRow.find('td:nth-child(8)').text().trim();
+        const listingOwnerEmail = selectedRow.find('td:nth-child(9)').text().trim();
+        const listingOwnerPhone = selectedRow.find('td:nth-child(10)').text().trim();
+        $("#edit-listing-start-date").val(listingStartDate);
+        $("#edit-listing-end-date").val(listingEndDate);
         $("#edit-listing-price").val(listingPrice);
+        $("#edit-listing-street").val(listingStreet);
+        $("#edit-listing-city").val(listingCity);
+        $("#edit-listing-owner-name").val(listingOwner);
+        $("#edit-listing-owner-email").val(listingOwnerEmail);
+        $("#edit-listing-owner-phone").val(listingOwnerPhone);
+
     });
 
     $("#submit-button-edit").click(function() {
         $('#edit-listing-modal').css('display', 'none');
-        var listingType = $("#edit-listing-type").val();
         var listingPrice = $("#edit-listing-price").val();
-    
+        var listingStartDate = $("#edit-listing-start-date").val();
+        var listingEndDate = $("#edit-listing-end-date").val();
+        var listingStreet = $("#edit-listing-street").val();
+        var listingCity = $("#edit-listing-city").val();
+        var listingOwner = $("#edit-listing-owner-name").val();
+        var listingEmail = $("#edit-listing-owner-email").val();
+        var listingPhone = $("#edit-listing-owner-phone").val();
+
         var data = {
-            'listing_type': listingType,
             'listing_price': listingPrice,
+            'listing_start_date': listingStartDate,
+            'listing_end_date': listingEndDate,
+            'listing_street': listingStreet,
+            'listing_city': listingCity,
+            'listing_owner': listingOwner,
+            'listing_email': listingEmail,
+            'listing_phone': listingPhone
         }
     
         $.ajax({

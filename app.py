@@ -193,6 +193,7 @@ def logout():
     logout_user()
     return redirect(url_for("login"))
 
+
 @app.route("/search_listings", methods=["POST"])
 @login_required
 def search_listings():
@@ -219,7 +220,12 @@ def search_listings():
             {"listing_price": regex_query},
         ]
     }
-    search_results = listings.find(query).sort("_id", -1).skip((page - 1) * items_per_page).limit(items_per_page) # Pagination
+    search_results = (
+        listings.find(query)
+        .sort("_id", -1)
+        .skip((page - 1) * items_per_page)
+        .limit(items_per_page)
+    )  # Pagination
     search_results_data = []
     for result in search_results:
         result["_id"] = str(result["_id"])
@@ -236,7 +242,7 @@ def view_listings():
             page_parameter="page", per_page_parameter="per_page"
         )
         per_page = 12
-        
+
         total, listings_data = (
             (
                 listings.count_documents({}),
@@ -618,20 +624,24 @@ def create_ics(listing_id):
 @app.route("/edit_listing/<listing_id>", methods=["POST"])
 @login_required
 def edit_listing(listing_id):
-    print("in here")
     data = request.get_json()
-    print(data)
-
     listing = listings.find_one({"_id": ObjectId(listing_id)})
     if not listing:
         return {"success": False, "error": "Listing not found"}
-
-    for field in ["listing_type", "listing_price"]:
+    for field in [
+        "listing_price",
+        "listing_start_date",
+        "listing_end_date",
+        "listing_street",
+        "listing_city",
+        "listing_owner",
+        "listing_email",
+        "listing_phone"
+    ]:
         if field in data:
             listings.update_one(
                 {"_id": ObjectId(listing_id)}, {"$set": {field: data[field]}}
             )
-
     return {"success": True}
 
 
