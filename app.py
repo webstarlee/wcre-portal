@@ -246,7 +246,7 @@ def view_listings():
         total, listings_data = (
             (
                 listings.count_documents({}),
-                listings.find().skip((page - 1) * per_page).limit(per_page),
+                listings.find().sort("_id", -1).skip((page - 1) * per_page).limit(per_page),
             )
             if current_user.role == "Admin"
             else (
@@ -299,6 +299,7 @@ def view_sales():
             sales=sales_data,
             pagination=pagination,
             is_admin=is_admin,
+            sale_count=total,
         )
     return redirect(url_for("login"))
 

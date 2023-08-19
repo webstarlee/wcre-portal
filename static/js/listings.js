@@ -80,22 +80,6 @@ $(document).ready(function() {
         $("#listing-end-date").datepicker();
     });
 
-
-    // RESET FORM DATA
-    function resetForm() {
-        // Reset all form fields to their initial state
-        $('#submit-listing-form')[0].reset();
-        $('#listing-agreement-file-base64').val('');
-        $('#upload-listing-agreement').text('Upload Listing Agreement');
-        $('#upload-listing-agreement').prop('disabled', false);
-        $('#listing-brokers').removeClass('error');
-        $('.error').removeClass('error');
-        $('.modal-step').removeClass('active-step');
-        $('.modal-step:first').addClass('active-step');
-        $('.prev-step').css('visibility', 'hidden');
-        $('.next-step').text('Next');
-    }
-
     // OPEN MODAL
     $("#add-listing-button").click(function() {
 		$("body").addClass("modal-open");
@@ -103,12 +87,24 @@ $(document).ready(function() {
 		$("#add-listing-modal").show();
 	});
 
+    $(".add-listing-modal").click(function(e) {
+		if ($(e.target).hasClass("add-listing-modal") || $(e.target).hasClass("close")) {
+			$("body").removeClass("modal-open");
+			$("#add-listing-modal").hide();
+		}
+	});
+	$(".edit-listing-modal").click(function(e) {
+		if ($(e.target).hasClass("edit-listing-modal") || $(e.target).hasClass("close")) {
+			$("body").removeClass("modal-open");
+			$("#edit-listing-modal").hide();
+		}
+	});
+
 
     $("#edit-button").click(function () {
         $("body").addClass("modal-open");
         $("#add-listing-modal").hide();
         $("#edit-listing-modal").show();
-            
         const actionModal = $('#action-modal');
         actionModal.hide();
         const selectedRow = $('.centered-table tbody tr[data-listing-id="' + listing_id + '"]');
@@ -130,7 +126,6 @@ $(document).ready(function() {
         $("#edit-listing-owner-name").val(listingOwner);
         $("#edit-listing-owner-email").val(listingOwnerEmail);
         $("#edit-listing-owner-phone").val(listingOwnerPhone);
-
     });
 
     $("#submit-button-edit").click(function() {
@@ -162,36 +157,24 @@ $(document).ready(function() {
             data: JSON.stringify(data),
             success: function(response) {
                 if (response.success) {
-                    showSuccessNotification('Listing Edited Successfully');
                     console.log("Listing Edited Successfully");
                     location.reload();
                 } else {
                     showErrorNotificationModal('Error Editing listing');
+                    console.log("Error Editing listing");
                 }
             },
-            error: function(xhr, status, error) {
+            error: function() {
                 showErrorNotificationModal('Error Editing listing');
+                console.log("Error Editing listing");
             }
         });
     });
-    
-
-    $(".add-listing-modal").click(function(e) {
-		if ($(e.target).hasClass("add-listing-modal") || $(e.target).hasClass("close")) {
-			$("body").removeClass("modal-open");
-			$("#add-listing-modal").hide();
-		}
-	});
-	$(".edit-listing-modal").click(function(e) {
-		if ($(e.target).hasClass("edit-listing-modal") || $(e.target).hasClass("close")) {
-			$("body").removeClass("modal-open");
-			$("#edit-listing-modal").hide();
-		}
-	});
 
     function validateStep() {
-        var currentStep = $('.active-step');
+        var currentStep = $('.active-step.main-form-step');
         var inputs = currentStep.find('input:required, select:required');
+        console.log(inputs);
         var isValid = true;
 
         inputs.each(function() {
@@ -243,18 +226,22 @@ $(document).ready(function() {
 			}),
 			success: function(search_results_data) {
 				var rows = $.map(search_results_data, function(result) {
+                    console.log(result.listing_price)
 					var $row = $('<tr>').attr('data-listing-id', result._id);
                     $row.append($('<td>').html(result.listing_property_type));
                     $row.append($('<td>').html(result.listing_type));
 					$row.append($('<td>').html(result.listing_start_date));
-                    $row.append($('<td>').text(result.listing_end_date));
-                    $row.append($('<td>').html(result.listing_price));
+                    $row.append($('<td>').html('<a href="createics:' + result.listing_end_date + '">' + result.listing_end_date + '</a>'));
+                    $row.append($('<td>').html(result.listing_price ? result.listing_price : "None"));
                     $row.append($('<td>').text(result.listing_street));
                     $row.append($('<td>').text(result.listing_city));
 					$row.append($('<td>').html(result.listing_owner));
-					$row.append($('<td>').html(result.listing_email));
-					$row.append($('<td>').html(result.listing_phone));
-					$row.append($('<td>').text(result.brokers));
+					$row.append($('<td>').html('<a href="mailto:' + result.listing_email + '">' + result.listing_email + '</a>'));
+					$row.append($('<td>').html('<a href="tel:' + result.listing_phone + '">' + result.listing_phone + '</a>'));
+					var brokerElements = $.map(result.brokers, function(broker) {
+                        return $('<span>').addClass('broker-name').text(broker);
+                    });
+                    $row.append($('<td>').append(brokerElements));                    
                     if(result.pdf_file_base64) {
                         $row.append($('<td>').html('<a href="/download_listing_pdf?listing_id=' + result._id + '">Fully Executed</a>'));
                     } else {
@@ -344,10 +331,12 @@ $(document).ready(function() {
     // NEXT STEP
     $('.next-step').on('click', function() {
         var currentStep = $('.active-step');
-        var nextStep = currentStep.next('.modal-step');
+        var nextStep = currentStep.next('.modal-step.main-form-step');
 
         if (nextStep.length) {
+            console.log("here");
             if (validateStep()) {
+                console.log("in here")
                 currentStep.removeClass('active-step');
                 nextStep.addClass('active-step');
                 $('.prev-step').css('visibility', 'visible');
@@ -383,7 +372,6 @@ $(document).ready(function() {
         if (!prevStep.prev('.modal-step').length) {
             $(this).css('visibility', 'hidden');
         }
-
         currentStep.find('input:required, select:required').removeClass('error');
     });
 
@@ -428,6 +416,12 @@ $(document).ready(function() {
             }).show();
             $(this).focus();
         }
+    });
+
+    // CLOSE MODAL
+    $("#add-listing-modal .close").click(function() {
+        $("body").removeClass("modal-open");
+        $("#add-listing-modal").hide();
     });
 
     $(document).bind('click', function(e) {

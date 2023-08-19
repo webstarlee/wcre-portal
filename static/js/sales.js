@@ -96,6 +96,7 @@ $(document).ready(function() {
     // OPEN MODAL
     $("#add-sale-button").click(function() {
         $("body").addClass("modal-open");
+        $("#edit-sale-modal").hide();
         $("#add-sale-modal").show();
     });
 
@@ -109,6 +110,19 @@ $(document).ready(function() {
         $(this).css('display', 'none');
         resetForm();
     });
+
+    $(".add-sale-modal").click(function(e) {
+		if ($(e.target).hasClass("add-sale-modal") || $(e.target).hasClass("close")) {
+			$("body").removeClass("modal-open");
+			$("#add-sale-modal").hide();
+		}
+	});
+	$(".edit-sale-modal").click(function(e) {
+		if ($(e.target).hasClass("edit-sale-modal") || $(e.target).hasClass("close")) {
+			$("body").removeClass("modal-open");
+			$("#edit-sale-modal").hide();
+		}
+	});
 
     function validateStep() {
         var currentStep = $('.active-step');

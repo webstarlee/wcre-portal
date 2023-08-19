@@ -89,7 +89,7 @@
       <div class="modal-content">
         <span class="close">&times;</span>
         <form id="submit-listing-form" class="modal-form" action="{{ url_for('submit_listing') }}" method="POST">
-          <div id="step1" class="modal-step active-step">
+          <div class="modal-step active-step main-form-step" id="main-step1">
             <h2 class="modal-step-title">New Listing - Address Information</h2>
             <div class="form-group">
               <label for="listing-street">Listing Street:</label>
@@ -118,7 +118,7 @@
               </select>
             </div>
           </div>
-          <div id="step2" class="modal-step">
+          <div class="modal-step main-form-step" id="main-step2">
             <h2 class="modal-step-title">New Listing - Owner Information</h2>
             <div class="form-group">
               <label for="listing-owner-name">Owner Name:</label>
@@ -133,7 +133,7 @@
               <input type="tel" id="listing-owner-phone" name="listing-owner-phone" required>
             </div>
           </div>
-          <div id="step3" class="modal-step">
+          <div class="modal-step main-form-step" id="main-step3">
             <h2 class="modal-step-title">New Listing - General Information</h2>
             <div class="form-group">
               <label for="listing-type">Listing Type:</label>
@@ -197,7 +197,7 @@
       <div class="modal-content">
         <span class="close">&times;</span>
         <form id="edit-listing-modal" class="modal-form">
-          <div id="step1" class="modal-step active-step">
+          <div class="modal-step active-step edit-form-step" id="edit-step1">
             <h2 class="modal-step-title">Edit Listing</h2>
             <div class="form-group">
               <label for="edit-listing-start-date">Listing Start Date:</label>
