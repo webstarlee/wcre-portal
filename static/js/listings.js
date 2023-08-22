@@ -174,7 +174,6 @@ $(document).ready(function() {
     function validateStep() {
         var currentStep = $('.active-step.main-form-step');
         var inputs = currentStep.find('input:required, select:required');
-        console.log(inputs);
         var isValid = true;
 
         inputs.each(function() {
@@ -334,9 +333,7 @@ $(document).ready(function() {
         var nextStep = currentStep.next('.modal-step.main-form-step');
 
         if (nextStep.length) {
-            console.log("here");
             if (validateStep()) {
-                console.log("in here")
                 currentStep.removeClass('active-step');
                 nextStep.addClass('active-step');
                 $('.prev-step').css('visibility', 'visible');
@@ -457,8 +454,8 @@ $(document).ready(function() {
                     console.error('Failed to Delete Listing: ' + data.message);
                 }
             },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error('Failed to delete listing.');
+            error: function() {
+                console.error('Failed to Delete listing.');
             }
         });
     });
@@ -491,10 +488,13 @@ $(document).ready(function() {
                         console.log("Unexpected Status Code: " + jqXHR.status);
                     }
                 })
-                .fail(function(textStatus, errorThrown) {
+                .fail(function(jqXHR, textStatus, errorThrown) {
                     showErrorNotification('Error Uploading Listing');
-                    console.log("Error Uploading Listing: ", textStatus, errorThrown);
-                });
+                    console.log("Error Uploading Listing:", textStatus);
+                    console.log("HTTP Status:", jqXHR.status);
+                    console.log("Error Thrown:", errorThrown);
+                    console.log("Response Text:", jqXHR.responseText);
+                });                
         }
     });
 });

@@ -410,9 +410,9 @@ body.modal-open {
   z-index: 9999;
 }
 .error-notification-modal.show,
-.success-notification-modal.show,
+.success-notification-modal.show
 .success-notification.show,
-.success-notification-modal.show {
+.error-notification.show {
   opacity: 1;
 }
 .action-modal {

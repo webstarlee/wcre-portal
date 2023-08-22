@@ -93,7 +93,7 @@
         <div class="modal-content">
           <span class="close">&times;</span>
           <form id="submit-sale-form" class="modal-form" action="{{ url_for('submit_sale') }}" method="POST">
-            <div id="step1" class="modal-step active-step">
+            <div class="modal-step active-step main-form-step" id="main-step1">
               <h2 class="modal-step-title">New Sale - Address Information</h2>
               <div class="form-group">
                 <label for="sale-street">Sale Street:</label>
@@ -122,14 +122,10 @@
                 </select>
               </div>
             </div>
-            <div id="step2" class="modal-step">
+            <div class="modal-step main-form-step" id="main-step2">
               <h2 class="modal-step-title">New Sale - Buyer Information</h2>
               <div class="form-group">
                 <label for="sale-buyer-name">Buyer Name:</label>
-                <input type="text" id="sale-buyer-name" name="sale-buyer-name" required>
-              </div>
-              <div class="form-group">
-                <label for="sale-buyer-name">Buyer Entity:</label>
                 <input type="text" id="sale-buyer-name" name="sale-buyer-name" required>
               </div>
               <div class="form-group">
@@ -141,15 +137,11 @@
                 <input type="tel" id="sale-buyer-phone" name="sale-buyer-phone" required>
               </div>
             </div>
-            <div id="step3" class="modal-step">
+            <div class="modal-step main-form-step" id="main-step3">
               <h2 class="modal-step-title">New Sale - Seller Information</h2>
               <div class="form-group">
                 <label for="sale-seller-name">Seller Name:</label>
                 <input type="text" id="sale-seller-name" name="sale-seller-name" required>
-              </div>
-              <div class="form-group">
-                <label for="sale-seller-name">Seller Entity:</label>
-                <input type="text" id="sale-seller-entity" name="sale-seller-entity" required>
               </div>
               <div class="form-group">
                 <label for="sale-seller-email">Seller Email:</label>
@@ -160,7 +152,7 @@
                 <input type="tel" id="sale-seller-phone" name="sale-seller-phone" required>
               </div>
             </div>
-            <div id="step4" class="modal-step">
+            <div class="modal-step main-form-step" id="main-step4">
               <h2 class="modal-step-title">New Sale - General Information</h2>
               <div class="form-group">
                 <label for="sale-type">Sale Type:</label>
@@ -222,10 +214,10 @@
         <div class="modal-content">
           <span class="close">&times;</span>
           <form id="edit-sale-modal" class="modal-form">
-            <div id="step1" class="modal-step active-step">
-              <h2 class="modal-step-title">Edit sale</h2>
+            <div class="modal-step active-step edit-form-step" id="edit-step1">
+              <h2 class="modal-step-title">Edit Sale</h2>
               <div class="form-group">
-                <label for="edit-sale-type">sale Type:</label>
+                <label for="edit-sale-type">Sale Type:</label>
                 <select id="edit-sale-type" name="edit-sale-type" required>
                   <option value="Sale">Sale</option>
                   <option value="Lease">Lease</option>
@@ -234,7 +226,7 @@
                 </select>
               </div>
               <div class="form-group">
-                <label for="edit-sale-price">sale Price:</label>
+                <label for="edit-sale-price">Sale Price:</label>
                 <input type="text" id="edit-sale-price" name="edit-sale-price" required>
               </div>
             </div>
