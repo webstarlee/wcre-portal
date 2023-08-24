@@ -23,7 +23,7 @@ body{
   color: black;
 }
 .card {
-  border-radius: 20px;
+  border-radius: 20px !important;
   box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25);
   transition: all 0.3s ease 0s;
 }
@@ -287,4 +287,90 @@ body.modal-open {
 
 .error-notification-modal.show, .success-notification-modal.show {
   opacity: 1;
+}
+
+.card-wrapper{
+  width: 85%;
+}
+
+@media only screen and (min-width: 320px) {
+  .root-div{
+    padding-right: 14px !important;
+  }
+}
+
+@media only screen and (min-width: 450px) {
+.card-wrapper{
+    width: 91%;
+    justify-content: end;
+}
+.root-div{
+  padding-right: 14px !important;
+}
+}
+@media only screen and (min-width: 600px) {
+  .card-wrapper{
+      width: 92%;
+      justify-content: end;
+  }
+
+  .root-div{
+    padding-right: 3rem !important;
+  }
+}
+@media only screen and (min-width: 768px) {
+  .card-wrapper{
+      width: 74%;
+  }
+}
+
+@media only screen and (min-width: 770px) {
+  .card-wrapper{
+    width: 70%;
+  }
+}
+
+@media only screen and (min-width: 900px) {
+  .card-wrapper{
+      width: 76%;
+  }
+}
+@media only screen and (min-width: 1050px) {
+  .card-wrapper{
+      width: 79%;
+      justify-content:end
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .card-wrapper{
+      width: 82%;
+      justify-content:end
+  }
+}
+@media only screen and (min-width: 1300px) {
+  .card-wrapper{
+      width: 83%;
+      justify-content:center
+  }
+}
+
+@media only screen and (min-width: 1600px) {
+  .card-wrapper{
+      width: 87%;
+      justify-content:center
+  }
+}
+
+@media only screen and (min-width: 1900px) {
+  .card-wrapper{
+      width: 89%;
+      justify-content:center
+  }
+}
+@media only screen and (min-width: 2400px) {
+  .card-wrapper{
+      width: 91%;
+      justify-content:center
+  }
 }
