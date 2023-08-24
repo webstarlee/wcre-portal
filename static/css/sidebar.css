@@ -42,9 +42,19 @@ ul li a {
   font-weight: bold;
   column-gap: 12px;
 }
+ul li a:hover {
+  color: #fff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: bold;
+  column-gap: 12px;
+}
 
 ul li:hover {
   background-color: #0f4068;
+  color:#fff
 }
 
 ul li a span {
@@ -77,6 +87,10 @@ ul li a span {
   color: #fff;
 }
 
+.user-details-wrapper{
+  display: flex;
+  align-items: center;
+}
 .user-details {
   display: flex;
   flex-direction: column;
