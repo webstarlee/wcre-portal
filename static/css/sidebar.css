@@ -1,5 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap');
 
+body {
+  font-family: "Noto Sans", sans-serif;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  background: linear-gradient(to right, #1c92d2, #f2fcfe);
+}
 .sidebar {
   position: fixed;
   top: 0;
@@ -48,7 +55,6 @@ ul li a:hover {
   display: flex;
   align-items: center;
   font-size: 12px;
-  font-weight: bold;
   column-gap: 12px;
 }
 
