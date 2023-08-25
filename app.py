@@ -624,10 +624,26 @@ def submit_sale():
                     {"status": "success", "redirect": url_for("view_sales")}, 200
                 )
             else:
-                return "Error Occurred While Submitting The Sale"
+                return (
+                    jsonify(
+                        {
+                            "status": "error",
+                            "message": "Error Occurred While Submitting The Listing",
+                        }
+                    ),
+                    500,
+                )
         except Exception as e:
             print(e)
-            return "Error Occurred While Submitting The Sale"
+            return (
+                jsonify(
+                    {
+                        "status": "error",
+                        "message": "Error Occurred While Submitting The Listing",
+                    }
+                ),
+                500,
+            )
     return redirect(url_for("login"))
 
 
