@@ -256,10 +256,10 @@ $(document).ready(function() {
 			}),
 			success: function(search_results_data) {
 				var rows = $.map(search_results_data, function(result) {
-					var $row = $('<tr>').attr('data-sale-id', result._id);
+                    var $row = $('<tr>').attr('data-sale-id', result._id);
                     $row.append($('<td>').html(result.sale_property_type));
                     $row.append($('<td>').html(result.sale_type));
-					$row.append($('<td>').html(result.sale_end_date));
+                    $row.append($('<td>').html(result.sale_end_date));
                     $row.append($('<td>').html(result.sale_price ? result.sale_price : "None"));
                     $row.append($('<td>').text(result.sale_sqft));
                     var price = parseFloat(result.sale_price.replace("$", "").replace(",", ""));
@@ -270,21 +270,23 @@ $(document).ready(function() {
                     } else {
                         $row.append($('<td>').text("N/A"));
                     }
+                    $row.append($('<td>').text(result.sale_street));
                     $row.append($('<td>').text(result.sale_city));
-					$row.append($('<td>').html(result.listing_owner));
-					$row.append($('<td>').html('<a href="mailto:' + result.listing_email + '">' + result.listing_email + '</a>'));
-					$row.append($('<td>').html('<a href="tel:' + result.listing_phone + '">' + result.listing_phone + '</a>'));
-					var brokerElements = $.map(result.brokers, function(broker) {
+                    $row.append($('<td>').html('<a href="mailto:' + result.sale_seller_email + '">' + result.sale_seller + '</a>'));
+                    $row.append($('<td>').html('<a href="mailto:' + result.sale_buyer_email + '">' + result.sale_buyer + '</a>'));
+                    var brokerElements = $.map(result.brokers, function(broker) {
                         return $('<span>').addClass('broker-name').text(broker);
                     });
-                    $row.append($('<td>').append(brokerElements));                    
+                    $row.append($('<td>').append(brokerElements));
+                
                     if(result.pdf_file_base64) {
-                        $row.append($('<td>').html('<a href="/download_sale_pdf?sale_id=' + result._id + '">Fully Executed</a>'));
+                        $row.append($('<td>').html('<a href="/download_sale_pdf/' + result._id + '">Fully Executed</a>'));
                     } else {
                         $row.append($('<td>').text('Pending'));
                     }
-					return $row;
-				});
+                    return $row;
+                });
+                
 				$('.centered-table tbody').empty().append(rows);
 			},
 			error: function(textStatus, errorThrown) {
@@ -293,6 +295,23 @@ $(document).ready(function() {
 			}
 		});
 	}
+
+    $('#search-input').on('input', function() {
+		currentPage = 1; // Reset to the first page on a new search
+		searchSales(currentPage);
+	});
+
+	$('#next-page').on('click', function() {
+		currentPage++;
+		searchSales(currentPage);
+	});
+
+	$('#prev-page').on('click', function() {
+		if (currentPage > 1) {
+			currentPage--;
+			searchSales(currentPage);
+		}
+	});
 
     uploadButton.addEventListener('click', function(e) {
         fileInput.click();

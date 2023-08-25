@@ -244,22 +244,26 @@ def search_sales():
     }
     query = {
         "$or": [
-            {"listing_street": regex_query},
-            {"listing_city": regex_query},
-            {"listing_state": regex_query},
-            {"listing_owner": regex_query},
-            {"listing_email": regex_query},
-            {"listing_phone": regex_query},
+            {"sale_street": regex_query},
+            {"sale_city": regex_query},
+            {"sale_state": regex_query},
+            {"sale_property_type": regex_query},
+            {"sale_sqft": regex_query},
+            {"sale_seller": regex_query},
+            {"sale_seller_entity": regex_query},
+            {"sale_seller_email": regex_query},
+            {"sale_seller_phone": regex_query},
             {"brokers": regex_query},
-            {"listing_end_date": regex_query},
-            {"listing_start_date": regex_query},
-            {"listing_property_type": regex_query},
-            {"listing_type": regex_query},
-            {"listing_price": regex_query},
+            {"sale_buyer": regex_query},
+            {"sale_buyer_email": regex_query},
+            {"sale_buyer_phone": regex_query},
+            {"sale_end_date": regex_query},
+            {"sale_type": regex_query},
+            {"sale_price": regex_query},
         ]
     }
     search_results = (
-        listings.find(query)
+        sales.find(query)
         .sort("_id", -1)
         .skip((page - 1) * items_per_page)
         .limit(items_per_page)
