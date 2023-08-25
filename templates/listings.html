@@ -46,7 +46,6 @@
             <th>Street</th>
             <th>City</th>
             <th>Owner</th>
-            <th>Email</th>
             <th>Phone</th>
             <th>Brokers</th>
             <th style="border-top-right-radius: 7px;">Listing Agreement</th>
@@ -64,10 +63,9 @@
             <td>{{ listing.listing_price }}</td>
             <td>{{ listing.listing_street }}</td>
             <td>{{ listing.listing_city }}</td>
-            <td>{{ listing.listing_owner }}</td>
             <td>
-              <a href="mailto:{{ listing.listing_email }}">{{ listing.listing_email }}</a>
-            </td>
+                <a href="mailto:{{ listing.listing_email }}">{{ listing.listing_owner }}</a>
+              </td>
             <td>
               <a href="tel:{{ listing.listing_phone }}">{{ listing.listing_phone }}</a>
             </td>
@@ -233,11 +231,11 @@
             <label for="edit-listing-owner-phone">Owner Phone Number:</label>
             <input type="tel" id="edit-listing-owner-phone" name="edit-listing-owner-phone" required>
           </div>
-<!--           <div class="form-group">
+          <div class="form-group">
             <button id="upload-listing-agreement" type="button">Upload Listing Agreement</button>
             <input id="listing-agreement" type="file" style="display:none;" accept=".pdf">
             <input type="hidden" id="listing-agreement-file-base64" name="listing-agreement-file-base64">
-          </div> -->
+          </div>
           <div class="modal-navigation">
             <button id="submit-button-edit" class="minimal-button submit-step" type="button">Submit Edit Changes</button>
           </div>

@@ -232,6 +232,44 @@ def search_listings():
         search_results_data.append(result)
     return jsonify(search_results_data)
 
+@app.route("/search_sales", methods=["POST"])
+@login_required
+def search_sales():
+    page = int(request.get_json().get("page", 1))  # Get page number from the request
+    items_per_page = 12
+    search_query = request.get_json().get("query")
+    regex_query = {
+        "$regex": f".*{search_query}.*",
+        "$options": "i",
+    }
+    query = {
+        "$or": [
+            {"listing_street": regex_query},
+            {"listing_city": regex_query},
+            {"listing_state": regex_query},
+            {"listing_owner": regex_query},
+            {"listing_email": regex_query},
+            {"listing_phone": regex_query},
+            {"brokers": regex_query},
+            {"listing_end_date": regex_query},
+            {"listing_start_date": regex_query},
+            {"listing_property_type": regex_query},
+            {"listing_type": regex_query},
+            {"listing_price": regex_query},
+        ]
+    }
+    search_results = (
+        listings.find(query)
+        .sort("_id", -1)
+        .skip((page - 1) * items_per_page)
+        .limit(items_per_page)
+    )  # Pagination
+    search_results_data = []
+    for result in search_results:
+        result["_id"] = str(result["_id"])
+        search_results_data.append(result)
+    return jsonify(search_results_data)
+
 
 @app.route("/listings")
 @login_required
@@ -641,6 +679,27 @@ def edit_listing(listing_id):
         if field in data:
             listings.update_one(
                 {"_id": ObjectId(listing_id)}, {"$set": {field: data[field]}}
+            )
+    return {"success": True}
+
+@app.route("/edit_sale/<sale_id>", methods=["POST"])
+@login_required
+def edit_sale(sale_id):
+    data = request.get_json()
+    sale = sales.find_one({"_id": ObjectId(sale_id)})
+    if not sale:
+        return {"success": False, "error": "Sale not found"}
+    for field in [
+        "sale_type",
+        "sale_end_date",
+        "sale_price",
+        "sale_sqft",
+        "sale_street",
+        "sale_city"
+    ]:
+        if field in data:
+            sales.update_one(
+                {"_id": ObjectId(sale_id)}, {"$set": {field: data[field]}}
             )
     return {"success": True}
 

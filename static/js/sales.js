@@ -11,6 +11,8 @@ $(document).ready(function() {
     editSalePriceInput.addEventListener('input', formatSalePriceEdit);
     const sqFootageInput = document.getElementById('sale-sqft');
     sqFootageInput.addEventListener('input', formatSquareFootage);
+    const editsqFootageInput = document.getElementById('edit-sale-sqft');
+    editsqFootageInput.addEventListener('input', formatSquareFootageEdit);
 
 
     function formatSalePrice() {
@@ -19,8 +21,6 @@ $(document).ready(function() {
             salePriceInput.value = inputText;
             return;
         }
-
-
         let numericValue = salePriceInput.value.replace(/[^0-9.,]/g, '');
         numericValue = numericValue.replace(/\.+/g, '.').replace(/,+/g, ',');
         const parts = numericValue.split('.');
@@ -86,6 +86,26 @@ $(document).ready(function() {
         sqFootageInput.value = formattedSqft;
     }    
 
+    function formatSquareFootageEdit() {
+        let numericValue = editsqFootageInput.value.replace(/[^0-9.,]/g, '');
+        numericValue = numericValue.replace(/\.+/g, '.').replace(/,+/g, ',');
+        const parts = numericValue.split('.');
+        if (parts.length > 1) {
+            parts[1] = parts[1].substring(0, 2);
+            numericValue = parts.join('.');
+        }
+        let cents = '';
+        if (numericValue.includes('.')) {
+            [numericValue, cents] = numericValue.split('.');
+            cents = '.' + cents;
+        }
+        numericValue = numericValue.replace(/,/g, '');
+        const numberValue = isNaN(parseFloat(numericValue)) ? 0 : parseFloat(numericValue);
+        const formattedNumber = new Intl.NumberFormat('en-US').format(numberValue);
+        const formattedSqft = numberValue ? `${formattedNumber}${cents}` : '';
+        editsqFootageInput.value = formattedSqft;
+    }    
+
     function formatBuyerPhoneNumber() {
         let phoneNumber = buyerPhoneInput.value.replace(/\D/g, '');
         if (phoneNumber.length > 10) {
@@ -141,8 +161,58 @@ $(document).ready(function() {
         actionModal.hide();
         const selectedRow = $('.centered-table tbody tr[data-sale-id="' + sale_id + '"]');
         const saleAddress = selectedRow.find('td:nth-child(7)').text().trim();
-        console.log(saleAddress);
         $('#edit-sale-modal .modal-step-title').text('Edit Sale - ' + saleAddress);
+        const saleType = selectedRow.find('td:nth-child(2)').text().trim();
+        const saleClosingDate = selectedRow.find('td:nth-child(3)').text().trim();
+        const salePrice = selectedRow.find('td:nth-child(4)').text().trim();
+        const saleSqFt = selectedRow.find('td:nth-child(5)').text().trim();
+        const saleStreet = selectedRow.find('td:nth-child(7)').text().trim();
+        const saleCity = selectedRow.find('td:nth-child(8)').text().trim();
+        $("#edit-sale-type").val(saleType);
+        $("#edit-sale-end-date").val(saleClosingDate);
+        $("#edit-sale-price").val(salePrice);
+        $("#edit-sale-sqft").val(saleSqFt);
+        $("#edit-sale-street").val(saleStreet);
+        $("#edit-sale-city").val(saleCity);
+    });
+
+    $("#submit-button-edit").click(function() {
+        $('#edit-sale-modal').css('display', 'none');
+        var saleType = $("#edit-sale-type").val();
+        var saleClosingDate = $("#edit-sale-end-date").val();
+        var salePrice = $("#edit-sale-price").val();
+        var saleSqFt = $("#edit-sale-sqft").val();
+        var saleStreet = $("#edit-sale-street").val();
+        var saleCity = $("#edit-sale-city").val();
+
+        var data = {
+            'sale_type': saleType,
+            'sale_end_date': saleClosingDate,
+            'sale_price': salePrice,
+            'sale_sqft': saleSqFt,
+            'sale_street': saleStreet,
+            'sale_city': saleCity
+        }
+
+        $.ajax({
+            url: '/edit_sale/' + sale_id,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(response) {
+                if (response.success) {
+                    console.log("Sale Edited Successfully");
+                    location.reload();
+                } else {
+                    showErrorNotificationModal('Error Editing Sale');
+                    console.log("Error Editing Sale");
+                }
+            },
+            error: function() {
+                showErrorNotificationModal('Error Editing Sale');
+                console.log("Error Editing Sale");
+            }
+        });
     });
 
     function validateStep() {
@@ -173,14 +243,56 @@ $(document).ready(function() {
         return isValid;
     }    
 
-    // SEARCH INPUT
-    $('#search-input').on('input', function() {
-        var searchTerm = $(this).val().toLowerCase();
-        $('.centered-table tbody tr').each(function() {
-            var sale = $(this).text().toLowerCase();
-            $(this).toggle(sale.indexOf(searchTerm) > -1);
-        });
-    });
+    var currentPage = 1;
+	function searchSales(page) {
+		var searchTerm = $('#search-input').val().toLowerCase();
+		$.ajax({
+			url: '/search_sales',
+			method: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				query: searchTerm,
+				page: page
+			}),
+			success: function(search_results_data) {
+				var rows = $.map(search_results_data, function(result) {
+					var $row = $('<tr>').attr('data-sale-id', result._id);
+                    $row.append($('<td>').html(result.sale_property_type));
+                    $row.append($('<td>').html(result.sale_type));
+					$row.append($('<td>').html(result.sale_end_date));
+                    $row.append($('<td>').html(result.sale_price ? result.sale_price : "None"));
+                    $row.append($('<td>').text(result.sale_sqft));
+                    var price = parseFloat(result.sale_price.replace("$", "").replace(",", ""));
+                    var sqft = parseFloat(result.sale_sqft.replace(",", ""));
+                    if (!isNaN(price) && !isNaN(sqft) && sqft !== 0) {
+                        var pricePerSqft = price / sqft;
+                        $row.append($('<td>').text("$" + pricePerSqft.toFixed(2)));
+                    } else {
+                        $row.append($('<td>').text("N/A"));
+                    }
+                    $row.append($('<td>').text(result.sale_city));
+					$row.append($('<td>').html(result.listing_owner));
+					$row.append($('<td>').html('<a href="mailto:' + result.listing_email + '">' + result.listing_email + '</a>'));
+					$row.append($('<td>').html('<a href="tel:' + result.listing_phone + '">' + result.listing_phone + '</a>'));
+					var brokerElements = $.map(result.brokers, function(broker) {
+                        return $('<span>').addClass('broker-name').text(broker);
+                    });
+                    $row.append($('<td>').append(brokerElements));                    
+                    if(result.pdf_file_base64) {
+                        $row.append($('<td>').html('<a href="/download_sale_pdf?sale_id=' + result._id + '">Fully Executed</a>'));
+                    } else {
+                        $row.append($('<td>').text('Pending'));
+                    }
+					return $row;
+				});
+				$('.centered-table tbody').empty().append(rows);
+			},
+			error: function(textStatus, errorThrown) {
+				console.error('Error Fetching Search Results:', textStatus, errorThrown);
+				showErrorNotificationModal("Error Fetching Search Results");
+			}
+		});
+	}
 
     uploadButton.addEventListener('click', function(e) {
         fileInput.click();
@@ -349,7 +461,6 @@ $(document).ready(function() {
         console.log(sale_id);
         const selectedRow = $('.centered-table tbody tr[data-sale-id="' + sale_id + '"]');
         const deleteModal = $('#action-modal'); // assuming this is the ID of your deletion modal
-
         $.ajax({
             url: '/delete_sale/' + sale_id,
             type: 'GET',
