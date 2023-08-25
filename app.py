@@ -232,6 +232,7 @@ def search_listings():
         search_results_data.append(result)
     return jsonify(search_results_data)
 
+
 @app.route("/search_sales", methods=["POST"])
 @login_required
 def search_sales():
@@ -288,7 +289,10 @@ def view_listings():
         total, listings_data = (
             (
                 listings.count_documents({}),
-                listings.find().sort("_id", -1).skip((page - 1) * per_page).limit(per_page),
+                listings.find()
+                .sort("_id", -1)
+                .skip((page - 1) * per_page)
+                .limit(per_page),
             )
             if current_user.role == "Admin"
             else (
@@ -525,17 +529,34 @@ def submit_listing():
                     recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
                 )
                 email_content = render_template(
-                    "email_new_listing.html", listing=new_listing
+                    "email_templates/email_new_listing.html", listing=new_listing
                 )
                 msg.html = transform(email_content)
                 mail.send(msg)
-                return make_response({"status": "success", "redirect": url_for("view_listings")}, 200
+                return make_response(
+                    {"status": "success", "redirect": url_for("view_listings")}, 200
                 )
             else:
-                return jsonify({"status": "error", "message": "Error Occurred While Submitting The Listing"}), 500
+                return (
+                    jsonify(
+                        {
+                            "status": "error",
+                            "message": "Error Occurred While Submitting The Listing",
+                        }
+                    ),
+                    500,
+                )
         except Exception as e:
             print(e)
-            return jsonify({"status": "error", "message": "Error Occurred While Submitting The Listing"}), 500
+            return (
+                jsonify(
+                    {
+                        "status": "error",
+                        "message": "Error Occurred While Submitting The Listing",
+                    }
+                ),
+                500,
+            )
     return redirect(url_for("login"))
 
 
@@ -594,7 +615,9 @@ def submit_sale():
                     sender="portal@wolfcre.com",
                     recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
                 )
-                email_content = render_template("email_new_sale.html", sale=new_sale)
+                email_content = render_template(
+                    "email_templates/email_new_sale.html", sale=new_sale
+                )
                 msg.html = transform(email_content)
                 mail.send(msg)
                 return make_response(
@@ -678,13 +701,14 @@ def edit_listing(listing_id):
         "listing_city",
         "listing_owner",
         "listing_email",
-        "listing_phone"
+        "listing_phone",
     ]:
         if field in data:
             listings.update_one(
                 {"_id": ObjectId(listing_id)}, {"$set": {field: data[field]}}
             )
     return {"success": True}
+
 
 @app.route("/edit_sale/<sale_id>", methods=["POST"])
 @login_required
@@ -699,12 +723,10 @@ def edit_sale(sale_id):
         "sale_price",
         "sale_sqft",
         "sale_street",
-        "sale_city"
+        "sale_city",
     ]:
         if field in data:
-            sales.update_one(
-                {"_id": ObjectId(sale_id)}, {"$set": {field: data[field]}}
-            )
+            sales.update_one({"_id": ObjectId(sale_id)}, {"$set": {field: data[field]}})
     return {"success": True}
 
 
