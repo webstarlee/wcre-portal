@@ -179,6 +179,10 @@ body {
   border-radius: 5px;
   background-color:#0056b3 ;
 }
+
+table tr:hover td a {
+  color: #fff;
+}
 /* modals */
 .add-listing-modal {
   display: none;
