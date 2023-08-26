@@ -78,6 +78,8 @@ $(document).ready(function() {
     $(function() {
         $("#listing-start-date").datepicker();
         $("#listing-end-date").datepicker();
+        $("#edit-listing-start-date").datepicker();
+        $("#edit-listing-end-date").datepicker();
     });
 
     // OPEN MODAL
