@@ -28,7 +28,7 @@ body{
   transition: all 0.3s ease 0s;
 }
 .card:hover {
-  transform: translateY(-10px);
+  /* transform: translateY(-10px); */
 }
 .col {
   margin-bottom: 30px; /*adjust as needed*/
@@ -213,6 +213,7 @@ body.modal-open {
 }
 .document-list li:hover {
   background-color: #ddd;
+  color: #000;
 }
 .download-button {
   background-color: #1c92d2;
@@ -223,7 +224,7 @@ body.modal-open {
   margin-left: 10px;
 }
 .download-button:hover {
-  background-color: #ddd;
+  background-color: #05537d;
 }
 
 .error-notification {
@@ -322,6 +323,7 @@ body.modal-open {
   .card-wrapper{
       width: 74%;
   }
+
 }
 
 @media only screen and (min-width: 770px) {
