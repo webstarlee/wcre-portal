@@ -461,7 +461,6 @@ def submit_document():
 
         new_document = {
             "document_name": document_name,
-            "document_type": document_type,
             "pdf_file_base64": document_file_base64,
         }
         try:
