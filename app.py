@@ -38,8 +38,6 @@ from flask import Flask
 from sentry_sdk.integrations.flask import FlaskIntegration
 
 ALLOWED_EXTENSIONS = {"pdf"}
-
-
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -92,9 +90,9 @@ try:
     sales = db["Sales"]
     leases = db["Leases"]
     fs = GridFS(db)
-    print("Connected to MongoDB successfully")
+    logger.info("Connected to MongoDB successfully")
 except Exception as e:
-    print(f"Error connecting to MongoDB: {str(e)}")
+    logger.error(f"Error connecting to MongoDB: {str(e)}")
 
 
 @app.route("/")
@@ -123,10 +121,11 @@ def login():
             return render_template("login.html", error="Invalid Username or Password")
     return render_template("login.html")
 
-
-@app.route("/debug-sentry")
-def trigger_error():
-    division_by_zero = 1 / 0
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("login"))
 
 
 @login_manager.user_loader
@@ -152,7 +151,6 @@ def greeting(current_time):
         return "Good Afternoon"
     else:
         return "Good Evening"
-
 
 @app.route("/dashboard")
 @login_required
@@ -188,95 +186,6 @@ def dashboard():
         total_leases=total_leases,
         greeting_msg=greeting_msg,
     )
-
-
-@app.route("/logout")
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for("login"))
-
-
-@app.route("/search_listings", methods=["POST"])
-@login_required
-def search_listings():
-    page = int(request.get_json().get("page", 1))  # Get page number from the request
-    items_per_page = 12
-    search_query = request.get_json().get("query")
-    regex_query = {
-        "$regex": f".*{search_query}.*",
-        "$options": "i",
-    }
-    query = {
-        "$or": [
-            {"listing_street": regex_query},
-            {"listing_city": regex_query},
-            {"listing_state": regex_query},
-            {"listing_owner": regex_query},
-            {"listing_email": regex_query},
-            {"listing_phone": regex_query},
-            {"brokers": regex_query},
-            {"listing_end_date": regex_query},
-            {"listing_start_date": regex_query},
-            {"listing_property_type": regex_query},
-            {"listing_type": regex_query},
-            {"listing_price": regex_query},
-        ]
-    }
-    search_results = (
-        listings.find(query)
-        .sort("_id", -1)
-        .skip((page - 1) * items_per_page)
-        .limit(items_per_page)
-    )  # Pagination
-    search_results_data = []
-    for result in search_results:
-        result["_id"] = str(result["_id"])
-        search_results_data.append(result)
-    return jsonify(search_results_data)
-
-
-@app.route("/search_sales", methods=["POST"])
-@login_required
-def search_sales():
-    page = int(request.get_json().get("page", 1))  # Get page number from the request
-    items_per_page = 12
-    search_query = request.get_json().get("query")
-    regex_query = {
-        "$regex": f".*{search_query}.*",
-        "$options": "i",
-    }
-    query = {
-        "$or": [
-            {"sale_street": regex_query},
-            {"sale_city": regex_query},
-            {"sale_state": regex_query},
-            {"sale_property_type": regex_query},
-            {"sale_sqft": regex_query},
-            {"sale_seller": regex_query},
-            {"sale_seller_entity": regex_query},
-            {"sale_seller_email": regex_query},
-            {"sale_seller_phone": regex_query},
-            {"brokers": regex_query},
-            {"sale_buyer": regex_query},
-            {"sale_buyer_email": regex_query},
-            {"sale_buyer_phone": regex_query},
-            {"sale_end_date": regex_query},
-            {"sale_type": regex_query},
-            {"sale_price": regex_query},
-        ]
-    }
-    search_results = (
-        sales.find(query)
-        .sort("_id", -1)
-        .skip((page - 1) * items_per_page)
-        .limit(items_per_page)
-    )  # Pagination
-    search_results_data = []
-    for result in search_results:
-        result["_id"] = str(result["_id"])
-        search_results_data.append(result)
-    return jsonify(search_results_data)
 
 
 @app.route("/listings")
@@ -504,14 +413,30 @@ def submit_document():
         try:
             result = db[document_type].insert_one(new_document)
         except:
-            return "Error Occured While Submitting The Document"
+            return (
+                    jsonify(
+                        {
+                            "status": "error",
+                            "message": "Error Occurred While Submitting The Document",
+                        }
+                    ),
+                    500,
+                )
         else:
             if result.inserted_id:
                 return make_response(
                     {"status": "success", "redirect": url_for("documents")}, 200
                 )
             else:
-                return "Error Occured While Submitting The Document"
+                return (
+                    jsonify(
+                        {
+                            "status": "error",
+                            "message": "Error Occurred While Submitting The Document",
+                        }
+                    ),
+                    500,
+                )
 
 
 @app.route("/submit_listing", methods=["POST"])
@@ -584,7 +509,7 @@ def submit_listing():
                     500,
                 )
         except Exception as e:
-            print(e)
+            logger.error(e)
             return (
                 jsonify(
                     {
@@ -671,7 +596,7 @@ def submit_sale():
                     500,
                 )
         except Exception as e:
-            print(e)
+            logger.error(e)
             return (
                 jsonify(
                     {
@@ -787,6 +712,87 @@ def edit_sale(sale_id):
         if field in data:
             sales.update_one({"_id": ObjectId(sale_id)}, {"$set": {field: data[field]}})
     return {"success": True}
+
+@app.route("/search_listings", methods=["POST"])
+@login_required
+def search_listings():
+    page = int(request.get_json().get("page", 1))  # Get page number from the request
+    items_per_page = 12
+    search_query = request.get_json().get("query")
+    regex_query = {
+        "$regex": f".*{search_query}.*",
+        "$options": "i",
+    }
+    query = {
+        "$or": [
+            {"listing_street": regex_query},
+            {"listing_city": regex_query},
+            {"listing_state": regex_query},
+            {"listing_owner": regex_query},
+            {"listing_email": regex_query},
+            {"listing_phone": regex_query},
+            {"brokers": regex_query},
+            {"listing_end_date": regex_query},
+            {"listing_start_date": regex_query},
+            {"listing_property_type": regex_query},
+            {"listing_type": regex_query},
+            {"listing_price": regex_query},
+        ]
+    }
+    search_results = (
+        listings.find(query)
+        .sort("_id", -1)
+        .skip((page - 1) * items_per_page)
+        .limit(items_per_page)
+    )  # Pagination
+    search_results_data = []
+    for result in search_results:
+        result["_id"] = str(result["_id"])
+        search_results_data.append(result)
+    return jsonify(search_results_data)
+
+
+@app.route("/search_sales", methods=["POST"])
+@login_required
+def search_sales():
+    page = int(request.get_json().get("page", 1))  # Get page number from the request
+    items_per_page = 12
+    search_query = request.get_json().get("query")
+    regex_query = {
+        "$regex": f".*{search_query}.*",
+        "$options": "i",
+    }
+    query = {
+        "$or": [
+            {"sale_street": regex_query},
+            {"sale_city": regex_query},
+            {"sale_state": regex_query},
+            {"sale_property_type": regex_query},
+            {"sale_sqft": regex_query},
+            {"sale_seller": regex_query},
+            {"sale_seller_entity": regex_query},
+            {"sale_seller_email": regex_query},
+            {"sale_seller_phone": regex_query},
+            {"brokers": regex_query},
+            {"sale_buyer": regex_query},
+            {"sale_buyer_email": regex_query},
+            {"sale_buyer_phone": regex_query},
+            {"sale_end_date": regex_query},
+            {"sale_type": regex_query},
+            {"sale_price": regex_query},
+        ]
+    }
+    search_results = (
+        sales.find(query)
+        .sort("_id", -1)
+        .skip((page - 1) * items_per_page)
+        .limit(items_per_page)
+    )  # Pagination
+    search_results_data = []
+    for result in search_results:
+        result["_id"] = str(result["_id"])
+        search_results_data.append(result)
+    return jsonify(search_results_data)
 
 
 Talisman(app, content_security_policy=None)

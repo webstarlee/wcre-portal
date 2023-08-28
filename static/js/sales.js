@@ -131,6 +131,7 @@ $(document).ready(function() {
 
     $(function() {
         $("#sale-end-date").datepicker();
+        $("#edit-sale-end-date").datepicker();
     });
 
     // OPEN MODAL
