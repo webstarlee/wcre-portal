@@ -90,6 +90,7 @@ try:
     users = db["users"]
     listings = db["listings"]
     sales = db["Sales"]
+    leases = db["Leases"]
     fs = GridFS(db)
     print("Connected to MongoDB successfully")
 except Exception as e:
@@ -158,6 +159,7 @@ def greeting(current_time):
 def dashboard():
     total_listings = listings.count_documents({})
     total_sales = sales.count_documents({})
+    total_leases = leases.count_documents({})
     office_collaterals = db["Office Collaterals"].count_documents({})
     industrial_collaterals = db["Industrial Collaterals"].count_documents({})
     retail_collaterals = db["Retail Collaterals"].count_documents({})
@@ -183,6 +185,7 @@ def dashboard():
         total_listings=total_listings,
         total_sales=total_sales,
         total_documents=total_documents,
+        total_leases=total_leases,
         greeting_msg=greeting_msg,
     )
 
@@ -346,6 +349,41 @@ def view_sales():
             pagination=pagination,
             is_admin=is_admin,
             sale_count=total,
+        )
+    return redirect(url_for("login"))
+
+
+@app.route("/leases")
+@login_required
+def view_leases():
+    is_admin = current_user.role == "Admin"
+    if current_user.is_authenticated:
+        page, per_page, _ = get_page_args(
+            page_parameter="page", per_page_parameter="per_page"
+        )
+        per_page = 12
+        total, leases_data = (
+            (
+                leases.count_documents({}),
+                leases.find().skip((page - 1) * per_page).limit(per_page),
+            )
+            if current_user.role == "Admin"
+            else (
+                leases.count_documents({"brokers": {"$in": [current_user.fullname]}}),
+                leases.find({"brokers": {"$in": [current_user.fullname]}})
+                .skip((page - 1) * per_page)
+                .limit(per_page),
+            )
+        )
+        pagination = Pagination(
+            page=page, per_page=per_page, total=total, css_framework="bootstrap4"
+        )
+        return render_template(
+            "leases.html",
+            leases=leases_data,
+            pagination=pagination,
+            is_admin=is_admin,
+            lease_count=total,
         )
     return redirect(url_for("login"))
 
@@ -644,6 +682,12 @@ def submit_sale():
                 500,
             )
     return redirect(url_for("login"))
+
+
+@app.route("/submit_lease", methods=["POST"])
+@login_required
+def submit_lease():
+    return
 
 
 @app.route("/delete_listing/<listing_id>", methods=["GET"])
