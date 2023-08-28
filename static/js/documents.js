@@ -108,7 +108,7 @@ $(document).ready(function() {
 					showErrorNotificationModal('Error Uploading Document');
 				}
 			},
-			error: function(xhr, status, error) {
+			error: function() {
 				showErrorNotificationModal('Error Uploading Document');
 			}
 		});
@@ -138,13 +138,11 @@ $(document).ready(function() {
 			})
 			.done(function(response, jqXHR) {
 				if (response.status === "success") {
-					console.log("SUCCESS")
-					showSuccessNotification('Document Uploaded Successfully');
 					console.log("Document Uploaded Successfully");
 					window.location.href = response.redirect;
 				} else {
-					showErrorNotification('Unexpected status code: ' + jqXHR.status);
-					console.log("Unexpected status code: " + jqXHR.status);
+					showErrorNotification('Unexpected Status Code: ' + jqXHR.status);
+					console.log("Unexpected Status Code: " + jqXHR.status);
 				}
 			})
 			.fail(function(textStatus, errorThrown) {
