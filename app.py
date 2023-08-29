@@ -38,8 +38,6 @@ from flask import Flask
 from sentry_sdk.integrations.flask import FlaskIntegration
 
 ALLOWED_EXTENSIONS = {"pdf"}
-
-
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -90,10 +88,11 @@ try:
     users = db["users"]
     listings = db["listings"]
     sales = db["Sales"]
+    leases = db["Leases"]
     fs = GridFS(db)
-    print("Connected to MongoDB successfully")
+    logger.info("Connected to MongoDB successfully")
 except Exception as e:
-    print(f"Error connecting to MongoDB: {str(e)}")
+    logger.error(f"Error connecting to MongoDB: {str(e)}")
 
 
 @app.route("/")
@@ -122,10 +121,11 @@ def login():
             return render_template("login.html", error="Invalid Username or Password")
     return render_template("login.html")
 
-
-@app.route("/debug-sentry")
-def trigger_error():
-    division_by_zero = 1 / 0
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("login"))
 
 
 @login_manager.user_loader
@@ -152,12 +152,12 @@ def greeting(current_time):
     else:
         return "Good Evening"
 
-
 @app.route("/dashboard")
 @login_required
 def dashboard():
     total_listings = listings.count_documents({})
     total_sales = sales.count_documents({})
+    total_leases = leases.count_documents({})
     office_collaterals = db["Office Collaterals"].count_documents({})
     industrial_collaterals = db["Industrial Collaterals"].count_documents({})
     retail_collaterals = db["Retail Collaterals"].count_documents({})
@@ -183,54 +183,9 @@ def dashboard():
         total_listings=total_listings,
         total_sales=total_sales,
         total_documents=total_documents,
+        total_leases=total_leases,
         greeting_msg=greeting_msg,
     )
-
-
-@app.route("/logout")
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for("login"))
-
-
-@app.route("/search_listings", methods=["POST"])
-@login_required
-def search_listings():
-    page = int(request.get_json().get("page", 1))  # Get page number from the request
-    items_per_page = 12
-    search_query = request.get_json().get("query")
-    regex_query = {
-        "$regex": f".*{search_query}.*",
-        "$options": "i",
-    }
-    query = {
-        "$or": [
-            {"listing_street": regex_query},
-            {"listing_city": regex_query},
-            {"listing_state": regex_query},
-            {"listing_owner": regex_query},
-            {"listing_email": regex_query},
-            {"listing_phone": regex_query},
-            {"brokers": regex_query},
-            {"listing_end_date": regex_query},
-            {"listing_start_date": regex_query},
-            {"listing_property_type": regex_query},
-            {"listing_type": regex_query},
-            {"listing_price": regex_query},
-        ]
-    }
-    search_results = (
-        listings.find(query)
-        .sort("_id", -1)
-        .skip((page - 1) * items_per_page)
-        .limit(items_per_page)
-    )  # Pagination
-    search_results_data = []
-    for result in search_results:
-        result["_id"] = str(result["_id"])
-        search_results_data.append(result)
-    return jsonify(search_results_data)
 
 
 @app.route("/listings")
@@ -246,7 +201,10 @@ def view_listings():
         total, listings_data = (
             (
                 listings.count_documents({}),
-                listings.find().sort("_id", -1).skip((page - 1) * per_page).limit(per_page),
+                listings.find()
+                .sort("_id", -1)
+                .skip((page - 1) * per_page)
+                .limit(per_page),
             )
             if current_user.role == "Admin"
             else (
@@ -300,6 +258,41 @@ def view_sales():
             pagination=pagination,
             is_admin=is_admin,
             sale_count=total,
+        )
+    return redirect(url_for("login"))
+
+
+@app.route("/leases")
+@login_required
+def view_leases():
+    is_admin = current_user.role == "Admin"
+    if current_user.is_authenticated:
+        page, per_page, _ = get_page_args(
+            page_parameter="page", per_page_parameter="per_page"
+        )
+        per_page = 12
+        total, leases_data = (
+            (
+                leases.count_documents({}),
+                leases.find().skip((page - 1) * per_page).limit(per_page),
+            )
+            if current_user.role == "Admin"
+            else (
+                leases.count_documents({"brokers": {"$in": [current_user.fullname]}}),
+                leases.find({"brokers": {"$in": [current_user.fullname]}})
+                .skip((page - 1) * per_page)
+                .limit(per_page),
+            )
+        )
+        pagination = Pagination(
+            page=page, per_page=per_page, total=total, css_framework="bootstrap4"
+        )
+        return render_template(
+            "leases.html",
+            leases=leases_data,
+            pagination=pagination,
+            is_admin=is_admin,
+            lease_count=total,
         )
     return redirect(url_for("login"))
 
@@ -415,20 +408,35 @@ def submit_document():
 
         new_document = {
             "document_name": document_name,
-            "document_type": document_type,
             "pdf_file_base64": document_file_base64,
         }
         try:
             result = db[document_type].insert_one(new_document)
         except:
-            return "Error Occured While Submitting The Document"
+            return (
+                    jsonify(
+                        {
+                            "status": "error",
+                            "message": "Error Occurred While Submitting The Document",
+                        }
+                    ),
+                    500,
+                )
         else:
             if result.inserted_id:
                 return make_response(
                     {"status": "success", "redirect": url_for("documents")}, 200
                 )
             else:
-                return "Error Occured While Submitting The Document"
+                return (
+                    jsonify(
+                        {
+                            "status": "error",
+                            "message": "Error Occurred While Submitting The Document",
+                        }
+                    ),
+                    500,
+                )
 
 
 @app.route("/submit_listing", methods=["POST"])
@@ -483,7 +491,7 @@ def submit_listing():
                     recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
                 )
                 email_content = render_template(
-                    "email_new_listing.html", listing=new_listing
+                    "email_templates/email_new_listing.html", listing=new_listing
                 )
                 msg.html = transform(email_content)
                 mail.send(msg)
@@ -491,10 +499,26 @@ def submit_listing():
                     {"status": "success", "redirect": url_for("view_listings")}, 200
                 )
             else:
-                return "Error Occurred While Submitting The Listing"
+                return (
+                    jsonify(
+                        {
+                            "status": "error",
+                            "message": "Error Occurred While Submitting The Listing",
+                        }
+                    ),
+                    500,
+                )
         except Exception as e:
-            print(e)
-            return "Error Occurred While Submitting The Listing"
+            logger.error(e)
+            return (
+                jsonify(
+                    {
+                        "status": "error",
+                        "message": "Error Occurred While Submitting The Listing",
+                    }
+                ),
+                500,
+            )
     return redirect(url_for("login"))
 
 
@@ -553,18 +577,42 @@ def submit_sale():
                     sender="portal@wolfcre.com",
                     recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
                 )
-                email_content = render_template("email_new_sale.html", sale=new_sale)
+                email_content = render_template(
+                    "email_templates/email_new_sale.html", sale=new_sale
+                )
                 msg.html = transform(email_content)
                 mail.send(msg)
                 return make_response(
                     {"status": "success", "redirect": url_for("view_sales")}, 200
                 )
             else:
-                return "Error Occurred While Submitting The Sale"
+                return (
+                    jsonify(
+                        {
+                            "status": "error",
+                            "message": "Error Occurred While Submitting The Listing",
+                        }
+                    ),
+                    500,
+                )
         except Exception as e:
-            print(e)
-            return "Error Occurred While Submitting The Sale"
+            logger.error(e)
+            return (
+                jsonify(
+                    {
+                        "status": "error",
+                        "message": "Error Occurred While Submitting The Listing",
+                    }
+                ),
+                500,
+            )
     return redirect(url_for("login"))
+
+
+@app.route("/submit_lease", methods=["POST"])
+@login_required
+def submit_lease():
+    return
 
 
 @app.route("/delete_listing/<listing_id>", methods=["GET"])
@@ -637,13 +685,114 @@ def edit_listing(listing_id):
         "listing_city",
         "listing_owner",
         "listing_email",
-        "listing_phone"
+        "listing_phone",
     ]:
         if field in data:
             listings.update_one(
                 {"_id": ObjectId(listing_id)}, {"$set": {field: data[field]}}
             )
     return {"success": True}
+
+
+@app.route("/edit_sale/<sale_id>", methods=["POST"])
+@login_required
+def edit_sale(sale_id):
+    data = request.get_json()
+    sale = sales.find_one({"_id": ObjectId(sale_id)})
+    if not sale:
+        return {"success": False, "error": "Sale not found"}
+    for field in [
+        "sale_type",
+        "sale_end_date",
+        "sale_price",
+        "sale_sqft",
+        "sale_street",
+        "sale_city",
+    ]:
+        if field in data:
+            sales.update_one({"_id": ObjectId(sale_id)}, {"$set": {field: data[field]}})
+    return {"success": True}
+
+@app.route("/search_listings", methods=["POST"])
+@login_required
+def search_listings():
+    page = int(request.get_json().get("page", 1))  # Get page number from the request
+    items_per_page = 12
+    search_query = request.get_json().get("query")
+    regex_query = {
+        "$regex": f".*{search_query}.*",
+        "$options": "i",
+    }
+    query = {
+        "$or": [
+            {"listing_street": regex_query},
+            {"listing_city": regex_query},
+            {"listing_state": regex_query},
+            {"listing_owner": regex_query},
+            {"listing_email": regex_query},
+            {"listing_phone": regex_query},
+            {"brokers": regex_query},
+            {"listing_end_date": regex_query},
+            {"listing_start_date": regex_query},
+            {"listing_property_type": regex_query},
+            {"listing_type": regex_query},
+            {"listing_price": regex_query},
+        ]
+    }
+    search_results = (
+        listings.find(query)
+        .sort("_id", -1)
+        .skip((page - 1) * items_per_page)
+        .limit(items_per_page)
+    )  # Pagination
+    search_results_data = []
+    for result in search_results:
+        result["_id"] = str(result["_id"])
+        search_results_data.append(result)
+    return jsonify(search_results_data)
+
+
+@app.route("/search_sales", methods=["POST"])
+@login_required
+def search_sales():
+    page = int(request.get_json().get("page", 1))  # Get page number from the request
+    items_per_page = 12
+    search_query = request.get_json().get("query")
+    regex_query = {
+        "$regex": f".*{search_query}.*",
+        "$options": "i",
+    }
+    query = {
+        "$or": [
+            {"sale_street": regex_query},
+            {"sale_city": regex_query},
+            {"sale_state": regex_query},
+            {"sale_property_type": regex_query},
+            {"sale_sqft": regex_query},
+            {"sale_seller": regex_query},
+            {"sale_seller_entity": regex_query},
+            {"sale_seller_email": regex_query},
+            {"sale_seller_phone": regex_query},
+            {"brokers": regex_query},
+            {"sale_buyer": regex_query},
+            {"sale_buyer_email": regex_query},
+            {"sale_buyer_phone": regex_query},
+            {"sale_end_date": regex_query},
+            {"sale_type": regex_query},
+            {"sale_price": regex_query},
+        ]
+    }
+    search_results = (
+        sales.find(query)
+        .sort("_id", -1)
+        .skip((page - 1) * items_per_page)
+        .limit(items_per_page)
+    )  # Pagination
+    search_results_data = []
+    for result in search_results:
+        result["_id"] = str(result["_id"])
+        search_results_data.append(result)
+    return jsonify(search_results_data)
 
 
 Talisman(app, content_security_policy=None)

@@ -78,6 +78,8 @@ $(document).ready(function() {
     $(function() {
         $("#listing-start-date").datepicker();
         $("#listing-end-date").datepicker();
+        $("#edit-listing-start-date").datepicker();
+        $("#edit-listing-end-date").datepicker();
     });
 
     // OPEN MODAL
@@ -116,8 +118,8 @@ $(document).ready(function() {
         const listingStreet = selectedRow.find('td:nth-child(6)').text().trim();
         const listingCity = selectedRow.find('td:nth-child(7)').text().trim();
         const listingOwner = selectedRow.find('td:nth-child(8)').text().trim();
-        const listingOwnerEmail = selectedRow.find('td:nth-child(9)').text().trim();
-        const listingOwnerPhone = selectedRow.find('td:nth-child(10)').text().trim();
+        const listingOwnerEmail = selectedRow.find('td:nth-child(8) a').attr('href').replace('mailto:', '').trim();
+        const listingOwnerPhone = selectedRow.find('td:nth-child(9)').text().trim();
         $("#edit-listing-start-date").val(listingStartDate);
         $("#edit-listing-end-date").val(listingEndDate);
         $("#edit-listing-price").val(listingPrice);
@@ -174,7 +176,6 @@ $(document).ready(function() {
     function validateStep() {
         var currentStep = $('.active-step.main-form-step');
         var inputs = currentStep.find('input:required, select:required');
-        console.log(inputs);
         var isValid = true;
 
         inputs.each(function() {
@@ -226,29 +227,29 @@ $(document).ready(function() {
 			}),
 			success: function(search_results_data) {
 				var rows = $.map(search_results_data, function(result) {
-                    console.log(result.listing_price)
-					var $row = $('<tr>').attr('data-listing-id', result._id);
+                    var $row = $('<tr>').attr('data-listing-id', result._id);
+                    
                     $row.append($('<td>').html(result.listing_property_type));
                     $row.append($('<td>').html(result.listing_type));
-					$row.append($('<td>').html(result.listing_start_date));
+                    $row.append($('<td>').html(result.listing_start_date));
                     $row.append($('<td>').html('<a href="createics:' + result.listing_end_date + '">' + result.listing_end_date + '</a>'));
                     $row.append($('<td>').html(result.listing_price ? result.listing_price : "None"));
                     $row.append($('<td>').text(result.listing_street));
                     $row.append($('<td>').text(result.listing_city));
-					$row.append($('<td>').html(result.listing_owner));
-					$row.append($('<td>').html('<a href="mailto:' + result.listing_email + '">' + result.listing_email + '</a>'));
-					$row.append($('<td>').html('<a href="tel:' + result.listing_phone + '">' + result.listing_phone + '</a>'));
-					var brokerElements = $.map(result.brokers, function(broker) {
+                    $row.append($('<td>').html('<a href="mailto:' + result.listing_email + '">' + result.listing_owner + '</a>'));
+                    $row.append($('<td>').html('<a href="tel:' + result.listing_phone + '">' + result.listing_phone + '</a>'));
+                    var brokerElements = $.map(result.brokers, function(broker) {
                         return $('<span>').addClass('broker-name').text(broker);
                     });
-                    $row.append($('<td>').append(brokerElements));                    
+                    $row.append($('<td>').append(brokerElements));
+                    
                     if(result.pdf_file_base64) {
-                        $row.append($('<td>').html('<a href="/download_listing_pdf?listing_id=' + result._id + '">Fully Executed</a>'));
+                        $row.append($('<td>').html('<a href="/download_listing_pdf/' + result._id + '">Fully Executed</a>'));
                     } else {
                         $row.append($('<td>').text('Pending'));
                     }
-					return $row;
-				});
+                    return $row;
+                });                
 				$('.centered-table tbody').empty().append(rows);
 			},
 			error: function(textStatus, errorThrown) {
@@ -334,9 +335,7 @@ $(document).ready(function() {
         var nextStep = currentStep.next('.modal-step.main-form-step');
 
         if (nextStep.length) {
-            console.log("here");
             if (validateStep()) {
-                console.log("in here")
                 currentStep.removeClass('active-step');
                 nextStep.addClass('active-step');
                 $('.prev-step').css('visibility', 'visible');
@@ -457,8 +456,8 @@ $(document).ready(function() {
                     console.error('Failed to Delete Listing: ' + data.message);
                 }
             },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error('Failed to delete listing.');
+            error: function() {
+                console.error('Failed to Delete listing.');
             }
         });
     });
@@ -491,10 +490,13 @@ $(document).ready(function() {
                         console.log("Unexpected Status Code: " + jqXHR.status);
                     }
                 })
-                .fail(function(textStatus, errorThrown) {
+                .fail(function(jqXHR, textStatus, errorThrown) {
                     showErrorNotification('Error Uploading Listing');
-                    console.log("Error Uploading Listing: ", textStatus, errorThrown);
-                });
+                    console.log("Error Uploading Listing:", textStatus);
+                    console.log("HTTP Status:", jqXHR.status);
+                    console.log("Error Thrown:", errorThrown);
+                    console.log("Response Text:", jqXHR.responseText);
+                });                
         }
     });
 });

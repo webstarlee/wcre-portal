@@ -61,7 +61,7 @@ body {
 #delete-all-button:hover {
   background-color: #ddd;
 }
-#add-sale-button {
+#add-lease-button {
   background-color: #f0f0f0;
   border: none;
   color: #333;
@@ -70,10 +70,10 @@ body {
   font-size: 14px;
   cursor: pointer;
 }
-#add-sale-button:hover {
+#add-lease-button:hover {
   background-color: #ddd;
 }
-#upload-sale-agreement {
+#upload-lease-agreement {
   margin-top: 1px;
   background-color: #f0f0f0;
   border: none;
@@ -83,7 +83,7 @@ body {
   font-size: 14px;
   cursor: pointer;
 }
-#upload-sale-agreement:hover {
+#upload-lease-agreement:hover {
   background-color: #ddd;
 }
 /* table */
@@ -184,7 +184,7 @@ table tr:hover td a {
   color: #fff;
 }
 /* modals */
-.add-sale-modal {
+.add-lease-modal {
   display: none;
   position: fixed;
   z-index: 1;
@@ -196,7 +196,7 @@ table tr:hover td a {
   align-items: center;
   background-color: rgba(0, 0, 0, 0.4);
 }
-.edit-sale-modal{
+.edit-lease-modal{
   display:none;
   position:fixed;
   z-index:1;
@@ -306,7 +306,7 @@ table tr:hover td a {
   display: block;
   white-space: nowrap;
 }
-#sale-brokers {
+#lease-brokers {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
@@ -338,12 +338,12 @@ table tr:hover td a {
 body.modal-open {
   overflow: hidden;
 }
-.modal-open #add-sale-modal {
+.modal-open #add-lease-modal {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.modal-open #edit-sale-modal {
+.modal-open #edit-lease-modal {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -458,7 +458,7 @@ body.modal-open {
 #edit-button:hover {
   background-color: #45a049;
 }
-.sales-count {
+.leases-count {
   position: absolute;
   left: 240px;
   padding: 10px;  /* Set padding similar to other buttons */
@@ -524,7 +524,7 @@ body.modal-open {
   .header-btns{
     width: 100%;
   }
-  .sales-count-div{
+  .leases-count-div{
     width: 93% !important;
   }
   .dropdown-btn{
@@ -563,7 +563,7 @@ body.modal-open {
     width: 100%;
   }
 
-  .sales-count-div{
+  .leases-count-div{
     width: 95% !important;
   }
   .dropdown-btn{
@@ -601,7 +601,7 @@ body.modal-open {
   .header-btns{
     width: auto;
   }
-  .sales-count-div{
+  .leases-count-div{
     width: auto !important;
   }
   .dropdown-btn{

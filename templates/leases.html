@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Admin Portal - Listings</title>
+    <title>Admin Portal - Leases</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="/static/icons/cropped_logo.png">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/listings.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/leases.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidebar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/icons.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="{{ url_for('static', filename='js/listings.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/leases.js') }}"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   </head>
@@ -22,14 +22,14 @@
     <div class="content">
       <div class="toolbar" style="padding: 10px 0; position: relative;">
         <form id="search-form" class="search-form" style="text-align: start; display: flex;flex-wrap: wrap;column-gap: 20px;row-gap: 10px;justify-content: space-between;position: relative;width: 100%;float: right;">
-          <div class="listings-count-div">
-            <div id="listings-count" style="position: relative; left: 0; flex-shrink: 0;" class="listings-count header-btns">Total Listings: {{ listing_count }}</div>
+          <div class="leases-count-div">
+            <div id="leases-count" style="position: relative; left: 0; flex-shrink: 0;" class="leases-count header-btns">Total Leases: {{ lease_count }}</div>
           </div>
           <div style="display: flex;flex-wrap: wrap; column-gap: 20px;row-gap: 10px;">
-            <input type="text" class="listings-count-div" style="flex-shrink: 0;" id="search-input" placeholder="Search Listings..." />
-            <button id="open-map-button" class="header-btns" style="flex-shrink: 0;" type="button">Open Listings Map</button>
-            <button id="delete-all-button" class="header-btns" style="flex-shrink: 0;" type="button">Delete All Listings</button>
-            <button id="add-listing-button" class="header-btns" style="flex-shrink: 0;" type="button">Add Listing</button>
+            <input type="text" class="leases-count-div" style="flex-shrink: 0;" id="search-input" placeholder="Search Leases..." />
+            <button id="open-map-button" class="header-btns" style="flex-shrink: 0;" type="button">Open leases Map</button>
+            <button id="delete-all-button" class="header-btns" style="flex-shrink: 0;" type="button">Delete All leases</button>
+            <button id="add-lease-button" class="header-btns" style="flex-shrink: 0;" type="button">Add lease</button>
           </div>
         </form>
       </div>
@@ -39,39 +39,35 @@
         <thead>
           <tr>
             <th style="border-top-left-radius: 7px;">Property Type</th>
-            <th>Listing Type</th>
+            <th>Lease Type</th>
             <th>Start Date</th>
-            <th>End Date</th>
             <th>Price</th>
             <th>Street</th>
             <th>City</th>
             <th>Owner</th>
             <th>Phone</th>
             <th>Brokers</th>
-            <th style="border-top-right-radius: 7px;">Listing Agreement</th>
+            <th style="border-top-right-radius: 7px;">Lease Agreement</th>
           </tr>
         </thead>
         <tbody> 
-          {% for listing in listings %} 
-          <tr data-listing-id="{{ listing._id }}">
-            <td>{{ listing.listing_property_type }}</td>
-            <td>{{ listing.listing_type }}</td>
-            <td>{{ listing.listing_start_date }}</td>
+          {% for lease in leases %} 
+          <tr data-lease-id="{{ lease._id }}">
+            <td>{{ lease.lease_property_type }}</td>
+            <td>{{ lease.lease_type }}</td>
+            <td>{{ lease.lease_start_date }}</td>
+            <td>{{ lease.lease_price }}</td>
+            <td>{{ lease.lease_street }}</td>
+            <td>{{ lease.lease_city }}</td>
             <td>
-              <a href="{{ url_for('create_ics', listing_id=listing._id) }}">{{ listing.listing_end_date }}</a>
-            </td>
-            <td>{{ listing.listing_price }}</td>
-            <td>{{ listing.listing_street }}</td>
-            <td>{{ listing.listing_city }}</td>
-            <td>
-                <a href="mailto:{{ listing.listing_email }}">{{ listing.listing_owner }}</a>
+                <a href="mailto:{{ lease.lease_email }}">{{ lease.lease_owner }}</a>
               </td>
             <td>
-              <a href="tel:{{ listing.listing_phone }}">{{ listing.listing_phone }}</a>
+              <a href="tel:{{ lease.lease_phone }}">{{ lease.lease_phone }}</a>
             </td>
-            <td class="brokers"> {% for broker in listing.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
+            <td class="brokers"> {% for broker in lease.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
             <td>
-              <form class="listing-form" action="{{ url_for('submit_listing') }}" method="POST"> {% if listing.pdf_file_base64 %} <a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
+              <form class="lease-form" action="{{ url_for('submit_lease') }}" method="POST"> {% if lease.pdf_file_base64 %} <a href="{{ url_for('download_lease_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
             </td>
           </tr> {% endfor %} 
         </tbody>
@@ -79,35 +75,35 @@
         {{ pagination.links }}
     </div>
     <div id="action-modal" class="action-modal">
-      <button id="delete-button">Delete Listing</button>
-      <button id="edit-button">Edit Listing</button>
+      <button id="delete-button">Delete lease</button>
+      <button id="edit-button">Edit lease</button>
     </div>
-    <div id="add-listing-modal" class="add-listing-modal">
+    <div id="add-lease-modal" class="add-lease-modal">
       <div id="error-notification-modal" class="error-notification-modal"></div>
       <div id="success-notification-modal" class="success-notification-modal"></div>
       <div class="modal-content">
         <span class="close">&times;</span>
-        <form id="submit-listing-form" class="modal-form" action="{{ url_for('submit_listing') }}" method="POST">
+        <form id="submit-lease-form" class="modal-form" action="{{ url_for('submit_lease') }}" method="POST">
           <div class="modal-step active-step main-form-step" id="main-step1">
-            <h2 class="modal-step-title">New Listing - Address Information</h2>
+            <h2 class="modal-step-title">New Lease - Address Information</h2>
             <div class="form-group">
-              <label for="listing-street">Listing Street:</label>
-              <input type="text" id="listing-street" name="listing-street" required>
+              <label for="lease-street">Lease Street:</label>
+              <input type="text" id="lease-street" name="lease-street" required>
             </div>
             <div class="form-group">
-              <label for="listing-city">Listing City:</label>
-              <input type="text" id="listing-city" name="listing-city" required>
+              <label for="lease-city">Lease City:</label>
+              <input type="text" id="lease-city" name="lease-city" required>
             </div>
             <div class="form-group">
-              <label for="listing-state">Listing State:</label>
-              <select id="listing-state" name="listing-state" required>
+              <label for="lease-state">Lease State:</label>
+              <select id="lease-state" name="lease-state" required>
                 <option value="NJ">NJ</option>
                 <option value="PA">PA</option>
               </select>
             </div>
             <div class="form-group">
-              <label for="listing-property-type">Property Type:</label>
-              <select id="listing-property-type" name="listing-property-type" required>
+              <label for="lease-property-type">Property Type:</label>
+              <select id="lease-property-type" name="lease-property-type" required>
                 <option value="Office">Office</option>
                 <option value="Industrial">Industrial</option>
                 <option value="Flex">Flex</option>
@@ -118,25 +114,25 @@
             </div>
           </div>
           <div class="modal-step main-form-step" id="main-step2">
-            <h2 class="modal-step-title">New Listing - Owner Information</h2>
+            <h2 class="modal-step-title">New Lease - Owner Information</h2>
             <div class="form-group">
-              <label for="listing-owner-name">Owner Name:</label>
-              <input type="text" id="listing-owner-name" name="listing-owner-name" required>
+              <label for="lease-owner-name">Owner Name:</label>
+              <input type="text" id="lease-owner-name" name="lease-owner-name" required>
             </div>
             <div class="form-group">
-              <label for="listing-owner-email">Owner Email:</label>
-              <input type="email" id="listing-owner-email" name="listing-owner-email" required>
+              <label for="lease-owner-email">Owner Email:</label>
+              <input type="email" id="lease-owner-email" name="lease-owner-email" required>
             </div>
             <div class="form-group">
-              <label for="listing-owner-phone">Owner Phone Number:</label>
-              <input type="tel" id="listing-owner-phone" name="listing-owner-phone" required>
+              <label for="lease-owner-phone">Owner Phone Number:</label>
+              <input type="tel" id="lease-owner-phone" name="lease-owner-phone" required>
             </div>
           </div>
           <div class="modal-step main-form-step" id="main-step3">
-            <h2 class="modal-step-title">New Listing - General Information</h2>
+            <h2 class="modal-step-title">New Lease - General Information</h2>
             <div class="form-group">
-              <label for="listing-type">Listing Type:</label>
-              <select id="listing-type" name="listing-type" required>
+              <label for="lease-type">Lease Type:</label>
+              <select id="lease-type" name="lease-type" required>
                 <option value="Sale">Sale</option>
                 <option value="Lease">Lease</option>
                 <option value="Sale and Lease">Sale and Lease</option>
@@ -144,20 +140,20 @@
               </select>
             </div>
             <div class="form-group">
-              <label for="listing-price">Listing Price:</label>
-              <input type="text" id="listing-price" name="listing-price" required>
+              <label for="lease-price">Lease Price:</label>
+              <input type="text" id="lease-price" name="lease-price" required>
             </div>
             <div class="form-group">
-              <label for="listing-start-date">Listing Start Date:</label>
-              <input type="text" id="listing-start-date" name="listing-start-date" required>
+              <label for="lease-start-date">Lease Start Date:</label>
+              <input type="text" id="lease-start-date" name="lease-start-date" required>
             </div>
             <div class="form-group">
-              <label for="listing-end-date">Listing End Date:</label>
-              <input type="text" id="listing-end-date" name="listing-end-date" required>
+              <label for="lease-end-date">Lease End Date:</label>
+              <input type="text" id="lease-end-date" name="lease-end-date" required>
             </div>
             <div class="form-group">
-              <label for="listing-brokers">Brokers:</label>
-              <select id="listing-brokers" name="brokers[]" multiple>
+              <label for="lease-brokers">Brokers:</label>
+              <select id="lease-brokers" name="brokers[]" multiple>
                 <option value="Jason Wolf">Jason Wolf</option>
                 <option value="Evan Zweben">Evan Zweben</option>
                 <option value="Erin Warwick">Erin Warwick</option>
@@ -178,9 +174,9 @@
               </select>
             </div>
             <div class="form-group">
-              <button id="upload-listing-agreement" type="button">Upload Listing Agreement</button>
-              <input id="listing-agreement" type="file" style="display:none;" accept=".pdf">
-              <input type="hidden" id="listing-agreement-file-base64" name="listing-agreement-file-base64">
+              <button id="upload-lease-agreement" type="button">Upload Lease Agreement</button>
+              <input id="lease-agreement" type="file" style="display:none;" accept=".pdf">
+              <input type="hidden" id="lease-agreement-file-base64" name="lease-agreement-file-base64">
             </div>
           </div>
           <div class="modal-navigation">
@@ -190,51 +186,51 @@
         </form>
       </div>
     </div>
-    <div id="edit-listing-modal" class="edit-listing-modal">
+    <div id="edit-lease-modal" class="edit-lease-modal">
       <div id="error-notification-modal" class="error-notification-modal"></div>
       <div id="success-notification-modal" class="success-notification-modal"></div>
       <div class="modal-content">
         <span class="close">&times;</span>
-        <form id="edit-listing-modal" class="modal-form">
+        <form id="edit-lease-modal" class="modal-form">
           <div class="modal-step active-step edit-form-step" id="edit-step1">
-            <h2 class="modal-step-title">Edit Listing</h2>
+            <h2 class="modal-step-title">Edit Lease</h2>
             <div class="form-group">
-              <label for="edit-listing-start-date">Listing Start Date:</label>
-              <input type="text" id="edit-listing-start-date" name="edit-listing-start-date" required>
+              <label for="edit-lease-start-date">Lease Start Date:</label>
+              <input type="text" id="edit-lease-start-date" name="edit-lease-start-date" required>
             </div>
             <div class="form-group">
-              <label for="edit-listing-end-date">Listing End Date:</label>
-              <input type="text" id="edit-listing-end-date" name="edit-listing-end-date" required>
+              <label for="edit-lease-end-date">Lease End Date:</label>
+              <input type="text" id="edit-lease-end-date" name="edit-lease-end-date" required>
             </div>
             <div class="form-group">
-              <label for="edit-listing-price">Listing Price:</label>
-              <input type="text" id="edit-listing-price" name="edit-listing-price" required>
+              <label for="edit-lease-price">Lease Price:</label>
+              <input type="text" id="edit-lease-price" name="edit-lease-price" required>
             </div>
           </div>
           <div class="form-group">
-            <label for="edit-listing-street">Listing Street:</label>
-            <input type="text" id="edit-listing-street" name="edit-listing-street" required>
+            <label for="edit-lease-street">Lease Street:</label>
+            <input type="text" id="edit-lease-street" name="edit-lease-street" required>
           </div>
           <div class="form-group">
-            <label for="edit-listing-city">Listing City:</label>
-            <input type="text" id="edit-listing-city" name="edit-listing-city" required>
+            <label for="edit-lease-city">Lease City:</label>
+            <input type="text" id="edit-lease-city" name="edit-lease-city" required>
           </div>
           <div class="form-group">
-            <label for="edit-listing-owner-name">Owner Name:</label>
-            <input type="text" id="edit-listing-owner-name" name="edit-listing-owner-name" required>
+            <label for="edit-lease-owner-name">Owner Name:</label>
+            <input type="text" id="edit-lease-owner-name" name="edit-lease-owner-name" required>
           </div>
           <div class="form-group">
-            <label for="edit-listing-owner-email">Owner Email:</label>
-            <input type="email" id="edit-listing-owner-email" name="edit-listing-owner-email" required>
+            <label for="edit-lease-owner-email">Owner Email:</label>
+            <input type="email" id="edit-lease-owner-email" name="edit-lease-owner-email" required>
           </div>
           <div class="form-group">
-            <label for="edit-listing-owner-phone">Owner Phone Number:</label>
-            <input type="tel" id="edit-listing-owner-phone" name="edit-listing-owner-phone" required>
+            <label for="edit-lease-owner-phone">Owner Phone Number:</label>
+            <input type="tel" id="edit-lease-owner-phone" name="edit-lease-owner-phone" required>
           </div>
           <div class="form-group">
-            <button id="upload-listing-agreement" type="button">Upload Listing Agreement</button>
-            <input id="listing-agreement" type="file" style="display:none;" accept=".pdf">
-            <input type="hidden" id="listing-agreement-file-base64" name="listing-agreement-file-base64">
+            <button id="upload-lease-agreement" type="button">Upload lease Agreement</button>
+            <input id="lease-agreement" type="file" style="display:none;" accept=".pdf">
+            <input type="hidden" id="lease-agreement-file-base64" name="lease-agreement-file-base64">
           </div>
           <div class="modal-navigation">
             <button id="submit-button-edit" class="minimal-button submit-step" type="button">Submit Edit Changes</button>

@@ -38,7 +38,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="{{ url_for('static', filename='js/documents.js') }}"></script>
   </head>
-  <body>
+  <body data-is-admin="{{ is_admin }}">
     <div class="container-fluid root-div">
       {% include 'sidebar.html' %}
       <div class="d-flex justify-content-end">
@@ -124,7 +124,8 @@
                       class="card-footer p-2 text-secondary rounded-0 btn btn-light border-0"
                     >
                       <small class="d-flex align-items-center gap-1">
-                        <i class="fas fa-eye"></i><span>View</span>
+                        <i class="fas fa-eye"></i>
+                        <span>View</span>
                       </small>
                     </button>
                   </div>
@@ -139,7 +140,6 @@
             </div>
             {% endfor %}
           </div>
-
           <div class="modal" id="document-modal">
             <div class="modal-dialog modal-dialog-scrollable">
               <div class="modal-content m-0">
@@ -162,6 +162,10 @@
     </div>
     <div id="error-notification" class="error-notification"></div>
     <div id="success-notification" class="success-notification"></div>
+    <div id="action-modal" class="action-modal">
+      <button id="delete-button">Delete Listing</button>
+      <button id="edit-button">Edit Listing</button>
+    </div>
     <div id="upload-document-modal" class="modal">
       <div id="error-notification-modal" class="error-notification-modal"></div>
       <div
