@@ -227,6 +227,14 @@ body.modal-open {
   background-color: #05537d;
 }
 
+.hide-scrollbar{
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar { 
+  width: 0 !important;
+  display: none; 
+}
 .error-notification {
   position: fixed;
   top: 20px;
@@ -284,6 +292,36 @@ body.modal-open {
   opacity: 0;
   transition: opacity 0.3s;
   z-index: 9999;
+}
+
+.pagination {
+  display: flex;
+  column-gap: 10px;
+}
+
+.page-item {
+  display: flex;
+  margin-top: 15px;
+  align-items: center;
+  transition: background-color 0.3s ease;
+  color: #0056b3;
+  padding: 5px 10px;
+  font-size: 14px;
+  font-weight:bolder ;
+}
+
+.page-item:hover{
+  color: #fff !important;
+  background-color: #0056b3 !important;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.active{
+  color: #fff !important;
+  background-color: #0056b3 !important;
+  padding: 5px 10px;
+  border-radius: 5px;
 }
 
 .error-notification-modal.show, .success-notification-modal.show {
