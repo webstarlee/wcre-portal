@@ -403,8 +403,6 @@ body.modal-open {
 #empty-message p {
   margin-top: 10px;
 }
-
-
 @media only screen and (min-width: 320px) {
   .root-div{
     padding-right: 14px !important;
