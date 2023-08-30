@@ -137,6 +137,18 @@ body{
 .active-step {
   display: block;
 }
+
+input[type=file] {
+  width: 350px;
+  max-width: 100%;
+  color: #444;
+  padding: 5px;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #555;
+}
+
+
 #upload-document-file {
   margin-top: 1px;
   background-color: #f0f0f0;
@@ -322,6 +334,15 @@ body.modal-open {
   background-color: #0056b3 !important;
   padding: 5px 10px;
   border-radius: 5px;
+}
+
+.upload-modal-btn-style{
+  background-color: #0056b3 !important;
+  color: #fff !important;
+}
+
+.upload-modal-btn-style:hover{
+  background-color: #1669c2 !important;
 }
 
 .error-notification-modal.show, .success-notification-modal.show {

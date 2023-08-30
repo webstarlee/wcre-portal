@@ -142,15 +142,15 @@
           </div>
           <div class="modal overflow-hidden" id="document-modal">
             <div class="d-flex justify-content-center align-items-center h-100">
-              <div class="modal-content m-0">
+              <div class="modal-content m-0" style="height: 570px">
                 <span class="close text-end">&times;</span>
                 <h3 class="modal-title fs-5">
                   Document Files - {{ document_type }}
                 </h3>
-                <ul
-                  id="documentList"
-                  class="document-list mt-3 hide-scrollbar overflow-auto"
-                ></ul>
+                <div id="empty-message" class="d-none">
+                  <p class="m-0">No documents found</p>
+                </div>
+                <ul id="documentList" class="document-list mt-3"></ul>
                 <div class="d-flex justify-content-center w-100">
                   <p class="pagination m-0" id="pagination"></p>
                 </div>
@@ -173,7 +173,7 @@
         class="success-notification-modal"
       ></div>
       <div class="modal-content">
-        <span class="close">&times;</span>
+        <span class="close text-end">&times;</span>
         <form
           id="submit-document-form"
           class="modal-form"
@@ -188,6 +188,7 @@
                 type="text"
                 id="document-name"
                 name="document-name"
+                placeholder="File name"
                 required
               />
             </div>
@@ -231,7 +232,7 @@
             <div class="modal-navigation">
               <button
                 id="submit-button"
-                class="minimal-button submit-step"
+                class="minimal-button submit-step upload-modal-btn-style"
                 type="submit"
               >
                 Upload Document
@@ -243,6 +244,7 @@
     </div>
     <script>
       const documentList = document.getElementById("documentList");
+      const emptyMessage = document.getElementById("empty-message");
       const pagination = document.getElementById("pagination");
       const itemsPerPage = 10;
 
@@ -290,55 +292,68 @@
 
             const documents = data;
 
-            const totalPages = Math.ceil(documents.length / itemsPerPage);
-
-            displayDocuments(documents, 1);
-
-            function createPaginationButtons(totalPages, currentPage) {
+            if (documents.length === 0) {
               pagination.innerHTML = "";
+              documentList.innerHTML = "";
+              emptyMessage.classList = "";
+              emptyMessage.classList = "d-block mt-3";
+            } else {
+              emptyMessage.classList = "";
+              emptyMessage.classList = "d-none";
 
-              if (totalPages <= 7) {
-                for (let i = 1; i <= totalPages; i++) {
-                  createPaginationButton(i, currentPage);
-                }
-              } else {
-                for (let i = 1; i <= 2; i++) {
-                  createPaginationButton(i, currentPage);
-                }
+              const totalPages = Math.ceil(documents.length / itemsPerPage);
 
-                const ellipsisBefore = document.createElement("span");
-                ellipsisBefore.textContent = "...";
-                pagination.appendChild(ellipsisBefore);
+              displayDocuments(documents, 1);
 
-                for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-                  if (i > 2 && i < totalPages - 1) {
+              function createPaginationButtons(totalPages, currentPage) {
+                pagination.innerHTML = "";
+
+                if (totalPages <= 7) {
+                  for (let i = 1; i <= totalPages; i++) {
+                    createPaginationButton(i, currentPage);
+                  }
+                } else {
+                  for (let i = 1; i <= 2; i++) {
+                    createPaginationButton(i, currentPage);
+                  }
+
+                  const ellipsisBefore = document.createElement("span");
+                  ellipsisBefore.textContent = "...";
+                  pagination.appendChild(ellipsisBefore);
+
+                  for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+                    if (i > 2 && i < totalPages - 1) {
+                      createPaginationButton(i, currentPage);
+                    }
+                  }
+                  const ellipsisAfter = document.createElement("span");
+                  ellipsisAfter.textContent = "...";
+                  pagination.appendChild(ellipsisAfter);
+
+                  for (let i = totalPages - 1; i <= totalPages; i++) {
                     createPaginationButton(i, currentPage);
                   }
                 }
-                const ellipsisAfter = document.createElement("span");
-                ellipsisAfter.textContent = "...";
-                pagination.appendChild(ellipsisAfter);
+              }
 
-                for (let i = totalPages - 1; i <= totalPages; i++) {
-                  createPaginationButton(i, currentPage);
+              createPaginationButtons(totalPages, 1);
+
+              function createPaginationButton(pageNumber, currentPage) {
+                console.log(pageNumber);
+                if (pageNumber > 1) {
+                  const button = document.createElement("button");
+                  button.textContent = pageNumber;
+                  button.classList = "page-item border-0";
+                  if (pageNumber === currentPage) {
+                    button.classList.add("active");
+                  }
+                  button.addEventListener("click", () => {
+                    createPaginationButtons(totalPages, pageNumber);
+                    displayDocuments(documents, pageNumber);
+                  });
+                  pagination.appendChild(button);
                 }
               }
-            }
-
-            createPaginationButtons(totalPages, 1);
-
-            function createPaginationButton(pageNumber, currentPage) {
-              const button = document.createElement("button");
-              button.textContent = pageNumber;
-              button.classList = "page-item border-0";
-              if (pageNumber === currentPage) {
-                button.classList.add("active");
-              }
-              button.addEventListener("click", () => {
-                createPaginationButtons(totalPages, pageNumber);
-                displayDocuments(documents, pageNumber);
-              });
-              pagination.appendChild(button);
             }
           }
         );
