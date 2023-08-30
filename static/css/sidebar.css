@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap");
 
 body {
   font-family: "Noto Sans", sans-serif !important;
@@ -60,7 +60,7 @@ ul li a:hover {
 
 ul li:hover {
   background-color: #0f4068;
-  color:#fff
+  color: #fff;
 }
 
 ul li a span {
@@ -93,7 +93,7 @@ ul li a span {
   color: #fff;
 }
 
-.user-details-wrapper{
+.user-details-wrapper {
   display: flex;
   align-items: center;
 }
@@ -113,7 +113,7 @@ ul li a span {
 }
 
 .logout-icon {
-  background-image: url('/static/icons/logout.png');
+  background-image: url("/static/icons/logout.png");
   width: 20px;
   height: 20px;
   background-size: cover;
@@ -129,13 +129,12 @@ ul li a span {
   object-fit: cover;
 }
 
-.toggle-sidebar-btn{
+.toggle-sidebar-btn {
   display: none;
 }
 
-
 @media only screen and (max-width: 768px) {
-  .sidebar{
+  .sidebar {
     position: fixed;
     top: 0;
     left: 0;
@@ -146,19 +145,19 @@ ul li a span {
     z-index: 1;
   }
 
-  .toggle-sidebar-btn{
+  .toggle-sidebar-btn {
     display: block;
   }
 
-  .sidebar-items{
+  .sidebar-items {
     display: none;
   }
 
-  .sidebar-header{
+  .sidebar-header {
     display: none;
   }
 
-  .user-info{
+  .user-info {
     display: none;
   }
 }
