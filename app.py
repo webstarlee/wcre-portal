@@ -310,6 +310,7 @@ def get_documents():
 @app.route("/documents")
 @login_required
 def documents():
+    is_admin = current_user.role == "Admin"
     greeting_msg = f"Marketing Dashboard - Document View"
     document_types = [
         "Office Collaterals",
@@ -328,6 +329,7 @@ def documents():
         "documents.html",
         document_types=document_types,
         document_counts=document_counts,
+        is_admin=is_admin,
         greeting_msg=greeting_msg,
     )
 

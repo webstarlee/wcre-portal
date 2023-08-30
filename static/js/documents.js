@@ -13,16 +13,6 @@ $(document).ready(function() {
 		}, 2000);
 	}
 
-	function showSuccessNotification(message) {
-		var successNotification = $("#success-notification");
-		successNotification.text(message);
-		successNotification.addClass("show");
-
-		setTimeout(function() {
-			successNotification.removeClass("show");
-		}, 2000);
-	}
-
 	// SHOW SUCCESS NOTI - MODAL
 	function showSuccessNotificationModal(message) {
 		var successNotification = $("#success-notification-modal");
@@ -61,13 +51,7 @@ $(document).ready(function() {
 		$(this).css("display", "none");
 		resetForm();
 	});
-
-	$(document).bind("click", function(e) {
-		const actionModal = $("#action-modal");
-		if (!$(e.target).closest(actionModal).length) {
-			actionModal.hide();
-		}
-	});
+	
 
 	function resetForm() {
 		$("#submit-document-form")[0].reset();
@@ -152,6 +136,35 @@ $(document).ready(function() {
 			});
 	});
 
+	$(document).ready(function() {
+		var isAdmin = $('body').data('is-admin') === 'True';
+		$('#documentList').on('contextmenu', '.file-item', function(e) {
+			e.preventDefault();
+			let document_id = $(this).data('document-id');
+			console.log('Document ID:', document_id);
+	
+			console.log(isAdmin)
+			if (isAdmin) {
+				console.log("Attempting to show modal..."); // Debug statement
+				const actionModal = $('#action-modal');
+				actionModal.css({
+					top: e.pageY + 'px',
+					left: e.pageX + 'px'
+				}).show();
+				console.log("Modal should now be visible"); // Debug statement
+				$(this).focus();
+			}
+			
+		});
+	
+		$(document).bind("click", function(e) {
+			const actionModal = $("#action-modal");
+			if (!$(e.target).closest(actionModal).length) {
+				actionModal.hide();
+			}
+		});
+	});
+
 	const documentList = document.getElementById("documentList");
 	const emptyMessage = document.getElementById("empty-message");
 	const pagination = document.getElementById("pagination");
@@ -165,7 +178,8 @@ $(document).ready(function() {
 
 		for (let i = startIndex; i < endIndex && i < documents.length; i++) {
 			const li = document.createElement("li");
-			li.classList = "d-flex justify-content-between align-items-center";
+			li.classList = "d-flex justify-content-between align-items-center file-item";
+			li.setAttribute('data-document-id', documents[i]._id);
 			var downloadButton =
 				'<a class="download-button" href="data:application/pdf;base64,' +
 				documents[i].pdf_file_base64 +
@@ -199,7 +213,6 @@ $(document).ready(function() {
 				);
 				var modal = document.getElementById("document-modal");
 				modal.style.display = "block";
-
 				const documents = data;
 
 				if (documents.length === 0) {
@@ -210,11 +223,9 @@ $(document).ready(function() {
 				} else {
 					emptyMessage.classList = "";
 					emptyMessage.classList = "d-none";
-
 					const totalPages = Math.ceil(documents.length / itemsPerPage);
 
 					displayDocuments(documents, 1);
-
 					function createPaginationButtons(totalPages, currentPage) {
 						pagination.innerHTML = "";
 
@@ -239,7 +250,6 @@ $(document).ready(function() {
 							const ellipsisAfter = document.createElement("span");
 							ellipsisAfter.textContent = "...";
 							pagination.appendChild(ellipsisAfter);
-
 							for (let i = totalPages - 1; i <= totalPages; i++) {
 								createPaginationButton(i, currentPage);
 							}
@@ -247,7 +257,6 @@ $(document).ready(function() {
 					}
 
 					createPaginationButtons(totalPages, 1);
-
 					function createPaginationButton(pageNumber, currentPage) {
 						const button = document.createElement("button");
 						button.textContent = pageNumber;
