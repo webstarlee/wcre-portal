@@ -106,7 +106,6 @@ $(document).ready(function() {
 			showErrorNotificationModal("Please Upload a PDF File");
 			return;
 		}
-
 		e.preventDefault();
 		$("#upload-document-modal").css("display", "none");
 		var formData = new FormData(this);
@@ -136,34 +135,34 @@ $(document).ready(function() {
 			});
 	});
 
+	let document_id = null;
 	$(document).ready(function() {
 		var isAdmin = $('body').data('is-admin') === 'True';
 		$('#documentList').on('contextmenu', '.file-item', function(e) {
 			e.preventDefault();
-			let document_id = $(this).data('document-id');
+			document_id = $(this).data('document-id');
 			console.log('Document ID:', document_id);
 	
 			console.log(isAdmin)
 			if (isAdmin) {
-				console.log("Attempting to show modal..."); // Debug statement
 				const actionModal = $('#action-modal');
 				actionModal.css({
 					top: e.pageY + 'px',
 					left: e.pageX + 'px'
 				}).show();
-				console.log("Modal should now be visible"); // Debug statement
 				$(this).focus();
 			}
 			
 		});
-	
-		$(document).bind("click", function(e) {
-			const actionModal = $("#action-modal");
-			if (!$(e.target).closest(actionModal).length) {
-				actionModal.hide();
-			}
-		});
 	});
+
+	$(document).bind('mousedown', function(e) {
+		const actionModal = $('#action-modal');
+		if (!$(e.target).closest(actionModal).length) {
+			actionModal.hide();
+		}
+	});
+	
 
 	const documentList = document.getElementById("documentList");
 	const emptyMessage = document.getElementById("empty-message");
@@ -172,14 +171,13 @@ $(document).ready(function() {
 
 	function displayDocuments(documents, pageNumber) {
 		documentList.innerHTML = "";
-
 		const startIndex = (pageNumber - 1) * itemsPerPage;
 		const endIndex = startIndex + itemsPerPage;
-
 		for (let i = startIndex; i < endIndex && i < documents.length; i++) {
 			const li = document.createElement("li");
 			li.classList = "d-flex justify-content-between align-items-center file-item";
 			li.setAttribute('data-document-id', documents[i]._id);
+			li.setAttribute('data-document-type', documents[i].document_type);
 			var downloadButton =
 				'<a class="download-button" href="data:application/pdf;base64,' +
 				documents[i].pdf_file_base64 +
@@ -237,11 +235,9 @@ $(document).ready(function() {
 							for (let i = 1; i <= 2; i++) {
 								createPaginationButton(i, currentPage);
 							}
-
 							const ellipsisBefore = document.createElement("span");
 							ellipsisBefore.textContent = "...";
 							pagination.appendChild(ellipsisBefore);
-
 							for (let i = currentPage - 1; i <= currentPage + 1; i++) {
 								if (i > 2 && i < totalPages - 1) {
 									createPaginationButton(i, currentPage);
@@ -274,4 +270,24 @@ $(document).ready(function() {
 			}
 		);
 	});
+
+	$('#delete-button').click(function() {
+        console.log(document_id);
+        const actionModal = $('#action-modal'); 
+        $.ajax({
+            url: '/delete_document/' + document_id,
+            type: 'GET',
+            success: function(data) {
+                if (data.success) {
+					location.reload();
+                    console.log('Document Deleted Successfully');
+                } else {
+                    console.error('Failed to Delete Document: ' + data.message);
+                }
+            },
+            error: function() {
+                console.error('Failed to Delete Document');
+            }
+        });
+    });
 });

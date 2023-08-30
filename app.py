@@ -89,6 +89,7 @@ try:
     listings = db["listings"]
     sales = db["Sales"]
     leases = db["Leases"]
+    docs = db["Documents"]
     fs = GridFS(db)
     logger.info("Connected to MongoDB successfully")
 except Exception as e:
@@ -158,24 +159,7 @@ def dashboard():
     total_listings = listings.count_documents({})
     total_sales = sales.count_documents({})
     total_leases = leases.count_documents({})
-    office_collaterals = db["Office Collaterals"].count_documents({})
-    industrial_collaterals = db["Industrial Collaterals"].count_documents({})
-    retail_collaterals = db["Retail Collaterals"].count_documents({})
-    investment_collaterals = db["Investment Collaterals"].count_documents({})
-    healthcare = db["Healthcare Collaterals"].count_documents({})
-    bov_reports = db["BOV Reports"].count_documents({})
-    key_marketing_pieces = db["Key Marketing Pieces"].count_documents({})
-    quarterly_reports = db["Quarterly Reports"].count_documents({})
-    total_documents = (
-        office_collaterals
-        + industrial_collaterals
-        + retail_collaterals
-        + investment_collaterals
-        + healthcare
-        + bov_reports
-        + key_marketing_pieces
-        + quarterly_reports
-    )
+    total_documents = docs.count_documents({})
     current_time = arrow.now("EST")
     greeting_msg = f"{greeting(current_time)}, {current_user.fullname.split()[0]}!"
     return render_template(
@@ -301,10 +285,11 @@ def view_leases():
 @login_required
 def get_documents():
     document_type = request.args.get("document_type")
-    documents = list(db[document_type].find({}))
+    documents = list(db['Documents'].find({'document_type': document_type}))
     for document in documents:
         document["_id"] = str(document["_id"])
     return jsonify(documents)
+
 
 
 @app.route("/documents")
@@ -313,18 +298,13 @@ def documents():
     is_admin = current_user.role == "Admin"
     greeting_msg = f"Marketing Dashboard - Document View"
     document_types = [
-        "Office Collaterals",
-        "Industrial Collaterals",
-        "Investment Collaterals",
-        "Healthcare Collaterals",
-        "Retail Collaterals",
-        "BOV Reports",
-        "Quarterly Reports",
-        "Key Marketing Pieces",
+        "Office Collaterals", "Industrial Collaterals", "Investment Collaterals", 
+        "Healthcare Collaterals", "Retail Collaterals", "BOV Reports", 
+        "Quarterly Reports", "Key Marketing Pieces"
     ]
     document_counts = {}
     for document_type in document_types:
-        document_counts[document_type] = db[document_type].count_documents({})
+        document_counts[document_type] = db['Documents'].count_documents({'document_type': document_type})
     return render_template(
         "documents.html",
         document_types=document_types,
@@ -407,13 +387,14 @@ def submit_document():
         document_file_base64 = request.form.get("document-file-base64")
         document_type = request.form.get("document-type")
         document_name = request.form.get("document-name")
-
         new_document = {
             "document_name": document_name,
+            "document_type": document_type,
             "pdf_file_base64": document_file_base64,
         }
+
         try:
-            result = db[document_type].insert_one(new_document)
+            result = docs.insert_one(new_document)
         except:
             return (
                     jsonify(
@@ -654,6 +635,25 @@ def delete_sale(sale_id):
             return {
                 "success": False,
                 "message": "Sale Not Found or Couldn't Be Deleted",
+            }, 404
+        
+@app.route("/delete_document/<document_id>", methods=["GET"])
+@login_required
+def delete_document(document_id):
+    try:
+        result = docs.delete_one({"_id": ObjectId(document_id)})
+    except:
+        return {
+            "success": False,
+            "message": "Document Not Found or Couldn't Be Deleted",
+        }, 404
+    else:
+        if result.deleted_count > 0:
+            return {"success": True}, 200
+        else:
+            return {
+                "success": False,
+                "message": "Document Not Found or Couldn't Be Deleted",
             }, 404
 
 

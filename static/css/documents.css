@@ -366,12 +366,13 @@ body.modal-open {
   padding: 5px;
   width: 150px;
   text-align: center;
+  z-index: 9999;
 }
 .action-modal button {
   display: block;
   border: none;
   color: #fff;
-  padding: 5px 10px;
+  padding: 5px 5px;
   margin-top: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
