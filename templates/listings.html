@@ -95,7 +95,6 @@
             </button>
             <button
               id="add-listing-button"
-              asdas
               class="header-btns"
               style="flex-shrink: 0"
               type="button"
@@ -115,7 +114,7 @@
               <th style="border-top-left-radius: 7px">Property Type</th>
               <th>Listing Type</th>
               <th>Start Date</th>
-              <th>Closing Date</th>
+              <th>End Date</th>
               <th>Price</th>
               <th>Street</th>
               <th>City</th>
@@ -171,327 +170,343 @@
             </tr>
             {% endfor %}
           </tbody>
+          <table>
+            {{ pagination.links }}
+            <div>
+              <div id="action-modal" class="action-modal">
+                <button id="delete-button">Delete Listing</button>
+                <button id="edit-button">Edit Listing</button>
+              </div>
+              <div id="add-listing-modal" class="add-listing-modal">
+                <div
+                  id="error-notification-modal"
+                  class="error-notification-modal"
+                ></div>
+                <div
+                  id="success-notification-modal"
+                  class="success-notification-modal"
+                ></div>
+                <div class="modal-content">
+                  <span class="close">&times;</span>
+                  <form
+                    id="submit-listing-form"
+                    class="modal-form"
+                    action="{{ url_for('submit_listing') }}"
+                    method="POST"
+                  >
+                    <div
+                      class="modal-step active-step main-form-step"
+                      id="main-step1"
+                    >
+                      <h2 class="modal-step-title">
+                        New Listing - Property Information
+                      </h2>
+                      <div class="form-group">
+                        <label for="listing-street">Listing Street:</label>
+                        <input
+                          type="text"
+                          id="listing-street"
+                          name="listing-street"
+                          required
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label for="listing-city">Listing City:</label>
+                        <input
+                          type="text"
+                          id="listing-city"
+                          name="listing-city"
+                          required
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label for="listing-state">Listing State:</label>
+                        <select
+                          id="listing-state"
+                          name="listing-state"
+                          required
+                        >
+                          <option value="NJ">NJ</option>
+                          <option value="PA">PA</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="listing-property-type"
+                          >Property Type:</label
+                        >
+                        <select
+                          id="listing-property-type"
+                          name="listing-property-type"
+                          required
+                        >
+                          <option value="Office">Office</option>
+                          <option value="Industrial">Industrial</option>
+                          <option value="Flex">Flex</option>
+                          <option value="Retail">Retail</option>
+                          <option value="Medical">Medical</option>
+                          <option value="Land">Land</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="modal-step main-form-step" id="main-step2">
+                      <h2 class="modal-step-title">
+                        New Listing - Owner Information
+                      </h2>
+                      <div class="form-group">
+                        <label for="listing-owner-name">Owner Name:</label>
+                        <input
+                          type="text"
+                          id="listing-owner-name"
+                          name="listing-owner-name"
+                          required
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label for="listing-owner-email">Owner Email:</label>
+                        <input
+                          type="email"
+                          id="listing-owner-email"
+                          name="listing-owner-email"
+                          required
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label for="listing-owner-phone"
+                          >Owner Phone Number:</label
+                        >
+                        <input
+                          type="tel"
+                          id="listing-owner-phone"
+                          name="listing-owner-phone"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="modal-step main-form-step" id="main-step3">
+                      <h2 class="modal-step-title">
+                        New Listing - General Information
+                      </h2>
+                      <div class="form-group">
+                        <label for="listing-type">Listing Type:</label>
+                        <select id="listing-type" name="listing-type" required>
+                          <option value="Sale">Sale</option>
+                          <option value="Lease">Lease</option>
+                          <option value="Sale and Lease">Sale and Lease</option>
+                          <option value="Sublease">Sublease</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="listing-price">Listing Price:</label>
+                        <input
+                          type="text"
+                          id="listing-price"
+                          name="listing-price"
+                          required
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label for="listing-start-date"
+                          >Listing Start Date:</label
+                        >
+                        <input
+                          type="text"
+                          id="listing-start-date"
+                          name="listing-start-date"
+                          required
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label for="listing-end-date">Listing End Date:</label>
+                        <input
+                          type="text"
+                          id="listing-end-date"
+                          name="listing-end-date"
+                          required
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label for="listing-brokers">Brokers:</label>
+                        <select id="listing-brokers" name="brokers[]" multiple>
+                          <option value="Jason Wolf">Jason Wolf</option>
+                          <option value="Evan Zweben">Evan Zweben</option>
+                          <option value="Erin Warwick">Erin Warwick</option>
+                          <option value="Todd Monahan">Todd Monahan</option>
+                          <option value="John Mozzillo">John Mozzillo</option>
+                          <option value="Ryan Barikian">Ryan Barikian</option>
+                          <option value="Bethany Brown">Bethany Brown</option>
+                          <option value="Tony Banks">Tony Banks</option>
+                          <option value="Phil Costa">Phil Costa</option>
+                          <option value="Eric Flocco">Eric Flocco</option>
+                          <option value="John Mazurie">John Mazurie</option>
+                          <option value="Brian Goren">Brian Goren</option>
+                          <option value="Julia Brines">Julia Brines</option>
+                          <option value="Brian Propp">Brian Propp</option>
+                          <option value="Sam Newman">Sam Newman</option>
+                          <option value="David Spector">David Spector</option>
+                          <option value="Chemmie Sokolic">
+                            Chemmie Sokolic
+                          </option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <button id="upload-listing-agreement" type="button">
+                          Upload Listing Agreement
+                        </button>
+                        <input
+                          id="listing-agreement"
+                          type="file"
+                          style="display: none"
+                          accept=".pdf"
+                        />
+                        <input
+                          type="hidden"
+                          id="listing-agreement-file-base64"
+                          name="listing-agreement-file-base64"
+                        />
+                      </div>
+                    </div>
+                    <div class="modal-navigation">
+                      <button class="minimal-button prev-step" type="button">
+                        Previous
+                      </button>
+                      <button
+                        id="next-button"
+                        class="minimal-button next-step"
+                        type="button"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <div id="edit-listing-modal" class="edit-listing-modal">
+                <div
+                  id="error-notification-modal"
+                  class="error-notification-modal"
+                ></div>
+                <div
+                  id="success-notification-modal"
+                  class="success-notification-modal"
+                ></div>
+                <div class="modal-content">
+                  <span class="close">&times;</span>
+                  <form id="edit-listing-modal" class="modal-form">
+                    <div
+                      class="modal-step active-step edit-form-step"
+                      id="edit-step1"
+                    >
+                      <h2 class="modal-step-title">Edit Listing</h2>
+                      <div class="form-group">
+                        <label for="edit-listing-start-date"
+                          >Listing Start Date:</label
+                        >
+                        <input
+                          type="text"
+                          id="edit-listing-start-date"
+                          name="edit-listing-start-date"
+                          required
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label for="edit-listing-end-date"
+                          >Listing End Date:</label
+                        >
+                        <input
+                          type="text"
+                          id="edit-listing-end-date"
+                          name="edit-listing-end-date"
+                          required
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label for="edit-listing-price">Listing Price:</label>
+                        <input
+                          type="text"
+                          id="edit-listing-price"
+                          name="edit-listing-price"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="edit-listing-street">Listing Street:</label>
+                      <input
+                        type="text"
+                        id="edit-listing-street"
+                        name="edit-listing-street"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="edit-listing-city">Listing City:</label>
+                      <input
+                        type="text"
+                        id="edit-listing-city"
+                        name="edit-listing-city"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="edit-listing-owner-name">Owner Name:</label>
+                      <input
+                        type="text"
+                        id="edit-listing-owner-name"
+                        name="edit-listing-owner-name"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="edit-listing-owner-email">Owner Email:</label>
+                      <input
+                        type="email"
+                        id="edit-listing-owner-email"
+                        name="edit-listing-owner-email"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="edit-listing-owner-phone"
+                        >Owner Phone Number:</label
+                      >
+                      <input
+                        type="tel"
+                        id="edit-listing-owner-phone"
+                        name="edit-listing-owner-phone"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <button id="upload-listing-agreement" type="button">
+                        Upload Listing Agreement
+                      </button>
+                      <input
+                        id="listing-agreement"
+                        type="file"
+                        style="display: none"
+                        accept=".pdf"
+                      />
+                      <input
+                        type="hidden"
+                        id="listing-agreement-file-base64"
+                        name="listing-agreement-file-base64"
+                      />
+                    </div>
+                    <div class="modal-navigation">
+                      <button
+                        id="submit-button-edit"
+                        class="minimal-button submit-step"
+                        type="button"
+                      >
+                        Submit Edit Changes
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </table>
         </table>
-        {{ pagination.links }}
-        <div>
-          <div id="action-modal" class="action-modal">
-            <button id="delete-button">Delete Listing</button>
-            <button id="edit-button">Edit Listing</button>
-          </div>
-          <div id="add-listing-modal" class="add-listing-modal">
-            <div
-              id="error-notification-modal"
-              class="error-notification-modal"
-            ></div>
-            <div
-              id="success-notification-modal"
-              class="success-notification-modal"
-            ></div>
-            <div class="modal-content">
-              <span class="close">&times;</span>
-              <form
-                id="submit-listing-form"
-                class="modal-form"
-                action="{{ url_for('submit_listing') }}"
-                method="POST"
-              >
-                <div
-                  class="modal-step active-step main-form-step"
-                  id="main-step1"
-                >
-                  <h2 class="modal-step-title">
-                    New Listing - Property Information
-                  </h2>
-                  <div class="form-group">
-                    <label for="listing-street">Listing Street:</label>
-                    <input
-                      type="text"
-                      id="listing-street"
-                      name="listing-street"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="listing-city">Listing City:</label>
-                    <input
-                      type="text"
-                      id="listing-city"
-                      name="listing-city"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="listing-state">Listing State:</label>
-                    <select id="listing-state" name="listing-state" required>
-                      <option value="NJ">NJ</option>
-                      <option value="PA">PA</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label for="listing-property-type">Property Type:</label>
-                    <select
-                      id="listing-property-type"
-                      name="listing-property-type"
-                      required
-                    >
-                      <option value="Office">Office</option>
-                      <option value="Industrial">Industrial</option>
-                      <option value="Flex">Flex</option>
-                      <option value="Retail">Retail</option>
-                      <option value="Medical">Medical</option>
-                      <option value="Land">Land</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="modal-step main-form-step" id="main-step2">
-                  <h2 class="modal-step-title">
-                    New Listing - Owner Information
-                  </h2>
-                  <div class="form-group">
-                    <label for="listing-owner-name">Owner Name:</label>
-                    <input
-                      type="text"
-                      id="listing-owner-name"
-                      name="listing-owner-name"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="listing-owner-email">Owner Email:</label>
-                    <input
-                      type="email"
-                      id="listing-owner-email"
-                      name="listing-owner-email"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="listing-owner-phone">Owner Phone Number:</label>
-                    <input
-                      type="tel"
-                      id="listing-owner-phone"
-                      name="listing-owner-phone"
-                      required
-                    />
-                  </div>
-                </div>
-                <div class="modal-step main-form-step" id="main-step3">
-                  <h2 class="modal-step-title">
-                    New Listing - General Information
-                  </h2>
-                  <div class="form-group">
-                    <label for="listing-type">Listing Type:</label>
-                    <select id="listing-type" name="listing-type" required>
-                      <option value="Sale">Sale</option>
-                      <option value="Lease">Lease</option>
-                      <option value="Sale and Lease">Sale and Lease</option>
-                      <option value="Sublease">Sublease</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label for="listing-price">Listing Price:</label>
-                    <input
-                      type="text"
-                      id="listing-price"
-                      name="listing-price"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="listing-start-date">Listing Start Date:</label>
-                    <input
-                      type="text"
-                      id="listing-start-date"
-                      name="listing-start-date"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="listing-end-date">Listing End Date:</label>
-                    <input
-                      type="text"
-                      id="listing-end-date"
-                      name="listing-end-date"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="listing-brokers">Brokers:</label>
-                    <select id="listing-brokers" name="brokers[]" multiple>
-                      <option value="Jason Wolf">Jason Wolf</option>
-                      <option value="Evan Zweben">Evan Zweben</option>
-                      <option value="Erin Warwick">Erin Warwick</option>
-                      <option value="Todd Monahan">Todd Monahan</option>
-                      <option value="John Mozzillo">John Mozzillo</option>
-                      <option value="Ryan Barikian">Ryan Barikian</option>
-                      <option value="Bethany Brown">Bethany Brown</option>
-                      <option value="Tony Banks">Tony Banks</option>
-                      <option value="Phil Costa">Phil Costa</option>
-                      <option value="Eric Flocco">Eric Flocco</option>
-                      <option value="John Mazurie">John Mazurie</option>
-                      <option value="Brian Goren">Brian Goren</option>
-                      <option value="Julia Brines">Julia Brines</option>
-                      <option value="Brian Propp">Brian Propp</option>
-                      <option value="Sam Newman">Sam Newman</option>
-                      <option value="David Spector">David Spector</option>
-                      <option value="Chemmie Sokolic">Chemmie Sokolic</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <button id="upload-listing-agreement" type="button">
-                      Upload Listing Agreement
-                    </button>
-                    <input
-                      id="listing-agreement"
-                      type="file"
-                      style="display: none"
-                      accept=".pdf"
-                    />
-                    <input
-                      type="hidden"
-                      id="listing-agreement-file-base64"
-                      name="listing-agreement-file-base64"
-                    />
-                  </div>
-                </div>
-                <div class="modal-navigation">
-                  <button class="minimal-button prev-step" type="button">
-                    Previous
-                  </button>
-                  <button
-                    id="next-button"
-                    class="minimal-button next-step"
-                    type="button"
-                  >
-                    Next
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-          <div id="edit-listing-modal" class="edit-listing-modal">
-            <div
-              id="error-notification-modal"
-              class="error-notification-modal"
-            ></div>
-            <div
-              id="success-notification-modal"
-              class="success-notification-modal"
-            ></div>
-            <div class="modal-content">
-              <span class="close">&times;</span>
-              <form id="edit-listing-modal" class="modal-form">
-                <div
-                  class="modal-step active-step edit-form-step"
-                  id="edit-step1"
-                >
-                  <h2 class="modal-step-title">Edit Listing</h2>
-                  <div class="form-group">
-                    <label for="edit-listing-start-date"
-                      >Listing Start Date:</label
-                    >
-                    <input
-                      type="text"
-                      id="edit-listing-start-date"
-                      name="edit-listing-start-date"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="edit-listing-end-date">Listing End Date:</label>
-                    <input
-                      type="text"
-                      id="edit-listing-end-date"
-                      name="edit-listing-end-date"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="edit-listing-price">Listing Price:</label>
-                    <input
-                      type="text"
-                      id="edit-listing-price"
-                      name="edit-listing-price"
-                      required
-                    />
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="edit-listing-street">Listing Street:</label>
-                  <input
-                    type="text"
-                    id="edit-listing-street"
-                    name="edit-listing-street"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="edit-listing-city">Listing City:</label>
-                  <input
-                    type="text"
-                    id="edit-listing-city"
-                    name="edit-listing-city"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="edit-listing-owner-name">Owner Name:</label>
-                  <input
-                    type="text"
-                    id="edit-listing-owner-name"
-                    name="edit-listing-owner-name"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="edit-listing-owner-email">Owner Email:</label>
-                  <input
-                    type="email"
-                    id="edit-listing-owner-email"
-                    name="edit-listing-owner-email"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="edit-listing-owner-phone"
-                    >Owner Phone Number:</label
-                  >
-                  <input
-                    type="tel"
-                    id="edit-listing-owner-phone"
-                    name="edit-listing-owner-phone"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <button id="upload-listing-agreement" type="button">
-                    Upload Listing Agreement
-                  </button>
-                  <input
-                    id="listing-agreement"
-                    type="file"
-                    style="display: none"
-                    accept=".pdf"
-                  />
-                  <input
-                    type="hidden"
-                    id="listing-agreement-file-base64"
-                    name="listing-agreement-file-base64"
-                  />
-                </div>
-                <div class="modal-navigation">
-                  <button
-                    id="submit-button-edit"
-                    class="minimal-button submit-step"
-                    type="button"
-                  >
-                    Submit Edit Changes
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </body>
