@@ -38,6 +38,8 @@ from flask import Flask
 from sentry_sdk.integrations.flask import FlaskIntegration
 
 ALLOWED_EXTENSIONS = {"pdf"}
+
+
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -122,6 +124,7 @@ def login():
             return render_template("login.html", error="Invalid Username or Password")
     return render_template("login.html")
 
+
 @app.route("/logout")
 @login_required
 def logout():
@@ -152,6 +155,7 @@ def greeting(current_time):
         return "Good Afternoon"
     else:
         return "Good Evening"
+
 
 @app.route("/dashboard")
 @login_required
@@ -285,11 +289,10 @@ def view_leases():
 @login_required
 def get_documents():
     document_type = request.args.get("document_type")
-    documents = list(db['Documents'].find({'document_type': document_type}))
+    documents = list(db["Documents"].find({"document_type": document_type}))
     for document in documents:
         document["_id"] = str(document["_id"])
     return jsonify(documents)
-
 
 
 @app.route("/documents")
@@ -298,13 +301,20 @@ def documents():
     is_admin = current_user.role == "Admin"
     greeting_msg = f"Marketing Dashboard - Document View"
     document_types = [
-        "Office Collaterals", "Industrial Collaterals", "Investment Collaterals", 
-        "Healthcare Collaterals", "Retail Collaterals", "BOV Reports", 
-        "Quarterly Reports", "Key Marketing Pieces"
+        "Office Collaterals",
+        "Industrial Collaterals",
+        "Investment Collaterals",
+        "Healthcare Collaterals",
+        "Retail Collaterals",
+        "BOV Reports",
+        "Quarterly Reports",
+        "Key Marketing Pieces",
     ]
     document_counts = {}
     for document_type in document_types:
-        document_counts[document_type] = db['Documents'].count_documents({'document_type': document_type})
+        document_counts[document_type] = db["Documents"].count_documents(
+            {"document_type": document_type}
+        )
     return render_template(
         "documents.html",
         document_types=document_types,
@@ -397,14 +407,14 @@ def submit_document():
             result = docs.insert_one(new_document)
         except:
             return (
-                    jsonify(
-                        {
-                            "status": "error",
-                            "message": "Error Occurred While Submitting The Document",
-                        }
-                    ),
-                    500,
-                )
+                jsonify(
+                    {
+                        "status": "error",
+                        "message": "Error Occurred While Submitting The Document",
+                    }
+                ),
+                500,
+            )
         else:
             if result.inserted_id:
                 return make_response(
@@ -636,7 +646,8 @@ def delete_sale(sale_id):
                 "success": False,
                 "message": "Sale Not Found or Couldn't Be Deleted",
             }, 404
-        
+
+
 @app.route("/delete_document/<document_id>", methods=["GET"])
 @login_required
 def delete_document(document_id):
@@ -714,6 +725,7 @@ def edit_sale(sale_id):
         if field in data:
             sales.update_one({"_id": ObjectId(sale_id)}, {"$set": {field: data[field]}})
     return {"success": True}
+
 
 @app.route("/search_listings", methods=["POST"])
 @login_required
