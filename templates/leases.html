@@ -27,8 +27,8 @@
           </div>
           <div style="display: flex;flex-wrap: wrap; column-gap: 20px;row-gap: 10px;">
             <input type="text" class="leases-count-div" style="flex-shrink: 0;" id="search-input" placeholder="Search Leases..." />
-            <button id="open-map-button" class="header-btns" style="flex-shrink: 0;" type="button">Open leases Map</button>
-            <button id="delete-all-button" class="header-btns" style="flex-shrink: 0;" type="button">Delete All leases</button>
+            <button id="open-map-button" class="header-btns" style="flex-shrink: 0;" type="button">Open Leases Map</button>
+            <button id="delete-all-button" class="header-btns" style="flex-shrink: 0;" type="button">Delete All Leases</button>
             <button id="add-lease-button" class="header-btns" style="flex-shrink: 0;" type="button">Add lease</button>
           </div>
         </form>
@@ -38,16 +38,18 @@
         overflow: hidden;">
         <thead>
           <tr>
-            <th style="border-top-left-radius: 7px;">Property Type</th>
-            <th>Lease Type</th>
+            <th style="border-top-left-radius: 7px;">Lease Type</th>
             <th>Start Date</th>
-            <th>Price</th>
-            <th>Street</th>
+            <th>Closing Date</th>
+            <th>Rental Price</th>
+            <th>Square Footage</th>
+            <th>% Of Space In Building</th>
+            <th>Term Length</th>
+            <th>Property Address</th>
             <th>City</th>
-            <th>Owner</th>
-            <th>Phone</th>
+            <th>Lessor</th>
+            <th>Lessee</th>
             <th>Brokers</th>
-            <th style="border-top-right-radius: 7px;">Lease Agreement</th>
           </tr>
         </thead>
         <tbody> 
@@ -85,7 +87,7 @@
         <span class="close">&times;</span>
         <form id="submit-lease-form" class="modal-form" action="{{ url_for('submit_lease') }}" method="POST">
           <div class="modal-step active-step main-form-step" id="main-step1">
-            <h2 class="modal-step-title">New Lease - Address Information</h2>
+            <h2 class="modal-step-title">New Lease - Property Information</h2>
             <div class="form-group">
               <label for="lease-street">Lease Street:</label>
               <input type="text" id="lease-street" name="lease-street" required>
@@ -114,46 +116,52 @@
             </div>
           </div>
           <div class="modal-step main-form-step" id="main-step2">
-            <h2 class="modal-step-title">New Lease - Owner Information</h2>
+            <h2 class="modal-step-title">New Lease - Lessor Information</h2>
             <div class="form-group">
-              <label for="lease-owner-name">Owner Name:</label>
-              <input type="text" id="lease-owner-name" name="lease-owner-name" required>
+              <label for="lease-lessor-name">Lessor Name:</label>
+              <input type="text" id="listing-owner-name" name="listing-owner-name" required>
             </div>
             <div class="form-group">
-              <label for="lease-owner-email">Owner Email:</label>
-              <input type="email" id="lease-owner-email" name="lease-owner-email" required>
+              <label for="lease-lessor-email">Owner Email:</label>
+              <input type="email" id="listing-owner-email" name="listing-owner-email" required>
             </div>
             <div class="form-group">
               <label for="lease-owner-phone">Owner Phone Number:</label>
-              <input type="tel" id="lease-owner-phone" name="lease-owner-phone" required>
+              <input type="tel" id="listing-owner-phone" name="listing-owner-phone" required>
             </div>
           </div>
           <div class="modal-step main-form-step" id="main-step3">
+            <h2 class="modal-step-title">New Lease - Lesse Information</h2>
+            <div class="form-group">
+              <label for="lease-lessor-name">Lesse Name:</label>
+              <input type="text" id="listing-owner-name" name="listing-owner-name" required>
+            </div>
+            <div class="form-group">
+              <label for="lease-lessor-email">Lesse Email:</label>
+              <input type="email" id="listing-owner-email" name="listing-owner-email" required>
+            </div>
+            <div class="form-group">
+              <label for="lease-owner-phone">Lesse Phone Number:</label>
+              <input type="tel" id="listing-owner-phone" name="listing-owner-phone" required>
+            </div>
+          </div>
+          <div class="modal-step main-form-step" id="main-step4">
             <h2 class="modal-step-title">New Lease - General Information</h2>
             <div class="form-group">
-              <label for="lease-type">Lease Type:</label>
-              <select id="lease-type" name="lease-type" required>
-                <option value="Sale">Sale</option>
-                <option value="Lease">Lease</option>
-                <option value="Sale and Lease">Sale and Lease</option>
-                <option value="Sublease">Sublease</option>
-              </select>
+              <label for="listing-price">Listing Price:</label>
+              <input type="text" id="listing-price" name="listing-price" required>
             </div>
             <div class="form-group">
-              <label for="lease-price">Lease Price:</label>
-              <input type="text" id="lease-price" name="lease-price" required>
+              <label for="listing-start-date">Listing Start Date:</label>
+              <input type="text" id="listing-start-date" name="listing-start-date" required>
             </div>
             <div class="form-group">
-              <label for="lease-start-date">Lease Start Date:</label>
-              <input type="text" id="lease-start-date" name="lease-start-date" required>
+              <label for="listing-end-date">Listing End Date:</label>
+              <input type="text" id="listing-end-date" name="listing-end-date" required>
             </div>
             <div class="form-group">
-              <label for="lease-end-date">Lease End Date:</label>
-              <input type="text" id="lease-end-date" name="lease-end-date" required>
-            </div>
-            <div class="form-group">
-              <label for="lease-brokers">Brokers:</label>
-              <select id="lease-brokers" name="brokers[]" multiple>
+              <label for="listing-brokers">Brokers:</label>
+              <select id="listing-brokers" name="brokers[]" multiple>
                 <option value="Jason Wolf">Jason Wolf</option>
                 <option value="Evan Zweben">Evan Zweben</option>
                 <option value="Erin Warwick">Erin Warwick</option>
@@ -174,9 +182,9 @@
               </select>
             </div>
             <div class="form-group">
-              <button id="upload-lease-agreement" type="button">Upload Lease Agreement</button>
-              <input id="lease-agreement" type="file" style="display:none;" accept=".pdf">
-              <input type="hidden" id="lease-agreement-file-base64" name="lease-agreement-file-base64">
+              <button id="upload-listing-agreement" type="button">Upload Listing Agreement</button>
+              <input id="listing-agreement" type="file" style="display:none;" accept=".pdf">
+              <input type="hidden" id="listing-agreement-file-base64" name="listing-agreement-file-base64">
             </div>
           </div>
           <div class="modal-navigation">
@@ -186,56 +194,5 @@
         </form>
       </div>
     </div>
-    <div id="edit-lease-modal" class="edit-lease-modal">
-      <div id="error-notification-modal" class="error-notification-modal"></div>
-      <div id="success-notification-modal" class="success-notification-modal"></div>
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        <form id="edit-lease-modal" class="modal-form">
-          <div class="modal-step active-step edit-form-step" id="edit-step1">
-            <h2 class="modal-step-title">Edit Lease</h2>
-            <div class="form-group">
-              <label for="edit-lease-start-date">Lease Start Date:</label>
-              <input type="text" id="edit-lease-start-date" name="edit-lease-start-date" required>
-            </div>
-            <div class="form-group">
-              <label for="edit-lease-end-date">Lease End Date:</label>
-              <input type="text" id="edit-lease-end-date" name="edit-lease-end-date" required>
-            </div>
-            <div class="form-group">
-              <label for="edit-lease-price">Lease Price:</label>
-              <input type="text" id="edit-lease-price" name="edit-lease-price" required>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="edit-lease-street">Lease Street:</label>
-            <input type="text" id="edit-lease-street" name="edit-lease-street" required>
-          </div>
-          <div class="form-group">
-            <label for="edit-lease-city">Lease City:</label>
-            <input type="text" id="edit-lease-city" name="edit-lease-city" required>
-          </div>
-          <div class="form-group">
-            <label for="edit-lease-owner-name">Owner Name:</label>
-            <input type="text" id="edit-lease-owner-name" name="edit-lease-owner-name" required>
-          </div>
-          <div class="form-group">
-            <label for="edit-lease-owner-email">Owner Email:</label>
-            <input type="email" id="edit-lease-owner-email" name="edit-lease-owner-email" required>
-          </div>
-          <div class="form-group">
-            <label for="edit-lease-owner-phone">Owner Phone Number:</label>
-            <input type="tel" id="edit-lease-owner-phone" name="edit-lease-owner-phone" required>
-          </div>
-          <div class="form-group">
-            <button id="upload-lease-agreement" type="button">Upload lease Agreement</button>
-            <input id="lease-agreement" type="file" style="display:none;" accept=".pdf">
-            <input type="hidden" id="lease-agreement-file-base64" name="lease-agreement-file-base64">
-          </div>
-          <div class="modal-navigation">
-            <button id="submit-button-edit" class="minimal-button submit-step" type="button">Submit Edit Changes</button>
-          </div>
-      </div>
-    </div>
-  </body>
+</body>
 </html>
