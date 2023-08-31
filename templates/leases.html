@@ -146,8 +146,8 @@
               </td>
               <td>
                 <form
-                  class="lease-form"
                   action="{{ url_for('submit_lease') }}"
+                  class="lease-form"
                   method="POST"
                 >
                   {% if lease.pdf_file_base64 %}
@@ -158,6 +158,36 @@
                   {% else %} Pending {% endif %}
                 </form>
               </td>
+            </tr>
+            <tr class="hidden-row-headers">
+              <td>Test Header</td>
+              <td>Test Header</td>
+              <td>Test Header</td>
+              <td>Test Header</td>
+              <td>Test Header</td>
+              <td>Test Header</td>
+              <td>Test Header</td>
+              <td>Test Header</td>
+              <td>Test Header</td>
+              <td>Test Header</td>
+              <td>Test Header</td>
+              <td>Test Header</td>
+              <td>Test Header</td>
+            </tr>
+            <tr class="hidden-row">
+              <td>Test Data</td>
+              <td>Test Data</td>
+              <td>Test Data</td>
+              <td>Test Data</td>
+              <td>Test Data</td>
+              <td>Test Data</td>
+              <td>Test Data</td>
+              <td>Test Data</td>
+              <td>Test Data</td>
+              <td>Test Data</td>
+              <td>Test Data</td>
+              <td>Test Data</td>
+              <td>Test Data</td>
             </tr>
             {% endfor %}
           </tbody>

@@ -59,6 +59,13 @@ $(document).ready(function () {
     $("#lease-end-date").datepicker();
   });
 
+  $(document).ready(function () {
+    $(".centered-table tbody tr[data-lease-id]").click(function () {
+      $(this).next(".hidden-row-headers").toggle();
+      $(this).next().next(".hidden-row").toggle();
+    });
+  });
+
   // OPEN MODAL
   $("#add-lease-button").click(function () {
     $("body").addClass("modal-open");
