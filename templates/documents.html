@@ -43,12 +43,14 @@
       {% include 'sidebar.html' %}
       <div class="d-flex justify-content-end">
         <div class="card-wrapper">
-          <div class="d-flex justify-content-between gap-lg-5">
-            <h2 class="greeting" style="margin-top: 30px">
-              {{ greeting_msg }}
-            </h2>
+          <div
+            class="d-flex position-relative justify-content-between gap-md-5"
+          >
+            <div style="width: 80%; margin-top: 30px">
+              <h2 class="greeting">{{ greeting_msg }}</h2>
+            </div>
             <div
-              class="position-relative flex-shrink-0"
+              class="flex-shrink-0 position-absolute end-0"
               style="margin-top: 30px"
             >
               <button
@@ -58,9 +60,7 @@
               >
                 Upload Document
               </button>
-              <div
-                class="position-relative d-flex d-lg-none flex-column align-items-end"
-              >
+              <div class="d-flex d-lg-none flex-column align-items-end">
                 <button
                   type="button"
                   class="z-3 d-block d-lg-none navbar-toggler top-0 end-0 pr-2 pt-2"
@@ -84,12 +84,9 @@
                     ></path>
                   </svg>
                 </button>
-                <div
-                  id="open-menu"
-                  class="d-none bg-light d-lg-none w-100 position-relative justify-content-end"
-                >
+                <div id="open-menu" class="d-none rounded-2 bg-light">
                   <button
-                    id="upload-document-button"
+                    id="upload-document-sm-button"
                     class="btn btn-primary end-0 top-0 position-relative"
                     type="button"
                   >

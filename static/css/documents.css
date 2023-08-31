@@ -34,7 +34,7 @@ body{
   margin-bottom: 30px; /*adjust as needed*/
 }
 
-#upload-document-button {
+#upload-document-button,#upload-document-sm-button {
   background-color: #f0f0f0;
   border: none;
   color: #333;
@@ -47,7 +47,7 @@ body{
   right: 40px;
   white-space: wrap;
 }
-#upload-document-button:hover {
+#upload-document-button,#upload-document-sm-button:hover {
   background-color: #ddd;
 }
 

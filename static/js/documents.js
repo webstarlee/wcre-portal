@@ -45,11 +45,26 @@ $(document).ready(function () {
     }, 2000);
   }
 
-  // OPEN MODAL
-  $("#upload-document-button").on("click", function () {
-    $("body").addClass("modal-open");
-    $("#upload-document-modal").css("display", "flex");
+  function toggleModalDisplay(modalId) {
+    const modal = $(modalId);
+    const isHidden = modal.css("display") === "none";
+
+    if (isHidden) {
+      $("body").addClass("modal-open");
+      modal.css("display", "flex");
+    } else {
+      modal.css("display", "none");
+    }
+  }
+
+  $("#upload-document-sm-button").on("click", function () {
+    toggleModalDisplay("#upload-document-modal");
   });
+
+  $("#upload-document-button").on("click", function () {
+    toggleModalDisplay("#upload-document-modal");
+  });
+
   // CLOSE MODAL
   $(".close").click(function (e) {
     e.stopPropagation(); // Stop event bubbling up and closing the modal
@@ -124,7 +139,6 @@ $(document).ready(function () {
     }
 
     e.preventDefault();
-    $("#upload-document-modal").css("display", "none");
     var formData = new FormData(this);
     var fileBase64 = $("#document-file-base64").val();
     formData.append("fileBase64", fileBase64);
