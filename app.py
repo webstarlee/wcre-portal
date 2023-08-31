@@ -86,6 +86,7 @@ try:
     )
     db = client["wcre_panel"]
     users = db["users"]
+    logins = db["logins"]
     listings = db["Listings"]
     sales = db["Sales"]
     leases = db["Leases"]
@@ -107,7 +108,6 @@ def login():
         user = load_user(request.form["username"])
         if user and bcrypt.check_password_hash(user.password, request.form["password"]):
             login_user(user)
-            logins = db["logins"]
             now_utc = datetime.now(pytz.timezone("UTC"))
             now_est = now_utc.astimezone(pytz.timezone("US/Eastern"))
             formatted_est = now_est.strftime("%Y-%m-%d %I:%M:%S %p %Z")
