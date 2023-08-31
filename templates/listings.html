@@ -132,7 +132,8 @@
               <td>{{ listing.listing_type }}</td>
               <td>{{ listing.listing_start_date }}</td>
               <td>
-                <a href="{{ url_for('create_ics', listing_id=listing._id) }}"
+                <a
+                  href="{{ url_for('create_ics_listing', listing_id=listing._id) }}"
                   >{{ listing.listing_end_date }}</a
                 >
               </td>

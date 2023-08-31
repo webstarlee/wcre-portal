@@ -130,7 +130,11 @@
             <tr data-sale-id="{{ sale._id }}">
               <td>{{ sale.sale_property_type }}</td>
               <td>{{ sale.sale_type }}</td>
-              <td>{{ sale.sale_end_date }}</td>
+              <td>
+                <a href="{{ url_for('create_ics_sale', sale_id=sale._id) }}"
+                  >{{ sale.sale_end_date }}</a
+                >
+              </td>
               <td>{{ sale.sale_price }}</td>
               <td>{{ sale.sale_sqft }}</td>
               <td>
