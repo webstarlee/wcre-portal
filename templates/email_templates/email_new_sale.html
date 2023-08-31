@@ -55,7 +55,10 @@
   </head>
   <body>
     <div class="container">
-      <h1>A New Sale Has Been Uploaded to The WCRE Portal By {{ current_user.fullname }}:</h1>
+      <h1>
+        A New Sale Has Been Uploaded to The WCRE Portal By {{
+        current_user.fullname }}:
+      </h1>
       <div class="sale-details">
         <p>
           <span class="sale-label">Property Type:</span>
@@ -88,8 +91,8 @@
         <div class="sale-brokers">
           <span class="sale-label">Brokers:</span>
           {% for broker in sale.brokers %}
-              <span>{{ broker }}</span>{% if not loop.last %}, {% endif %}
-          {% endfor %}
+          <span>{{ broker }}</span>{% if not loop.last %}, {% endif %} {% endfor
+          %}
         </div>
       </div>
     </div>
