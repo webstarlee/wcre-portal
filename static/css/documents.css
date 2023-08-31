@@ -45,7 +45,9 @@ body {
   right: 40px;
   white-space: wrap;
 }
-#upload-document-button,
+#upload-document-button:hover {
+  background-color: #ddd;
+}
 #upload-document-sm-button:hover {
   background-color: #ddd;
 }
