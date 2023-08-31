@@ -1,24 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap");
 
-body{
-  font-family:'Noto Sans',sans-serif;
-  margin:0;
-  padding:0;
-  background:linear-gradient(to right,#1c92d2,#f2fcfe)
+body {
+  font-family: "Noto Sans", sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to right, #1c92d2, #f2fcfe);
 }
-.container{
-  display:flex;
-  align-items:flex-start;
-  height:100vh
+.container {
+  display: flex;
+  align-items: flex-start;
+  height: 100vh;
 }
-.content{
+.content {
   margin-left: 125px;
 }
-.greeting{
-  font-family: 'Montserrat', sans-serif;
+.greeting {
+  font-family: "Montserrat", sans-serif;
   font-weight: 700;
   font-size: 30px;
-  margin-bottom:10px;
+  margin-bottom: 10px;
   text-transform: uppercase;
   color: black;
 }
@@ -31,7 +31,8 @@ body{
   margin-bottom: 30px; /*adjust as needed*/
 }
 
-#upload-document-button,#upload-document-sm-button {
+#upload-document-button,
+#upload-document-sm-button {
   background-color: #f0f0f0;
   border: none;
   color: #333;
@@ -44,7 +45,8 @@ body{
   right: 40px;
   white-space: wrap;
 }
-#upload-document-button,#upload-document-sm-button:hover {
+#upload-document-button,
+#upload-document-sm-button:hover {
   background-color: #ddd;
 }
 
@@ -135,7 +137,7 @@ body{
   display: block;
 }
 
-input[type=file] {
+input[type="file"] {
   width: 350px;
   max-width: 100%;
   color: #444;
@@ -144,7 +146,6 @@ input[type=file] {
   border-radius: 10px;
   border: 1px solid #555;
 }
-
 
 #upload-document-file {
   margin-top: 1px;
@@ -236,13 +237,13 @@ body.modal-open {
   background-color: #05537d;
 }
 
-.hide-scrollbar{
+.hide-scrollbar {
   -ms-overflow-style: none;
 }
 
-.hide-scrollbar::-webkit-scrollbar { 
+.hide-scrollbar::-webkit-scrollbar {
   width: 0 !important;
-  display: none; 
+  display: none;
 }
 .error-notification {
   position: fixed;
@@ -262,7 +263,7 @@ body.modal-open {
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #4BB543;
+  background-color: #4bb543;
   color: #fff;
   padding: 10px 20px;
   border-radius: 4px;
@@ -271,7 +272,8 @@ body.modal-open {
   z-index: 9999;
 }
 
-.error-notification.show, .success-notification.show {
+.error-notification.show,
+.success-notification.show {
   opacity: 1;
 }
 
@@ -294,7 +296,7 @@ body.modal-open {
   top: 40px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #4BB543;
+  background-color: #4bb543;
   color: #fff;
   padding: 10px 20px;
   border-radius: 4px;
@@ -316,37 +318,38 @@ body.modal-open {
   color: #0056b3;
   padding: 5px 10px;
   font-size: 14px;
-  font-weight:bolder ;
+  font-weight: bolder;
 }
 
-.page-item:hover{
+.page-item:hover {
   color: #fff !important;
   background-color: #0056b3 !important;
   padding: 5px 10px;
   border-radius: 5px;
 }
 
-.active{
+.active {
   color: #fff !important;
   background-color: #0056b3 !important;
   padding: 5px 10px;
   border-radius: 5px;
 }
 
-.upload-modal-btn-style{
+.upload-modal-btn-style {
   background-color: #0056b3 !important;
   color: #fff !important;
 }
 
-.upload-modal-btn-style:hover{
+.upload-modal-btn-style:hover {
   background-color: #1669c2 !important;
 }
 
-.error-notification-modal.show, .success-notification-modal.show {
+.error-notification-modal.show,
+.success-notification-modal.show {
   opacity: 1;
 }
 
-.card-wrapper{
+.card-wrapper {
   width: 85%;
 }
 
@@ -401,84 +404,83 @@ body.modal-open {
 }
 
 @media only screen and (min-width: 320px) {
-  .root-div{
+  .root-div {
     padding-right: 14px !important;
   }
 }
 
 @media only screen and (min-width: 450px) {
-.card-wrapper{
+  .card-wrapper {
     width: 91%;
     justify-content: end;
-}
-.root-div{
-  padding-right: 14px !important;
-}
+  }
+  .root-div {
+    padding-right: 14px !important;
+  }
 }
 @media only screen and (min-width: 600px) {
-  .card-wrapper{
-      width: 92%;
-      justify-content: end;
+  .card-wrapper {
+    width: 92%;
+    justify-content: end;
   }
 
-  .root-div{
+  .root-div {
     padding-right: 3rem !important;
   }
 }
 @media only screen and (min-width: 768px) {
-  .card-wrapper{
-      width: 74%;
+  .card-wrapper {
+    width: 74%;
   }
-
 }
 
 @media only screen and (min-width: 770px) {
-  .card-wrapper{
+  .card-wrapper {
     width: 70%;
   }
 }
 
 @media only screen and (min-width: 900px) {
-  .card-wrapper{
-      width: 76%;
+  .card-wrapper {
+    width: 76%;
   }
 }
 @media only screen and (min-width: 1050px) {
-  .card-wrapper{
-      width: 79%;
-      justify-content:end
+  .card-wrapper {
+    width: 79%;
+    justify-content: end;
   }
 }
 
 @media only screen and (min-width: 1200px) {
-  .card-wrapper{
-      width: 82%;
-      justify-content:end
+  .card-wrapper {
+    width: 82%;
+    justify-content: end;
   }
 }
 @media only screen and (min-width: 1300px) {
-  .card-wrapper{
-      width: 83%;
-      justify-content:center
+  .card-wrapper {
+    width: 83%;
+    justify-content: center;
   }
 }
 
 @media only screen and (min-width: 1600px) {
-  .card-wrapper{
-      width: 87%;
-      justify-content:center
+  .card-wrapper {
+    width: 87%;
+    justify-content: center;
   }
 }
 
 @media only screen and (min-width: 1900px) {
-  .card-wrapper{
-      width: 89%;
-      justify-content:center
+  .card-wrapper {
+    width: 89%;
+    justify-content: center;
   }
 }
 @media only screen and (min-width: 2400px) {
-  .card-wrapper{
-      width: 91%;
-      justify-content:center
+  .card-wrapper {
+    width: 91%;
+    justify-content: center;
   }
 }

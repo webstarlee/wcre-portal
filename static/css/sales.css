@@ -168,16 +168,16 @@ body {
   transition: background-color 0.3s ease;
   color: #0056b3;
 }
-.page-item a{
+.page-item a {
   padding: 10px;
   font-size: 14px;
-  font-weight:bolder ;
+  font-weight: bolder;
 }
-.page-item a:hover{
+.page-item a:hover {
   color: #fff !important;
   padding: 10px;
   border-radius: 5px;
-  background-color:#0056b3 ;
+  background-color: #0056b3;
 }
 
 table tr:hover td a {
@@ -196,31 +196,31 @@ table tr:hover td a {
   align-items: center;
   background-color: rgba(0, 0, 0, 0.4);
 }
-.edit-sale-modal{
-  display:none;
-  position:fixed;
-  z-index:1;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  justify-content:center;
-  align-items:center;
-  background-color:rgba(0,0,0,.4) 
+.edit-sale-modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 .truncate-text {
   white-space: normal; /* Allow text to wrap on hover */
 }
 .modal-content {
-  background:#fff;
-  margin:auto;
-  padding:20px;
-  border-radius:8px;
-  color:#333;
-  position:relative;
-  width:60%;
-  max-width:500px;
-  box-shadow:0 0 10px rgba(0,0,0,.2); 
+  background: #fff;
+  margin: auto;
+  padding: 20px;
+  border-radius: 8px;
+  color: #333;
+  position: relative;
+  width: 60%;
+  max-width: 500px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   overflow: auto;
   max-height: 80%;
 }
@@ -240,14 +240,14 @@ table tr:hover td a {
 }
 .form-group input,
 .form-group select {
-  box-sizing:border-box;
-  width:100%;
-  padding:10px;
-  border:none;
-  border-radius:4px;
-  background-color:#f0f0f0;
-  color:#333;
-  font-size:14px 
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+  color: #333;
+  font-size: 14px;
 }
 .modal-navigation {
   display: flex;
@@ -256,48 +256,48 @@ table tr:hover td a {
 }
 .modal-navigation .prev-step {
   visibility: hidden;
-  background-color:#f0f0f0;
-  border:none;
-  color:#333;
-  padding:10px 20px;
-  border-radius:4px;
-  font-size:14px;
-  cursor:pointer;
-  transition:background-color .3s ease 
+  background-color: #f0f0f0;
+  border: none;
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 .modal-navigation .next-step {
-  background-color:#f0f0f0;
-  border:none;
-  color:#333;
-  padding:10px 20px;
-  border-radius:4px;
-  font-size:14px;
-  cursor:pointer;
-  transition:background-color 0.3s ease 
+  background-color: #f0f0f0;
+  border: none;
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 .modal-navigation .next-step:hover,
 .modal-navigation .prev-step:hover {
   background-color: #ddd;
 }
 .minimal-button {
-  background-color:#f0f0f0;
-  border:none;
-  color:#333;
-  padding:10px 20px;
-  border-radius:4px;
-  font-size:14px;
-  cursor:pointer;
-  margin-top:10px;
-  align-self:flex-start 
+  background-color: #f0f0f0;
+  border: none;
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+  align-self: flex-start;
 }
-.minimal-button:hover{
-  background-color:#ddd 
+.minimal-button:hover {
+  background-color: #ddd;
 }
-.modal-step{
-  display:none 
+.modal-step {
+  display: none;
 }
-.active-step{
-  display:block 
+.active-step {
+  display: block;
 }
 .brokers {
   white-space: nowrap;
@@ -414,8 +414,7 @@ body.modal-open {
   z-index: 9999;
 }
 .error-notification-modal.show,
-.success-notification-modal.show
-.success-notification.show,
+.success-notification-modal.show .success-notification.show,
 .error-notification.show {
   opacity: 1;
 }
@@ -461,7 +460,7 @@ body.modal-open {
 .sales-count {
   position: absolute;
   left: 240px;
-  padding: 10px;  /* Set padding similar to other buttons */
+  padding: 10px; /* Set padding similar to other buttons */
   font-size: 14px; /* Set font size similar to other buttons */
   color: #333;
   font-weight: bold; /* Keep text bold */
@@ -469,7 +468,7 @@ body.modal-open {
   border-radius: 4px; /* Set border radius similar to other buttons */
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.3); /* Add a slight shadow similar to the input field when focused */
 }
-.table-div{
+.table-div {
   width: 80%;
   overflow: auto;
   float: right;
@@ -479,34 +478,35 @@ body.modal-open {
 .search-form::-webkit-scrollbar {
   display: none;
 }
-.modal-content{
+.modal-content {
   -ms-overflow-style: none;
 }
 
-.modal-content::-webkit-scrollbar { 
+.modal-content::-webkit-scrollbar {
   width: 0 !important;
-  display: none; 
+  display: none;
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */
-.search-form,.table-div {
-  -ms-overflow-style: none;  /* IE and Edge */
+.search-form,
+.table-div {
+  -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none;
   /* Firefox */
 }
-.user-details-wrapper{
+.user-details-wrapper {
   display: flex;
   justify-content: space-between;
   align-items: center;
   column-gap: 10px;
 }
 @media only screen and (max-width: 400px) {
-  .toolbar{
+  .toolbar {
     width: 85%;
     float: right;
   }
 
-  .search-form{
+  .search-form {
     display: flex;
     justify-content: space-between;
     position: relative;
@@ -515,35 +515,34 @@ body.modal-open {
     float: right;
     column-gap: 10px;
   }
-  .table-div{
+  .table-div {
     width: 85%;
     overflow: auto;
     float: right;
     max-width: inherit;
   }
-  .header-btns{
+  .header-btns {
     width: 100%;
   }
-  .sales-count-div{
+  .sales-count-div {
     width: 93% !important;
   }
-  .dropdown-btn{
+  .dropdown-btn {
     width: 100%;
   }
   .pagination {
     display: flex;
     padding-left: 10px;
   }
-
 }
 
 @media only screen and (min-width: 400px) {
-  .toolbar{
+  .toolbar {
     width: 90%;
     float: right;
   }
 
-  .search-form{
+  .search-form {
     display: flex;
     justify-content: space-between;
     position: relative;
@@ -552,21 +551,21 @@ body.modal-open {
     float: right;
     column-gap: 10px;
   }
-  .table-div{
+  .table-div {
     width: 90%;
     overflow: auto;
     float: right;
     max-width: inherit;
   }
 
-  .header-btns{
+  .header-btns {
     width: 100%;
   }
 
-  .sales-count-div{
+  .sales-count-div {
     width: 95% !important;
   }
-  .dropdown-btn{
+  .dropdown-btn {
     width: 100%;
   }
   .pagination {
@@ -578,12 +577,12 @@ body.modal-open {
 /* width: 90%; */
 
 @media only screen and (min-width: 550px) {
-  .toolbar{
+  .toolbar {
     width: 90%;
     float: right;
   }
 
-  .search-form{
+  .search-form {
     display: flex;
     justify-content: space-between;
     position: relative;
@@ -592,35 +591,34 @@ body.modal-open {
     float: right;
     column-gap: 10px;
   }
-  .table-div{
+  .table-div {
     width: 90%;
     overflow: auto;
     float: right;
     max-width: inherit;
   }
-  .header-btns{
+  .header-btns {
     width: auto;
   }
-  .sales-count-div{
+  .sales-count-div {
     width: auto !important;
   }
-  .dropdown-btn{
+  .dropdown-btn {
     width: 100%;
   }
   .pagination {
     display: flex;
     padding-left: 10px;
   }
-
 }
 
 @media only screen and (min-width: 769px) {
-  .toolbar{
+  .toolbar {
     width: 74%;
     float: right;
   }
 
-  .search-form{
+  .search-form {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -629,29 +627,28 @@ body.modal-open {
     float: right;
     column-gap: 10px;
   }
-  .table-div{
+  .table-div {
     width: 74%;
     overflow: auto;
     float: right;
     max-width: inherit;
   }
-  .header-btns{
+  .header-btns {
     width: auto;
   }
   .pagination {
     display: flex;
     padding-left: 10px;
   }
-
 }
 
 @media only screen and (min-width: 955px) {
-  .toolbar{
+  .toolbar {
     width: 80%;
     float: right;
   }
 
-  .search-form{
+  .search-form {
     display: flex;
     justify-content: space-between;
     position: relative;
@@ -660,13 +657,13 @@ body.modal-open {
     float: right;
     column-gap: 10px;
   }
-  .table-div{
+  .table-div {
     width: 80%;
     overflow: auto;
     float: right;
     max-width: inherit;
   }
-  .header-btns{
+  .header-btns {
     width: auto;
   }
   .pagination {
@@ -674,21 +671,20 @@ body.modal-open {
     justify-content: center;
     padding-left: 10px;
   }
-
 }
 @media only screen and (min-width: 1200px) {
-  .toolbar{
+  .toolbar {
     width: 84%;
     float: right;
   }
-  .table-div{
+  .table-div {
     width: 84%;
     overflow: auto;
     float: right;
     max-width: inherit;
   }
 
-  .header-btns{
+  .header-btns {
     width: auto;
   }
   .pagination {
@@ -696,34 +692,32 @@ body.modal-open {
     justify-content: center;
     padding-left: 10px;
   }
-
 }
 @media only screen and (min-width: 1500px) {
-.table-div{
-  width: 85%;
-  overflow: auto;
-  float: right;
-  max-width: inherit;
-}
+  .table-div {
+    width: 85%;
+    overflow: auto;
+    float: right;
+    max-width: inherit;
+  }
 
-.toolbar{
-  width: 85%;
-  float: right;
-}
+  .toolbar {
+    width: 85%;
+    float: right;
+  }
 
-.header-btns{
-  width: auto;
-}
-
+  .header-btns {
+    width: auto;
+  }
 }
 
 @media only screen and (min-width: 1700px) {
-  .toolbar{
+  .toolbar {
     width: 87%;
     float: right;
   }
 
-  .search-form{
+  .search-form {
     display: flex;
     justify-content: space-between;
     position: relative;
@@ -732,24 +726,23 @@ body.modal-open {
     float: right;
     column-gap: 10px;
   }
-  .table-div{
+  .table-div {
     width: 87%;
     overflow: auto;
     float: right;
     max-width: inherit;
   }
-  .header-btns{
+  .header-btns {
     width: auto;
   }
-
 }
 
 @media only screen and (min-width: 1900px) {
-  .toolbar{
+  .toolbar {
     width: 90%;
     float: right;
   }
-  .search-form{
+  .search-form {
     display: flex;
     justify-content: space-between;
     position: relative;
@@ -758,13 +751,13 @@ body.modal-open {
     float: right;
     column-gap: 10px;
   }
-  .table-div{
+  .table-div {
     width: 90%;
     overflow: auto;
     float: right;
     max-width: inherit;
   }
-  .header-btns{
+  .header-btns {
     width: auto;
   }
 }
