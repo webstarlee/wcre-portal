@@ -86,7 +86,7 @@ try:
     )
     db = client["wcre_panel"]
     users = db["users"]
-    listings = db["listings"]
+    listings = db["Listings"]
     sales = db["Sales"]
     leases = db["Leases"]
     docs = db["Documents"]
