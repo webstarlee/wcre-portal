@@ -8,13 +8,48 @@ $(document).ready(function() {
 	const editListingPriceInput = document.getElementById("edit-listing-price");
 	editListingPriceInput.addEventListener("input", formatListingPriceEdit);
 
+	function showErrorNotification(message) {
+		var errorNotification = $("#error-notification");
+		errorNotification.text(message);
+		errorNotification.addClass("show");
+		setTimeout(function() {
+			errorNotification.removeClass("show");
+		}, 2000);
+	}
+
+	function showSuccessNotification(message) {
+		var successNotification = $("#success-notification");
+		successNotification.text(message);
+		successNotification.addClass("show");
+		setTimeout(function() {
+			successNotification.removeClass("show");
+		}, 2000);
+	}
+
+	function showSuccessNotificationModal(message) {
+		var successNotification = $("#success-notification-modal");
+		successNotification.text(message);
+		successNotification.addClass("show");
+		setTimeout(function() {
+			successNotification.removeClass("show");
+		}, 2000);
+	}
+
+	function showErrorNotificationModal(message) {
+		var errorNotification = $("#error-notification-modal");
+		errorNotification.text(message);
+		errorNotification.addClass("show");
+		setTimeout(function() {
+			errorNotification.removeClass("show");
+		}, 2000);
+	}
+
 	function formatListingPrice() {
 		let inputText = listingPriceInput.value.trim();
 		if (isNaN(inputText.replace(/[,.$]/g, ""))) {
 			listingPriceInput.value = inputText;
 			return;
 		}
-
 		let numericValue = inputText.replace(/[^0-9.,]/g, "");
 		numericValue = numericValue.replace(/\.+/g, ".").replace(/,+/g, ",");
 		const parts = numericValue.split(".");
@@ -42,7 +77,6 @@ $(document).ready(function() {
 			editListingPriceInput.value = inputText;
 			return;
 		}
-
 		let numericValue = inputText.replace(/[^0-9.,]/g, "");
 		numericValue = numericValue.replace(/\.+/g, ".").replace(/,+/g, ",");
 		const parts = numericValue.split(".");
@@ -131,6 +165,18 @@ $(document).ready(function() {
 		$("#edit-listing-owner-name").val(listingOwner);
 		$("#edit-listing-owner-email").val(listingOwnerEmail);
 		$("#edit-listing-owner-phone").val(listingOwnerPhone);
+	});
+
+  // CLOSE ADD LISTING MODAL
+	$("#add-listing-modal .close").click(function() {
+		$("body").removeClass("modal-open");
+		$("#add-listing-modal").hide();
+	});
+
+	// CLOSE EDIT LISTING MODAL
+	$("#edit-listing-modal .close").click(function() {
+		$("body").removeClass("modal-open");
+		$("#edit-listing-modal").hide();
 	});
 
 	function validateStep() {
@@ -281,45 +327,6 @@ $(document).ready(function() {
 		event.stopPropagation();
 	});
 
-	// SHOW ERROR NOTI
-	function showErrorNotification(message) {
-		var errorNotification = $("#error-notification");
-		errorNotification.text(message);
-		errorNotification.addClass("show");
-		setTimeout(function() {
-			errorNotification.removeClass("show");
-		}, 2000);
-	}
-
-	function showSuccessNotification(message) {
-		var successNotification = $("#success-notification");
-		successNotification.text(message);
-		successNotification.addClass("show");
-		setTimeout(function() {
-			successNotification.removeClass("show");
-		}, 2000);
-	}
-
-	// SHOW SUCCESS NOTI - MODAL
-	function showSuccessNotificationModal(message) {
-		var successNotification = $("#success-notification-modal");
-		successNotification.text(message);
-		successNotification.addClass("show");
-		setTimeout(function() {
-			successNotification.removeClass("show");
-		}, 2000);
-	}
-
-	// SHOW ERROR NOTI - MODAL
-	function showErrorNotificationModal(message) {
-		var errorNotification = $("#error-notification-modal");
-		errorNotification.text(message);
-		errorNotification.addClass("show");
-		setTimeout(function() {
-			errorNotification.removeClass("show");
-		}, 2000);
-	}
-
 
 	$(".next-step").on("click", function() {
 		var currentModal = $(this).closest(".listing-modal");
@@ -461,18 +468,6 @@ $(document).ready(function() {
 				.show();
 			$(this).focus();
 		}
-	});
-
-	// CLOSE MODAL
-	$("#add-listing-modal .close").click(function() {
-		$("body").removeClass("modal-open");
-		$("#add-listing-modal").hide();
-	});
-
-	// CLOSE MODAL
-	$("#edit-listing-modal .close").click(function() {
-		$("body").removeClass("modal-open");
-		$("#edit-listing-modal").hide();
 	});
 
 	$(document).bind("click", function(e) {
