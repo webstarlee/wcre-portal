@@ -184,19 +184,7 @@ table tr:hover td a {
   color: #fff;
 }
 /* modals */
-.add-listing-modal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.4);
-}
-.edit-listing-modal {
+.listing-modal {
   display: none;
   position: fixed;
   z-index: 1;
@@ -254,8 +242,10 @@ table tr:hover td a {
   justify-content: space-between;
   padding: 10px 0;
 }
-.modal-navigation .prev-step {
+.hidden {
   visibility: hidden;
+}
+.modal-navigation .prev-step {
   background-color: #f0f0f0;
   border: none;
   color: #333;

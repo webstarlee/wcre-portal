@@ -151,25 +151,6 @@ $(document).ready(function () {
     $("#add-sale-modal").show();
   });
 
-  $(".add-sale-modal").click(function (e) {
-    if (
-      $(e.target).hasClass("add-sale-modal") ||
-      $(e.target).hasClass("close")
-    ) {
-      $("body").removeClass("modal-open");
-      $("#add-sale-modal").hide();
-    }
-  });
-  $(".edit-sale-modal").click(function (e) {
-    if (
-      $(e.target).hasClass("edit-sale-modal") ||
-      $(e.target).hasClass("close")
-    ) {
-      $("body").removeClass("modal-open");
-      $("#edit-sale-modal").hide();
-    }
-  });
-
   $("#edit-button").click(function () {
     $("body").addClass("modal-open");
     $("#add-sale-modal").hide();
@@ -510,6 +491,12 @@ $(document).ready(function () {
   $("#add-sale-modal .close").click(function () {
     $("body").removeClass("modal-open");
     $("#add-sale-modal").hide();
+  });
+
+  // CLOSE MODAL
+  $("#edit-sale-modal .close").click(function () {
+    $("body").removeClass("modal-open");
+    $("#edit-sale-modal").hide();
   });
 
   $(document).bind("click", function (e) {
