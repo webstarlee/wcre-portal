@@ -421,11 +421,9 @@ $(document).ready(function() {
 			currentStep.removeClass("active-step");
 			prevStep.addClass("active-step");
 
-			// If there's no step before the current one, hide the Previous button
 			if (!prevStep.prev(".modal-step").length) {
 				$(this).addClass("hidden");
 			}
-
 
 			if (currentModal.data("mode") === "add") {
 				currentStep.find("input:required, select:required").removeClass("error");

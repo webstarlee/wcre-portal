@@ -101,7 +101,7 @@
                 <button id="delete-button">Delete Sale</button>
                 <button id="edit-button">Edit Sale</button>
               </div>
-              <div id="add-sale-modal" class="add-sale-modal">
+              <div id="add-sale-modal" class="sale-modal" data-mode="add">
                 <div id="error-notification-modal" class="error-notification-modal"></div>
                 <div id="success-notification-modal" class="success-notification-modal"></div>
                 <div class="modal-content">
@@ -217,26 +217,57 @@
                     </div>
                     <div class="modal-navigation">
                       <button class="minimal-button prev-step" type="button"> Previous </button>
-                      <button id="next-button" class="minimal-button next-step" type="button"> Next </button>
+                      <button class="minimal-button next-step" type="button"> Next </button>
                     </div>
                   </form>
                 </div>
               </div>
-              <div id="edit-sale-modal" class="edit-sale-modal">
+              <div id="edit-sale-modal" class="sale-modal" data-mode="edit">
                 <div id="error-notification-modal" class="error-notification-modal"></div>
                 <div id="success-notification-modal" class="success-notification-modal"></div>
                 <div class="modal-content">
                   <span class="close">&times;</span>
                   <form id="edit-sale-modal" class="modal-form">
-                    <div class="modal-step active-step edit-form-step" id="edit-step1">
-                      <h2 class="modal-step-title">Edit Sale</h2>
+                    <h2 class="modal-step-title">Edit Sale</h2>
+                    <div class="modal-step active-step edit-form-step" id="edit-step1"></div>
                       <div class="form-group">
-                        <label for="edit-sale-type">Sale Type:</label>
-                        <select id="edit-sale-type" name="edit-sale-type" required>
-                          <option value="User">User</option>
-                          <option value="Investor">Investor</option>
-                        </select>
+                        <label for="edit-sale-street">Sale Street:</label>
+                        <input type="text" id="edit-sale-street" name="edit-sale-street" required />
                       </div>
+                      <div class="form-group">
+                        <label for="sale-city">Sale City:</label>
+                        <input type="text" id="edit-sale-city" name="edit-sale-city" required />
+                      </div>
+                    </div>
+                    <div class="modal-step edit-form-step" id="edit-step2">
+                      <div class="form-group">
+                        <label for="edit-sale-buyer-name">Buyer Name:</label>
+                        <input type="text" id="edit-sale-buyer-name" name="edit-sale-buyer-name" required />
+                      </div>
+                      <div class="form-group">
+                        <label for="edit-sale-buyer-email">Buyer Email:</label>
+                        <input type="email" id="edit-sale-buyer-email" name="edit-sale-buyer-email" required />
+                      </div>
+                      <div class="form-group">
+                        <label for="edit-sale-buyer-phone">Buyer Phone Number:</label>
+                        <input type="tel" id="edit-sale-buyer-phone" name="edit-sale-buyer-phone" required />
+                      </div>
+                    </div>
+                    <div class="modal-step edit-form-step" id="edit-step3">
+                      <div class="form-group">
+                        <label for="edit-sale-seller-name">Seller Name:</label>
+                        <input type="text" id="edit-sale-seller-name" name="edit-sale-seller-name" required />
+                      </div>
+                      <div class="form-group">
+                        <label for="edit-sale-seller-email">Seller Email:</label>
+                        <input type="email" id="edit-sale-seller-email" name="edit-sale-seller-email" required />
+                      </div>
+                      <div class="form-group">
+                        <label for="edit-sale-seller-phone">Seller Phone Number:</label>
+                        <input type="tel" id="edit-sale-seller-phone" name="edit-sale-seller-phone" required />
+                      </div>
+                    </div>
+                    <div class="modal-step edit-form-step" id="edit-step4">
                       <div class="form-group">
                         <label for="edit-sale-end-date">Sale Closing Date:</label>
                         <input type="text" id="edit-sale-end-date" name="edit-sale-end-date" required />
@@ -250,21 +281,14 @@
                         <input type="text" id="edit-sale-sqft" name="edit-sale-sqft" required />
                       </div>
                       <div class="form-group">
-                        <label for="edit-sale-street">Sale Street:</label>
-                        <input type="text" id="edit-sale-street" name="edit-sale-street" required />
+                        <button id="upload-sale-agreement" type="button"> Upload Sale Agreement </button>
+                        <input id="sale-agreement" type="file" style="display: none" accept=".pdf" />
+                        <input type="hidden" id="sale-agreement-file-base64" name="sale-agreement-file-base64" />
                       </div>
-                      <div class="form-group">
-                        <label for="sale-city">Sale City:</label>
-                        <input type="text" id="edit-sale-city" name="edit-sale-city" required />
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <button id="upload-sale-agreement" type="button"> Upload Sale Agreement </button>
-                      <input id="sale-agreement" type="file" style="display: none" accept=".pdf" />
-                      <input type="hidden" id="sale-agreement-file-base64" name="sale-agreement-file-base64" />
                     </div>
                     <div class="modal-navigation">
-                      <button id="submit-button-edit" class="minimal-button submit-step" type="button"> Submit Edit Changes </button>
+                      <button class="minimal-button prev-step" type="button"> Previous </button>
+                      <button class="minimal-button next-step" type="button"> Next </button>
                     </div>
                   </form>
                 </div>
