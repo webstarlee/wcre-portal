@@ -130,8 +130,17 @@ $(document).ready(function() {
 		$("#add-listing-modal .prev-step").addClass("hidden");
 	});
 
+	function resetModalSteps(modal) {
+		modal.find(".modal-step").removeClass("active-step");
+		modal.find(".modal-step:first").addClass("active-step");
+		modal.find(".prev-step").addClass("hidden");
+		modal.find(".next-step").text("Next");
+	}
+
+
 	// OPEN EDIT LISTING MODAL
 	$("#edit-button").click(function() {
+		resetModalSteps($("#edit-listing-modal"));
 		$("body").addClass("modal-open");
 		$("#add-listing-modal").hide();
 		$("#edit-listing-modal").show();
@@ -167,7 +176,7 @@ $(document).ready(function() {
 		$("#edit-listing-owner-phone").val(listingOwnerPhone);
 	});
 
-  // CLOSE ADD LISTING MODAL
+	// CLOSE ADD LISTING MODAL
 	$("#add-listing-modal .close").click(function() {
 		$("body").removeClass("modal-open");
 		$("#add-listing-modal").hide();
