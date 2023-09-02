@@ -245,19 +245,10 @@ $(document).ready(function() {
 			success: function(search_results_data) {
 				var rows = $.map(search_results_data, function(result) {
 					var $row = $("<tr>").attr("data-listing-id", result._id);
-
 					$row.append($("<td>").html(result.listing_property_type));
 					$row.append($("<td>").html(result.listing_type));
 					$row.append($("<td>").html(result.listing_start_date));
-					$row.append(
-						$("<td>").html(
-							'<a href="createics:' +
-							result.listing_end_date +
-							'">' +
-							result.listing_end_date +
-							"</a>"
-						)
-					);
+					$row.append($("<td>").html('<a href="/create_ics_listing/' + result._id + '">' + result.listing_end_date + "</a>"));
 					$row.append(
 						$("<td>").html(result.listing_price ? result.listing_price : "None")
 					);
