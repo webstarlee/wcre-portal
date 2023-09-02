@@ -124,6 +124,7 @@ $(document).ready(function() {
 
 	// OPEN ADD LISTING MODAL
 	$("#add-listing-button").click(function() {
+		resetModalSteps($("#add-listing-modal"));
 		$("body").addClass("modal-open");
 		$("#edit-listing-modal").hide();
 		$("#add-listing-modal").show();

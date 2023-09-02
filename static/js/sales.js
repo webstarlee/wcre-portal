@@ -180,8 +180,9 @@ $(document).ready(function() {
 		$("#edit-sale-end-date").datepicker();
 	});
 
-	// OPEN MODAL
+	// OPEN ADD SALES MODAL
 	$("#add-sale-button").click(function() {
+		resetModalSteps($("#add-sale-modal"));
 		$("body").addClass("modal-open");
 		$("#edit-sale-modal").hide();
 		$("#add-sale-modal").show();
