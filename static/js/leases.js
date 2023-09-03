@@ -60,8 +60,28 @@ $(document).ready(function () {
   });
 
   $(document).ready(function () {
-    $(".centered-table tbody tr[data-lease-id]").click(function () {
-      $(this).next(".hidden-row-headers").toggle();
+    const iconVisible = $(".fa-caret-right");
+    const iconHidden = $(".fa-caret-down");
+
+    iconHidden.hide();
+    $(".centered-table tbody tr[data-lease-id] button").click(function () {
+      $(this)
+        .closest(".centered-table tbody tr[data-lease-id]")
+        .next(".hidden-row-headers")
+        .toggle();
+
+      if (
+        $(this)
+          .closest(".centered-table tbody tr[data-lease-id]")
+          .next(".hidden-row-headers")
+          .is(":hidden")
+      ) {
+        $(this).find(".fa-caret-right").show();
+        $(this).find(".fa-caret-down").hide();
+      } else {
+        $(this).find(".fa-caret-right").hide();
+        $(this).find(".fa-caret-down").show();
+      }
       $(this).next().next(".hidden-row").toggle();
     });
   });

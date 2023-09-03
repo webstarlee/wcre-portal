@@ -125,6 +125,14 @@ body {
   color: white !important;
   cursor: pointer;
 }
+.centered-table tr:hover .fa-caret-right {
+  color: white !important;
+}
+.centered-table tr:hover .fa-caret-down {
+  color: white !important;
+}
+
+
 
 .centered-table .hidden-row:hover{
   background-color: rgb(202, 206, 213) !important;
@@ -142,18 +150,16 @@ body {
   color: white;
 }
 .centered-table .hidden-row-headers{
-  background-color: #ffffff !important;
+  background-color: transparent !important;
   width: 150px;
   color: black !important;
-  font-weight: bold;
-  border-top:1px solid #CACED5;
 }
 .centered-table .hidden-row-headers:hover{
-  background-color: #ffffff !important;
+  background-color: transparent !important;
   width: 150px;
   color: black !important;
-  font-weight: bold;
 }
+
 .centered-table th:nth-child(1),
 .centered-table th:nth-child(2),
 .centered-table th:nth-child(3),
