@@ -5,16 +5,16 @@ $(document).ready(function() {
 	const editBuyerPhoneInput = document.getElementById("edit-sale-buyer-phone");
 	const sellerPhoneInput = document.getElementById("sale-seller-phone");
 	const editSellerPhoneInput = document.getElementById("edit-sale-seller-phone");
+	const salePriceInput = document.getElementById("sale-price");
+	const editSalePriceInput = document.getElementById("edit-sale-price");
+	const sqFootageInput = document.getElementById("sale-sqft");
+	const editsqFootageInput = document.getElementById("edit-sale-sqft");
 	buyerPhoneInput.addEventListener("input", () => formatPhoneNumber(buyerPhoneInput));
 	editBuyerPhoneInput.addEventListener("input", () => formatPhoneNumber(editBuyerPhoneInput));
 	sellerPhoneInput.addEventListener("input", () => formatPhoneNumber(sellerPhoneInput));
 	editSellerPhoneInput.addEventListener("input", () => formatPhoneNumber(editSellerPhoneInput));
-	const salePriceInput = document.getElementById("sale-price");
-	const editSalePriceInput = document.getElementById("edit-sale-price");
 	salePriceInput.addEventListener("input", () => formatPrice(salePriceInput));
 	editSalePriceInput.addEventListener("input", () => formatPrice(editSalePriceInput));
-	const sqFootageInput = document.getElementById("sale-sqft");
-	const editsqFootageInput = document.getElementById("edit-sale-sqft");
 	sqFootageInput.addEventListener("input", () => formatSqFootage(sqFootageInput));
 	editsqFootageInput.addEventListener("input", () => formatSqFootage(editsqFootageInput));
 
@@ -374,12 +374,10 @@ $(document).ready(function() {
 								location.reload();
 							} else {
 								showNotification("Error Editing Sale", "error-notification-modal");
-								console.log("Error Editing Sale");
 							}
 						},
 						error: function() {
 							showErrorNotificationModal("Error Editing Sale");
-							console.log("Error Editing Sale");
 						},
 					});
 				} else {
