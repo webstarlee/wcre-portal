@@ -125,15 +125,34 @@ body {
   color: white !important;
   cursor: pointer;
 }
+
+.centered-table .hidden-row:hover{
+  background-color: rgb(202, 206, 213) !important;
+  color: black !important;
+  cursor: pointer;
+}
 .row-hover:hover {
   background-color: rgb(57, 112, 206);
   color: white !important;
   cursor: pointer;
 }
-.centered-table th {
+.centered-table th{
   background-color: #1c92d2;
   width: 150px;
   color: white;
+}
+.centered-table .hidden-row-headers{
+  background-color: #ffffff !important;
+  width: 150px;
+  color: black !important;
+  font-weight: bold;
+  border-top:1px solid #CACED5;
+}
+.centered-table .hidden-row-headers:hover{
+  background-color: #ffffff !important;
+  width: 150px;
+  color: black !important;
+  font-weight: bold;
 }
 .centered-table th:nth-child(1),
 .centered-table th:nth-child(2),
@@ -500,6 +519,19 @@ body.modal-open {
   align-items: center;
   column-gap: 10px;
 }
+/* Styles for the hidden rows */
+.hidden-row,
+.hidden-row-headers {
+  background-color: #f5f5f5;
+  display: none; /* Hidden by default */
+}
+
+/* Hover effect for the main rows */
+.centered-table tbody tr:not(.hidden-row):not(.hidden-row-headers):hover {
+  background-color: rgb(57, 112, 206);
+  cursor: pointer; /* Indicate interactivity */
+}
+
 @media only screen and (max-width: 400px) {
   .toolbar {
     width: 85%;
