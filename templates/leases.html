@@ -55,8 +55,9 @@
               <th style="border-top-left-radius: 7px">Lease Type</th>
               <th>Start Date</th>
               <th>Closing Date</th>
-              <th>Rental Price</th>
+              <th>Rental Price (Annual)</th>
               <th>Square Footage</th>
+              <th>Price/SF</th>
               <th>Space Percentage</th>
               <th>Term Length</th>
               <th>Property Address</th>
@@ -79,6 +80,14 @@
               <td>{{ lease.lease_end_date }}</td>
               <td>{{ lease.lease_price }}</td>
               <td>{{ lease.lease_sqft }}</td>
+              <td>
+                <script>
+                  var price = parseFloat('{{ lease.lease_price.replace("$", "").replace(",", "") }}');
+                  var sqft = parseFloat('{{ lease.lease_sqft.replace(",", "") }}');
+                  var pricePerSqft = price / sqft;
+                  document.write("$" + pricePerSqft.toFixed(2));
+                </script>
+              </td>
               <td>{{ lease.lease_percentage_space }}</td>
               <td>{{ lease.lease_term_length }}</td>
               <td>{{ lease.lease_street }}</td>
@@ -204,11 +213,11 @@
             <div class="modal-step main-form-step" id="main-step4">
               <h2 class="modal-step-title">New Lease - General Information</h2>
               <div class="form-group">
-                <label for="lease-price">Lease Rental Price:</label>
+                <label for="lease-price">Lease Rental Price (Annual):</label>
                 <input type="text" id="lease-price" name="lease-price" required />
               </div>
               <div class="form-group">
-                <label for="lease-sqft">Sale Square Footage:</label>
+                <label for="lease-sqft">Lease Square Footage:</label>
                 <input type="text" id="lease-sqft" name="lease-sqft" required />
               </div>
               <div class="form-group">
