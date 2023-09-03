@@ -4,48 +4,23 @@
     <title>Admin Portal - Leases</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="/static/icons/cropped_logo.png" />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{{ url_for('static', filename='css/leases.css') }}"
-    />
-    <script
-      src="https://kit.fontawesome.com/f53ea1a836.js"
-      crossorigin="anonymous"
-    ></script>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{{ url_for('static', filename='css/sidebar.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/icons.css') }}"
-    />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/leases.css') }}" />
+    <script src="https://kit.fontawesome.com/f53ea1a836.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidebar.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/icons.css') }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='js/leases.js') }}"></script>
-    <link
-      rel="stylesheet"
-      href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
-    />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   </head>
   <body data-is-admin="{{ is_admin }}">
     <div id="error-notification" class="error-notification"></div>
-    <div id="success-notification" class="success-notification"></div>
-    {% include 'sidebar.html' %}
-    <div class="content">
+    <div id="success-notification" class="success-notification"></div> {% include 'sidebar.html' %} <div class="content">
       <div class="toolbar" style="padding: 10px 0; position: relative">
-        <form
-          id="search-form"
-          class="search-form"
-          style="
+        <form id="search-form" class="search-form" style="
             text-align: start;
             display: flex;
             flex-wrap: wrap;
@@ -55,64 +30,26 @@
             position: relative;
             width: 100%;
             float: right;
-          "
-        >
+          ">
           <div class="leases-count-div">
-            <div
-              id="leases-count"
-              style="position: relative; left: 0; flex-shrink: 0"
-              class="leases-count header-btns"
-            >
-              Total Leases: {{ lease_count }}
+            <div id="leases-count" style="position: relative; left: 0; flex-shrink: 0" class="leases-count header-btns"> Total Leases: {{ lease_count }}
             </div>
           </div>
-          <div
-            style="
+          <div style="
               display: flex;
               flex-wrap: wrap;
               column-gap: 20px;
               row-gap: 10px;
-            "
-          >
-            <input
-              type="text"
-              class="leases-count-div"
-              style="flex-shrink: 0"
-              id="search-input"
-              placeholder="Search Leases..."
-            />
-            <button
-              id="open-map-button"
-              class="header-btns"
-              style="flex-shrink: 0"
-              type="button"
-            >
-              Open Leases Map
-            </button>
-            <button
-              id="delete-all-button"
-              class="header-btns"
-              style="flex-shrink: 0"
-              type="button"
-            >
-              Delete All Leases
-            </button>
-            <button
-              id="add-lease-button"
-              class="header-btns"
-              style="flex-shrink: 0"
-              type="button"
-            >
-              Add lease
-            </button>
+            ">
+            <input type="text" class="leases-count-div" style="flex-shrink: 0" id="search-input" placeholder="Search Leases..." />
+            <button id="open-map-button" class="header-btns" style="flex-shrink: 0" type="button"> Open Leases Map </button>
+            <button id="delete-all-button" class="header-btns" style="flex-shrink: 0" type="button"> Delete All Leases </button>
+            <button id="add-lease-button" class="header-btns" style="flex-shrink: 0" type="button"> Add lease </button>
           </div>
         </form>
       </div>
       <div class="table-div">
-        <table
-          class="centered-table"
-          style="width: 100%; margin: 0; border-radius: 6px; overflow: hidden"
-        >
+        <table class="centered-table" style="width: 100%; margin: 0; border-radius: 6px; overflow: hidden">
           <thead>
             <tr>
               <th style="border-top-left-radius: 7px">Lease Type</th>
@@ -130,16 +67,9 @@
               <th>Lease Agreement</th>
             </tr>
           </thead>
-          <tbody>
-            {% for lease in leases %}
-            <tr data-lease-id="{{ lease._id }}">
-              <td
-                class="d-flex justify-content-center align-items-center gap-2 w-auto"
-              >
-                <button
-                  data-lease-id="{{ lease._id }}"
-                  class="bg-transparent border-0"
-                >
+          <tbody> {% for lease in leases %} <tr data-lease-id="{{ lease._id }}">
+              <td class="d-flex justify-content-center align-items-center gap-2 w-auto">
+                <button data-lease-id="{{ lease._id }}" class="bg-transparent border-0">
                   <i class="fa fa-caret-right fs-6" aria-hidden="true"></i>
                   <i class="fa fa-caret-down fs-6" aria-hidden="true"></i>
                 </button>
@@ -155,23 +85,9 @@
               <td>{{ lease.lease_city }}</td>
               <td>{{ lease.lease_lessor }}</td>
               <td>{{ lease.lease_lessee }}</td>
-              <td class="brokers">
-                {% for broker in lease.brokers %}
-                <span class="broker-name">{{ broker }}</span> {% endfor %}
-              </td>
+              <td class="brokers"> {% for broker in lease.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
               <td>
-                <form
-                  action="{{ url_for('submit_lease') }}"
-                  class="lease-form"
-                  method="POST"
-                >
-                  {% if lease.pdf_file_base64 %}
-                  <a
-                    href="{{ url_for('download_lease_pdf', lease_id=lease._id) }}"
-                    >Fully Executed</a
-                  >
-                  {% else %} Pending {% endif %}
-                </form>
+                <form action="{{ url_for('submit_lease') }}" class="lease-form" method="POST"> {% if lease.pdf_file_base64 %} <a href="{{ url_for('download_lease_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
               </td>
             </tr>
             <tr class="hidden-row-headers">
@@ -211,8 +127,7 @@
                   </tbody>
                 </table>
               </td>
-            </tr>
-            {% endfor %}
+            </tr> {% endfor %}
           </tbody>
         </table>
         {{ pagination.links }}
@@ -222,32 +137,16 @@
         <button id="edit-button">Edit lease</button>
       </div>
       <div id="add-lease-modal" class="add-lease-modal">
-        <div
-          id="error-notification-modal"
-          class="error-notification-modal"
-        ></div>
-        <div
-          id="success-notification-modal"
-          class="success-notification-modal"
-        ></div>
+        <div id="error-notification-modal" class="error-notification-modal"></div>
+        <div id="success-notification-modal" class="success-notification-modal"></div>
         <div class="modal-content">
           <span class="close">&times;</span>
-          <form
-            id="submit-lease-form"
-            class="modal-form"
-            action="{{ url_for('submit_lease') }}"
-            method="POST"
-          >
+          <form id="submit-lease-form" class="modal-form" action="{{ url_for('submit_lease') }}" method="POST">
             <div class="modal-step active-step main-form-step" id="main-step1">
               <h2 class="modal-step-title">New Lease - Property Information</h2>
               <div class="form-group">
                 <label for="lease-street">Lease Street:</label>
-                <input
-                  type="text"
-                  id="lease-street"
-                  name="lease-street"
-                  required
-                />
+                <input type="text" id="lease-street" name="lease-street" required />
               </div>
               <div class="form-group">
                 <label for="lease-city">Lease City:</label>
@@ -262,11 +161,7 @@
               </div>
               <div class="form-group">
                 <label for="lease-property-type">Property Type:</label>
-                <select
-                  id="lease-property-type"
-                  name="lease-property-type"
-                  required
-                >
+                <select id="lease-property-type" name="lease-property-type" required>
                   <option value="Office">Office</option>
                   <option value="Industrial">Industrial</option>
                   <option value="Flex">Flex</option>
@@ -280,72 +175,37 @@
               <h2 class="modal-step-title">New Lease - Lessor Information</h2>
               <div class="form-group">
                 <label for="lease-lessor-name">Lessor Name:</label>
-                <input
-                  type="text"
-                  id="lease-owner-name"
-                  name="lease-owner-name"
-                  required
-                />
+                <input type="text" id="lease-owner-name" name="lease-owner-name" required />
               </div>
               <div class="form-group">
                 <label for="lease-lessor-email">Owner Email:</label>
-                <input
-                  type="email"
-                  id="lease-owner-email"
-                  name="lease-owner-email"
-                  required
-                />
+                <input type="email" id="lease-owner-email" name="lease-owner-email" required />
               </div>
               <div class="form-group">
                 <label for="lease-owner-phone">Owner Phone Number:</label>
-                <input
-                  type="tel"
-                  id="lease-owner-phone"
-                  name="lease-owner-phone"
-                  required
-                />
+                <input type="tel" id="lease-owner-phone" name="lease-owner-phone" required />
               </div>
             </div>
             <div class="modal-step main-form-step" id="main-step3">
               <h2 class="modal-step-title">New Lease - Lesse Information</h2>
               <div class="form-group">
                 <label for="lease-lessor-name">Lesse Name:</label>
-                <input
-                  type="text"
-                  id="lease-owner-name"
-                  name="lease-owner-name"
-                  required
-                />
+                <input type="text" id="lease-owner-name" name="lease-owner-name" required />
               </div>
               <div class="form-group">
                 <label for="lease-lessor-email">Lesse Email:</label>
-                <input
-                  type="email"
-                  id="lease-owner-email"
-                  name="lease-owner-email"
-                  required
-                />
+                <input type="email" id="lease-owner-email" name="lease-owner-email" required />
               </div>
               <div class="form-group">
                 <label for="lease-owner-phone">Lesse Phone Number:</label>
-                <input
-                  type="tel"
-                  id="lease-owner-phone"
-                  name="lease-owner-phone"
-                  required
-                />
+                <input type="tel" id="lease-owner-phone" name="lease-owner-phone" required />
               </div>
             </div>
             <div class="modal-step main-form-step" id="main-step4">
               <h2 class="modal-step-title">New Lease - General Information</h2>
               <div class="form-group">
                 <label for="lease-price">Lease Rental Price:</label>
-                <input
-                  type="text"
-                  id="lease-price"
-                  name="lease-price"
-                  required
-                />
+                <input type="text" id="lease-price" name="lease-price" required />
               </div>
               <div class="form-group">
                 <label for="lease-sqft">Sale Square Footage:</label>
@@ -353,21 +213,11 @@
               </div>
               <div class="form-group">
                 <label for="lease-start-date">Lease Start Date:</label>
-                <input
-                  type="text"
-                  id="lease-start-date"
-                  name="lease-start-date"
-                  required
-                />
+                <input type="text" id="lease-start-date" name="lease-start-date" required />
               </div>
               <div class="form-group">
                 <label for="lease-end-date">Lease Closing Date:</label>
-                <input
-                  type="text"
-                  id="lease-end-date"
-                  name="lease-end-date"
-                  required
-                />
+                <input type="text" id="lease-end-date" name="lease-end-date" required />
               </div>
               <div class="form-group">
                 <label for="lease-brokers">Brokers:</label>
@@ -392,33 +242,14 @@
                 </select>
               </div>
               <div class="form-group">
-                <button id="upload-lease-agreement" type="button">
-                  Upload Lease Agreement
-                </button>
-                <input
-                  id="lease-agreement"
-                  type="file"
-                  style="display: none"
-                  accept=".pdf"
-                />
-                <input
-                  type="hidden"
-                  id="lease-agreement-file-base64"
-                  name="lease-agreement-file-base64"
-                />
+                <button id="upload-lease-agreement" type="button"> Upload Lease Agreement </button>
+                <input id="lease-agreement" type="file" style="display: none" accept=".pdf" />
+                <input type="hidden" id="lease-agreement-file-base64" name="lease-agreement-file-base64" />
               </div>
             </div>
             <div class="modal-navigation">
-              <button class="minimal-button prev-step" type="button">
-                Previous
-              </button>
-              <button
-                id="next-button"
-                class="minimal-button next-step"
-                type="button"
-              >
-                Next
-              </button>
+              <button class="minimal-button prev-step" type="button"> Previous </button>
+              <button id="next-button" class="minimal-button next-step" type="button"> Next </button>
             </div>
           </form>
         </div>
