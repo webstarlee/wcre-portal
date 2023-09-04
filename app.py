@@ -525,7 +525,6 @@ def submit_sale():
             sale_state = request.form.get("sale-state")
             sale_sqft = request.form.get("sale-sqft")
             sale_seller = request.form.get("sale-seller-name")
-            sale_seller_entity = request.form.get("sale-seller-entity")
             sale_seller_email = request.form.get("sale-seller-email")
             sale_seller_phone = request.form.get("sale-seller-phone")
             sale_buyer = request.form.get("sale-buyer-name")
@@ -550,7 +549,6 @@ def submit_sale():
                 "sale_property_type": sale_property_type,
                 "sale_sqft": sale_sqft,
                 "sale_seller": sale_seller,
-                "sale_seller_entity": sale_seller_entity,
                 "sale_seller_email": sale_seller_email,
                 "sale_seller_phone": sale_seller_phone,
                 "sale_buyer": sale_buyer,
@@ -583,7 +581,7 @@ def submit_sale():
                     jsonify(
                         {
                             "status": "error",
-                            "message": "Error Occurred While Submitting The Listing",
+                            "message": "Error Occurred While Submitting The Sale",
                         }
                     ),
                     500,
@@ -594,7 +592,7 @@ def submit_sale():
                 jsonify(
                     {
                         "status": "error",
-                        "message": "Error Occurred While Submitting The Listing",
+                        "message": "Error Occurred While Submitting The Sale",
                     }
                 ),
                 500,
@@ -665,6 +663,26 @@ def delete_document(document_id):
             return {
                 "success": False,
                 "message": "Document Not Found or Couldn't Be Deleted",
+            }, 404
+
+
+@app.route("/delete_lease/<lease_id>", methods=["GET"])
+@login_required
+def delete_lease(lease_id):
+    try:
+        result = leases.delete_one({"_id": ObjectId(lease_id)})
+    except:
+        return {
+            "success": False,
+            "message": "Lease Not Found or Couldn't Be Deleted",
+        }, 404
+    else:
+        if result.deleted_count > 0:
+            return {"success": True}, 200
+        else:
+            return {
+                "success": False,
+                "message": "Lease Not Found or Couldn't Be Deleted",
             }, 404
 
 
@@ -814,7 +832,6 @@ def search_sales():
             {"sale_property_type": regex_query},
             {"sale_sqft": regex_query},
             {"sale_seller": regex_query},
-            {"sale_seller_entity": regex_query},
             {"sale_seller_email": regex_query},
             {"sale_seller_phone": regex_query},
             {"brokers": regex_query},

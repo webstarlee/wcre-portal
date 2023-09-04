@@ -216,7 +216,7 @@ table tr:hover td a {
   color: #fff;
 }
 /* modals */
-.add-lease-modal {
+.lease-modal {
   display: none;
   position: fixed;
   z-index: 1;
@@ -286,8 +286,10 @@ table tr:hover td a {
   justify-content: space-between;
   padding: 10px 0;
 }
-.modal-navigation .prev-step {
+.hidden {
   visibility: hidden;
+}
+.modal-navigation .prev-step {
   background-color: #f0f0f0;
   border: none;
   color: #333;

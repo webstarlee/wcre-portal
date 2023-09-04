@@ -72,39 +72,10 @@
               flex-wrap: wrap;
               column-gap: 20px;
               row-gap: 10px;
-            "
-          >
-            <input
-              type="text"
-              class="leases-count-div"
-              style="flex-shrink: 0"
-              id="search-input"
-              placeholder="Search Leases..."
-            />
-            <button
-              id="open-map-button"
-              class="header-btns"
-              style="flex-shrink: 0"
-              type="button"
-            >
-              Open Leases Map
-            </button>
-            <button
-              id="delete-all-button"
-              class="header-btns"
-              style="flex-shrink: 0"
-              type="button"
-            >
-              Delete All Leases
-            </button>
-            <button
-              id="add-lease-button"
-              class="header-btns"
-              style="flex-shrink: 0"
-              type="button"
-            >
-              Add lease
-            </button>
+            ">
+            <input type="text" class="leases-count-div" style="flex-shrink: 0" id="search-input" placeholder="Search Leases..." />
+            <button id="open-map-button" class="header-btns" style="flex-shrink: 0" type="button"> Open Leases Map </button>
+            <button id="add-lease-button" class="header-btns" style="flex-shrink: 0" type="button"> Add Lease </button>
           </div>
         </form>
       </div>
@@ -166,12 +137,9 @@
               <td>{{ lease.lease_term_length }}</td>
               <td>{{ lease.lease_street }}</td>
               <td>{{ lease.lease_city }}</td>
-              <td>{{ lease.lease_lessor }}</td>
-              <td>{{ lease.lease_lessee }}</td>
-              <td class="brokers">
-                {% for broker in lease.brokers %}
-                <span class="broker-name">{{ broker }}</span> {% endfor %}
-              </td>
+              <td><a href="mailto:{{ lease.lease_lessor_email }}">{{ lease.lease_lessor }}</a> </td>
+              <td><a href="mailto:{{ lease.lease_lesse_email }}">{{ lease.lease_lesse }}</a> </td>
+              <td class="brokers"> {% for broker in lease.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
               <td>
                 <form
                   action="{{ url_for('submit_lease') }}"
@@ -231,18 +199,12 @@
         {{ pagination.links }}
       </div>
       <div id="action-modal" class="action-modal">
-        <button id="delete-button">Delete lease</button>
-        <button id="edit-button">Edit lease</button>
+        <button id="delete-button">Delete Lease</button>
+        <button id="edit-button">Edit Lease</button>
       </div>
-      <div id="add-lease-modal" class="add-lease-modal">
-        <div
-          id="error-notification-modal"
-          class="error-notification-modal"
-        ></div>
-        <div
-          id="success-notification-modal"
-          class="success-notification-modal"
-        ></div>
+      <div id="add-lease-modal" class="lease-modal" data-mode="add">
+        <div id="error-notification-modal" class="error-notification-modal"></div>
+        <div id="success-notification-modal" class="success-notification-modal"></div>
         <div class="modal-content">
           <span class="close">&times;</span>
           <form
@@ -293,60 +255,30 @@
               <h2 class="modal-step-title">New Lease - Lessor Information</h2>
               <div class="form-group">
                 <label for="lease-lessor-name">Lessor Name:</label>
-                <input
-                  type="text"
-                  id="lease-owner-name"
-                  name="lease-owner-name"
-                  required
-                />
+                <input type="text" id="lease-lessor-name" name="lease-lessor-name" required />
               </div>
               <div class="form-group">
-                <label for="lease-lessor-email">Owner Email:</label>
-                <input
-                  type="email"
-                  id="lease-owner-email"
-                  name="lease-owner-email"
-                  required
-                />
+                <label for="lease-lessor-email">Lessor Email:</label>
+                <input type="email" id="lease-lessor-email" name="lease-lessor-email" required />
               </div>
               <div class="form-group">
-                <label for="lease-owner-phone">Owner Phone Number:</label>
-                <input
-                  type="tel"
-                  id="lease-owner-phone"
-                  name="lease-owner-phone"
-                  required
-                />
+                <label for="lease-lessor-phone">Owner Phone Number:</label>
+                <input type="tel" id="lease-lessor-phone" name="lease-lessor-phone" required />
               </div>
             </div>
             <div class="modal-step main-form-step" id="main-step3">
               <h2 class="modal-step-title">New Lease - Lesse Information</h2>
               <div class="form-group">
-                <label for="lease-lessor-name">Lesse Name:</label>
-                <input
-                  type="text"
-                  id="lease-owner-name"
-                  name="lease-owner-name"
-                  required
-                />
+                <label for="lease-lesse-name">Lesse Name:</label>
+                <input type="text" id="lease-lesse-name" name="lease-lesse-name" required />
               </div>
               <div class="form-group">
-                <label for="lease-lessor-email">Lesse Email:</label>
-                <input
-                  type="email"
-                  id="lease-owner-email"
-                  name="lease-owner-email"
-                  required
-                />
+                <label for="lease-lesse-email">Lesse Email:</label>
+                <input type="email" id="lease-lesse-email" name="lease-lesse-email" required />
               </div>
               <div class="form-group">
-                <label for="lease-owner-phone">Lesse Phone Number:</label>
-                <input
-                  type="tel"
-                  id="lease-owner-phone"
-                  name="lease-owner-phone"
-                  required
-                />
+                <label for="lesse-lesse-phone">Lesse Phone Number:</label>
+                <input type="tel" id="lease-lesse-phone" name="lease-lesse-phone" required />
               </div>
             </div>
             <div class="modal-step main-form-step" id="main-step4">
@@ -422,16 +354,8 @@
               </div>
             </div>
             <div class="modal-navigation">
-              <button class="minimal-button prev-step" type="button">
-                Previous
-              </button>
-              <button
-                id="next-button"
-                class="minimal-button next-step"
-                type="button"
-              >
-                Next
-              </button>
+              <button class="minimal-button prev-step" type="button"> Previous </button>
+              <button class="minimal-button next-step" type="button"> Next </button>
             </div>
           </form>
         </div>

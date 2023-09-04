@@ -423,7 +423,6 @@ $(document).ready(function() {
 			success: function(data) {
 				if (data.success) {
 					uploadButton.textContent = "Document Uploaded ✔";
-					showNotification("Document Uploaded Successfully", "success-notification-modal");
 					uploadButton.disabled = true;
 					document.getElementById("sale-agreement-file-base64").value =
 						data.fileBase64;
@@ -442,7 +441,6 @@ $(document).ready(function() {
 		var isAdmin = $("body").data("is-admin") === "True";
 		$(".centered-table tbody tr").on("contextmenu", function(e) {
 			if (isAdmin) {
-				// Check if user is an admin
 				e.preventDefault();
 				const actionModal = $("#action-modal");
 				actionModal
