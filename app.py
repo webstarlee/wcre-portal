@@ -672,7 +672,7 @@ def delete_document(document_id):
 @login_required
 def delete_lease(lease_id):
     try:
-        result = docs.delete_one({"_id": ObjectId(lease_id)})
+        result = leases.delete_one({"_id": ObjectId(lease_id)})
     except:
         return {
             "success": False,
