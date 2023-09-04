@@ -583,7 +583,7 @@ def submit_sale():
                     jsonify(
                         {
                             "status": "error",
-                            "message": "Error Occurred While Submitting The Listing",
+                            "message": "Error Occurred While Submitting The Sale",
                         }
                     ),
                     500,
@@ -594,7 +594,7 @@ def submit_sale():
                 jsonify(
                     {
                         "status": "error",
-                        "message": "Error Occurred While Submitting The Listing",
+                        "message": "Error Occurred While Submitting The Sale",
                     }
                 ),
                 500,
@@ -665,6 +665,26 @@ def delete_document(document_id):
             return {
                 "success": False,
                 "message": "Document Not Found or Couldn't Be Deleted",
+            }, 404
+
+
+@app.route("/delete_lease/<lease_id>", methods=["GET"])
+@login_required
+def delete_lease(lease_id):
+    try:
+        result = docs.delete_one({"_id": ObjectId(lease_id)})
+    except:
+        return {
+            "success": False,
+            "message": "Lease Not Found or Couldn't Be Deleted",
+        }, 404
+    else:
+        if result.deleted_count > 0:
+            return {"success": True}, 200
+        else:
+            return {
+                "success": False,
+                "message": "Lease Not Found or Couldn't Be Deleted",
             }, 404
 
 
