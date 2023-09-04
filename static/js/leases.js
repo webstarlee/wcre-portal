@@ -44,6 +44,28 @@ $(document).ready(function() {
 		inputElement.value = formattedPrice;
 	}
 
+	function formatSqFootage(inputElement) {
+		let numericValue = inputElement.value.replace(/[^0-9.,]/g, "");
+		numericValue = numericValue.replace(/\.+/g, ".").replace(/,+/g, ",");
+
+		const parts = numericValue.split(".");
+		if (parts.length > 1) {
+			parts[1] = parts[1].substring(0, 2);
+			numericValue = parts.join(".");
+		}
+
+		let cents = "";
+		if (numericValue.includes(".")) {
+			[numericValue, cents] = numericValue.split(".");
+			cents = "." + cents;
+		}
+		numericValue = numericValue.replace(/,/g, "");
+		const numberValue = isNaN(parseFloat(numericValue)) ? 0 : parseFloat(numericValue);
+		const formattedNumber = new Intl.NumberFormat("en-US").format(numberValue);
+		const formattedSqft = numberValue ? `${formattedNumber}${cents}` : "";
+		inputElement.value = formattedSqft;
+	}
+
 	function formatPhoneNumber(inputElement) {
 		let phoneNumber = inputElement.value.replace(/\D/g, "");
 		if (phoneNumber.length > 10) {
@@ -63,7 +85,7 @@ $(document).ready(function() {
 	$("#add-lease-button").click(function() {
 		resetModalSteps($("#add-lease-modal"));
 		$("body").addClass("modal-open");
-		//$("#edit-listing-modal").hide();
+		//$("#edit-lease-modal").hide();
 		$("#add-lease-modal").show();
 		$("#add-lease-modal .prev-step").addClass("hidden");
 	});
@@ -290,65 +312,23 @@ $(document).ready(function() {
 		});
 	});
 
-	// OPEN MODAL
-	$("#add-lease-button").click(function() {
-		$("body").addClass("modal-open");
-		$("#edit-lease-modal").hide();
-		$("#add-lease-modal").show();
-	});
-	$(".add-lease-modal").click(function(e) {
-		if (
-			$(e.target).hasClass("add-lease-modal") ||
-			$(e.target).hasClass("close")
-		) {
-			$("body").removeClass("modal-open");
-			$("#add-lease-modal").hide();
-		}
-	});
-
-
-	// NEXT STEP
-	$(".next-step").on("click", function() {
-		var currentStep = $(".active-step");
-		var nextStep = currentStep.next(".modal-step.main-form-step");
-
-		if (nextStep.length) {
-			if (validateStep()) {
-				currentStep.removeClass("active-step");
-				nextStep.addClass("active-step");
-				$(".prev-step").css("visibility", "visible");
-
-				if (!nextStep.next(".modal-step").length) {
-					$(this).text("Submit Lease");
-				} else {
-					$(this).text("Next");
-				}
-			} else {
-				showNotification("Please Fill Out All Required Fields", "error-notification-modal");
-			}
-		} else {
-			if (validateBrokers()) {
-				$("#submit-lease-form").submit();
-			} else {
-				showNotification("Please Fill Out All Required Fields", "error-notification-modal");
-			}
-		}
-	});
-
 	// PREV STEP
 	$(".prev-step").on("click", function() {
-		var currentStep = $(".active-step");
+		var currentModal = $(this).closest(".lease-modal");
+		var currentStep = currentModal.find(".active-step");
 		var prevStep = currentStep.prev(".modal-step");
 
 		if (prevStep.length) {
 			currentStep.removeClass("active-step");
 			prevStep.addClass("active-step");
-			$(".next-step").text("Next");
-		}
 
-		if (!prevStep.prev(".modal-step").length) {
-			$(this).css("visibility", "hidden");
+			if (!prevStep.prev(".modal-step").length) {
+				$(this).addClass("hidden");
+			}
+
+			if (currentModal.data("mode") === "add") {
+				currentStep.find("input:required, select:required").removeClass("error");
+			}
 		}
-		currentStep.find("input:required, select:required").removeClass("error");
 	});
 });

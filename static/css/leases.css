@@ -287,7 +287,6 @@ table tr:hover td a {
   visibility: hidden;
 }
 .modal-navigation .prev-step {
-  visibility: hidden;
   background-color: #f0f0f0;
   border: none;
   color: #333;

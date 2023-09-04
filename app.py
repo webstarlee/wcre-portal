@@ -525,7 +525,6 @@ def submit_sale():
             sale_state = request.form.get("sale-state")
             sale_sqft = request.form.get("sale-sqft")
             sale_seller = request.form.get("sale-seller-name")
-            sale_seller_entity = request.form.get("sale-seller-entity")
             sale_seller_email = request.form.get("sale-seller-email")
             sale_seller_phone = request.form.get("sale-seller-phone")
             sale_buyer = request.form.get("sale-buyer-name")
@@ -550,7 +549,6 @@ def submit_sale():
                 "sale_property_type": sale_property_type,
                 "sale_sqft": sale_sqft,
                 "sale_seller": sale_seller,
-                "sale_seller_entity": sale_seller_entity,
                 "sale_seller_email": sale_seller_email,
                 "sale_seller_phone": sale_seller_phone,
                 "sale_buyer": sale_buyer,
@@ -672,7 +670,7 @@ def delete_document(document_id):
 @login_required
 def delete_lease(lease_id):
     try:
-        result = docs.delete_one({"_id": ObjectId(lease_id)})
+        result = leases.delete_one({"_id": ObjectId(lease_id)})
     except:
         return {
             "success": False,
@@ -834,7 +832,6 @@ def search_sales():
             {"sale_property_type": regex_query},
             {"sale_sqft": regex_query},
             {"sale_seller": regex_query},
-            {"sale_seller_entity": regex_query},
             {"sale_seller_email": regex_query},
             {"sale_seller_phone": regex_query},
             {"brokers": regex_query},
