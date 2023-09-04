@@ -114,12 +114,26 @@ body {
   cursor: default;
   width: 150px;
 }
-.centered-table tr:nth-child(even) {
+/* .centered-table .parent-rows:nth-child(even) {
   background-color: #f0f0f0;
 }
-.centered-table tr:nth-child(odd) {
+.centered-table .parent-rows:nth-child(odd) {
+  background-color: #f2fcfe;
+} */
+
+.selected-parent {
   background-color: #f2fcfe;
 }
+.selected-child {
+  background-color: #f0f0f0;
+}
+
+.nested-table-rows:hover{
+  background-color: rgb(57, 112, 206) !important;
+  color: white !important;
+  cursor: pointer;
+}
+
 .centered-table tr:hover {
   background-color: rgb(57, 112, 206);
   color: white !important;
@@ -132,13 +146,6 @@ body {
   color: white !important;
 }
 
-
-
-.centered-table .hidden-row:hover{
-  background-color: rgb(202, 206, 213) !important;
-  color: black !important;
-  cursor: pointer;
-}
 .row-hover:hover {
   background-color: rgb(57, 112, 206);
   color: white !important;
