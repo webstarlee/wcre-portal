@@ -146,14 +146,8 @@
         <button id="edit-button">Edit Lease</button>
       </div>
       <div id="add-lease-modal" class="lease-modal" data-mode="add">
-        <div
-          id="error-notification-modal"
-          class="error-notification-modal"
-        ></div>
-        <div
-          id="success-notification-modal"
-          class="success-notification-modal"
-        ></div>
+        <div id="error-notification-modal" class="error-notification-modal"></div>
+        <div id="success-notification-modal" class="success-notification-modal"></div>
         <div class="modal-content">
           <span class="close">&times;</span>
           <form id="submit-lease-form" class="modal-form" action="{{ url_for('submit_lease') }}" method="POST">
@@ -264,7 +258,7 @@
             </div>
             <div class="modal-navigation">
               <button class="minimal-button prev-step" type="button"> Previous </button>
-              <button id="next-button" class="minimal-button next-step" type="button"> Next </button>
+              <button class="minimal-button next-step" type="button"> Next </button>
             </div>
           </form>
         </div>

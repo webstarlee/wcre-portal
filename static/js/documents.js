@@ -116,7 +116,6 @@ $(document).ready(function () {
       success: function (data) {
         if (data.success) {
           uploadButton.textContent = "Document Uploaded ✔";
-          showSuccessNotificationModal("Document Uploaded Successfully");
           uploadButton.disabled = true;
           document.getElementById("document-file-base64").value =
             data.fileBase64;

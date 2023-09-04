@@ -379,7 +379,6 @@ $(document).ready(function() {
 			success: function(data) {
 				if (data.success) {
 					uploadButton.textContent = "Document Uploaded ✔";
-					showNotification("Document Uploaded Successfully", "success-notification-modal");
 					uploadButton.disabled = true;
 					document.getElementById("listing-agreement-file-base64").value =
 						data.fileBase64;
