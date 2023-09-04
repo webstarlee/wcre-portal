@@ -73,6 +73,23 @@ $(document).ready(function () {
       if (
         $(this)
           .closest(".centered-table tbody tr[data-lease-id]")
+          .hasClass("selected-child")
+      ) {
+        $(this)
+          .closest(".centered-table tbody tr[data-lease-id]")
+          .next(".hidden-row-headers")
+          .find(".nested-table tr")
+          .addClass("selected-child");
+      } else {
+        $(this)
+          .closest(".centered-table tbody tr[data-lease-id]")
+          .next(".hidden-row-headers")
+          .find(".nested-table tr")
+          .addClass("selected-parent");
+      }
+      if (
+        $(this)
+          .closest(".centered-table tbody tr[data-lease-id]")
           .next(".hidden-row-headers")
           .is(":hidden")
       ) {
@@ -83,6 +100,17 @@ $(document).ready(function () {
         $(this).find(".fa-caret-down").show();
       }
       $(this).next().next(".hidden-row").toggle();
+    });
+
+    $(document).ready(function () {
+      $(".parent-row").each(function (index) {
+        // Apply the background color to every third parent row
+        if (index % 3 === 0) {
+          $(this).addClass("selected-parent");
+        } else {
+          $(this).addClass("selected-child");
+        }
+      });
     });
   });
 

@@ -133,7 +133,7 @@
           </thead>
           <tbody>
             {% for lease in leases %}
-            <tr data-lease-id="{{ lease._id }}">
+            <tr class="parent-row" data-lease-id="{{ lease._id }}">
               <td
                 class="d-flex justify-content-center align-items-center gap-2 w-auto"
               >
@@ -191,7 +191,7 @@
               <td class="border-0" colspan="100">
                 <table class="mx-auto nested-table" style="width: 99%">
                   <tbody>
-                    <tr>
+                    <tr class="child-rows">
                       <th>Test Header</th>
                       <th>Test Header</th>
                       <th>Test Header</th>
