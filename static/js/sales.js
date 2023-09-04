@@ -442,7 +442,6 @@ $(document).ready(function() {
 		var isAdmin = $("body").data("is-admin") === "True";
 		$(".centered-table tbody tr").on("contextmenu", function(e) {
 			if (isAdmin) {
-				// Check if user is an admin
 				e.preventDefault();
 				const actionModal = $("#action-modal");
 				actionModal
