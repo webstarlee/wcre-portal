@@ -153,6 +153,13 @@ $(document).ready(function () {
     $("#add-lease-modal .prev-step").addClass("hidden");
   });
 
+  $(function() {
+		$("#lease-start-date").datepicker();
+		$("#lease-end-date").datepicker();
+		$("#edit-lease-start-date").datepicker();
+		$("#edit-lease-end-date").datepicker();
+	});
+
   function resetModalSteps(modal) {
     modal.find(".modal-step").removeClass("active-step");
     modal.find(".modal-step:first").addClass("active-step");
