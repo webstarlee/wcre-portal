@@ -69,7 +69,8 @@ try:
     app.config["MAIL_PASSWORD"] = os.getenv("EMAIL_PW")
     app.config["MAIL_USE_TLS"] = False
     app.config["MAIL_USE_SSL"] = True
-    mail = Mail(app)
+    mail = Mail()
+    mail.init_app(app)
     load_dotenv()
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
     login_manager = LoginManager(app)
@@ -685,16 +686,23 @@ def submit_lease():
 
             result = leases.insert_one(new_lease)
             if result.inserted_id:
-                msg = Message(
-                    "WCRE Portal - A New Lease Has Been Submitted",
-                    sender="portal@wolfcre.com",
-                    recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
-                )
-                email_content = render_template(
-                    "email_templates/email_new_lease.html", lease=new_lease
-                )
-                msg.html = transform(email_content)
-                mail.send(msg)
+                try:
+                    msg = Message(
+                        "WCRE Portal - A New Lease Has Been Submitted",
+                        sender="portal@wolfcre.com",
+                        recipients=[
+                            "nathanwolf100@gmail.com",
+                            "jason.wolf@wolfcre.com",
+                        ],
+                    )
+                    email_content = render_template(
+                        "email_templates/email_new_lease.html", lease=new_lease
+                    )
+                    msg.html = transform(email_content)
+                    mail.send(msg)
+                except Exception as e:
+                    print("Error Sending Email")
+                    print(e)
                 return make_response(
                     {"status": "success", "redirect": url_for("view_leases")}, 200
                 )

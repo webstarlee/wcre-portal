@@ -1,8 +1,8 @@
 $(document).ready(function() {
 	var agreementFileInput = document.getElementById("lease-agreement");
 	var commisionFileInput = document.getElementById("commision-agreement");
-  var uploadButtonAgreement = document.getElementById("upload-lease-agreement");
-  var uploadButtonCommision = document.getElementById("upload-commision-agreement");
+  	var uploadButtonAgreement = document.getElementById("upload-lease-agreement");
+  	var uploadButtonCommision = document.getElementById("upload-commision-agreement");
 	const leasePriceInput = document.getElementById("lease-price");
 	const sqFootageInput = document.getElementById("lease-sqft");
 	const lessorPhoneNumberInput = document.getElementById("lease-lessor-phone");
@@ -133,7 +133,6 @@ $(document).ready(function() {
 	});
 	$(document).ready(function() {
 		$(".parent-row").each(function(index) {
-			// Apply the background color to every third parent row
 			if (index % 3 === 0) {
 				$(this).addClass("selected-parent");
 			} else {
@@ -328,68 +327,46 @@ $(document).ready(function() {
 		});
 	});
 
-  uploadButtonAgreement.addEventListener("click", function(e) {
-		agreementFileInput.click();
-	});
+	function uploadDocument(fileInput, uploadButton, fileBase64Id) {
+		fileInput.addEventListener("change", function(e) {
+			var file = this.files[0];
+			var formData = new FormData();
+			formData.append("file", file);
+			$.ajax({
+				url: "/upload_pdf",
+				type: "POST",
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function(data) {
+					if (data.success) {
+						uploadButton.textContent = "Document Uploaded ✔";
+						uploadButton.disabled = true;
+						document.getElementById(fileBase64Id).value = data.fileBase64;
+					} else {
+						showNotification("Error Uploading Document", "error-notification-modal");
+					}
+				},
+				error: function() {
+					showNotification("Error Uploading Document", "error-notification-modal");
+				},
+			});
+		});
+	}
 
-  uploadButtonCommision.addEventListener("click", function(e) {
-		commisionFileInput.click();
-	});
+	function setupButtonAndInput(button, input) {
+		button.addEventListener("click", function(e) {
+			input.click();
+		});
+	}
 
-  $(".modal-content").click(function(event) {
+	setupButtonAndInput(uploadButtonAgreement, agreementFileInput);
+	setupButtonAndInput(uploadButtonCommision, commisionFileInput);
+	uploadDocument(agreementFileInput, uploadButtonAgreement, "lease-agreement-file-base64");
+	uploadDocument(commisionFileInput, uploadButtonCommision, "commision-agreement-file-base64");
+
+	$(".modal-content").click(function(event) {
 		event.stopPropagation();
-	});
-
-	agreementFileInput.addEventListener("change", function(e) {
-		var file = this.files[0];
-		var formData = new FormData();
-		formData.append("file", file);
-		$.ajax({
-			url: "/upload_pdf",
-			type: "POST",
-			data: formData,
-			processData: false,
-			contentType: false,
-			success: function(data) {
-				if (data.success) {
-					uploadButtonAgreement.textContent = "Document Uploaded ✔";
-					uploadButtonAgreement.disabled = true;
-					document.getElementById("lease-agreement-file-base64").value =
-						data.fileBase64;
-				} else {
-					showNotification("Error Uploading Document", "error-notification-modal");
-				}
-			},
-			error: function() {
-				showNotification("Error Uploading Document", "error-notification-modal");
-			},
-		});
-	});
-
-	commisionFileInput.addEventListener("change", function(e) {
-		var file = this.files[0];
-		var formData = new FormData();
-		formData.append("file", file);
-		$.ajax({
-			url: "/upload_pdf",
-			type: "POST",
-			data: formData,
-			processData: false,
-			contentType: false,
-			success: function(data) {
-				if (data.success) {
-					uploadButtonCommision.textContent = "Document Uploaded ✔";
-					uploadButtonCommision.disabled = true;
-					document.getElementById("commision-agreement-file-base64").value =
-						data.fileBase64;
-				} else {
-					showNotification("Error Uploading Document", "error-notification-modal");
-				}
-			},
-			error: function() {
-				showNotification("Error Uploading Document", "error-notification-modal");
-			},
-		});
 	});
 
 	// SUBMIT LEASE
@@ -401,9 +378,7 @@ $(document).ready(function() {
 			var leaseAgreementFileBase64 = $("#lease-agreement-file-base64").val();
 			var commisionAgreementFileBase64 = $("#commision-agreement-file-base64").val();
 			formData.append("lease-agreement-file-base64", leaseAgreementFileBase64);
-      formData.append("commision-agreement-file-base64", commisionAgreementFileBase64);
-
-
+      		formData.append("commision-agreement-file-base64", commisionAgreementFileBase64);
 			$.ajax({
 					url: "/submit_lease",
 					type: "POST",
