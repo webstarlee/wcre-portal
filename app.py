@@ -603,7 +603,91 @@ def submit_sale():
 @app.route("/submit_lease", methods=["POST"])
 @login_required
 def submit_lease():
-    return
+    if request.method == "POST":
+        try:
+            lease_street = request.form.get("lease-street")
+            lease_city = request.form.get("lease-city")
+            lease_state = request.form.get("lease-state")
+            lease_sqft = request.form.get("lease-sqft")
+            lease_property_type = request.form.get("lease-property-type")
+            lease_price = request.form.get("lease-price")
+            lease_term = request.form.get("lease-term-length")
+            lease_percentage_space = request.form.get("lease-percentage-space")
+            lease_lessor = request.form.get("lease-lessor-name")
+            lease_lessor_email = request.form.get("lease-lessor-email")
+            lease_lessor_phone = request.form.get("lease-lessor-phone")
+            lease_lesse = request.form.get("lease-lesse-name")
+            lease_lesse_email = request.form.get("lease-lesse-email")
+            lease_lesse_phone = request.form.get("lease-lesse-phone")
+            lease_brokers = request.form.getlist("brokers[]")
+            commision_agreement_file_base64 = request.form.get(
+                "commision-agreement-file-base64"
+            )
+            lease_agreement_file_base64 = request.form.get(
+                "commision-agreement-file-base64"
+            )
+            if lease_state == "NJ":
+                lease_state = "New Jersey"
+            elif lease_state == "PA":
+                lease_state == "Pennsylvania"
+
+            new_lease = {
+                "lease_street": lease_street,
+                "lease_city": lease_city,
+                "lease_staTe": lease_state,
+                "lease_property_type": lease_property_type,
+                "lease_sqft": lease_sqft,
+                "lease_price": lease_price,
+                "lease_term_length": lease_term,
+                "lease_percentage_space": lease_percentage_space,
+                "lease_lessor": lease_lessor,
+                "lease_lessor_email": lease_lessor_email,
+                "lease_lessor_phone": lease_lessor_phone,
+                "lease_lesse": lease_lesse,
+                "lease_lesse_email": lease_lesse_email,
+                "lease_lesse_phone": lease_lesse_phone,
+                "brokers": lease_brokers,
+                "lease_agreement_pdf_file_base64": lease_agreement_file_base64,
+                "lease_commision_pdf_file_base64": commision_agreement_file_base64,
+            }
+
+            result = leases.insert_one(new_lease)
+            if result.inserted_id:
+                msg = Message(
+                    "WCRE Portal - A New Lease Has Been Submitted",
+                    sender="portal@wolfcre.com",
+                    recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
+                )
+                email_content = render_template(
+                    "email_templates/email_new_lease.html", lease=new_lease
+                )
+                msg.html = transform(email_content)
+                mail.send(msg)
+                return make_response(
+                    {"status": "success", "redirect": url_for("view_leases")}, 200
+                )
+            else:
+                return (
+                    jsonify(
+                        {
+                            "status": "error",
+                            "message": "Error Occurred While Submitting The Lease",
+                        }
+                    ),
+                    500,
+                )
+        except Exception as e:
+            logger.error(e)
+            return (
+                jsonify(
+                    {
+                        "status": "error",
+                        "message": "Error Occurred While Submitting The Lease",
+                    }
+                ),
+                500,
+            )
+    return redirect(url_for("login"))
 
 
 @app.route("/delete_listing/<listing_id>", methods=["GET"])

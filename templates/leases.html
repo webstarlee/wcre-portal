@@ -16,27 +16,6 @@
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   </head>
-  <script>
-    function calculateTermLength(startDate, endDate) {
-      let start = new Date(startDate);
-      let end = new Date(endDate);
-      let yearsDiff = end.getFullYear() - start.getFullYear();
-      let monthsDiff = end.getMonth() - start.getMonth();
-      if (monthsDiff < 0) {
-        yearsDiff--;
-        monthsDiff += 12;
-      }
-      let result = "";
-      if (yearsDiff > 0) {
-        result += `${yearsDiff} Year${yearsDiff > 1 ? 's' : ''}`;
-      }
-      if (monthsDiff > 0) {
-        if (result) result += ', ';
-        result += `${monthsDiff} Month${monthsDiff > 1 ? 's' : ''}`;
-      }
-      return result;
-    }
-  </script>
   <body data-is-admin="{{ is_admin }}">
     <div id="error-notification" class="error-notification"></div>
     <div id="success-notification" class="success-notification"></div> {% include 'sidebar.html' %} <div class="content">
@@ -73,8 +52,6 @@
           <thead>
             <tr>
               <th style="border-top-left-radius: 7px">Property Type</th>
-              <th>Start Date</th>
-              <th>Closing Date</th>
               <th>Annual Price</th>
               <th>Square Footage</th>
               <th>Price/SF</th>
@@ -89,16 +66,10 @@
               <th>Commision Agreement</th>
             </tr>
           </thead>
-          <tbody> {% for lease in leases %} <tr class="parent-row" data-lease-id="{{ lease._id }}">
-              <td class="d-flex justify-content-center align-items-center gap-2 w-auto">
-                <button data-lease-id="{{ lease._id }}" class="bg-transparent border-0">
-                  <i class="fa fa-caret-right fs-6" aria-hidden="true"></i>
-                  <i class="fa fa-caret-down fs-6" aria-hidden="true"></i>
-                </button>
-                {{lease.lease_property_type }}
-              </td>
-              <td>{{ lease.lease_start_date }}</td>
-              <td>{{ lease.lease_end_date }}</td>
+          <tbody>
+            {% for lease in leases %} 
+            <tr data-lease-id="{{ lease._id }}">
+              <td>{{ lease.lease_property_type }}</td>
               <td>{{ lease.lease_price }}</td>
               <td>{{ lease.lease_sqft }}</td>
               <td>
@@ -110,11 +81,7 @@
                 </script>
               </td>
               <td>{{ lease.lease_percentage_space }}</td>
-              <td>
-                <script>
-                  document.write(calculateTermLength('{{ lease.lease_start_date }}', '{{ lease.lease_end_date }}'));
-                </script>
-              </td>
+              <td>{{ lease.lease_term_length }}</td>
               </td>
               <td>{{ lease.lease_street }}</td>
               <td>{{ lease.lease_city }}</td>
@@ -126,53 +93,16 @@
               </td>
               <td class="brokers"> {% for broker in lease.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
               <td>
-                <form action="{{ url_for('submit_lease') }}" class="lease-form" method="POST"> {% if lease.pdf_file_base64 %} <a href="{{ url_for('download_lease_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
+                <form action="{{ url_for('submit_lease') }}" class="lease-form" method="POST"> {% if lease.agreement_pdf_file_base64 %} <a href="{{ url_for('download_lease_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
               </td>
               <td>
-                <form action="{{ url_for('submit_lease') }}" class="lease-form" method="POST"> {% if lease.pdf_file_base64 %} <a href="{{ url_for('download_commision_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
+                <form action="{{ url_for('submit_lease') }}" class="lease-form" method="POST"> {% if lease.commision_pdf_file_base64 %} <a href="{{ url_for('download_commision_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
               </td>
-            </tr>
-            <tr class="hidden-row-headers">
-              <td class="border-0" colspan="100">
-                <table class="mx-auto nested-table" style="width: 99%">
-                  <tbody>
-                    <tr class="child-rows">
-                      <th>Test Header</th>
-                      <th>Test Header</th>
-                      <th>Test Header</th>
-                      <th>Test Header</th>
-                      <th>Test Header</th>
-                      <th>Test Header</th>
-                      <th>Test Header</th>
-                      <th>Test Header</th>
-                      <th>Test Header</th>
-                      <th>Test Header</th>
-                      <th>Test Header</th>
-                      <th>Test Header</th>
-                      <th>Test Header</th>
-                    </tr>
-                    <tr class="nested-table-rows">
-                      <td>Test Data</td>
-                      <td>Test Data</td>
-                      <td>Test Data</td>
-                      <td>Test Data</td>
-                      <td>Test Data</td>
-                      <td>Test Data</td>
-                      <td>Test Data</td>
-                      <td>Test Data</td>
-                      <td>Test Data</td>
-                      <td>Test Data</td>
-                      <td>Test Data</td>
-                      <td>Test Data</td>
-                      <td>Test Data</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </td>
-            </tr> {% endfor %}
+            </tr> 
+            {% endfor %} 
           </tbody>
-        </table>
-        {{ pagination.links }}
+          <table>
+            {{ pagination.links }}
       </div>
       <div id="action-modal" class="action-modal">
         <button id="delete-button">Delete Lease</button>
@@ -254,12 +184,12 @@
                 <input type="text" id="lease-sqft" name="lease-sqft" required />
               </div>
               <div class="form-group">
-                <label for="lease-start-date">Lease Start Date:</label>
-                <input type="text" id="lease-start-date" name="lease-start-date" required />
+                <label for="lease-percentage-space">Lease Space Percentage:</label>
+                <input type="text" id="lease-percentage-space" name="lease-percentage-space" required />
               </div>
               <div class="form-group">
-                <label for="lease-end-date">Lease Closing Date:</label>
-                <input type="text" id="lease-end-date" name="lease-end-date" required />
+                <label for="lease-term">Lease Term Length:</label>
+                <input type="text" id="lease-term" name="lease-term" required />
               </div>
               <div class="form-group">
                 <label for="lease-brokers">Brokers:</label>
@@ -287,6 +217,11 @@
                 <button id="upload-lease-agreement" type="button"> Upload Lease Agreement </button>
                 <input id="lease-agreement" type="file" style="display: none" accept=".pdf" />
                 <input type="hidden" id="lease-agreement-file-base64" name="lease-agreement-file-base64" />
+              </div>
+              <div class="form-group">
+                <button id="upload-commision-agreement" type="button"> Upload Commision Agreement </button>
+                <input id="commision-agreement" type="file" style="display: none" accept=".pdf" />
+                <input type="hidden" id="commision-agreement-file-base64" name="commision-agreement-file-base64" />
               </div>
             </div>
             <div class="modal-navigation">

@@ -1,18 +1,16 @@
 $(document).ready(function () {
+  var agreementFileInput = document.getElementById("lease-agreement");
+  var commisionFileInput = document.getElementById("commision-agreement");
   const leasePriceInput = document.getElementById("lease-price");
   const sqFootageInput = document.getElementById("lease-sqft");
   const lessorPhoneNumberInput = document.getElementById("lease-lessor-phone");
   const lessePhoneNumberInput = document.getElementById("lease-lesse-phone");
+  const leasePercentageSpaceInput = document.getElementById("lease-percentage-space");
+  leasePercentageSpaceInput.addEventListener("input", () => formatPercentage(leasePercentageSpaceInput));
   leasePriceInput.addEventListener("input", () => formatPrice(leasePriceInput));
-  sqFootageInput.addEventListener("input", () =>
-    formatSqFootage(sqFootageInput)
-  );
-  lessorPhoneNumberInput.addEventListener("input", () =>
-    formatPhoneNumber(lessorPhoneNumberInput)
-  );
-  lessePhoneNumberInput.addEventListener("input", () =>
-    formatPhoneNumber(lessePhoneNumberInput)
-  );
+  sqFootageInput.addEventListener("input", () =>formatSqFootage(sqFootageInput));
+  lessorPhoneNumberInput.addEventListener("input", () =>formatPhoneNumber(lessorPhoneNumberInput));
+  lessePhoneNumberInput.addEventListener("input", () =>formatPhoneNumber(lessePhoneNumberInput));
 
   function showNotification(message, elementId) {
     var notification = $("#" + elementId);
@@ -50,6 +48,21 @@ $(document).ready(function () {
     const formattedNumber = new Intl.NumberFormat("en-US").format(numberValue);
     const formattedPrice = numberValue ? `$${formattedNumber}${cents}` : "";
     inputElement.value = formattedPrice;
+  }
+
+  function formatPercentage(inputElement) {
+    let numericValue = inputElement.value.replace(/[^0-9.]/g, "");
+    numericValue = numericValue.replace(/\.+/g, ".");
+    const parts = numericValue.split(".");
+    if (parts.length > 1) {
+        parts[1] = parts[1].substring(0, 2);
+        numericValue = parts.join(".");
+    }
+    if (numericValue) {
+        inputElement.value = `${numericValue}%`;
+    } else {
+        inputElement.value = ""; 
+    }
   }
 
   function formatSqFootage(inputElement) {
@@ -153,13 +166,6 @@ $(document).ready(function () {
     $("#add-lease-modal .prev-step").addClass("hidden");
   });
 
-  $(function() {
-		$("#lease-start-date").datepicker();
-		$("#lease-end-date").datepicker();
-		$("#edit-lease-start-date").datepicker();
-		$("#edit-lease-end-date").datepicker();
-	});
-
   function resetModalSteps(modal) {
     modal.find(".modal-step").removeClass("active-step");
     modal.find(".modal-step:first").addClass("active-step");
@@ -197,19 +203,6 @@ $(document).ready(function () {
       $("#lease-brokers").addClass("error");
     } else {
       $("#lease-brokers").removeClass("error");
-    }
-    return isValid;
-  }
-
-  function validateDates() {
-    var startDateInput = $("#lease-start-date");
-    var isValid = startDateInput.val().trim().length > 0;
-    console.log(isValid);
-
-    if (!isValid) {
-      $("#lease-start-date").addClass("error");
-    } else {
-      $("#lease-start-date").removeClass("error");
     }
     return isValid;
   }
@@ -333,12 +326,68 @@ $(document).ready(function () {
     });
   });
 
+  // UPLOAD DOCUMENT
+	agreementFileInput.addEventListener("change", function(e) {
+		var file = this.files[0];
+		var formData = new FormData();
+		formData.append("file", file);
+
+		$.ajax({
+			url: "/upload_pdf",
+			type: "POST",
+			data: formData,
+			processData: false,
+			contentType: false,
+			success: function(data) {
+				if (data.success) {
+					uploadButton.textContent = "Document Uploaded ✔";
+					uploadButton.disabled = true;
+					document.getElementById("lease-agreement-file-base64").value =
+						data.fileBase64;
+				} else {
+					showNotification("Error Uploading Document", "error-notification-modal");
+				}
+			},
+			error: function() {
+				showNotification("Error Uploading Document", "error-notification-modal");
+			},
+		});
+	});
+
+  // UPLOAD DOCUMENT
+	commisionFileInput.addEventListener("change", function(e) {
+		var file = this.files[0];
+		var formData = new FormData();
+		formData.append("file", file);
+
+		$.ajax({
+			url: "/upload_pdf",
+			type: "POST",
+			data: formData,
+			processData: false,
+			contentType: false,
+			success: function(data) {
+				if (data.success) {
+					uploadButton.textContent = "Document Uploaded ✔";
+					uploadButton.disabled = true;
+					document.getElementById("commision-agreement-file-base64").value =
+						data.fileBase64;
+				} else {
+					showNotification("Error Uploading Document", "error-notification-modal");
+				}
+			},
+			error: function() {
+				showNotification("Error Uploading Document", "error-notification-modal");
+			},
+		});
+	});
+
   // SUBMIT LEASE
   $("#submit-lease-form").on("submit", function (e) {
     e.preventDefault();
     $("#add-lease-modal").css("display", "none");
 
-    if (validateStep() && validateBrokers() && validateDates()) {
+    if (validateStep() && validateBrokers()) {
       var formData = new FormData(this);
       var fileBase64 = $("#lease-agreement-file-base64").val();
       formData.append("fileBase64", fileBase64);

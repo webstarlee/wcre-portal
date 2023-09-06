@@ -86,6 +86,19 @@ body {
 #upload-lease-agreement:hover {
   background-color: #ddd;
 }
+#upload-commision-agreement {
+  margin-top: 1px;
+  background-color: #f0f0f0;
+  border: none;
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+#upload-commision-agreement:hover {
+  background-color: #ddd;
+}
 /* table */
 .centered-table {
   margin-left: 220px;
@@ -114,14 +127,29 @@ body {
   cursor: default;
   width: 150px;
 }
-/* .centered-table .parent-rows:nth-child(even) {
+.centered-table tr:nth-child(even) {
   background-color: #f0f0f0;
 }
-.centered-table .parent-rows:nth-child(odd) {
+.centered-table tr:nth-child(odd) {
   background-color: #f2fcfe;
-} */
+}
+.centered-table tr:hover {
+  background-color: rgb(57, 112, 206);
+  color: white !important;
+  cursor: pointer;
+}
+.row-hover:hover {
+  background-color: rgb(57, 112, 206);
+  color: white !important;
+  cursor: pointer;
+}
+.centered-table th {
+  background-color: #1c92d2;
+  width: 150px;
+  color: white;
+}
 
-.selected-parent {
+/* .selected-parent {
   background-color: #f2fcfe;
 }
 .selected-child {
@@ -132,31 +160,20 @@ body {
   background-color: rgb(57, 112, 206) !important;
   color: white !important;
   cursor: pointer;
-}
-
-.centered-table tr:hover {
-  background-color: rgb(57, 112, 206);
-  color: white !important;
-  cursor: pointer;
-}
-.centered-table tr:hover .fa-caret-right {
+} */
+/* .centered-table tr:hover .fa-caret-right {
   color: white !important;
 }
 .centered-table tr:hover .fa-caret-down {
   color: white !important;
-}
+} */
 
-.row-hover:hover {
-  background-color: rgb(57, 112, 206);
-  color: white !important;
-  cursor: pointer;
-}
 .centered-table th{
   background-color: #1c92d2;
   width: 150px;
   color: white;
 }
-.centered-table .hidden-row-headers{
+/* .centered-table .hidden-row-headers{
   background-color: transparent !important;
   width: 150px;
   color: black !important;
@@ -165,7 +182,7 @@ body {
   background-color: transparent !important;
   width: 150px;
   color: black !important;
-}
+} */
 
 .centered-table th:nth-child(1),
 .centered-table th:nth-child(2),

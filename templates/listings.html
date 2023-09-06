@@ -65,7 +65,9 @@
               <th style="border-top-right-radius: 7px">Listing Agreement</th>
             </tr>
           </thead>
-          <tbody> {% for listing in listings %} <tr data-listing-id="{{ listing._id }}">
+          <tbody> 
+            {% for listing in listings %} 
+            <tr data-listing-id="{{ listing._id }}">
               <td>{{ listing.listing_property_type }}</td>
               <td>{{ listing.listing_type }}</td>
               <td>{{ listing.listing_start_date }}</td>
@@ -85,7 +87,9 @@
               <td>
                 <form method="POST"> {% if listing.pdf_file_base64 %} <a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
               </td>
-            </tr> {% endfor %} </tbody>
+            </tr> 
+            {% endfor %} 
+          </tbody>
           <table>
             {{ pagination.links }}
             <div>
