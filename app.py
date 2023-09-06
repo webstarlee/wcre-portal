@@ -692,7 +692,7 @@ def create_ics_listing(listing_id):
     listing = listings.find_one({"_id": ObjectId(listing_id)})
     c = Calendar()
     e = Event()
-    e.name = "Listing End Date: " + listing["listing_street"]
+    e.name = "Listing Closing Date: " + listing["listing_street"]
     e.begin = arrow.get(listing["listing_end_date"], "MM/DD/YYYY").format("YYYY-MM-DD")
     e.make_all_day()
     c.events.add(e)
@@ -707,7 +707,7 @@ def create_ics_sale(sale_id):
     sale = sales.find_one({"_id": ObjectId(sale_id)})
     c = Calendar()
     e = Event()
-    e.name = "Listing End Date: " + sale["sale_street"]
+    e.name = "Listing Closing Date: " + sale["sale_street"]
     e.begin = arrow.get(sale["sale_end_date"], "MM/DD/YYYY").format("YYYY-MM-DD")
     e.make_all_day()
     c.events.add(e)
@@ -722,7 +722,7 @@ def create_ics_lease(lease_id):
     lease = leases.find_one({"_id": ObjectId(lease_id)})
     c = Calendar()
     e = Event()
-    e.name = "Lease End Date: " + lease["lease_street"]
+    e.name = "Lease Closing Date: " + lease["lease_street"]
     e.begin = arrow.get(lease["lease_end_date"], "MM/DD/YYYY").format("YYYY-MM-DD")
     e.make_all_day()
     c.events.add(e)
