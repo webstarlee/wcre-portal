@@ -356,6 +356,38 @@ def download_sale_pdf(sale_id):
     return response
 
 
+@app.route("/download_lease_agreement_pdf/<lease_id>", methods=["GET"])
+@login_required
+def download_lease_agreement(lease_id):
+    lease = leases.find_one({"_id": ObjectId(lease_id)})
+    if not lease:
+        return "No Lease Found", 404
+    pdf_file_base64 = lease.get("lease_agreement_pdf_file_base64")
+    if not pdf_file_base64:
+        return "No PDF Found for This Sale", 404
+    pdf_file_data = base64.b64decode(pdf_file_base64)
+    response = make_response(pdf_file_data)
+    response.headers.set("Content-Type", "application/pdf")
+    response.headers.set("Content-Disposition", "attachment", filename="lease.pdf")
+    return response
+
+
+@app.route("/download_lease_commision_pdf/<lease_id>", methods=["GET"])
+@login_required
+def download_lease_commision(lease_id):
+    lease = leases.find_one({"_id": ObjectId(lease_id)})
+    if not lease:
+        return "No Sale Found", 404
+    pdf_file_base64 = lease.get("lease_commision_pdf_file_base64")
+    if not pdf_file_base64:
+        return "No PDF Found for This Lease", 404
+    pdf_file_data = base64.b64decode(pdf_file_base64)
+    response = make_response(pdf_file_data)
+    response.headers.set("Content-Type", "application/pdf")
+    response.headers.set("Content-Disposition", "attachment", filename="lease.pdf")
+    return response
+
+
 @app.route("/upload_pdf", methods=["POST"])
 @login_required
 def upload_pdf():
@@ -540,7 +572,7 @@ def submit_sale():
             if sale_state == "NJ":
                 sale_state = "New Jersey"
             elif sale_state == "PA":
-                sale_state == "Pennsylvania"
+                sale_state = "Pennsylvania"
 
             new_sale = {
                 "sale_street": sale_street,
@@ -624,12 +656,12 @@ def submit_lease():
                 "commision-agreement-file-base64"
             )
             lease_agreement_file_base64 = request.form.get(
-                "commision-agreement-file-base64"
+                "lease-agreement-file-base64"
             )
             if lease_state == "NJ":
                 lease_state = "New Jersey"
             elif lease_state == "PA":
-                lease_state == "Pennsylvania"
+                lease_state = "Pennsylvania"
 
             new_lease = {
                 "lease_street": lease_street,
