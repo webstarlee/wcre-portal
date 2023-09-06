@@ -73,6 +73,7 @@ body {
   position: relative;
   max-width: 500px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  animation: modalFadeIn 0.3s ease-in-out;
 }
 .modal-step-title {
   text-align: center;
