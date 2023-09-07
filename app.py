@@ -72,7 +72,6 @@ try:
     app.config["MAIL_PASSWORD"] = os.getenv("EMAIL_PW")
     app.config["MAIL_USE_TLS"] = False
     app.config["MAIL_USE_SSL"] = True
-
     mail = Mail(app)
     bcrypt = Bcrypt(app)
     login_manager = LoginManager(app)
@@ -89,8 +88,8 @@ try:
         serverSelectionTimeoutMS=5000,
     )
     db = client["wcre_panel"]
-    users = db["users"]
-    logins = db["logins"]
+    users = db["Users"]
+    logins = db["Logins"]
     listings = db["Listings"]
     sales = db["Sales"]
     leases = db["Leases"]
