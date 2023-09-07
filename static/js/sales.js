@@ -482,14 +482,16 @@ $(document).ready(function() {
 				if (data.success) {
 					showNotification("Sale Deleted", "error-notification");
 					selectedRow.remove();
-					deleteModal.hide(); // hide the modal
-					console.log("Sale Deleted Successfully");
+					deleteModal.hide();
+					$.get("/count/sales", function(response) {
+						$("#sales-count").html("Total Sales: " + response.count);
+					});
 				} else {
-					console.error("Failed to Delete Sale: " + data.message);
+					showNotification("Failed to Delete Sale", "error-notification");
 				}
 			},
 			error: function() {
-				console.error("Failed to Delete Sale.");
+				showNotification("Failed to Delete Sale", "error-notification");
 			},
 		});
 	});

@@ -78,10 +78,10 @@
               <td>{{ listing.listing_street }}</td>
               <td>{{ listing.listing_city }}</td>
               <td>
-                <a href="mailto:{{ listing.listing_email }}">{{ listing.listing_owner }}</a>
+                <a href="mailto:{{ listing.listing_owner_email }}">{{ listing.listing_owner_name }}</a>
               </td>
               <td>
-                <a href="tel:{{ listing.listing_phone }}">{{ listing.listing_phone }}</a>
+                <a href="tel:{{ listing.listing_phone }}">{{ listing.listing_owner_phone }}</a>
               </td>
               <td class="brokers"> {% for broker in listing.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
               <td>

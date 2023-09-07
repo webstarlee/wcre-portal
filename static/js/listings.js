@@ -428,7 +428,6 @@ $(document).ready(function() {
 			'.centered-table tbody tr[data-listing-id="' + listing_id + '"]'
 		);
 		const deleteModal = $("#action-modal"); // assuming this is the ID of your deletion modal
-
 		$.ajax({
 			url: "/delete_listing/" + listing_id,
 			type: "GET",
@@ -437,6 +436,9 @@ $(document).ready(function() {
 					showNotification("Listing Deleted", "error-notification");
 					selectedRow.remove();
 					deleteModal.hide();
+					$.get("/count/listings", function(response) {
+						$("#listings-count").html("Total Listings: " + response.count);
+					});
 				} else {
 					showNotification("Failed to Delete Listing", "error-notification");
 				}

@@ -162,7 +162,7 @@ $(document).ready(function() {
 	$("#add-lease-button").click(function() {
 		resetModalSteps($("#add-lease-modal"));
 		$("body").addClass("modal-open");
-		//$("#edit-lease-modal").hide();
+		$("#edit-lease-modal").hide();
 		$("#add-lease-modal").show();
 		$("#add-lease-modal .prev-step").addClass("hidden");
 	});
@@ -174,10 +174,61 @@ $(document).ready(function() {
 		modal.find(".next-step").text("Next");
 	}
 
+	$("#edit-button").click(function() {
+		resetModalSteps($("#edit-lease-modal"));
+		$("body").addClass("modal-open");
+		$("#add-lease-modal").hide();
+		$("#edit-lease-modal").show();
+		$("#edit-lease-modal .prev-step").addClass("hidden");
+		const actionModal = $("#action-modal");
+		actionModal.hide();
+		const selectedRow = $(
+			'.centered-table tbody tr[data-lease-id="' + lease_id + '"]'
+		);
+		const leaseAddress = selectedRow.find("td:nth-child(7)").text().trim();
+		$("#edit-lease-modal .modal-step-title").text("Edit Lease - " + leaseAddress);
+		const leasePropertyType = selectedRow.find("td:nth-child(1)").text().trim();
+		const leasePrice = selectedRow.find("td:nth-child(2)").text().trim();
+		const leaseSqFt = selectedRow.find("td:nth-child(3)").text().trim();
+		const leaseSpacePercentage = selectedRow.find("td:nth-child(5)").text().trim();
+		const leaseTermLength = selectedRow.find("td:nth-child(6)").text().trim();
+		const leaseStreet = selectedRow.find("td:nth-child(7)").text().trim();
+		const leaseCity = selectedRow.find("td:nth-child(8)").text().trim();
+		const leaseLessor = selectedRow.find("td:nth-child(9)").text().trim();
+		const leaseLessorEmail = selectedRow
+			.find("td:nth-child(9) a")
+			.attr("href")
+			.replace("mailto:", "")
+			.trim();
+		const leaseLesse = selectedRow.find("td:nth-child(10)").text().trim();
+		const leaseLesseEmail = selectedRow
+			.find("td:nth-child(10) a")
+			.attr("href")
+			.replace("mailto:", "")
+			.trim();
+		$("#edit-lease-property-type").val(leasePropertyType);
+		$("#edit-lease-price").val(leasePrice);
+		$("#edit-lease-sqft").val(leaseSqFt);
+		$("#edit-lease-percentage-space").val(leaseSpacePercentage);
+		$("#edit-lease-term-length").val(leaseTermLength);
+		$("#edit-lease-street").val(leaseStreet);
+		$("#edit-lease-city").val(leaseCity);
+		$("#edit-lease-lessor-name").val(leaseLessor);
+		$("#edit-lease-lessor-email").val(leaseLessorEmail);
+		$("#edit-lease-lesse-name").val(leaseLesse);
+		$("#edit-lease-lesse-email").val(leaseLesseEmail);
+	});
+
 	// CLOSE ADD LESAE MODAL
 	$("#add-lease-modal .close").click(function() {
 		$("body").removeClass("modal-open");
 		$("#add-lease-modal").hide();
+	});
+
+	// CLOSE EDIT LEASE MODAL
+	$("#edit-lease-modal .close").click(function() {
+		$("body").removeClass("modal-open");
+		$("#edit-lease-modal").hide();
 	});
 
 	function validateStep() {
@@ -235,6 +286,47 @@ $(document).ready(function() {
 					$("#submit-lease-form").submit();
 				} else if (mode === "edit" && $(this).text() === "Submit Lease Edits") {
 					$("#edit-lease-modal").css("display", "none");
+					var leasePropertyType = $("#edit-lease-property-type").val();
+					var leasePrice = $("#edit-lease-price").val();
+					var leaseSqFt = $("#edit-lease-sqft").val();
+					var leaseStreet = $("#edit-lease-street").val();
+					var leaseCity = $("#edit-lease-city").val();
+					var leaseBuyer = $("#edit-lease-lessor-name").val();
+					var leaseBuyerEmail = $("#edit-lease-lessor-email").val();
+					var leaseSeller = $("#edit-lease-lesse-name").val();
+					var leaseSellerEmail = $("#edit-lease-lesse-email").val();
+
+					var data = {
+						lease_property_type: leasePropertyType,
+						lease_price: leasePrice,
+						lease_sqft: leaseSqFt,
+						lease_street: leaseStreet,
+						lease_city: leaseCity,
+						lease_buyer: leaseBuyer,
+						lease_buyer_email: leaseBuyerEmail,
+						lease_buyer_phone: leaseBuyerPhone,
+						lease_seller: leaseSeller,
+						lease_seller_email: leaseSellerEmail,
+						lease_seller_phone: leaseSellerPhone
+					};
+
+					$.ajax({
+						url: "/edit_lease/" + lease_id,
+						type: "POST",
+						contentType: "application/json",
+						data: JSON.stringify(data),
+						success: function(response) {
+							if (response.success) {
+								console.log("lease Edited Successfully");
+								location.reload();
+							} else {
+								showNotification("Error Editing lease", "error-notification-modal");
+							}
+						},
+						error: function() {
+							showErrorNotificationModal("Error Editing lease");
+						},
+					});
 				} else {
 					showNotification(
 						"Please Fill Out All Required Fields",
@@ -308,7 +400,6 @@ $(document).ready(function() {
 			'.centered-table tbody tr[data-lease-id="' + lease_id + '"]'
 		);
 		const deleteModal = $("#action-modal"); // assuming this is the ID of your deletion modal
-
 		$.ajax({
 			url: "/delete_lease/" + lease_id,
 			type: "GET",
@@ -317,6 +408,9 @@ $(document).ready(function() {
 					showNotification("Lease Deleted", "error-notification");
 					selectedRow.remove();
 					deleteModal.hide();
+					$.get("/count/sales", function(response) {
+						$("#leases-count").html("Total Leases: " + response.count);
+					});
 				} else {
 					showNotification("Failed to Delete Lease", "error-notification");
 				}
