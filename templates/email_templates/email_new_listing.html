@@ -55,10 +55,7 @@
   </head>
   <body>
     <div class="container">
-      <h1>
-        A New Listing Has Been Uploaded to The WCRE Portal By {{
-        current_user.fullname }}:
-      </h1>
+      <h1> A New Listing Has Been Uploaded to The WCRE Portal By {{ current_user.fullname }}: </h1>
       <div class="listing-details">
         <p>
           <span class="listing-label">Property Type:</span>
@@ -101,9 +98,7 @@
           <span class="listing-value">{{ listing.listing_phone }}</span>
         </p>
         <div class="listing-brokers">
-          <span class="listing-label">Brokers:</span>
-          {% for broker in listing.brokers %}
-          <span>{{ broker }}</span>{% if not loop.last %}, {% endif %} {% endfor
+          <span class="listing-label">Brokers:</span> {% for broker in listing.brokers %} <span>{{ broker }}</span>{% if not loop.last %}, {% endif %} {% endfor
           %}
         </div>
       </div>

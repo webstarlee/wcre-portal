@@ -55,10 +55,7 @@
   </head>
   <body>
     <div class="container">
-      <h1>
-        A New Lease Has Been Uploaded to The WCRE Portal By {{
-        current_user.fullname }}:
-      </h1>
+      <h1> A New Lease Has Been Uploaded to The WCRE Portal By {{ current_user.fullname }}: </h1>
       <div class="lease-details">
         <p>
           <span class="lease-label">Property Type:</span>
@@ -85,9 +82,7 @@
           <span class="lease-value">{{ lease.lease_lesse }}</span>
         </p>
         <div class="lease-brokers">
-          <span class="lease-label">Brokers:</span>
-          {% for broker in lease.brokers %}
-          <span>{{ broker }}</span>{% if not loop.last %}, {% endif %} {% endfor
+          <span class="lease-label">Brokers:</span> {% for broker in lease.brokers %} <span>{{ broker }}</span>{% if not loop.last %}, {% endif %} {% endfor
           %}
         </div>
       </div>
