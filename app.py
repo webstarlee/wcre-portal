@@ -426,443 +426,289 @@ def upload_document_pdf():
 @app.route("/submit_document", methods=["POST"])
 @login_required
 def submit_document():
-    if request.method == "POST":
-        document_file_base64 = request.form.get("document-file-base64")
-        document_type = request.form.get("document-type")
-        document_name = request.form.get("document-name")
-        new_document = {
-            "document_name": document_name,
-            "document_type": document_type,
-            "pdf_file_base64": document_file_base64,
-        }
+    try:
+        form_keys = ["document-file-base64", "document-type", "document-name"]
+        new_document = {key.replace('-', '_'): request.form.get(key) for key in form_keys}
+        result = docs.insert_one(new_document)
+        if not result.inserted_id:
+            raise Exception("Error inserting the document.")
+        return make_response({"status": "success", "redirect": url_for("documents")}, 200)
+    except Exception as e:
+        logger.error(e)
+        return jsonify({"status": "error", "message": "Error Occurred While Submitting The Document"}), 500
 
-        try:
-            result = docs.insert_one(new_document)
-        except:
-            return (
-                jsonify(
-                    {
-                        "status": "error",
-                        "message": "Error Occurred While Submitting The Document",
-                    }
-                ),
-                500,
-            )
-        else:
-            if result.inserted_id:
-                return make_response(
-                    {"status": "success", "redirect": url_for("documents")}, 200
-                )
-            else:
-                return (
-                    jsonify(
-                        {
-                            "status": "error",
-                            "message": "Error Occurred While Submitting The Document",
-                        }
-                    ),
-                    500,
-                )
 
 
 @app.route("/submit_listing", methods=["POST"])
 @login_required
 def submit_listing():
-    if request.method == "POST":
+    try:
+        form_keys = [
+            "listing-street",
+            "listing-city",
+            "listing-state",
+            "listing-owner-name",
+            "listing-owner-email",
+            "listing-owner-phone",
+            "listing-end-date",
+            "listing-start-date",
+            "listing-agreement-file-base64",
+            "listing-property-type",
+            "listing-type",
+            "investment-sale",
+            "listing-price",
+        ]
+        new_listing = {
+            key.replace("-", "_"): request.form.get(key) for key in form_keys
+        }
+        new_listing["brokers"] = request.form.getlist("brokers[]")
+
+        state_mapping = {"NJ": "New Jersey", "PA": "Pennsylvania"}
+        if new_listing["listing_state"] in state_mapping:
+            new_listing["listing_state"] = state_mapping[new_listing["listing_state"]]
+        result = listings.insert_one(new_listing)
+        if not result.inserted_id:
+            raise Exception("Error inserting the listing.")
         try:
-            listing_street = request.form.get("listing-street")
-            listing_city = request.form.get("listing-city")
-            listing_state = request.form.get("listing-state")
-            listing_owner = request.form.get("listing-owner-name")
-            listing_email = request.form.get("listing-owner-email")
-            listing_phone = request.form.get("listing-owner-phone")
-            listing_brokers = request.form.getlist("brokers[]")
-            listing_end_date = request.form.get("listing-end-date")
-            listing_start_date = request.form.get("listing-start-date")
-            listing_agreement_file_base64 = request.form.get(
-                "listing-agreement-file-base64"
+            msg = Message(
+                "WCRE Portal - A New Listing Has Been Submitted",
+                sender="portal@wolfcre.com",
+                recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
             )
-            listing_property_type = request.form.get("listing-property-type")
-            listing_type = request.form.get("listing-type")
-            listing_investment_sale = request.form.get("investment-sale")
-            listing_price = request.form.get("listing-price")
-
-            if listing_state == "NJ":
-                listing_state = "New Jersey"
-            elif listing_state == "PA":
-                listing_state = "Pennsylvania"
-
-            new_listing = {
-                "listing_street": listing_street,
-                "listing_city": listing_city,
-                "listing_state": listing_state,
-                "listing_owner": listing_owner,
-                "listing_email": listing_email,
-                "listing_phone": listing_phone,
-                "brokers": listing_brokers,
-                "pdf_file_base64": listing_agreement_file_base64,
-                "listing_end_date": listing_end_date,
-                "listing_start_date": listing_start_date,
-                "listing_property_type": listing_property_type,
-                "listing_type": listing_type,
-                "listing_investment_sale": listing_investment_sale,
-                "listing_price": listing_price,
-            }
-
-            result = listings.insert_one(new_listing)
-            if result.inserted_id:
-                msg = Message(
-                    "WCRE Portal - A New Listing Has Been Submitted",
-                    sender="portal@wolfcre.com",
-                    recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
-                )
-                email_content = render_template(
-                    "email_templates/email_new_listing.html", listing=new_listing
-                )
-                msg.html = transform(email_content)
-                mail.send(msg)
-                return make_response(
-                    {"status": "success", "redirect": url_for("view_listings")}, 200
-                )
-            else:
-                return (
-                    jsonify(
-                        {
-                            "status": "error",
-                            "message": "Error Occurred While Submitting The Listing",
-                        }
-                    ),
-                    500,
-                )
+            email_content = render_template(
+                "email_templates/email_new_listing.html", listing=new_listing
+            )
+            msg.html = transform(email_content)
+            mail.send(msg)
         except Exception as e:
-            logger.error(e)
-            return (
-                jsonify(
-                    {
-                        "status": "error",
-                        "message": "Error Occurred While Submitting The Listing",
-                    }
-                ),
-                500,
-            )
-    return redirect(url_for("login"))
+            print("Error Sending Email", e)
+        return make_response(
+            {"status": "success", "redirect": url_for("view_listings")}, 200
+        )
+    except Exception as e:
+        logger.error(e)
+        return (
+            jsonify(
+                {
+                    "status": "error",
+                    "message": "Error Occurred While Submitting The Listing",
+                }
+            ),
+            500,
+        )
 
 
 @app.route("/submit_sale", methods=["POST"])
 @login_required
 def submit_sale():
-    if request.method == "POST":
+    try:
+        form_keys = [
+            "sale-street",
+            "sale-city",
+            "sale-state",
+            "sale-sqft",
+            "sale-seller-name",
+            "sale-seller-email",
+            "sale-seller-phone",
+            "sale-buyer-name",
+            "sale-buyer-email",
+            "sale-buyer-phone",
+            "sale-end-date",
+            "sale-agreement-file-base64",
+            "sale-property-type",
+            "sale-type",
+            "sale-price",
+        ]
+        new_sale = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
+        new_sale["brokers"] = request.form.getlist("brokers[]")
+        state_mapping = {"NJ": "New Jersey", "PA": "Pennsylvania"}
+        if new_sale["sale_state"] in state_mapping:
+            new_sale["sale_state"] = state_mapping[new_sale["sale_state"]]
+        result = sales.insert_one(new_sale)
+        if not result.inserted_id:
+            raise Exception("Error Inserting the Sale")
         try:
-            sale_street = request.form.get("sale-street")
-            sale_city = request.form.get("sale-city")
-            sale_state = request.form.get("sale-state")
-            sale_sqft = request.form.get("sale-sqft")
-            sale_seller = request.form.get("sale-seller-name")
-            sale_seller_email = request.form.get("sale-seller-email")
-            sale_seller_phone = request.form.get("sale-seller-phone")
-            sale_buyer = request.form.get("sale-buyer-name")
-            sale_buyer_email = request.form.get("sale-buyer-email")
-            sale_buyer_phone = request.form.get("sale-buyer-phone")
-            sale_brokers = request.form.getlist("brokers[]")
-            sale_end_date = request.form.get("sale-end-date")
-            sale_agreement_file_base64 = request.form.get("sale-agreement-file-base64")
-            sale_property_type = request.form.get("sale-property-type")
-            sale_type = request.form.get("sale-type")
-            sale_price = request.form.get("sale-price")
-
-            if sale_state == "NJ":
-                sale_state = "New Jersey"
-            elif sale_state == "PA":
-                sale_state = "Pennsylvania"
-
-            new_sale = {
-                "sale_street": sale_street,
-                "sale_city": sale_city,
-                "sale_state": sale_state,
-                "sale_property_type": sale_property_type,
-                "sale_sqft": sale_sqft,
-                "sale_seller": sale_seller,
-                "sale_seller_email": sale_seller_email,
-                "sale_seller_phone": sale_seller_phone,
-                "sale_buyer": sale_buyer,
-                "sale_buyer_email": sale_buyer_email,
-                "sale_buyer_phone": sale_buyer_phone,
-                "brokers": sale_brokers,
-                "pdf_file_base64": sale_agreement_file_base64,
-                "sale_end_date": sale_end_date,
-                "sale_type": sale_type,
-                "sale_price": sale_price,
-            }
-
-            result = sales.insert_one(new_sale)
-            if result.inserted_id:
-                msg = Message(
-                    "WCRE Portal - A New Sale Has Been Submitted",
-                    sender="portal@wolfcre.com",
-                    recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
-                )
-                email_content = render_template(
-                    "email_templates/email_new_sale.html", sale=new_sale
-                )
-                msg.html = transform(email_content)
-                mail.send(msg)
-                return make_response(
-                    {"status": "success", "redirect": url_for("view_sales")}, 200
-                )
-            else:
-                return (
-                    jsonify(
-                        {
-                            "status": "error",
-                            "message": "Error Occurred While Submitting The Sale",
-                        }
-                    ),
-                    500,
-                )
-        except Exception as e:
-            logger.error(e)
-            return (
-                jsonify(
-                    {
-                        "status": "error",
-                        "message": "Error Occurred While Submitting The Sale",
-                    }
-                ),
-                500,
+            msg = Message(
+                "WCRE Portal - A New Sale Has Been Submitted",
+                sender="portal@wolfcre.com",
+                recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
             )
-    return redirect(url_for("login"))
+            email_content = render_template(
+                "email_templates/email_new_sale.html", sale=new_sale
+            )
+            msg.html = transform(email_content)
+            mail.send(msg)
+        except Exception as e:
+            print("Error Sending Email", e)
+        return make_response(
+            {"status": "success", "redirect": url_for("view_sales")}, 200
+        )
+    except Exception as e:
+        logger.error(e)
+        return (
+            jsonify(
+                {
+                    "status": "error",
+                    "message": "Error Occurred While Submitting The Sale",
+                }
+            ),
+            500,
+        )
 
 
 @app.route("/submit_lease", methods=["POST"])
 @login_required
 def submit_lease():
-    if request.method == "POST":
+    try:
+        form_keys = [
+            "lease-street",
+            "lease-city",
+            "lease-state",
+            "lease-sqft",
+            "lease-property-type",
+            "lease-price",
+            "lease-term-length",
+            "lease-percentage-space",
+            "lease-lessor-name",
+            "lease-lessor-email",
+            "lease-lessor-phone",
+            "lease-lesse-name",
+            "lease-lesse-email",
+            "lease-lesse-phone",
+        ]
+        new_lease = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
+        new_lease["brokers"] = request.form.getlist("brokers[]")
+        new_lease["lease_agreement_pdf_file_base64"] = request.form.get(
+            "lease-agreement-file-base64"
+        )
+        new_lease["lease_commision_pdf_file_base64"] = request.form.get(
+            "commision-agreement-file-base64"
+        )
+        state_mapping = {"NJ": "New Jersey", "PA": "Pennsylvania"}
+        if new_lease["lease_state"] in state_mapping:
+            new_lease["lease_state"] = state_mapping[new_lease["lease_state"]]
+        result = leases.insert_one(new_lease)
+        if not result.inserted_id:
+            raise Exception("Error Inserting the Lease")
         try:
-            lease_street = request.form.get("lease-street")
-            lease_city = request.form.get("lease-city")
-            lease_state = request.form.get("lease-state")
-            lease_sqft = request.form.get("lease-sqft")
-            lease_property_type = request.form.get("lease-property-type")
-            lease_price = request.form.get("lease-price")
-            lease_term = request.form.get("lease-term-length")
-            lease_percentage_space = request.form.get("lease-percentage-space")
-            lease_lessor = request.form.get("lease-lessor-name")
-            lease_lessor_email = request.form.get("lease-lessor-email")
-            lease_lessor_phone = request.form.get("lease-lessor-phone")
-            lease_lesse = request.form.get("lease-lesse-name")
-            lease_lesse_email = request.form.get("lease-lesse-email")
-            lease_lesse_phone = request.form.get("lease-lesse-phone")
-            lease_brokers = request.form.getlist("brokers[]")
-            commision_agreement_file_base64 = request.form.get(
-                "commision-agreement-file-base64"
+            msg = Message(
+                "WCRE Portal - A New Lease Has Been Submitted",
+                sender="portal@wolfcre.com",
+                recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
             )
-            lease_agreement_file_base64 = request.form.get(
-                "lease-agreement-file-base64"
+            email_content = render_template(
+                "email_templates/email_new_lease.html", lease=new_lease
             )
-            if lease_state == "NJ":
-                lease_state = "New Jersey"
-            elif lease_state == "PA":
-                lease_state = "Pennsylvania"
-
-            new_lease = {
-                "lease_street": lease_street,
-                "lease_city": lease_city,
-                "lease_staTe": lease_state,
-                "lease_property_type": lease_property_type,
-                "lease_sqft": lease_sqft,
-                "lease_price": lease_price,
-                "lease_term_length": lease_term,
-                "lease_percentage_space": lease_percentage_space,
-                "lease_lessor": lease_lessor,
-                "lease_lessor_email": lease_lessor_email,
-                "lease_lessor_phone": lease_lessor_phone,
-                "lease_lesse": lease_lesse,
-                "lease_lesse_email": lease_lesse_email,
-                "lease_lesse_phone": lease_lesse_phone,
-                "brokers": lease_brokers,
-                "lease_agreement_pdf_file_base64": lease_agreement_file_base64,
-                "lease_commision_pdf_file_base64": commision_agreement_file_base64,
-            }
-
-            result = leases.insert_one(new_lease)
-            if result.inserted_id:
-                try:
-                    msg = Message(
-                        "WCRE Portal - A New Lease Has Been Submitted",
-                        sender="portal@wolfcre.com",
-                        recipients=[
-                            "nathanwolf100@gmail.com",
-                            "jason.wolf@wolfcre.com",
-                        ],
-                    )
-                    email_content = render_template(
-                        "email_templates/email_new_lease.html", lease=new_lease
-                    )
-                    msg.html = transform(email_content)
-                    mail.send(msg)
-                except Exception as e:
-                    print("Error Sending Email")
-                    print(e)
-                return make_response(
-                    {"status": "success", "redirect": url_for("view_leases")}, 200
-                )
-            else:
-                return (
-                    jsonify(
-                        {
-                            "status": "error",
-                            "message": "Error Occurred While Submitting The Lease",
-                        }
-                    ),
-                    500,
-                )
+            msg.html = transform(email_content)
+            mail.send(msg)
         except Exception as e:
-            logger.error(e)
-            return (
-                jsonify(
-                    {
-                        "status": "error",
-                        "message": "Error Occurred While Submitting The Lease",
-                    }
-                ),
-                500,
-            )
-    return redirect(url_for("login"))
+            print("Error Sending Email", e)
+        return make_response(
+            {"status": "success", "redirect": url_for("view_leases")}, 200
+        )
+    except Exception as e:
+        logger.error(e)
+        return (
+            jsonify(
+                {
+                    "status": "error",
+                    "message": "Error Occurred While Submitting The Lease",
+                }
+            ),
+            500,
+        )
+
+
+def delete_item_from_collection(item_id, collection, item_type):
+    try:
+        result = collection.delete_one({"_id": ObjectId(item_id)})
+    except:
+        return {
+            "success": False,
+            "message": f"{item_type} Not Found or Couldn't Be Deleted",
+        }, 404
+    else:
+        if result.deleted_count > 0:
+            return {"success": True}, 200
+        else:
+            return {
+                "success": False,
+                "message": f"{item_type} Not Found or Couldn't Be Deleted",
+            }, 404
 
 
 @app.route("/delete_listing/<listing_id>", methods=["GET"])
 @login_required
 def delete_listing(listing_id):
-    try:
-        result = listings.delete_one({"_id": ObjectId(listing_id)})
-    except:
-        return {
-            "success": False,
-            "message": "Listing Not Found or Couldn't Be Deleted",
-        }, 404
-    else:
-        if result.deleted_count > 0:
-            return {"success": True}, 200
-        else:
-            return {
-                "success": False,
-                "message": "Listing Not Found or Couldn't Be Deleted",
-            }, 404
+    return delete_item_from_collection(listing_id, listings, "Listing")
 
 
 @app.route("/delete_sale/<sale_id>", methods=["GET"])
 @login_required
 def delete_sale(sale_id):
-    try:
-        result = sales.delete_one({"_id": ObjectId(sale_id)})
-    except:
-        return {
-            "success": False,
-            "message": "Sale Not Found or Couldn't Be Deleted",
-        }, 404
-    else:
-        if result.deleted_count > 0:
-            return {"success": True}, 200
-        else:
-            return {
-                "success": False,
-                "message": "Sale Not Found or Couldn't Be Deleted",
-            }, 404
+    return delete_item_from_collection(sale_id, sales, "Sale")
 
 
 @app.route("/delete_document/<document_id>", methods=["GET"])
 @login_required
 def delete_document(document_id):
-    try:
-        result = docs.delete_one({"_id": ObjectId(document_id)})
-    except:
-        return {
-            "success": False,
-            "message": "Document Not Found or Couldn't Be Deleted",
-        }, 404
-    else:
-        if result.deleted_count > 0:
-            return {"success": True}, 200
-        else:
-            return {
-                "success": False,
-                "message": "Document Not Found or Couldn't Be Deleted",
-            }, 404
+    return delete_item_from_collection(document_id, docs, "Document")
 
 
 @app.route("/delete_lease/<lease_id>", methods=["GET"])
 @login_required
 def delete_lease(lease_id):
-    try:
-        result = leases.delete_one({"_id": ObjectId(lease_id)})
-    except:
-        return {
-            "success": False,
-            "message": "Lease Not Found or Couldn't Be Deleted",
-        }, 404
-    else:
-        if result.deleted_count > 0:
-            return {"success": True}, 200
-        else:
-            return {
-                "success": False,
-                "message": "Lease Not Found or Couldn't Be Deleted",
-            }, 404
+    return delete_item_from_collection(lease_id, leases, "Lease")
+
+
+def create_ics_event(item_id, collection, item_type, street_key, date_key):
+    item = collection.find_one({"_id": ObjectId(item_id)})
+    if not item:
+        return {"success": False, "message": f"{item_type} not found"}, 404
+    c = Calendar()
+    e = Event()
+    e.name = f"{item_type} Closing Date: {item[street_key]}"
+    e.begin = arrow.get(item[date_key], "MM/DD/YYYY").format("YYYY-MM-DD")
+    e.make_all_day()
+    c.events.add(e)
+    response = Response(c.serialize(), mimetype="text/calendar")
+    response.headers["Content-Disposition"] = "attachment; filename=event.ics"
+    return response
 
 
 @app.route("/create_ics_listing/<listing_id>")
 @login_required
 def create_ics_listing(listing_id):
-    listing = listings.find_one({"_id": ObjectId(listing_id)})
-    c = Calendar()
-    e = Event()
-    e.name = "Listing Closing Date: " + listing["listing_street"]
-    e.begin = arrow.get(listing["listing_end_date"], "MM/DD/YYYY").format("YYYY-MM-DD")
-    e.make_all_day()
-    c.events.add(e)
-    response = Response(c.serialize(), mimetype="text/calendar")
-    response.headers["Content-Disposition"] = "attachment; filename=event.ics"
-    return response
+    return create_ics_event(
+        listing_id, listings, "Listing", "listing_street", "listing_end_date"
+    )
 
 
 @app.route("/create_ics_sale/<sale_id>")
 @login_required
 def create_ics_sale(sale_id):
-    sale = sales.find_one({"_id": ObjectId(sale_id)})
-    c = Calendar()
-    e = Event()
-    e.name = "Listing Closing Date: " + sale["sale_street"]
-    e.begin = arrow.get(sale["sale_end_date"], "MM/DD/YYYY").format("YYYY-MM-DD")
-    e.make_all_day()
-    c.events.add(e)
-    response = Response(c.serialize(), mimetype="text/calendar")
-    response.headers["Content-Disposition"] = "attachment; filename=event.ics"
-    return response
+    return create_ics_event(sale_id, sales, "Sale", "sale_street", "sale_end_date")
 
 
 @app.route("/create_ics_lease/<lease_id>")
 @login_required
 def create_ics_lease(lease_id):
-    lease = leases.find_one({"_id": ObjectId(lease_id)})
-    c = Calendar()
-    e = Event()
-    e.name = "Lease Closing Date: " + lease["lease_street"]
-    e.begin = arrow.get(lease["lease_end_date"], "MM/DD/YYYY").format("YYYY-MM-DD")
-    e.make_all_day()
-    c.events.add(e)
-    response = Response(c.serialize(), mimetype="text/calendar")
-    response.headers["Content-Disposition"] = "attachment; filename=event.ics"
-    return response
+    return create_ics_event(lease_id, leases, "Lease", "lease_street", "lease_end_date")
 
+
+def edit_record(record_id, collection, fields):
+    data = request.get_json()
+    record = collection.find_one({"_id": ObjectId(record_id)})
+    if not record:
+        return {"success": False, "error": f"{collection.name.capitalize()} not found"}
+    update_data = {field: data[field] for field in fields if field in data}
+    collection.update_one({"_id": ObjectId(record_id)}, {"$set": update_data})
+    return {"success": True}
 
 @app.route("/edit_listing/<listing_id>", methods=["POST"])
 @login_required
 def edit_listing(listing_id):
-    data = request.get_json()
-    listing = listings.find_one({"_id": ObjectId(listing_id)})
-    if not listing:
-        return {"success": False, "error": "Listing not found"}
-    for field in [
+    fields = [
         "listing_price",
         "listing_start_date",
         "listing_end_date",
@@ -871,32 +717,21 @@ def edit_listing(listing_id):
         "listing_owner",
         "listing_email",
         "listing_phone",
-    ]:
-        if field in data:
-            listings.update_one(
-                {"_id": ObjectId(listing_id)}, {"$set": {field: data[field]}}
-            )
-    return {"success": True}
-
+    ]
+    return edit_record(listing_id, listings, fields)
 
 @app.route("/edit_sale/<sale_id>", methods=["POST"])
 @login_required
 def edit_sale(sale_id):
-    data = request.get_json()
-    sale = sales.find_one({"_id": ObjectId(sale_id)})
-    if not sale:
-        return {"success": False, "error": "Sale not found"}
-    for field in [
+    fields = [
         "sale_type",
         "sale_end_date",
         "sale_price",
         "sale_sqft",
         "sale_street",
         "sale_city",
-    ]:
-        if field in data:
-            sales.update_one({"_id": ObjectId(sale_id)}, {"$set": {field: data[field]}})
-    return {"success": True}
+    ]
+    return edit_record(sale_id, sales, fields)
 
 
 @app.route("/search_listings", methods=["POST"])
