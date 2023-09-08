@@ -296,6 +296,16 @@
                 <label for="edit-lease-term-length">Lease Term Length:</label>
                 <input type="text" id="edit-lease-term-length" name="edit-lease-term-length" required />
               </div>
+              <div class="form-group">
+                <button id="upload-lease-agreement" type="button"> Upload Lease Agreement </button>
+                <input id="lease-agreement" type="file" style="display: none" accept=".pdf" />
+                <input type="hidden" id="lease-agreement-file-base64" name="lease-agreement-file-base64" />
+              </div>
+              <div class="form-group">
+                <button id="upload-commision-agreement" type="button"> Upload Commision Agreement </button>
+                <input id="commision-agreement" type="file" style="display: none" accept=".pdf" />
+                <input type="hidden" id="commision-agreement-file-base64" name="commision-agreement-file-base64" />
+              </div>
             </div>
             <div class="modal-navigation">
               <button class="minimal-button prev-step" type="button"> Previous </button>

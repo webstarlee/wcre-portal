@@ -295,7 +295,7 @@ def get_count(collection_type):
         "leases": leases,
     }
     collection = collection_map.get(collection_type)
-    if not collection:
+    if collection is None:
         return jsonify(error=f"Invalid collection type: {collection_type}"), 400
     count = collection.count_documents({})
     return jsonify(count=count)
@@ -702,19 +702,19 @@ def edit_record(record_id, collection, fields):
 @login_required
 def edit_listing(listing_id):
     fields = [
-        "listing-street",
-        "listing-city",
-        "listing-state",
-        "listing-owner-name",
-        "listing-owner-email",
-        "listing-owner-phone",
-        "listing-end-date",
-        "listing-start-date",
-        "listing-agreement-file-base64",
-        "listing-property-type",
-        "listing-type",
-        "investment-sale",
-        "listing-price",
+        "listing_street",
+        "listing_city",
+        "listing_state",
+        "listing_owner_name",
+        "listing_owner_email",
+        "listing_owner_phone",
+        "listing_end_date",
+        "listing_start_date",
+        "listing_agreement_file_base64",
+        "listing_property_type",
+        "listing_type",
+        "investment_sale",
+        "listing_price",
     ]
     return edit_record(listing_id, listings, fields)
 
@@ -723,19 +723,19 @@ def edit_listing(listing_id):
 @login_required
 def edit_sale(sale_id):
     fields = [
-        "sale-street",
-        "sale-city",
-        "sale-sqft",
-        "sale-seller-name",
-        "sale-seller-email",
-        "sale-seller-phone",
-        "sale-buyer-name",
-        "sale-buyer-email",
-        "sale-buyer-phone",
-        "sale-end-date",
-        "sale-property-type",
-        "sale-type",
-        "sale-price",
+        "sale_street",
+        "sale_city",
+        "sale_sqft",
+        "sale_seller_name",
+        "sale_seller_email",
+        "sale_seller_phone",
+        "sale_buyer_name",
+        "sale_buyer_email",
+        "sale_buyer_phone",
+        "sale_end_date",
+        "sale_property_type",
+        "sale_type",
+        "sale_price",
     ]
     return edit_record(sale_id, sales, fields)
 
@@ -744,19 +744,17 @@ def edit_sale(sale_id):
 @login_required
 def edit_lease(lease_id):
     fields = [
-        "lease-street",
-        "lease-city",
-        "lease-sqft",
-        "lease-property-type",
-        "lease-price",
-        "lease-term-length",
-        "lease-percentage-space",
-        "lease-lessor-name",
-        "lease-lessor-email",
-        "lease-lessor-phone",
-        "lease-lesse-name",
-        "lease-lesse-email",
-        "lease-lesse-phone",
+        "lease_street",
+        "lease_city",
+        "lease_sqft",
+        "lease_property_type",
+        "lease_price",
+        "lease_term_length",
+        "lease_percentage_space",
+        "lease_lessor_name",
+        "lease_lessor_email",
+        "lease_lesse_name",
+        "lease_lesse_email",
     ]
     return edit_record(lease_id, leases, fields)
 
@@ -791,9 +789,9 @@ def search_listings():
         "listing_street",
         "listing_city",
         "listing_state",
-        "listing_owner",
-        "listing_email",
-        "listing_phone",
+        "listing_owner_name",
+        "listing_owner_email",
+        "listing_owner_phone",
         "brokers",
         "listing_end_date",
         "listing_start_date",
@@ -816,7 +814,7 @@ def search_sales():
         "sale_state",
         "sale_property_type",
         "sale_sqft",
-        "sale_seller",
+        "sale_seller_name",
         "sale_seller_email",
         "sale_seller_phone",
         "brokers",
@@ -828,6 +826,33 @@ def search_sales():
         "sale_price",
     ]
     results = search_in_collection(sales, fields, page, search_query)
+    return jsonify(results)
+
+@app.route("/search_leases", methods=["POST"])
+@login_required
+def search_leases():
+    page = int(request.get_json().get("page", 1))
+    search_query = request.get_json().get("query")
+    fields = [
+        "lease_street",
+        "lease_city",
+        "lease_state",
+        "lease_property_type",
+        "lease_sqft",
+        "lease_percentage_space",
+        "lease_term_length",
+        "lease_seller_name",
+        "lease_seller_email",
+        "lease_seller_phone",
+        "brokers",
+        "lease_buyer",
+        "lease_buyer_email",
+        "lease_buyer_phone",
+        "lease_end_date",
+        "lease_type",
+        "lease_price",
+    ]
+    results = search_in_collection(leases, fields, page, search_query)
     return jsonify(results)
 
 

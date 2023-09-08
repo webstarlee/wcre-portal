@@ -199,106 +199,82 @@ $(document).ready(function() {
 		return isValid;
 	}
 
-	var currentPage = 1;
-
-	function searchSales(page) {
-		var searchTerm = $("#search-input").val().toLowerCase();
+	let currentPage = 1;
+	const searchSales = (page) => {
+		const searchTerm = $("#search-input").val().toLowerCase();
 		$.ajax({
 			url: "/search_sales",
 			method: "POST",
 			contentType: "application/json",
-			data: JSON.stringify({
-				query: searchTerm,
-				page: page,
-			}),
-			success: function(search_results_data) {
-				var rows = $.map(search_results_data, function(result) {
-					var $row = $("<tr>").attr("data-sale-id", result._id);
-					$row.append($("<td>").html(result.sale_property_type));
-					$row.append($("<td>").html(result.sale_type));
-					$row.append($("<td>").html(result.sale_end_date));
-					$row.append(
-						$("<td>").html(result.sale_price ? result.sale_price : "None")
-					);
-					$row.append($("<td>").text(result.sale_sqft));
-					var price = parseFloat(
-						result.sale_price.replace("$", "").replace(",", "")
-					);
-					var sqft = parseFloat(result.sale_sqft.replace(",", ""));
-					if (!isNaN(price) && !isNaN(sqft) && sqft !== 0) {
-						var pricePerSqft = price / sqft;
-						$row.append($("<td>").text("$" + pricePerSqft.toFixed(2)));
-					} else {
-						$row.append($("<td>").text("N/A"));
-					}
-					$row.append($("<td>").text(result.sale_street));
-					$row.append($("<td>").text(result.sale_city));
-					$row.append(
-						$("<td>").html(
-							'<a href="mailto:' +
-							result.sale_seller_email +
-							'">' +
-							result.sale_seller +
-							"</a>"
-						)
-					);
-					$row.append(
-						$("<td>").html(
-							'<a href="mailto:' +
-							result.sale_buyer_email +
-							'">' +
-							result.sale_buyer +
-							"</a>"
-						)
-					);
-					var brokerElements = $.map(result.brokers, function(broker) {
-						return $("<span>").addClass("broker-name").text(broker);
-					});
-					$row.append($("<td>").append(brokerElements));
-
-					if (result.pdf_file_base64) {
-						$row.append(
-							$("<td>").html(
-								'<a href="/download_sale_pdf/' +
-								result._id +
-								'">Fully Executed</a>'
-							)
-						);
-					} else {
-						$row.append($("<td>").text("Pending"));
-					}
-					return $row;
-				});
-
-				$(".centered-table tbody").empty().append(rows);
-			},
-			error: function(textStatus, errorThrown) {
-				console.error(
-					"Error Fetching Search Results:",
-					textStatus,
-					errorThrown
-				);
-				showNotification("Error Fetching Search Results", "error-notification-modal");
-			},
+			data: JSON.stringify({ query: searchTerm, page }),
+			success: renderSalesResults,
+			error: handleSalesError
 		});
-	}
+	};
 
-	$("#search-input").on("input", function() {
-		currentPage = 1; // Reset to the first page on a new search
+	const renderSalesResults = (search_results_data) => {
+		const rows = search_results_data.map(result => createRowForSale(result));
+		$(".centered-table tbody").empty().append(rows);
+	};
+
+	const createRowForSale = (result) => {
+		const $row = $("<tr>").attr("data-sale-id", result._id);
+		const cells = [
+			result.sale_property_type,
+			result.sale_type,
+			result.sale_end_date,
+			result.sale_price || "None",
+			result.sale_sqft,
+			calculatePricePerSqft(result.sale_price, result.sale_sqft),
+			result.sale_street,
+			result.sale_city,
+			`<a href="mailto:${result.sale_buyer_email}">${result.sale_buyer_name}</a>`,
+			`<a href="tel:${result.sale_buyer_phone}">${result.sale_buyer_phone}</a>`,
+			`<a href="mailto:${result.sale_seller_email}">${result.sale_seller_name}</a>`,
+			`<a href="tel:${result.sale_seller_phone}">${result.sale_seller_phone}</a>`,
+		];
+
+		cells.forEach(cell => $row.append($("<td>").html(cell)));
+		const brokerElements = $.map(result.brokers, broker => $("<span>").addClass("broker-name").text(broker));
+		$row.append($("<td>").append(brokerElements));
+		$row.append($("<td>").html(result.pdf_file_base64 ? `<a href="/download_sale_pdf/${result._id}">Fully Executed</a>` : "Pending"));
+		return $row;
+	};
+
+	const calculatePricePerSqft = (price, sqft) => {
+		const parsedPrice = parseFloat(price.replace(/\$/g, '').replace(/,/g, ''));
+		const parsedSqft = parseFloat(sqft.replace(/,/g, ''));
+	
+		if (!isNaN(parsedPrice) && !isNaN(parsedSqft) && parsedSqft !== 0) {
+			const rawValue = parsedPrice / parsedSqft;
+			return "$" + rawValue.toFixed(2);
+		} 
+		return "N/A";
+	};	
+	
+
+	const handleSalesError = (textStatus, errorThrown) => {
+		console.error("Error Fetching Search Results:", textStatus, errorThrown);
+		showNotification("Error Fetching Search Results", "error-notification-modal");
+	};
+
+	$("#search-input").on("input", () => {
+		currentPage = 1;
 		searchSales(currentPage);
 	});
 
-	$("#next-page").on("click", function() {
+	$("#next-page").on("click", () => {
 		currentPage++;
 		searchSales(currentPage);
 	});
 
-	$("#prev-page").on("click", function() {
+	$("#prev-page").on("click", () => {
 		if (currentPage > 1) {
 			currentPage--;
 			searchSales(currentPage);
 		}
 	});
+
 
 	uploadButton.addEventListener("click", function(e) {
 		fileInput.click();
@@ -390,18 +366,25 @@ $(document).ready(function() {
 	});
 
 	$(".prev-step").on("click", function() {
-		var currentModal = $(this).closest(".sale-modal");
+		var currentModal = $(this).closest(".lease-modal");
 		var currentStep = currentModal.find(".active-step");
 		var prevStep = currentStep.prev(".modal-step");
-
+		var nextButton = currentModal.find(".next-step");
+	
 		if (prevStep.length) {
 			currentStep.removeClass("active-step");
 			prevStep.addClass("active-step");
-
-			if (!prevStep.prev(".modal-step").length) {
-				$(this).addClass("hidden");
+	
+			if (!prevStep.next(".modal-step").length) {
+				if (currentModal.data("mode") === "add") {
+					nextButton.text("Submit Sale");
+				} else {
+					nextButton.text("Submit Sale Edits");
+				}
+			} else {
+				nextButton.text("Next");
 			}
-
+	
 			if (currentModal.data("mode") === "add") {
 				currentStep.find("input:required, select:required").removeClass("error");
 			}

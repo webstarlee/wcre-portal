@@ -285,29 +285,30 @@ $(document).ready(function() {
 				if (mode === "add" && validateBrokers()) {
 					$("#submit-lease-form").submit();
 				} else if (mode === "edit" && $(this).text() === "Submit Lease Edits") {
+					console.log("in here")
 					$("#edit-lease-modal").css("display", "none");
 					var leasePropertyType = $("#edit-lease-property-type").val();
 					var leasePrice = $("#edit-lease-price").val();
 					var leaseSqFt = $("#edit-lease-sqft").val();
+					var leaseTermLength = $("#edit-lease-term-length").val();
 					var leaseStreet = $("#edit-lease-street").val();
 					var leaseCity = $("#edit-lease-city").val();
-					var leaseBuyer = $("#edit-lease-lessor-name").val();
-					var leaseBuyerEmail = $("#edit-lease-lessor-email").val();
-					var leaseSeller = $("#edit-lease-lesse-name").val();
-					var leaseSellerEmail = $("#edit-lease-lesse-email").val();
+					var leaseLessor = $("#edit-lease-lessor-name").val();
+					var leaseLessorEmail = $("#edit-lease-lessor-email").val();
+					var leaseLesse = $("#edit-lease-lesse-name").val();
+					var leaseLesseEmail = $("#edit-lease-lesse-email").val();
 
 					var data = {
 						lease_property_type: leasePropertyType,
 						lease_price: leasePrice,
 						lease_sqft: leaseSqFt,
+						lease_term_length: leaseTermLength,
 						lease_street: leaseStreet,
 						lease_city: leaseCity,
-						lease_buyer: leaseBuyer,
-						lease_buyer_email: leaseBuyerEmail,
-						lease_buyer_phone: leaseBuyerPhone,
-						lease_seller: leaseSeller,
-						lease_seller_email: leaseSellerEmail,
-						lease_seller_phone: leaseSellerPhone
+						lease_lessor_name: leaseLessor,
+						lease_lessor_email: leaseLessorEmail,
+						lease_lesse_name: leaseLesse,
+						lease_lesse_email: leaseLesseEmail,
 					};
 
 					$.ajax({
@@ -317,7 +318,6 @@ $(document).ready(function() {
 						data: JSON.stringify(data),
 						success: function(response) {
 							if (response.success) {
-								console.log("lease Edited Successfully");
 								location.reload();
 							} else {
 								showNotification("Error Editing lease", "error-notification-modal");
@@ -347,22 +347,28 @@ $(document).ready(function() {
 		var currentModal = $(this).closest(".lease-modal");
 		var currentStep = currentModal.find(".active-step");
 		var prevStep = currentStep.prev(".modal-step");
-
+		var nextButton = currentModal.find(".next-step");
+	
 		if (prevStep.length) {
 			currentStep.removeClass("active-step");
 			prevStep.addClass("active-step");
-
-			if (!prevStep.prev(".modal-step").length) {
-				$(this).addClass("hidden");
+	
+			if (!prevStep.next(".modal-step").length) {
+				if (currentModal.data("mode") === "add") {
+					nextButton.text("Submit Lease");
+				} else {
+					nextButton.text("Submit Lease Edits");
+				}
+			} else {
+				nextButton.text("Next");
 			}
-
+	
 			if (currentModal.data("mode") === "add") {
-				currentStep
-					.find("input:required, select:required")
-					.removeClass("error");
+				currentStep.find("input:required, select:required").removeClass("error");
 			}
 		}
 	});
+	
 
 	// OPEN ACTION MODAL
 	var isAdmin = $("body").data("is-admin") === "True";
@@ -408,7 +414,7 @@ $(document).ready(function() {
 					showNotification("Lease Deleted", "error-notification");
 					selectedRow.remove();
 					deleteModal.hide();
-					$.get("/count/sales", function(response) {
+					$.get("/count/leases", function(response) {
 						$("#leases-count").html("Total Leases: " + response.count);
 					});
 				} else {
@@ -447,6 +453,79 @@ $(document).ready(function() {
 			});
 		});
 	}
+
+	let currentPage = 1;
+	const searchLeases = (page) => {
+		const searchTerm = $("#search-input").val().toLowerCase();
+		$.ajax({
+			url: "/search_leases",
+			method: "POST",
+			contentType: "application/json",
+			data: JSON.stringify({ query: searchTerm, page }),
+			success: renderSearchResults,
+			error: handleSearchError
+		});
+	};
+
+	const renderSearchResults = (search_results_data) => {
+		const rows = search_results_data.map(result => createRowForLease(result));
+		$(".centered-table tbody").empty().append(rows);
+	};
+
+	const createRowForLease = (result) => {
+		const $row = $("<tr>").attr("data-lease-id", result._id);
+		const cells = [
+			result.lease_property_type,
+			result.lease_price || "None",
+			result.lease_sqft,
+			calculatePricePerSqft(result.lease_price, result.lease_sqft),
+			result.lease_percentage_space,
+			result.lease_term_length,
+			result.lease_street,
+			result.lease_city,
+			`<a href="mailto:${result.lease_lessor_email}">${result.lease_lessor_name}</a>`,
+			`<a href="mailto:${result.lease_lesse_email}">${result.lease_lesse_name}</a>`,
+		];
+		cells.forEach(cell => $row.append($("<td>").html(cell)));
+		const brokerElements = $.map(result.brokers, broker => $("<span>").addClass("broker-name").text(broker));
+		$row.append($("<td>").append(brokerElements));
+		$row.append($("<td>").html(result.lease_agreement_pdf_file_base64 ? `<a href="/download_lease_agreement_pdf/${result._id}">Fully Executed</a>` : "Pending"));
+		$row.append($("<td>").html(result.lease_commision_pdf_file_base64 ? `<a href="/download_lease_commision_pdf/${result._id}">Fully Executed</a>` : "Pending"));
+		return $row;
+	};
+
+	const calculatePricePerSqft = (price, sqft) => {
+		const parsedPrice = parseFloat(price.replace(/\$/g, '').replace(/,/g, ''));
+		const parsedSqft = parseFloat(sqft.replace(/,/g, ''));
+	
+		if (!isNaN(parsedPrice) && !isNaN(parsedSqft) && parsedSqft !== 0) {
+			const rawValue = parsedPrice / parsedSqft;
+			return "$" + rawValue.toFixed(2);
+		} 
+		return "N/A";
+	};	
+
+	const handleSearchError = (textStatus, errorThrown) => {
+		console.error("Error Fetching Lease Results:", textStatus, errorThrown);
+		showNotification("Error Fetching Lease Results", "error-notification-modal");
+	};
+
+	$("#search-input").on("input", () => {
+		currentPage = 1;
+		searchLeases(currentPage);
+	});
+
+	$("#next-page").on("click", () => {
+		currentPage++;
+		searchLeases(currentPage);
+	});
+
+	$("#prev-page").on("click", () => {
+		if (currentPage > 1) {
+			currentPage--;
+			searchLeases(currentPage);
+		}
+	});
 
 	function setupButtonAndInput(button, input) {
 		button.addEventListener("click", function(e) {
@@ -491,28 +570,6 @@ $(document).ready(function() {
 				.fail(function() {
 					showNotification("Error Uploading Lease", "error-notification");
 				});
-		}
-	});
-
-	// PREV STEP
-	$(".prev-step").on("click", function() {
-		var currentModal = $(this).closest(".lease-modal");
-		var currentStep = currentModal.find(".active-step");
-		var prevStep = currentStep.prev(".modal-step");
-
-		if (prevStep.length) {
-			currentStep.removeClass("active-step");
-			prevStep.addClass("active-step");
-
-			if (!prevStep.prev(".modal-step").length) {
-				$(this).addClass("hidden");
-			}
-
-			if (currentModal.data("mode") === "add") {
-				currentStep
-					.find("input:required, select:required")
-					.removeClass("error");
-			}
 		}
 	});
 });
