@@ -13,6 +13,9 @@ $(document).ready(function() {
 	sqFootageInput.addEventListener("input", () => formatSqFootage(sqFootageInput));
 	lessorPhoneNumberInput.addEventListener("input", () => formatPhoneNumber(lessorPhoneNumberInput));
 	lessePhoneNumberInput.addEventListener("input", () => formatPhoneNumber(lessePhoneNumberInput));
+	document.getElementById('years').addEventListener('change', adjustTerm);
+	document.getElementById('months').addEventListener('change', adjustTerm);
+
 
 	function showNotification(message, elementId) {
 		var notification = $("#" + elementId);
@@ -21,6 +24,18 @@ $(document).ready(function() {
 		setTimeout(function() {
 			notification.removeClass("show");
 		}, 2000);
+	}
+
+	function adjustTerm() {
+		const yearsSelect = document.getElementById('years');
+		const monthsSelect = document.getElementById('months');
+		const years = parseInt(yearsSelect.value);
+		const months = parseInt(monthsSelect.value);
+	
+		if (months === 12) {
+			monthsSelect.value = "0";
+			yearsSelect.value = (years + 1).toString();
+		}
 	}
 
 	function formatPrice(inputElement) {

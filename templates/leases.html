@@ -118,11 +118,11 @@
               <h2 class="modal-step-title">New Lease - Property Information</h2>
               <div class="form-group">
                 <label for="lease-street">Lease Street:</label>
-                <input type="text" id="lease-street" name="lease-street" required />
+                <input type="text" id="lease-street" name="lease-street" placeholder= "Enter Street Address:" required />
               </div>
               <div class="form-group">
                 <label for="lease-city">Lease City:</label>
-                <input type="text" id="lease-city" name="lease-city" required />
+                <input type="text" id="lease-city" name="lease-city" placeholder= "Enter Town/City:" required />
               </div>
               <div class="form-group">
                 <label for="lease-state">Lease State:</label>
@@ -142,55 +142,82 @@
                   <option value="Land">Land</option>
                 </select>
               </div>
+              <div class="form-group">
+                <label for="lease-sqft">Lease Square Footage:</label>
+                <input type="text" id="lease-sqft" name="lease-sqft" placeholder="Enter Square Footage:" required />
+            </div>
+            <div class="form-group">
+                <label for="lease-percentage-space">Lease Space Percentage:</label>
+                <input type="text" id="lease-percentage-space" name="lease-percentage-space" placeholder="Enter Percentage:" required />
+            </div>            
             </div>
             <div class="modal-step main-form-step" id="main-step2">
               <h2 class="modal-step-title">New Lease - Lessor Information</h2>
               <div class="form-group">
                 <label for="lease-lessor-name">Lessor Name:</label>
-                <input type="text" id="lease-lessor-name" name="lease-lessor-name" required />
+                <input type="text" id="lease-lessor-name" name="lease-lessor-name" placeholder= "Enter Lessor Name:" required />
               </div>
               <div class="form-group">
                 <label for="lease-lessor-email">Lessor Email:</label>
-                <input type="email" id="lease-lessor-email" name="lease-lessor-email" required />
+                <input type="email" id="lease-lessor-email" name="lease-lessor-email" placeholder= "Enter Lessor Email:" required />
               </div>
               <div class="form-group">
                 <label for="lease-lessor-phone">Owner Phone Number:</label>
-                <input type="tel" id="lease-lessor-phone" name="lease-lessor-phone" required />
+                <input type="tel" id="lease-lessor-phone" name="lease-lessor-phone" placeholder= "Enter Lessor Phone Number:" required />
               </div>
             </div>
             <div class="modal-step main-form-step" id="main-step3">
               <h2 class="modal-step-title">New Lease - Lesse Information</h2>
               <div class="form-group">
                 <label for="lease-lesse-name">Lesse Name:</label>
-                <input type="text" id="lease-lesse-name" name="lease-lesse-name" required />
+                <input type="text" id="lease-lesse-name" name="lease-lesse-name" placeholder= "Enter Lesse Name:" required />
               </div>
               <div class="form-group">
                 <label for="lease-lesse-email">Lesse Email:</label>
-                <input type="email" id="lease-lesse-email" name="lease-lesse-email" required />
+                <input type="email" id="lease-lesse-email" name="lease-lesse-email" placeholder= "Enter Lesse Email:" required />
               </div>
               <div class="form-group">
                 <label for="lesse-lesse-phone">Lesse Phone Number:</label>
-                <input type="tel" id="lease-lesse-phone" name="lease-lesse-phone" required />
+                <input type="tel" id="lease-lesse-phone" name="lease-lesse-phone" placeholder= "Enter Lesse Phone Number:" required />
               </div>
             </div>
             <div class="modal-step main-form-step" id="main-step4">
               <h2 class="modal-step-title">New Lease - General Information</h2>
               <div class="form-group">
                 <label for="lease-price">Annual Price:</label>
-                <input type="text" id="lease-price" name="lease-price" required />
-              </div>
-              <div class="form-group">
-                <label for="lease-sqft">Lease Square Footage:</label>
-                <input type="text" id="lease-sqft" name="lease-sqft" required />
-              </div>
-              <div class="form-group">
-                <label for="lease-percentage-space">Lease Space Percentage:</label>
-                <input type="text" id="lease-percentage-space" name="lease-percentage-space" required />
+                <input type="text" id="lease-price" name="lease-price" placeholder= "Enter Lease Annual Price:" required />
               </div>
               <div class="form-group">
                 <label for="lease-term-length">Lease Term Length:</label>
-                <input type="text" id="lease-term-length" name="lease-term-length" required />
-              </div>
+                <select id="years" name="lease-years">
+                    <option value="0">0 Years</option>
+                    <option value="1">1 Year</option>
+                    <option value="2">2 Years</option>
+                    <option value="3">3 Years</option>
+                    <option value="4">4 Years</option>
+                    <option value="5">5 Years</option>
+                    <option value="6">6 Years</option>
+                    <option value="7">7 Years</option>
+                    <option value="8">8 Years</option>
+                    <option value="9">9 Years</option>
+                    <option value="10">10 Years</option>
+                </select>
+                <select id="months" name="lease-months">
+                    <option value="0">0 Months</option>
+                    <option value="1">1 Month</option>
+                    <option value="2">2 Months</option>
+                    <option value="3">3 Months</option>
+                    <option value="4">4 Months</option>
+                    <option value="5">5 Months</option>
+                    <option value="6">6 Months</option>
+                    <option value="7">7 Months</option>
+                    <option value="8">8 Months</option>
+                    <option value="9">9 Months</option>
+                    <option value="10">10 Months</option>
+                    <option value="11">11 Months</option>
+                    <option value="12">12 Months</option>
+                </select>
+            </div>            
               <div class="form-group">
                 <label for="lease-brokers">Brokers:</label>
                 <select id="lease-brokers" name="brokers[]" multiple>
