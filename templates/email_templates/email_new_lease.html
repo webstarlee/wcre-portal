@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>New Lease Notification</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+
+      h1 {
+        color: #333;
+      }
+
+      p {
+        color: #555;
+        margin-top: 10px;
+      }
+
+      .lease-details {
+        margin-top: 20px;
+      }
+
+      .lease-label {
+        font-weight: bold;
+      }
+
+      .lease-value {
+        margin-left: 10px;
+      }
+
+      .lease-label,
+      .lease-value {
+        display: inline-block;
+        vertical-align: top;
+      }
+
+      .lease-brokers {
+        margin-top: 10px;
+      }
+
+      .lease-brokers p {
+        margin: 5px 0;
+        font-weight: normal;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1> A New Lease Has Been Uploaded to The WCRE Portal By {{ current_user.fullname }}: </h1>
+      <div class="lease-details">
+        <p>
+          <span class="lease-label">Property Type:</span>
+          <span class="lease-value">{{ lease.lease_property_type }}</span>
+        </p>
+        <p>
+          <span class="lease-label">Price:</span>
+          <span class="lease-value">{{ lease.lease_price }}</span>
+        </p>
+        <p>
+          <span class="lease-label">Street:</span>
+          <span class="lease-value">{{ lease.lease_street }}</span>
+        </p>
+        <p>
+          <span class="lease-label">City:</span>
+          <span class="lease-value">{{ lease.lease_city }}</span>
+        </p>
+        <p>
+          <span class="lease-label">Lessor:</span>
+          <span class="lease-value">{{ lease.lease_lessor }}</span>
+        </p>
+        <p>
+          <span class="lease-label">Lesse:</span>
+          <span class="lease-value">{{ lease.lease_lesse }}</span>
+        </p>
+        <div class="lease-brokers">
+          <span class="lease-label">Brokers:</span> {% for broker in lease.brokers %} <span>{{ broker }}</span>{% if not loop.last %}, {% endif %} {% endfor
+          %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

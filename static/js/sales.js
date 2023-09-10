@@ -113,51 +113,33 @@ $(document).ready(function() {
 	}
 
 	$("#edit-button").click(function() {
-		resetModalSteps($("#edit-sale-modal"));
+		const editModal = $("#edit-sale-modal");
+		const actionModal = $("#action-modal");
+		const selectedRow = $(`.centered-table tbody tr[data-sale-id="${sale_id}"]`);
+		const getCellText = (index) => selectedRow.find(`td:nth-child(${index})`).text().trim();
+		const getEmailFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a`).attr("href").replace("mailto:", "").trim();
+		const setInputValue = (selector, value) => $(selector).val(value);
+		resetModalSteps(editModal);
 		$("body").addClass("modal-open");
 		$("#add-sale-modal").hide();
-		$("#edit-sale-modal").show();
-		$("#edit-sale-modal .prev-step").addClass("hidden");
-		const actionModal = $("#action-modal");
+		editModal.show();
+		editModal.find(".prev-step").addClass("hidden");
 		actionModal.hide();
-		const selectedRow = $(
-			'.centered-table tbody tr[data-sale-id="' + sale_id + '"]'
-		);
-		const saleAddress = selectedRow.find("td:nth-child(7)").text().trim();
-		$("#edit-sale-modal .modal-step-title").text("Edit Sale - " + saleAddress);
-		const saleType = selectedRow.find("td:nth-child(2)").text().trim();
-		const saleClosingDate = selectedRow.find("td:nth-child(3)").text().trim();
-		const salePrice = selectedRow.find("td:nth-child(4)").text().trim();
-		const saleSqFt = selectedRow.find("td:nth-child(5)").text().trim();
-		const saleStreet = selectedRow.find("td:nth-child(7)").text().trim();
-		const saleCity = selectedRow.find("td:nth-child(8)").text().trim();
-		const saleBuyer = selectedRow.find("td:nth-child(9)").text().trim();
-		const saleBuyerEmail = selectedRow
-			.find("td:nth-child(9) a")
-			.attr("href")
-			.replace("mailto:", "")
-			.trim();
-		const saleBuyerPhone = selectedRow.find("td:nth-child(10)").text().trim();
-		const saleSeller = selectedRow.find("td:nth-child(11)").text().trim();
-		const saleSellerEmail = selectedRow
-			.find("td:nth-child(11) a")
-			.attr("href")
-			.replace("mailto:", "")
-			.trim();
-		const saleSellerPhone = selectedRow.find("td:nth-child(12)").text().trim();
-		$("#edit-sale-type").val(saleType);
-		$("#edit-sale-end-date").val(saleClosingDate);
-		$("#edit-sale-price").val(salePrice);
-		$("#edit-sale-sqft").val(saleSqFt);
-		$("#edit-sale-street").val(saleStreet);
-		$("#edit-sale-city").val(saleCity);
-		$("#edit-sale-buyer-name").val(saleBuyer);
-		$("#edit-sale-buyer-email").val(saleBuyerEmail);
-		$("#edit-sale-buyer-phone").val(saleBuyerPhone);
-		$("#edit-sale-seller-name").val(saleSeller);
-		$("#edit-sale-seller-email").val(saleSellerEmail);
-		$("#edit-sale-seller-phone").val(saleSellerPhone);
+		editModal.find(".modal-step-title").text("Edit Sale - " + getCellText(7));
+		setInputValue("#edit-sale-type", getCellText(2));
+		setInputValue("#edit-sale-end-date", getCellText(3));
+		setInputValue("#edit-sale-price", getCellText(4));
+		setInputValue("#edit-sale-sqft", getCellText(5));
+		setInputValue("#edit-sale-street", getCellText(7));
+		setInputValue("#edit-sale-city", getCellText(8));
+		setInputValue("#edit-sale-buyer-name", getCellText(9));
+		setInputValue("#edit-sale-buyer-email", getEmailFromCell(9));
+		setInputValue("#edit-sale-buyer-phone", getCellText(10));
+		setInputValue("#edit-sale-seller-name", getCellText(11));
+		setInputValue("#edit-sale-seller-email", getEmailFromCell(11));
+		setInputValue("#edit-sale-seller-phone", getCellText(12));
 	});
+	
 
 	// CLOSE ADD SALE MODAL
 	$("#add-sale-modal .close").click(function() {
@@ -199,106 +181,82 @@ $(document).ready(function() {
 		return isValid;
 	}
 
-	var currentPage = 1;
-
-	function searchSales(page) {
-		var searchTerm = $("#search-input").val().toLowerCase();
+	let currentPage = 1;
+	const searchSales = (page) => {
+		const searchTerm = $("#search-input").val().toLowerCase();
 		$.ajax({
 			url: "/search_sales",
 			method: "POST",
 			contentType: "application/json",
-			data: JSON.stringify({
-				query: searchTerm,
-				page: page,
-			}),
-			success: function(search_results_data) {
-				var rows = $.map(search_results_data, function(result) {
-					var $row = $("<tr>").attr("data-sale-id", result._id);
-					$row.append($("<td>").html(result.sale_property_type));
-					$row.append($("<td>").html(result.sale_type));
-					$row.append($("<td>").html(result.sale_end_date));
-					$row.append(
-						$("<td>").html(result.sale_price ? result.sale_price : "None")
-					);
-					$row.append($("<td>").text(result.sale_sqft));
-					var price = parseFloat(
-						result.sale_price.replace("$", "").replace(",", "")
-					);
-					var sqft = parseFloat(result.sale_sqft.replace(",", ""));
-					if (!isNaN(price) && !isNaN(sqft) && sqft !== 0) {
-						var pricePerSqft = price / sqft;
-						$row.append($("<td>").text("$" + pricePerSqft.toFixed(2)));
-					} else {
-						$row.append($("<td>").text("N/A"));
-					}
-					$row.append($("<td>").text(result.sale_street));
-					$row.append($("<td>").text(result.sale_city));
-					$row.append(
-						$("<td>").html(
-							'<a href="mailto:' +
-							result.sale_seller_email +
-							'">' +
-							result.sale_seller +
-							"</a>"
-						)
-					);
-					$row.append(
-						$("<td>").html(
-							'<a href="mailto:' +
-							result.sale_buyer_email +
-							'">' +
-							result.sale_buyer +
-							"</a>"
-						)
-					);
-					var brokerElements = $.map(result.brokers, function(broker) {
-						return $("<span>").addClass("broker-name").text(broker);
-					});
-					$row.append($("<td>").append(brokerElements));
-
-					if (result.pdf_file_base64) {
-						$row.append(
-							$("<td>").html(
-								'<a href="/download_sale_pdf/' +
-								result._id +
-								'">Fully Executed</a>'
-							)
-						);
-					} else {
-						$row.append($("<td>").text("Pending"));
-					}
-					return $row;
-				});
-
-				$(".centered-table tbody").empty().append(rows);
-			},
-			error: function(textStatus, errorThrown) {
-				console.error(
-					"Error Fetching Search Results:",
-					textStatus,
-					errorThrown
-				);
-				showNotification("Error Fetching Search Results", "error-notification-modal");
-			},
+			data: JSON.stringify({ query: searchTerm, page }),
+			success: renderSalesResults,
+			error: handleSalesError
 		});
-	}
+	};
 
-	$("#search-input").on("input", function() {
-		currentPage = 1; // Reset to the first page on a new search
+	const renderSalesResults = (search_results_data) => {
+		const rows = search_results_data.map(result => createRowForSale(result));
+		$(".centered-table tbody").empty().append(rows);
+	};
+
+	const createRowForSale = (result) => {
+		const $row = $("<tr>").attr("data-sale-id", result._id);
+		const cells = [
+			result.sale_property_type,
+			result.sale_type,
+			result.sale_end_date,
+			result.sale_price || "None",
+			result.sale_sqft,
+			calculatePricePerSqft(result.sale_price, result.sale_sqft),
+			result.sale_street,
+			result.sale_city,
+			`<a href="mailto:${result.sale_buyer_email}">${result.sale_buyer_name}</a>`,
+			`<a href="tel:${result.sale_buyer_phone}">${result.sale_buyer_phone}</a>`,
+			`<a href="mailto:${result.sale_seller_email}">${result.sale_seller_name}</a>`,
+			`<a href="tel:${result.sale_seller_phone}">${result.sale_seller_phone}</a>`,
+		];
+
+		cells.forEach(cell => $row.append($("<td>").html(cell)));
+		const brokerElements = $.map(result.brokers, broker => $("<span>").addClass("broker-name").text(broker));
+		$row.append($("<td>").append(brokerElements));
+		$row.append($("<td>").html(result.pdf_file_base64 ? `<a href="/download_sale_pdf/${result._id}">Fully Executed</a>` : "Pending"));
+		return $row;
+	};
+
+	const calculatePricePerSqft = (price, sqft) => {
+		const parsedPrice = parseFloat(price.replace(/\$/g, '').replace(/,/g, ''));
+		const parsedSqft = parseFloat(sqft.replace(/,/g, ''));
+	
+		if (!isNaN(parsedPrice) && !isNaN(parsedSqft) && parsedSqft !== 0) {
+			const rawValue = parsedPrice / parsedSqft;
+			return "$" + rawValue.toFixed(2);
+		} 
+		return "N/A";
+	};	
+	
+
+	const handleSalesError = (textStatus, errorThrown) => {
+		console.error("Error Fetching Search Results:", textStatus, errorThrown);
+		showNotification("Error Fetching Search Results", "error-notification-modal");
+	};
+
+	$("#search-input").on("input", () => {
+		currentPage = 1;
 		searchSales(currentPage);
 	});
 
-	$("#next-page").on("click", function() {
+	$("#next-page").on("click", () => {
 		currentPage++;
 		searchSales(currentPage);
 	});
 
-	$("#prev-page").on("click", function() {
+	$("#prev-page").on("click", () => {
 		if (currentPage > 1) {
 			currentPage--;
 			searchSales(currentPage);
 		}
 	});
+
 
 	uploadButton.addEventListener("click", function(e) {
 		fileInput.click();
@@ -393,15 +351,22 @@ $(document).ready(function() {
 		var currentModal = $(this).closest(".sale-modal");
 		var currentStep = currentModal.find(".active-step");
 		var prevStep = currentStep.prev(".modal-step");
-
+		var nextButton = currentModal.find(".next-step");
+	
 		if (prevStep.length) {
 			currentStep.removeClass("active-step");
 			prevStep.addClass("active-step");
-
-			if (!prevStep.prev(".modal-step").length) {
-				$(this).addClass("hidden");
+	
+			if (!prevStep.next(".modal-step").length) {
+				if (currentModal.data("mode") === "add") {
+					nextButton.text("Submit Sale");
+				} else {
+					nextButton.text("Submit Sale Edits");
+				}
+			} else {
+				nextButton.text("Next");
 			}
-
+	
 			if (currentModal.data("mode") === "add") {
 				currentStep.find("input:required, select:required").removeClass("error");
 			}
@@ -482,14 +447,16 @@ $(document).ready(function() {
 				if (data.success) {
 					showNotification("Sale Deleted", "error-notification");
 					selectedRow.remove();
-					deleteModal.hide(); // hide the modal
-					console.log("Sale Deleted Successfully");
+					deleteModal.hide();
+					$.get("/count/sales", function(response) {
+						$("#sales-count").html("Total Sales: " + response.count);
+					});
 				} else {
-					console.error("Failed to Delete Sale: " + data.message);
+					showNotification("Failed to Delete Sale", "error-notification");
 				}
 			},
 			error: function() {
-				console.error("Failed to Delete Sale.");
+				showNotification("Failed to Delete Sale", "error-notification");
 			},
 		});
 	});

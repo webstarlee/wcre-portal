@@ -65,7 +65,9 @@
               <th style="border-top-right-radius: 7px">Listing Agreement</th>
             </tr>
           </thead>
-          <tbody> {% for listing in listings %} <tr data-listing-id="{{ listing._id }}">
+          <tbody> 
+            {% for listing in listings %} 
+            <tr data-listing-id="{{ listing._id }}">
               <td>{{ listing.listing_property_type }}</td>
               <td>{{ listing.listing_type }}</td>
               <td>{{ listing.listing_start_date }}</td>
@@ -76,16 +78,18 @@
               <td>{{ listing.listing_street }}</td>
               <td>{{ listing.listing_city }}</td>
               <td>
-                <a href="mailto:{{ listing.listing_email }}">{{ listing.listing_owner }}</a>
+                <a href="mailto:{{ listing.listing_owner_email }}">{{ listing.listing_owner_name }}</a>
               </td>
               <td>
-                <a href="tel:{{ listing.listing_phone }}">{{ listing.listing_phone }}</a>
+                <a href="tel:{{ listing.listing_phone }}">{{ listing.listing_owner_phone }}</a>
               </td>
               <td class="brokers"> {% for broker in listing.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
               <td>
                 <form method="POST"> {% if listing.pdf_file_base64 %} <a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
               </td>
-            </tr> {% endfor %} </tbody>
+            </tr> 
+            {% endfor %} 
+          </tbody>
           <table>
             {{ pagination.links }}
             <div>

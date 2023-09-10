@@ -86,41 +86,28 @@ $(document).ready(function() {
 
 	// OPEN EDIT LISTING MODAL
 	$("#edit-button").click(function() {
-		resetModalSteps($("#edit-listing-modal"));
+		const editModal = $("#edit-listing-modal");
+		const actionModal = $("#action-modal");
+		const selectedRow = $(`.centered-table tbody tr[data-listing-id="${listing_id}"]`);
+		const getCellText = (index) => selectedRow.find(`td:nth-child(${index})`).text().trim();
+		const setInputValue = (selector, value) => $(selector).val(value);
+		resetModalSteps(editModal);
 		$("body").addClass("modal-open");
 		$("#add-listing-modal").hide();
-		$("#edit-listing-modal").show();
-		$("#edit-listing-modal .prev-step").addClass("hidden");
-		const actionModal = $("#action-modal");
+		editModal.show();
+		editModal.find(".prev-step").addClass("hidden");
 		actionModal.hide();
-		const selectedRow = $(
-			'.centered-table tbody tr[data-listing-id="' + listing_id + '"]'
-		);
-		const listingAddress = selectedRow.find("td:nth-child(6)").text().trim();
-		$("#edit-listing-modal .modal-step-title").text(
-			"Edit Listing - " + listingAddress
-		);
-		const listingStartDate = selectedRow.find("td:nth-child(3)").text().trim();
-		const listingEndDate = selectedRow.find("td:nth-child(4)").text().trim();
-		const listingPrice = selectedRow.find("td:nth-child(5)").text().trim();
-		const listingStreet = selectedRow.find("td:nth-child(6)").text().trim();
-		const listingCity = selectedRow.find("td:nth-child(7)").text().trim();
-		const listingOwner = selectedRow.find("td:nth-child(8)").text().trim();
-		const listingOwnerEmail = selectedRow
-			.find("td:nth-child(8) a")
-			.attr("href")
-			.replace("mailto:", "")
-			.trim();
-		const listingOwnerPhone = selectedRow.find("td:nth-child(9)").text().trim();
-		$("#edit-listing-start-date").val(listingStartDate);
-		$("#edit-listing-end-date").val(listingEndDate);
-		$("#edit-listing-price").val(listingPrice);
-		$("#edit-listing-street").val(listingStreet);
-		$("#edit-listing-city").val(listingCity);
-		$("#edit-listing-owner-name").val(listingOwner);
-		$("#edit-listing-owner-email").val(listingOwnerEmail);
-		$("#edit-listing-owner-phone").val(listingOwnerPhone);
+		editModal.find(".modal-step-title").text("Edit Listing - " + getCellText(6));
+		setInputValue("#edit-listing-start-date", getCellText(3));
+		setInputValue("#edit-listing-end-date", getCellText(4));
+		setInputValue("#edit-listing-price", getCellText(5));
+		setInputValue("#edit-listing-street", getCellText(6));
+		setInputValue("#edit-listing-city", getCellText(7));
+		setInputValue("#edit-listing-owner-name", getCellText(8));
+		setInputValue("#edit-listing-owner-email", selectedRow.find("td:nth-child(8) a").attr("href").replace("mailto:", "").trim());
+		setInputValue("#edit-listing-owner-phone", getCellText(9));
 	});
+	
 
 	// CLOSE ADD LISTING MODAL
 	$("#add-listing-modal .close").click(function() {
@@ -174,95 +161,67 @@ $(document).ready(function() {
 		return isValid;
 	}
 
-	var currentPage = 1;
-
-	function searchListings(page) {
-		var searchTerm = $("#search-input").val().toLowerCase();
+	let currentPage = 1;
+	const searchListings = (page) => {
+		const searchTerm = $("#search-input").val().toLowerCase();
 		$.ajax({
 			url: "/search_listings",
 			method: "POST",
 			contentType: "application/json",
-			data: JSON.stringify({
-				query: searchTerm,
-				page: page,
-			}),
-			success: function(search_results_data) {
-				var rows = $.map(search_results_data, function(result) {
-					var $row = $("<tr>").attr("data-listing-id", result._id);
-					$row.append($("<td>").html(result.listing_property_type));
-					$row.append($("<td>").html(result.listing_type));
-					$row.append($("<td>").html(result.listing_start_date));
-					$row.append($("<td>").html('<a href="/create_ics_listing/' + result._id + '">' + result.listing_end_date + "</a>"));
-					$row.append(
-						$("<td>").html(result.listing_price ? result.listing_price : "None")
-					);
-					$row.append($("<td>").text(result.listing_street));
-					$row.append($("<td>").text(result.listing_city));
-					$row.append(
-						$("<td>").html(
-							'<a href="mailto:' +
-							result.listing_email +
-							'">' +
-							result.listing_owner +
-							"</a>"
-						)
-					);
-					$row.append(
-						$("<td>").html(
-							'<a href="tel:' +
-							result.listing_phone +
-							'">' +
-							result.listing_phone +
-							"</a>"
-						)
-					);
-					var brokerElements = $.map(result.brokers, function(broker) {
-						return $("<span>").addClass("broker-name").text(broker);
-					});
-					$row.append($("<td>").append(brokerElements));
-
-					if (result.pdf_file_base64) {
-						$row.append(
-							$("<td>").html(
-								'<a href="/download_listing_pdf/' +
-								result._id +
-								'">Fully Executed</a>'
-							)
-						);
-					} else {
-						$row.append($("<td>").text("Pending"));
-					}
-					return $row;
-				});
-				$(".centered-table tbody").empty().append(rows);
-			},
-			error: function(textStatus, errorThrown) {
-				console.error(
-					"Error Fetching Search Results:",
-					textStatus,
-					errorThrown
-				);
-				showNotification("Error Fetching Search Results", "error-notification-modal");
-			},
+			data: JSON.stringify({ query: searchTerm, page }),
+			success: renderSearchResults,
+			error: handleSearchError
 		});
-	}
+	};
 
-	$("#search-input").on("input", function() {
-		currentPage = 1; // Reset to the first page on a new search
+	const renderSearchResults = (search_results_data) => {
+		const rows = search_results_data.map(result => createRowForListing(result));
+		$(".centered-table tbody").empty().append(rows);
+	};
+
+	const createRowForListing = (result) => {
+		const $row = $("<tr>").attr("data-listing-id", result._id);
+		const cells = [
+			result.listing_property_type,
+			result.listing_type,
+			result.listing_start_date,
+			`<a href="/create_ics_listing/${result._id}">${result.listing_end_date}</a>`,
+			result.listing_price || "None",
+			result.listing_street,
+			result.listing_city,
+			`<a href="mailto:${result.listing_owner_email}">${result.listing_owner_name}</a>`,
+			`<a href="tel:${result.listing_owner_phone}">${result.listing_owner_phone}</a>`,
+		];
+
+		cells.forEach(cell => $row.append($("<td>").html(cell)));
+		const brokerElements = $.map(result.brokers, broker => $("<span>").addClass("broker-name").text(broker));
+		$row.append($("<td>").append(brokerElements));
+		$row.append($("<td>").html(result.pdf_file_base64 ? `<a href="/download_listing_pdf/${result._id}">Fully Executed</a>` : "Pending"));
+		return $row;
+	};
+
+	const handleSearchError = (textStatus, errorThrown) => {
+		console.error("Error Fetching Search Results:", textStatus, errorThrown);
+		showNotification("Error Fetching Search Results", "error-notification-modal");
+	};
+
+	$("#search-input").on("input", () => {
+		currentPage = 1;
 		searchListings(currentPage);
 	});
 
-	$("#next-page").on("click", function() {
+	$("#next-page").on("click", () => {
 		currentPage++;
 		searchListings(currentPage);
 	});
 
-	$("#prev-page").on("click", function() {
+	$("#prev-page").on("click", () => {
 		if (currentPage > 1) {
 			currentPage--;
 			searchListings(currentPage);
 		}
 	});
+
 
 	uploadButton.addEventListener("click", function(e) {
 		fileInput.click();
@@ -349,15 +308,22 @@ $(document).ready(function() {
 		var currentModal = $(this).closest(".listing-modal");
 		var currentStep = currentModal.find(".active-step");
 		var prevStep = currentStep.prev(".modal-step");
+		var nextButton = currentModal.find(".next-step");
 
 		if (prevStep.length) {
 			currentStep.removeClass("active-step");
 			prevStep.addClass("active-step");
-
-			if (!prevStep.prev(".modal-step").length) {
-				$(this).addClass("hidden");
+	
+			if (!prevStep.next(".modal-step").length) {
+				if (currentModal.data("mode") === "add") {
+					nextButton.text("Submit Listing");
+				} else {
+					nextButton.text("Submit Listing Edits");
+				}
+			} else {
+				nextButton.text("Next");
 			}
-
+	
 			if (currentModal.data("mode") === "add") {
 				currentStep.find("input:required, select:required").removeClass("error");
 			}
@@ -428,7 +394,6 @@ $(document).ready(function() {
 			'.centered-table tbody tr[data-listing-id="' + listing_id + '"]'
 		);
 		const deleteModal = $("#action-modal"); // assuming this is the ID of your deletion modal
-
 		$.ajax({
 			url: "/delete_listing/" + listing_id,
 			type: "GET",
@@ -437,6 +402,9 @@ $(document).ready(function() {
 					showNotification("Listing Deleted", "error-notification");
 					selectedRow.remove();
 					deleteModal.hide();
+					$.get("/count/listings", function(response) {
+						$("#listings-count").html("Total Listings: " + response.count);
+					});
 				} else {
 					showNotification("Failed to Delete Listing", "error-notification");
 				}
