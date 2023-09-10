@@ -60,10 +60,9 @@
               <th>Price/SF</th>
               <th>Street</th>
               <th>City</th>
+              <th>State</th>
               <th>Buyer</th>
-              <th>Buyer Phone</th>
               <th>Seller</th>
-              <th>Seller Phone</th>
               <th>Brokers</th>
               <th style="border-top-right-radius: 7px">Sale Agreement</th>
             </tr>
@@ -85,17 +84,26 @@
               <td>{{ sale.sale_street }}</td>
               <td>{{ sale.sale_city }}</td>
               <td>
-                <a href="mailto:{{ sale.sale_buyer_email }}">{{ sale.sale_buyer_name }}</a>
-              </td>
-              <td> 
-                <a href="tel:{{ sale.sale_buyer_phone }}">{{ sale.sale_buyer_phone }}</a>
+                {% if sale.sale_state == "New Jersey" %}
+                    NJ
+                {% elif sale.sale_state == "Pennsylvania" %}
+                    PA
+                {% else %}
+                    {{ sale.sale_state }}
+                {% endif %}
+              </td>            
+              <td>
+                <div class="contact-info">
+                    <a href="mailto:{{ sale.sale_buyer_email }}">{{ sale.sale_buyer_name }}</a>
+                    <a href="tel:{{ sale.sale_buyer_phone }}">{{ sale.sale_buyer_phone }}</a>
+                </div>
               </td>
               <td>
-                <a href="mailto:{{ sale.sale_seller_email }}">{{ sale.sale_seller_name }}</a>
-              </td>
-              <td> 
-                <a href="tel:{{ sale.sale_seller_phone }}">{{ sale.sale_seller_phone }}</a>
-              </td>
+                <div class="contact-info">
+                    <a href="mailto:{{ sale.sale_seller_email }}">{{ sale.sale_seller_name }}</a>
+                    <a href="tel:{{ sale.sale_seller_phone }}">{{ sale.sale_seller_phone }}</a>
+                </div>
+              </td>            
               <td class="brokers"> {% for broker in sale.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
               <td>
                 <form method="POST"> {% if sale.pdf_file_base64 %} <a href="{{ url_for('download_sale_pdf', sale_id=sale._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
@@ -245,6 +253,28 @@
                         <label for="sale-city">Sale City:</label>
                         <input type="text" id="edit-sale-city" name="edit-sale-city" required />
                       </div>
+                      <div class="form-group">
+                        <label for="edit-sale-state">Sale State:</label>
+                        <select id="edit-sale-state" name="edit-sale-state" required>
+                          <option value="NJ">NJ</option>
+                          <option value="PA">PA</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="edit-sale-property-type">Property Type:</label>
+                        <select id="edit-sale-property-type" name="edit-sale-property-type" required>
+                          <option value="Office">Office</option>
+                          <option value="Industrial">Industrial</option>
+                          <option value="Flex">Flex</option>
+                          <option value="Retail">Retail</option>
+                          <option value="Medical">Medical</option>
+                          <option value="Land">Land</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="edit-sale-sqft">Sale Square Footage:</label>
+                        <input type="text" id="edit-sale-sqft" name="edit-sale-sqft" required />
+                      </div>
                     </div>
                     <div class="modal-step edit-form-step" id="edit-step2">
                       <div class="form-group">
@@ -276,16 +306,19 @@
                     </div>
                     <div class="modal-step edit-form-step" id="edit-step4">
                       <div class="form-group">
+                        <label for="edit-sale-type">Sale Type:</label>
+                        <select id="edit-sale-type" name="sale-type" required>
+                          <option value="User">User</option>
+                          <option value="Investor">Investor</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
                         <label for="edit-sale-end-date">Sale Closing Date:</label>
                         <input type="text" id="edit-sale-end-date" name="edit-sale-end-date" required />
                       </div>
                       <div class="form-group">
                         <label for="edit-sale-price">Sale Price:</label>
                         <input type="text" id="edit-sale-price" name="edit-sale-price" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-sale-sqft">Sale Square Footage:</label>
-                        <input type="text" id="edit-sale-sqft" name="edit-sale-sqft" required />
                       </div>
                       <div class="form-group">
                         <button id="upload-sale-agreement" type="button"> Upload Sale Agreement </button>

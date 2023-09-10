@@ -5,14 +5,18 @@ $(document).ready(function() {
   	var uploadButtonCommision = document.getElementById("upload-commision-agreement");
 	const leasePriceInput = document.getElementById("lease-price");
 	const sqFootageInput = document.getElementById("lease-sqft");
+	const editsqFootageInput = document.getElementById("edit-lease-sqft");
 	const lessorPhoneNumberInput = document.getElementById("lease-lessor-phone");
 	const lessePhoneNumberInput = document.getElementById("lease-lesse-phone");
 	const leasePercentageSpaceInput = document.getElementById("lease-percentage-space");
+	const editLeasePercentageSpaceInput = document.getElementById("edit-lease-percentage-space");
 	leasePercentageSpaceInput.addEventListener("input", () => formatPercentage(leasePercentageSpaceInput));
+	editLeasePercentageSpaceInput.addEventListener("input", () => formatPercentage(editLeasePercentageSpaceInput));
 	leasePriceInput.addEventListener("input", () => formatPrice(leasePriceInput));
 	sqFootageInput.addEventListener("input", () => formatSqFootage(sqFootageInput));
 	lessorPhoneNumberInput.addEventListener("input", () => formatPhoneNumber(lessorPhoneNumberInput));
 	lessePhoneNumberInput.addEventListener("input", () => formatPhoneNumber(lessePhoneNumberInput));
+	editsqFootageInput.addEventListener("input", () => formatSqFootage(editsqFootageInput));
 	document.getElementById('years').addEventListener('change', adjustTerm);
 	document.getElementById('months').addEventListener('change', adjustTerm);
 
@@ -37,6 +41,20 @@ $(document).ready(function() {
 			yearsSelect.value = (years + 1).toString();
 		}
 	}
+
+	document.addEventListener('DOMContentLoaded', function() {
+		// For example, let's assume you have a button to get the lease term
+		document.getElementById('submit-button').addEventListener('click', function() {
+			var years = document.getElementById('years').value;
+			var months = document.getElementById('months').value;
+
+			var leaseTermLength = years + " Years " + months + " Months";
+			
+			// Assuming you have a table cell with an ID 'lease-term-cell'
+			document.getElementById('lease-term-cell').innerText = leaseTermLength;
+		});
+	});
+
 
 	function formatPrice(inputElement) {
 		let inputText = inputElement.value.trim();
@@ -194,8 +212,11 @@ $(document).ready(function() {
 		const actionModal = $("#action-modal");
 		const selectedRow = $(`.centered-table tbody tr[data-lease-id="${lease_id}"]`);
 		const getCellText = (index) => selectedRow.find(`td:nth-child(${index})`).text().trim();
-		const getEmailFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a`).attr("href").replace("mailto:", "").trim();
+		const getEmailFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="mailto:"]`).attr("href").replace("mailto:", "").trim();
+		const getPhoneFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="tel:"]`).attr("href").replace("tel:", "").trim();
+		const getNameFromCell = (index) => getCellText(index).replace(getEmailFromCell(index), '').replace(getPhoneFromCell(index), '').trim();
 		const setInputValue = (selector, value) => $(selector).val(value);
+		
 		resetModalSteps(editModal);
 		$("body").addClass("modal-open");
 		$("#add-lease-modal").hide();
@@ -210,10 +231,13 @@ $(document).ready(function() {
 		setInputValue("#edit-lease-term-length", getCellText(6));
 		setInputValue("#edit-lease-street", getCellText(7));
 		setInputValue("#edit-lease-city", getCellText(8));
-		setInputValue("#edit-lease-lessor-name", getCellText(9));
-		setInputValue("#edit-lease-lessor-email", getEmailFromCell(9));
-		setInputValue("#edit-lease-lesse-name", getCellText(10));
-		setInputValue("#edit-lease-lesse-email", getEmailFromCell(10));
+		setInputValue("#edit-lease-state", getCellText(9));
+		setInputValue("#edit-lease-lessor-name", getNameFromCell(10));
+		setInputValue("#edit-lease-lessor-email", getEmailFromCell(10));
+		setInputValue("#edit-lease-lessor-phone", getPhoneFromCell(10));
+		setInputValue("#edit-lease-lesse-name", getNameFromCell(11));
+		setInputValue("#edit-lease-lesse-email", getEmailFromCell(11));
+		setInputValue("#edit-lease-lesse-phone", getPhoneFromCell(11));
 	});
 	
 
@@ -288,25 +312,33 @@ $(document).ready(function() {
 					var leasePropertyType = $("#edit-lease-property-type").val();
 					var leasePrice = $("#edit-lease-price").val();
 					var leaseSqFt = $("#edit-lease-sqft").val();
+					var leaseSpacePercentage = $("#edit-lease-percentage-space").val();
 					var leaseTermLength = $("#edit-lease-term-length").val();
 					var leaseStreet = $("#edit-lease-street").val();
 					var leaseCity = $("#edit-lease-city").val();
+					var leaseState = $("#edit-lease-state").val();
 					var leaseLessor = $("#edit-lease-lessor-name").val();
 					var leaseLessorEmail = $("#edit-lease-lessor-email").val();
+					var leaseLessorPhone = $("#edit-lease-lessor-phone").val();
 					var leaseLesse = $("#edit-lease-lesse-name").val();
 					var leaseLesseEmail = $("#edit-lease-lesse-email").val();
+					var leaseLessePhone = $("#edit-lease-lesse-phone").val();
 
 					var data = {
 						lease_property_type: leasePropertyType,
 						lease_price: leasePrice,
 						lease_sqft: leaseSqFt,
 						lease_term_length: leaseTermLength,
+						lease_percentage_space: leaseSpacePercentage,
 						lease_street: leaseStreet,
 						lease_city: leaseCity,
+						lease_state: leaseState,
 						lease_lessor_name: leaseLessor,
 						lease_lessor_email: leaseLessorEmail,
+						lease_lessor_phone: leaseLessorPhone,
 						lease_lesse_name: leaseLesse,
 						lease_lesse_email: leaseLesseEmail,
+						lease_lesse_phone: leaseLessePhone
 					};
 
 					$.ajax({

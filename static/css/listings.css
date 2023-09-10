@@ -137,7 +137,8 @@ body {
 }
 .centered-table th:nth-child(1),
 .centered-table th:nth-child(2),
-.centered-table th:nth-child(3),
+.centered-table th:nth-child(3)
+.centered-table th:nth-child(4),
 .centered-table th:nth-child(5),
 .centered-table th:nth-child(6),
 .centered-table th:nth-child(7),
@@ -145,8 +146,10 @@ body {
 .centered-table th:nth-child(9) {
   max-width: 150px;
 }
-.centered-table th:nth-child(4) {
-  width: 80px;
+.contact-info a:first-child {
+  display: block;
+  margin-bottom: 5px; /* Adjust this value as needed */
+  padding-bottom: 3px; /* Space above the visual separation */
 }
 /* pagination */
 .pagination {

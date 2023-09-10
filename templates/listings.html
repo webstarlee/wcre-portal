@@ -54,13 +54,13 @@
             <tr>
               <th style="border-top-left-radius: 7px">Property Type</th>
               <th>Listing Type</th>
-              <th>Start Date</th>
+              <th>Starting Date</th>
               <th>Closing Date</th>
               <th>Price</th>
               <th>Street</th>
               <th>City</th>
+              <th>State</th>
               <th>Owner</th>
-              <th>Phone</th>
               <th>Brokers</th>
               <th style="border-top-right-radius: 7px">Listing Agreement</th>
             </tr>
@@ -77,12 +77,21 @@
               <td>{{ listing.listing_price }}</td>
               <td>{{ listing.listing_street }}</td>
               <td>{{ listing.listing_city }}</td>
+               <td>
+                {% if listing.listing_state == "New Jersey" %}
+                    NJ
+                {% elif listing.listing_state == "Pennsylvania" %}
+                    PA
+                {% else %}
+                    {{ listing.listing_state }}
+                {% endif %}
+              </td>   
               <td>
-                <a href="mailto:{{ listing.listing_owner_email }}">{{ listing.listing_owner_name }}</a>
-              </td>
-              <td>
-                <a href="tel:{{ listing.listing_phone }}">{{ listing.listing_owner_phone }}</a>
-              </td>
+                <div class="contact-info">
+                    <a href="mailto:{{ listing.listing_owner_email }}">{{ listing.listing_owner_name }}</a>
+                    <a href="tel:{{ listing.listing_owner_phone }}">{{ listing.listing_owner_phone }}</a>
+                </div>
+            </td>
               <td class="brokers"> {% for broker in listing.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
               <td>
                 <form method="POST"> {% if listing.pdf_file_base64 %} <a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
@@ -163,7 +172,7 @@
                         <input type="text" id="listing-price" name="listing-price" placeholder= "Enter Listing Price:" required />
                       </div>
                       <div class="form-group">
-                        <label for="listing-start-date">Listing Start Date:</label>
+                        <label for="listing-start-date">Listing Starting Date:</label>
                         <input type="text" id="listing-start-date" name="listing-start-date" placeholder= "Enter Listing Start Date:" required />
                       </div>
                       <div class="form-group">
@@ -221,6 +230,24 @@
                         <label for="edit-listing-city">Listing City:</label>
                         <input type="text" id="edit-listing-city" name="edit-listing-city" required />
                       </div>
+                      <div class="form-group">
+                        <label for="edit-listing-state">Listing State:</label>
+                        <select id="edit-listing-state" name="edit-listing-state" required>
+                          <option value="NJ">NJ</option>
+                          <option value="PA">PA</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="edit-listing-property-type">Property Type:</label>
+                        <select id="edit-listing-property-type" name="edit-listing-property-type" required>
+                          <option value="Office">Office</option>
+                          <option value="Industrial">Industrial</option>
+                          <option value="Flex">Flex</option>
+                          <option value="Retail">Retail</option>
+                          <option value="Medical">Medical</option>
+                          <option value="Land">Land</option>
+                        </select>
+                      </div>
                     </div>
                     <div class="modal-step edit-form-step" id="edit-step2">
                       <div class="form-group">
@@ -238,7 +265,16 @@
                     </div>
                     <div class="modal-step edit-form-step" id="edit-step3">
                       <div class="form-group">
-                        <label for="edit-listing-start-date">Listing Start Date:</label>
+                        <label for="edit-listing-type">Listing Type:</label>
+                        <select id="edit-listing-type" name="edit-listing-type" required>
+                          <option value="Sale">Sale</option>
+                          <option value="Lease">Lease</option>
+                          <option value="Sale and Lease">Sale and Lease</option>
+                          <option value="Sublease">Sublease</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="edit-listing-start-date">Listing Starting Date:</label>
                         <input type="text" id="edit-listing-start-date" name="edit-listing-start-date" required />
                       </div>
                       <div class="form-group">

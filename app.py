@@ -559,7 +559,6 @@ def submit_lease():
             "lease-sqft",
             "lease-property-type",
             "lease-price",
-            "lease-term-length",
             "lease-percentage-space",
             "lease-lessor-name",
             "lease-lessor-email",
@@ -569,6 +568,9 @@ def submit_lease():
             "lease-lesse-phone",
         ]
         new_lease = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
+        years = request.form.get("lease-years")
+        months = request.form.get("lease-months")
+        new_lease["lease_term_length"] = f"{years} Years, {months} Months"
         new_lease["brokers"] = request.form.getlist("brokers[]")
         new_lease["lease_agreement_pdf_file_base64"] = request.form.get(
             "lease-agreement-file-base64"
@@ -713,7 +715,6 @@ def edit_listing(listing_id):
         "listing_agreement_file_base64",
         "listing_property_type",
         "listing_type",
-        "investment_sale",
         "listing_price",
     ]
     return edit_record(listing_id, listings, fields)

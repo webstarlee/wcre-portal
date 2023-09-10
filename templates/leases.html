@@ -59,6 +59,7 @@
               <th>Term Length</th>
               <th>Property Address</th>
               <th>City</th>
+              <th>State</th>
               <th>Lessor</th>
               <th>Lessee</th>
               <th>Brokers</th>
@@ -86,10 +87,25 @@
               <td>{{ lease.lease_street }}</td>
               <td>{{ lease.lease_city }}</td>
               <td>
-                <a href="mailto:{{ lease.lease_lessor_email }}">{{ lease.lease_lessor_name }}</a>
+                {% if lease.lease_state == "New Jersey" %}
+                    NJ
+                {% elif lease.lease_state == "Pennsylvania" %}
+                    PA
+                {% else %}
+                    {{ lease.lease_state }}
+                {% endif %}
+              </td>   
+              <td>
+                <div class="contact-info">
+                    <a href="mailto:{{ lease.lease_lessor_email }}">{{ lease.lease_lessor_name }}</a>
+                    <a href="tel:{{ lease.lease_lessor_phone }}">{{ lease.lease_lessor_phone }}</a>
+                </div>
               </td>
               <td>
-                <a href="mailto:{{ lease.lease_lesse_email }}">{{ lease.lease_lesse_name }}</a>
+                <div class="contact-info">
+                    <a href="mailto:{{ lease.lease_lesse_email }}">{{ lease.lease_lesse_name }}</a>
+                    <a href="tel:{{ lease.lease_lesse_phone }}">{{ lease.lease_lesse_phone }}</a>
+                </div>
               </td>
               <td class="brokers"> {% for broker in lease.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
               <td>
@@ -145,11 +161,11 @@
               <div class="form-group">
                 <label for="lease-sqft">Lease Square Footage:</label>
                 <input type="text" id="lease-sqft" name="lease-sqft" placeholder="Enter Square Footage:" required />
-            </div>
-            <div class="form-group">
-                <label for="lease-percentage-space">Lease Space Percentage:</label>
-                <input type="text" id="lease-percentage-space" name="lease-percentage-space" placeholder="Enter Percentage:" required />
-            </div>            
+              </div>
+              <div class="form-group">
+                  <label for="lease-percentage-space">Lease Space Percentage:</label>
+                  <input type="text" id="lease-percentage-space" name="lease-percentage-space" placeholder="Enter Percentage:" required />
+              </div>            
             </div>
             <div class="modal-step main-form-step" id="main-step2">
               <h2 class="modal-step-title">New Lease - Lessor Information</h2>
@@ -162,7 +178,7 @@
                 <input type="email" id="lease-lessor-email" name="lease-lessor-email" placeholder= "Enter Lessor Email:" required />
               </div>
               <div class="form-group">
-                <label for="lease-lessor-phone">Owner Phone Number:</label>
+                <label for="lease-lessor-phone">Lessor Phone Number:</label>
                 <input type="tel" id="lease-lessor-phone" name="lease-lessor-phone" placeholder= "Enter Lessor Phone Number:" required />
               </div>
             </div>
@@ -217,7 +233,7 @@
                     <option value="11">11 Months</option>
                     <option value="12">12 Months</option>
                 </select>
-            </div>            
+              </div>            
               <div class="form-group">
                 <label for="lease-brokers">Brokers:</label>
                 <select id="lease-brokers" name="brokers[]" multiple>
@@ -275,6 +291,13 @@
                 <input type="text" id="edit-lease-city" name="edit-lease-city" required />
               </div>
               <div class="form-group">
+                <label for="edit-lease-state">Lease State:</label>
+                <select id="edit-lease-state" name="edit-lease-state" required>
+                  <option value="NJ">NJ</option>
+                  <option value="PA">PA</option>
+                </select>
+              </div>
+              <div class="form-group">
                 <label for="edit-lease-property-type">Property Type:</label>
                 <select id="edit-lease-property-type" name="edit-lease-property-type" required>
                   <option value="Office">Office</option>
@@ -284,6 +307,14 @@
                   <option value="Medical">Medical</option>
                   <option value="Land">Land</option>
                 </select>
+              </div>
+              <div class="form-group">
+                <label for="edit-lease-sqft">Lease Square Footage:</label>
+                <input type="text" id="edit-lease-sqft" name="edit-lease-sqft" required />
+              </div>
+              <div class="form-group">
+                <label for="edit-lease-percentage-space">Lease Space Percentage:</label>
+                <input type="text" id="edit-lease-percentage-space" name="edit-lease-percentage-space" required />
               </div>
             </div>
             <div class="modal-step edit-form-step" id="edit-step2">
@@ -295,6 +326,10 @@
                 <label for="edit-lease-lessor-email">Lessor Email:</label>
                 <input type="email" id="edit-lease-lessor-email" name="edit-lease-lessor-email" required />
               </div>
+              <div class="form-group">
+                <label for="edit-lease-lessor-phone">Lessor Phone Number:</label>
+                <input type="tel" id="edit-lease-lessor-phone" name="edit-lease-lessor-phone" required />
+              </div>
             </div>
             <div class="modal-step edit-form-step" id="edit-step3">
               <div class="form-group">
@@ -305,19 +340,15 @@
                 <label for="edit-lease-lesse-email">Lesse Email:</label>
                 <input type="email" id="edit-lease-lesse-email" name="edit-lease-lesse-email" required />
               </div>
+              <div class="form-group">
+                <label for="edit-lease-lesse-phone">Lesse Phone Number:</label>
+                <input type="tel" id="edit-lease-lesse-phone" name="edit-lease-lesse-phone" required />
+              </div>
             </div>
             <div class="modal-step edit-form-step" id="edit-step4">
               <div class="form-group">
                 <label for="edit-lease-price">Annual Price:</label>
                 <input type="text" id="edit-lease-price" name="edit-lease-price" required />
-              </div>
-              <div class="form-group">
-                <label for="edit-lease-sqft">Lease Square Footage:</label>
-                <input type="text" id="edit-lease-sqft" name="edit-lease-sqft" required />
-              </div>
-              <div class="form-group">
-                <label for="edit-lease-percentage-space">Lease Space Percentage:</label>
-                <input type="text" id="edit-lease-percentage-space" name="lease-percentage-space" required />
               </div>
               <div class="form-group">
                 <label for="edit-lease-term-length">Lease Term Length:</label>

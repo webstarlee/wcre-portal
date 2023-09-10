@@ -90,6 +90,9 @@ $(document).ready(function() {
 		const actionModal = $("#action-modal");
 		const selectedRow = $(`.centered-table tbody tr[data-listing-id="${listing_id}"]`);
 		const getCellText = (index) => selectedRow.find(`td:nth-child(${index})`).text().trim();
+		const getEmailFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="mailto:"]`).attr("href").replace("mailto:", "").trim();
+		const getPhoneFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="tel:"]`).attr("href").replace("tel:", "").trim();
+		const getNameFromCell = (index) => getCellText(index).replace(getEmailFromCell(index), '').replace(getPhoneFromCell(index), '').trim();
 		const setInputValue = (selector, value) => $(selector).val(value);
 		resetModalSteps(editModal);
 		$("body").addClass("modal-open");
@@ -98,14 +101,17 @@ $(document).ready(function() {
 		editModal.find(".prev-step").addClass("hidden");
 		actionModal.hide();
 		editModal.find(".modal-step-title").text("Edit Listing - " + getCellText(6));
+		setInputValue("#edit-listing-property-type", getCellText(1));
+		setInputValue("#edit-listing-type", getCellText(2));
 		setInputValue("#edit-listing-start-date", getCellText(3));
 		setInputValue("#edit-listing-end-date", getCellText(4));
 		setInputValue("#edit-listing-price", getCellText(5));
 		setInputValue("#edit-listing-street", getCellText(6));
 		setInputValue("#edit-listing-city", getCellText(7));
-		setInputValue("#edit-listing-owner-name", getCellText(8));
-		setInputValue("#edit-listing-owner-email", selectedRow.find("td:nth-child(8) a").attr("href").replace("mailto:", "").trim());
-		setInputValue("#edit-listing-owner-phone", getCellText(9));
+		setInputValue("#edit-listing-state", getCellText(8));
+		setInputValue("#edit-listing-owner-name", getNameFromCell(9));
+		setInputValue("#edit-listing-owner-email", getEmailFromCell(9));
+		setInputValue("#edit-listing-owner-phone", getPhoneFromCell(9));
 	});
 	
 
@@ -259,24 +265,30 @@ $(document).ready(function() {
 					$("#submit-listing-form").submit();
 				} else if (mode === "edit" && $(this).text() === "Submit Listing Edits") {
 					$("#edit-listing-modal").css("display", "none");
+					var listingPropertyType = $("#edit-listing-property-type").val();
+					var listingType = $("#edit-listing-type").val();
 					var listingPrice = $("#edit-listing-price").val();
 					var listingStartDate = $("#edit-listing-start-date").val();
 					var listingEndDate = $("#edit-listing-end-date").val();
 					var listingStreet = $("#edit-listing-street").val();
 					var listingCity = $("#edit-listing-city").val();
+					var listingState = $("#edit-listing-state").val();
 					var listingOwner = $("#edit-listing-owner-name").val();
 					var listingEmail = $("#edit-listing-owner-email").val();
 					var listingPhone = $("#edit-listing-owner-phone").val();
 
 					var data = {
+						listing_property_type: listingPropertyType,
+						listing_type: listingType,
 						listing_price: listingPrice,
 						listing_start_date: listingStartDate,
 						listing_end_date: listingEndDate,
 						listing_street: listingStreet,
 						listing_city: listingCity,
-						listing_owner: listingOwner,
-						listing_email: listingEmail,
-						listing_phone: listingPhone,
+						listing_state: listingState,
+						listing_owner_name: listingOwner,
+						listing_owner_email: listingEmail,
+						listing_owner_phone: listingPhone,
 					};
 
 					$.ajax({
