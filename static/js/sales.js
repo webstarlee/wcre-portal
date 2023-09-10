@@ -348,7 +348,7 @@ $(document).ready(function() {
 	});
 
 	$(".prev-step").on("click", function() {
-		var currentModal = $(this).closest(".lease-modal");
+		var currentModal = $(this).closest(".sale-modal");
 		var currentStep = currentModal.find(".active-step");
 		var prevStep = currentStep.prev(".modal-step");
 		var nextButton = currentModal.find(".next-step");
