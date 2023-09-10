@@ -86,41 +86,28 @@ $(document).ready(function() {
 
 	// OPEN EDIT LISTING MODAL
 	$("#edit-button").click(function() {
-		resetModalSteps($("#edit-listing-modal"));
+		const editModal = $("#edit-listing-modal");
+		const actionModal = $("#action-modal");
+		const selectedRow = $(`.centered-table tbody tr[data-listing-id="${listing_id}"]`);
+		const getCellText = (index) => selectedRow.find(`td:nth-child(${index})`).text().trim();
+		const setInputValue = (selector, value) => $(selector).val(value);
+		resetModalSteps(editModal);
 		$("body").addClass("modal-open");
 		$("#add-listing-modal").hide();
-		$("#edit-listing-modal").show();
-		$("#edit-listing-modal .prev-step").addClass("hidden");
-		const actionModal = $("#action-modal");
+		editModal.show();
+		editModal.find(".prev-step").addClass("hidden");
 		actionModal.hide();
-		const selectedRow = $(
-			'.centered-table tbody tr[data-listing-id="' + listing_id + '"]'
-		);
-		const listingAddress = selectedRow.find("td:nth-child(6)").text().trim();
-		$("#edit-listing-modal .modal-step-title").text(
-			"Edit Listing - " + listingAddress
-		);
-		const listingStartDate = selectedRow.find("td:nth-child(3)").text().trim();
-		const listingEndDate = selectedRow.find("td:nth-child(4)").text().trim();
-		const listingPrice = selectedRow.find("td:nth-child(5)").text().trim();
-		const listingStreet = selectedRow.find("td:nth-child(6)").text().trim();
-		const listingCity = selectedRow.find("td:nth-child(7)").text().trim();
-		const listingOwner = selectedRow.find("td:nth-child(8)").text().trim();
-		const listingOwnerEmail = selectedRow
-			.find("td:nth-child(8) a")
-			.attr("href")
-			.replace("mailto:", "")
-			.trim();
-		const listingOwnerPhone = selectedRow.find("td:nth-child(9)").text().trim();
-		$("#edit-listing-start-date").val(listingStartDate);
-		$("#edit-listing-end-date").val(listingEndDate);
-		$("#edit-listing-price").val(listingPrice);
-		$("#edit-listing-street").val(listingStreet);
-		$("#edit-listing-city").val(listingCity);
-		$("#edit-listing-owner-name").val(listingOwner);
-		$("#edit-listing-owner-email").val(listingOwnerEmail);
-		$("#edit-listing-owner-phone").val(listingOwnerPhone);
+		editModal.find(".modal-step-title").text("Edit Listing - " + getCellText(6));
+		setInputValue("#edit-listing-start-date", getCellText(3));
+		setInputValue("#edit-listing-end-date", getCellText(4));
+		setInputValue("#edit-listing-price", getCellText(5));
+		setInputValue("#edit-listing-street", getCellText(6));
+		setInputValue("#edit-listing-city", getCellText(7));
+		setInputValue("#edit-listing-owner-name", getCellText(8));
+		setInputValue("#edit-listing-owner-email", selectedRow.find("td:nth-child(8) a").attr("href").replace("mailto:", "").trim());
+		setInputValue("#edit-listing-owner-phone", getCellText(9));
 	});
+	
 
 	// CLOSE ADD LISTING MODAL
 	$("#add-listing-modal .close").click(function() {

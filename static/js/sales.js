@@ -113,51 +113,33 @@ $(document).ready(function() {
 	}
 
 	$("#edit-button").click(function() {
-		resetModalSteps($("#edit-sale-modal"));
+		const editModal = $("#edit-sale-modal");
+		const actionModal = $("#action-modal");
+		const selectedRow = $(`.centered-table tbody tr[data-sale-id="${sale_id}"]`);
+		const getCellText = (index) => selectedRow.find(`td:nth-child(${index})`).text().trim();
+		const getEmailFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a`).attr("href").replace("mailto:", "").trim();
+		const setInputValue = (selector, value) => $(selector).val(value);
+		resetModalSteps(editModal);
 		$("body").addClass("modal-open");
 		$("#add-sale-modal").hide();
-		$("#edit-sale-modal").show();
-		$("#edit-sale-modal .prev-step").addClass("hidden");
-		const actionModal = $("#action-modal");
+		editModal.show();
+		editModal.find(".prev-step").addClass("hidden");
 		actionModal.hide();
-		const selectedRow = $(
-			'.centered-table tbody tr[data-sale-id="' + sale_id + '"]'
-		);
-		const saleAddress = selectedRow.find("td:nth-child(7)").text().trim();
-		$("#edit-sale-modal .modal-step-title").text("Edit Sale - " + saleAddress);
-		const saleType = selectedRow.find("td:nth-child(2)").text().trim();
-		const saleClosingDate = selectedRow.find("td:nth-child(3)").text().trim();
-		const salePrice = selectedRow.find("td:nth-child(4)").text().trim();
-		const saleSqFt = selectedRow.find("td:nth-child(5)").text().trim();
-		const saleStreet = selectedRow.find("td:nth-child(7)").text().trim();
-		const saleCity = selectedRow.find("td:nth-child(8)").text().trim();
-		const saleBuyer = selectedRow.find("td:nth-child(9)").text().trim();
-		const saleBuyerEmail = selectedRow
-			.find("td:nth-child(9) a")
-			.attr("href")
-			.replace("mailto:", "")
-			.trim();
-		const saleBuyerPhone = selectedRow.find("td:nth-child(10)").text().trim();
-		const saleSeller = selectedRow.find("td:nth-child(11)").text().trim();
-		const saleSellerEmail = selectedRow
-			.find("td:nth-child(11) a")
-			.attr("href")
-			.replace("mailto:", "")
-			.trim();
-		const saleSellerPhone = selectedRow.find("td:nth-child(12)").text().trim();
-		$("#edit-sale-type").val(saleType);
-		$("#edit-sale-end-date").val(saleClosingDate);
-		$("#edit-sale-price").val(salePrice);
-		$("#edit-sale-sqft").val(saleSqFt);
-		$("#edit-sale-street").val(saleStreet);
-		$("#edit-sale-city").val(saleCity);
-		$("#edit-sale-buyer-name").val(saleBuyer);
-		$("#edit-sale-buyer-email").val(saleBuyerEmail);
-		$("#edit-sale-buyer-phone").val(saleBuyerPhone);
-		$("#edit-sale-seller-name").val(saleSeller);
-		$("#edit-sale-seller-email").val(saleSellerEmail);
-		$("#edit-sale-seller-phone").val(saleSellerPhone);
+		editModal.find(".modal-step-title").text("Edit Sale - " + getCellText(7));
+		setInputValue("#edit-sale-type", getCellText(2));
+		setInputValue("#edit-sale-end-date", getCellText(3));
+		setInputValue("#edit-sale-price", getCellText(4));
+		setInputValue("#edit-sale-sqft", getCellText(5));
+		setInputValue("#edit-sale-street", getCellText(7));
+		setInputValue("#edit-sale-city", getCellText(8));
+		setInputValue("#edit-sale-buyer-name", getCellText(9));
+		setInputValue("#edit-sale-buyer-email", getEmailFromCell(9));
+		setInputValue("#edit-sale-buyer-phone", getCellText(10));
+		setInputValue("#edit-sale-seller-name", getCellText(11));
+		setInputValue("#edit-sale-seller-email", getEmailFromCell(11));
+		setInputValue("#edit-sale-seller-phone", getCellText(12));
 	});
+	
 
 	// CLOSE ADD SALE MODAL
 	$("#add-sale-modal .close").click(function() {

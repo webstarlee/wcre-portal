@@ -175,49 +175,32 @@ $(document).ready(function() {
 	}
 
 	$("#edit-button").click(function() {
-		resetModalSteps($("#edit-lease-modal"));
+		const editModal = $("#edit-lease-modal");
+		const actionModal = $("#action-modal");
+		const selectedRow = $(`.centered-table tbody tr[data-lease-id="${lease_id}"]`);
+		const getCellText = (index) => selectedRow.find(`td:nth-child(${index})`).text().trim();
+		const getEmailFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a`).attr("href").replace("mailto:", "").trim();
+		const setInputValue = (selector, value) => $(selector).val(value);
+		resetModalSteps(editModal);
 		$("body").addClass("modal-open");
 		$("#add-lease-modal").hide();
-		$("#edit-lease-modal").show();
-		$("#edit-lease-modal .prev-step").addClass("hidden");
-		const actionModal = $("#action-modal");
+		editModal.show();
+		editModal.find(".prev-step").addClass("hidden");
 		actionModal.hide();
-		const selectedRow = $(
-			'.centered-table tbody tr[data-lease-id="' + lease_id + '"]'
-		);
-		const leaseAddress = selectedRow.find("td:nth-child(7)").text().trim();
-		$("#edit-lease-modal .modal-step-title").text("Edit Lease - " + leaseAddress);
-		const leasePropertyType = selectedRow.find("td:nth-child(1)").text().trim();
-		const leasePrice = selectedRow.find("td:nth-child(2)").text().trim();
-		const leaseSqFt = selectedRow.find("td:nth-child(3)").text().trim();
-		const leaseSpacePercentage = selectedRow.find("td:nth-child(5)").text().trim();
-		const leaseTermLength = selectedRow.find("td:nth-child(6)").text().trim();
-		const leaseStreet = selectedRow.find("td:nth-child(7)").text().trim();
-		const leaseCity = selectedRow.find("td:nth-child(8)").text().trim();
-		const leaseLessor = selectedRow.find("td:nth-child(9)").text().trim();
-		const leaseLessorEmail = selectedRow
-			.find("td:nth-child(9) a")
-			.attr("href")
-			.replace("mailto:", "")
-			.trim();
-		const leaseLesse = selectedRow.find("td:nth-child(10)").text().trim();
-		const leaseLesseEmail = selectedRow
-			.find("td:nth-child(10) a")
-			.attr("href")
-			.replace("mailto:", "")
-			.trim();
-		$("#edit-lease-property-type").val(leasePropertyType);
-		$("#edit-lease-price").val(leasePrice);
-		$("#edit-lease-sqft").val(leaseSqFt);
-		$("#edit-lease-percentage-space").val(leaseSpacePercentage);
-		$("#edit-lease-term-length").val(leaseTermLength);
-		$("#edit-lease-street").val(leaseStreet);
-		$("#edit-lease-city").val(leaseCity);
-		$("#edit-lease-lessor-name").val(leaseLessor);
-		$("#edit-lease-lessor-email").val(leaseLessorEmail);
-		$("#edit-lease-lesse-name").val(leaseLesse);
-		$("#edit-lease-lesse-email").val(leaseLesseEmail);
+		editModal.find(".modal-step-title").text("Edit Lease - " + getCellText(7));
+		setInputValue("#edit-lease-property-type", getCellText(1));
+		setInputValue("#edit-lease-price", getCellText(2));
+		setInputValue("#edit-lease-sqft", getCellText(3));
+		setInputValue("#edit-lease-percentage-space", getCellText(5));
+		setInputValue("#edit-lease-term-length", getCellText(6));
+		setInputValue("#edit-lease-street", getCellText(7));
+		setInputValue("#edit-lease-city", getCellText(8));
+		setInputValue("#edit-lease-lessor-name", getCellText(9));
+		setInputValue("#edit-lease-lessor-email", getEmailFromCell(9));
+		setInputValue("#edit-lease-lesse-name", getCellText(10));
+		setInputValue("#edit-lease-lesse-email", getEmailFromCell(10));
 	});
+	
 
 	// CLOSE ADD LESAE MODAL
 	$("#add-lease-modal .close").click(function() {
