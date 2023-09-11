@@ -372,29 +372,25 @@ def send_pdf_response(collection, item_id, pdf_key, default_filename):
 @app.route("/download_listing_pdf/<listing_id>", methods=["GET"])
 @login_required
 def download_listing_pdf(listing_id):
-    return send_pdf_response(listings, listing_id, "listing_agreement_file_base64", "listing.pdf")
+    return send_pdf_response(listings, listing_id, "listing_agreement_file_base64", "listing_agreement.pdf")
 
 
 @app.route("/download_sale_pdf/<sale_id>", methods=["GET"])
 @login_required
 def download_sale_pdf(sale_id):
-    return send_pdf_response(sales, sale_id, "pdf_file_base64", "sale.pdf")
+    return send_pdf_response(sales, sale_id, "sale_agreement_file_base64", "sale_agreement.pdf")
 
 
 @app.route("/download_lease_agreement_pdf/<lease_id>", methods=["GET"])
 @login_required
-def download_lease_agreement(lease_id):
-    return send_pdf_response(
-        leases, lease_id, "lease_agreement_pdf_file_base64", "lease_agreement.pdf"
-    )
+def download_lease_agreement_pdf(lease_id):
+    return send_pdf_response(leases, lease_id, "lease_agreement_file_base64", "lease_agreement.pdf")
 
 
 @app.route("/download_lease_commision_pdf/<lease_id>", methods=["GET"])
 @login_required
-def download_lease_commision(lease_id):
-    return send_pdf_response(
-        leases, lease_id, "lease_commision_pdf_file_base64", "lease_commision.pdf"
-    )
+def download_lease_commision_pdf(lease_id):
+    return send_pdf_response(leases, lease_id, "lease_commision_file_base64", "lease_commision.pdf")
 
 
 def handle_upload():
@@ -557,11 +553,11 @@ def submit_lease():
         months = request.form.get("lease-months")
         new_lease["lease_term_length"] = f"{years} Years, {months} Months"
         new_lease["brokers"] = request.form.getlist("brokers[]")
-        new_lease["lease_agreement_pdf_file_base64"] = request.form.get(
+        new_lease["lease_agreement_file_base64"] = request.form.get(
             "lease-agreement-file-base64"
         )
-        new_lease["lease_commision_pdf_file_base64"] = request.form.get(
-            "commision-agreement-file-base64"
+        new_lease["lease_commision_file_base64"] = request.form.get(
+            "lease-commision-agreement-file-base64"
         )
         state_mapping = {"NJ": "New Jersey", "PA": "Pennsylvania"}
         if new_lease["lease_state"] in state_mapping:
@@ -675,7 +671,7 @@ def edit_record(record_id, collection, fields):
 @app.route("/edit_listing/<listing_id>", methods=["POST"])
 @login_required
 def edit_listing(listing_id):
-    existing_listing = listings.find_one({"_id": listing_id})
+    existing_listing = listings.find_one({"_id": ObjectId(listing_id)})
     if not request.json.get('listing_agreement_file_base64') and existing_listing.get('listing_agreement_file_base64'):
         request.json.pop('listing_agreement_file_base64', None)
     fields = [
@@ -698,6 +694,9 @@ def edit_listing(listing_id):
 @app.route("/edit_sale/<sale_id>", methods=["POST"])
 @login_required
 def edit_sale(sale_id):
+    existing_sale = sales.find_one({"_id": ObjectId(sale_id)})
+    if not request.json.get('sale_agreement_file_base64') and existing_sale.get('sale_agreement_file_base64'):
+        request.json.pop('sale_agreement_file_base64', None)
     fields = [
         "sale_street",
         "sale_city",
@@ -709,6 +708,7 @@ def edit_sale(sale_id):
         "sale_buyer_email",
         "sale_buyer_phone",
         "sale_end_date",
+        "sale_agreement_file_base64",
         "sale_property_type",
         "sale_type",
         "sale_price",
@@ -719,6 +719,11 @@ def edit_sale(sale_id):
 @app.route("/edit_lease/<lease_id>", methods=["POST"])
 @login_required
 def edit_lease(lease_id):
+    existing_lease = leases.find_one({"_id": ObjectId(lease_id)})
+    if not request.json.get('lease_agreement_file_base64') and existing_lease.get('lease_agreement_file_base64'):
+        request.json.pop('lease_agreement_file_base64', None)
+    if not request.json.get('lease_commision_file_base64') and existing_lease.get('lease_commision_file_base64'):
+        request.json.pop('lease_commision_file_base64', None)
     fields = [
         "lease_street",
         "lease_city",
@@ -727,6 +732,8 @@ def edit_lease(lease_id):
         "lease_price",
         "lease_term_length",
         "lease_percentage_space",
+        "lease_agreement_file_base64",
+        "lease_commision_file_base64"
         "lease_lessor_name",
         "lease_lessor_email",
         "lease_lesse_name",

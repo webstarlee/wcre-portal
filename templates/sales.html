@@ -106,7 +106,7 @@
               </td>            
               <td class="brokers"> {% for broker in sale.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
               <td>
-                <form method="POST"> {% if sale.pdf_file_base64 %} <a href="{{ url_for('download_sale_pdf', sale_id=sale._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
+                <form method="POST"> {% if sale.sale_agreement_file_base64 %} <a href="{{ url_for('download_sale_pdf', sale_id=sale._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
               </td>
             </tr> {% endfor %} </tbody>
           <table>
@@ -321,9 +321,9 @@
                         <input type="text" id="edit-sale-price" name="edit-sale-price" required />
                       </div>
                       <div class="form-group">
-                        <button id="upload-sale-agreement" type="button"> Upload Sale Agreement </button>
-                        <input id="sale-agreement" type="file" style="display: none" accept=".pdf" />
-                        <input type="hidden" id="sale-agreement-file-base64" name="sale-agreement-file-base64" />
+                        <button id="edit-upload-sale-agreement" type="button"> Upload Sale Agreement </button>
+                        <input id="edit-sale-agreement" type="file" style="display: none" accept=".pdf" />
+                        <input type="hidden" id="edit-sale-agreement-file-base64" name="edit-sale-agreement-file-base64" />
                       </div>
                     </div>
                     <div class="modal-navigation">

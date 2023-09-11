@@ -357,7 +357,7 @@ $(document).ready(function() {
 						showNotification("Error Uploading Document", "error-notification-modal");
 					}
 				},
-				error: function(xhr, status, error) {
+				error: function() {
 					showNotification("Error Uploading Document", "error-notification-modal");
 				}
 			});

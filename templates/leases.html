@@ -109,10 +109,10 @@
               </td>
               <td class="brokers"> {% for broker in lease.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
               <td>
-                <form action="{{ url_for('submit_lease') }}" class="lease-form" method="POST"> {% if lease.lease_agreement_pdf_file_base64 %} <a href="{{ url_for('download_lease_agreement', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
+                <form method="POST"> {% if lease.lease_agreement_file_base64 %} <a href="{{ url_for('download_lease_agreement_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
               </td>
               <td>
-                <form action="{{ url_for('submit_lease') }}" class="lease-form" method="POST"> {% if lease.lease_commision_pdf_file_base64 %} <a href="{{ url_for('download_lease_commision', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
+                <form method="POST"> {% if lease.lease_commision_file_base64 %} <a href="{{ url_for('download_lease_commision_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
               </td>
             </tr> 
             {% endfor %} 
@@ -262,9 +262,9 @@
                 <input type="hidden" id="lease-agreement-file-base64" name="lease-agreement-file-base64" />
               </div>
               <div class="form-group">
-                <button id="upload-commision-agreement" type="button"> Upload Commision Agreement </button>
-                <input id="commision-agreement" type="file" style="display: none" accept=".pdf" />
-                <input type="hidden" id="commision-agreement-file-base64" name="commision-agreement-file-base64" />
+                <button id="upload-lease-commision-agreement" type="button"> Upload Commision Agreement </button>
+                <input id="lease-commision-agreement" type="file" style="display: none" accept=".pdf" />
+                <input type="hidden" id="lease-commision-agreement-file-base64" name="lease-commision-agreement-file-base64" />
               </div>
             </div>
             <div class="modal-navigation">
@@ -355,14 +355,14 @@
                 <input type="text" id="edit-lease-term-length" name="edit-lease-term-length" required />
               </div>
               <div class="form-group">
-                <button id="upload-lease-agreement" type="button"> Upload Lease Agreement </button>
-                <input id="lease-agreement" type="file" style="display: none" accept=".pdf" />
-                <input type="hidden" id="lease-agreement-file-base64" name="lease-agreement-file-base64" />
+                <button id="edit-upload-lease-agreement" type="button"> Upload Lease Agreement </button>
+                <input id="edit-lease-agreement" type="file" style="display: none" accept=".pdf" />
+                <input type="hidden" id="edit-lease-agreement-file-base64" name="edit-lease-agreement-file-base64" />
               </div>
               <div class="form-group">
-                <button id="upload-commision-agreement" type="button"> Upload Commision Agreement </button>
-                <input id="commision-agreement" type="file" style="display: none" accept=".pdf" />
-                <input type="hidden" id="commision-agreement-file-base64" name="commision-agreement-file-base64" />
+                <button id="edit-upload-lease-commision-agreement" type="button"> Upload Commision Agreement </button>
+                <input id="edit-lease-commision-agreement" type="file" style="display: none" accept=".pdf" />
+                <input type="hidden" id="edit-lease-commision-agreement-file-base64" name="edit-lease-commision-agreement-file-base64" />
               </div>
             </div>
             <div class="modal-navigation">

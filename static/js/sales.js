@@ -1,6 +1,8 @@
 $(document).ready(function() {
 	var fileInput = document.getElementById("sale-agreement");
 	var uploadButton = document.getElementById("upload-sale-agreement");
+	var editFileInput = document.getElementById("edit-sale-agreement");
+	var editUploadButton = document.getElementById("edit-upload-sale-agreement");
 	const buyerPhoneInput = document.getElementById("sale-buyer-phone");
 	const editBuyerPhoneInput = document.getElementById("edit-sale-buyer-phone");
 	const sellerPhoneInput = document.getElementById("sale-seller-phone");
@@ -18,6 +20,29 @@ $(document).ready(function() {
 	sqFootageInput.addEventListener("input", () => formatSqFootage(sqFootageInput));
 	editsqFootageInput.addEventListener("input", () => formatSqFootage(editsqFootageInput));
 
+	function toggleErrorClass($element, isError) {
+		isError ? $element.addClass("error") : $element.removeClass("error");
+	}
+
+	function validateStep() {
+		var currentStep = $(".active-step.main-form-step");
+		var inputs = currentStep.find("input:required, select:required");
+		var isValid = true;
+	
+		inputs.each(function() {
+			var isEmpty = $(this).val().trim() === "";
+			toggleErrorClass($(this), isEmpty);
+			if (isEmpty) isValid = false;
+		});
+		return isValid;
+	}
+	
+	function validateBrokers() {
+		var $brokerInput = $("#sale-brokers");
+		var isValid = $brokerInput.val() && $brokerInput.val().length > 0;
+		toggleErrorClass($brokerInput, !isValid);
+		return isValid;
+	}
 
 	function showNotification(message, elementId) {
 		var notification = $("#" + elementId);
@@ -159,34 +184,6 @@ $(document).ready(function() {
 		$("#edit-sale-modal").hide();
 	});
 
-	function validateStep() {
-		var currentStep = $(".active-step.main-form-step");
-		var inputs = currentStep.find("input:required, select:required");
-		var isValid = true;
-
-		inputs.each(function() {
-			if ($(this).val().trim() === "") {
-				isValid = false;
-				$(this).addClass("error");
-			} else {
-				$(this).removeClass("error");
-			}
-		});
-		return isValid;
-	}
-
-	function validateBrokers() {
-		var selectedBrokers = $("#sale-brokers").val(); // use the .val() method instead
-		var isValid = selectedBrokers && selectedBrokers.length > 0;
-
-		if (!isValid) {
-			$("#sale-brokers").addClass("error");
-		} else {
-			$("#sale-brokers").removeClass("error");
-		}
-		return isValid;
-	}
-
 	let currentPage = 1;
 	const searchSales = (page) => {
 		const searchTerm = $("#search-input").val().toLowerCase();
@@ -263,11 +260,6 @@ $(document).ready(function() {
 		}
 	});
 
-
-	uploadButton.addEventListener("click", function(e) {
-		fileInput.click();
-	});
-
 	$(".modal-content").click(function(event) {
 		event.stopPropagation();
 	});
@@ -313,11 +305,13 @@ $(document).ready(function() {
 					var saleSeller = $("#edit-sale-seller-name").val();
 					var saleSellerEmail = $("#edit-sale-seller-email").val();
 					var saleSellerPhone = $("#edit-sale-seller-phone").val();
+					var fileBase64 = $("#edit-sale-agreement-file-base64").val();
 
 					var data = {
 						sale_type: saleType,
 						sale_property_type: salePropertyType,
 						sale_end_date: saleClosingDate,
+						sale_agreement_file_base64: fileBase64,
 						sale_price: salePrice,
 						sale_sqft: saleSqFt,
 						sale_street: saleStreet,
@@ -338,7 +332,6 @@ $(document).ready(function() {
 						data: JSON.stringify(data),
 						success: function(response) {
 							if (response.success) {
-								console.log("Sale Edited Successfully");
 								location.reload();
 							} else {
 								showNotification("Error Editing Sale", "error-notification-modal");
@@ -383,33 +376,45 @@ $(document).ready(function() {
 		}
 	});
 
-	// UPLOAD DOCUMENT
-	fileInput.addEventListener("change", function(e) {
-		var file = this.files[0];
-		var formData = new FormData();
-		formData.append("file", file);
+	// UPLOAD SALE AGREEMENT FUNCTION
+	function handleFileUpload(inputElement, buttonElement, resultElementId) {
+		inputElement.addEventListener("change", function(e) {
+			var file = this.files[0];
+			var formData = new FormData();
+			formData.append("file", file);
 
-		$.ajax({
-			url: "/upload_pdf",
-			type: "POST",
-			data: formData,
-			processData: false,
-			contentType: false,
-			success: function(data) {
-				if (data.success) {
-					uploadButton.textContent = "Document Uploaded ✔";
-					uploadButton.disabled = true;
-					document.getElementById("sale-agreement-file-base64").value =
-						data.fileBase64;
-				} else {
+			$.ajax({
+				url: "/upload_pdf",
+				type: "POST",
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function(data) {
+					if (data.success) {
+						buttonElement.textContent = "Document Uploaded ✔";
+						buttonElement.disabled = true;
+						document.getElementById(resultElementId).value = data.fileBase64;
+					} else {
+						showNotification("Error Uploading Document", "error-notification-modal");
+					}
+				},
+				error: function() {
 					showNotification("Error Uploading Document", "error-notification-modal");
 				}
-			},
-			error: function() {
-				showNotification("Error Uploading Document", "error-notification-modal");
-			},
+			});
 		});
-	});
+	}
+
+	function handleButtonClick(buttonElement, inputElement) {
+		buttonElement.addEventListener("click", function(e) {
+			inputElement.click();
+		});
+	}
+
+	handleButtonClick(uploadButton, fileInput);
+	handleFileUpload(fileInput, uploadButton, "sale-agreement-file-base64");
+	handleButtonClick(editUploadButton, editFileInput);
+	handleFileUpload(editFileInput, editUploadButton, "edit-sale-agreement-file-base64");
 
 	// OPEN ACTION MODAL
 	$(document).ready(function() {
