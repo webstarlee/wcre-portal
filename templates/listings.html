@@ -17,9 +17,7 @@
   </head>
   <body data-is-admin="{{ is_admin }}">
     <div id="error-notification" class="error-notification"></div>
-    <div id="success-notification" class="success-notification"></div> 
-    {% include 'sidebar.html' %} 
-    <div class="content">
+    <div id="success-notification" class="success-notification"></div> {% include 'sidebar.html' %} <div class="content">
       <div class="toolbar" style="padding: 10px 0; position: relative">
         <form id="search-form" class="search-form" style="
             text-align: start;
@@ -65,9 +63,7 @@
               <th style="border-top-right-radius: 7px">Listing Agreement</th>
             </tr>
           </thead>
-          <tbody> 
-            {% for listing in listings %} 
-            <tr data-listing-id="{{ listing._id }}">
+          <tbody> {% for listing in listings %} <tr data-listing-id="{{ listing._id }}">
               <td>{{ listing.listing_property_type }}</td>
               <td>{{ listing.listing_type }}</td>
               <td>{{ listing.listing_start_date }}</td>
@@ -77,28 +73,18 @@
               <td>{{ listing.listing_price }}</td>
               <td>{{ listing.listing_street }}</td>
               <td>{{ listing.listing_city }}</td>
-               <td>
-                {% if listing.listing_state == "New Jersey" %}
-                    NJ
-                {% elif listing.listing_state == "Pennsylvania" %}
-                    PA
-                {% else %}
-                    {{ listing.listing_state }}
-                {% endif %}
-              </td>   
+              <td> {% if listing.listing_state == "New Jersey" %} NJ {% elif listing.listing_state == "Pennsylvania" %} PA {% else %} {{ listing.listing_state }} {% endif %} </td>
               <td>
                 <div class="contact-info">
-                    <a href="mailto:{{ listing.listing_owner_email }}">{{ listing.listing_owner_name }}</a>
-                    <a href="tel:{{ listing.listing_owner_phone }}">{{ listing.listing_owner_phone }}</a>
+                  <a href="mailto:{{ listing.listing_owner_email }}">{{ listing.listing_owner_name }}</a>
+                  <a href="tel:{{ listing.listing_owner_phone }}">{{ listing.listing_owner_phone }}</a>
                 </div>
-            </td>
+              </td>
               <td class="brokers"> {% for broker in listing.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
               <td>
-                <form method="POST"> {% if listing.pdf_file_base64 %} <a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
+                <form method="POST"> {% if listing.listing_agreement_file_base64 %} <a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
               </td>
-            </tr> 
-            {% endfor %} 
-          </tbody>
+            </tr> {% endfor %} </tbody>
           <table>
             {{ pagination.links }}
             <div>
@@ -116,11 +102,11 @@
                       <h2 class="modal-step-title"> New Listing - Property Information </h2>
                       <div class="form-group">
                         <label for="listing-street">Listing Street:</label>
-                        <input type="text" id="listing-street" name="listing-street" placeholder= "Enter Street Address:" required />
+                        <input type="text" id="listing-street" name="listing-street" placeholder="Enter Street Address:" required />
                       </div>
                       <div class="form-group">
                         <label for="listing-city">Listing City:</label>
-                        <input type="text" id="listing-city" name="listing-city" placeholder= "Enter Town/City:" required />
+                        <input type="text" id="listing-city" name="listing-city" placeholder="Enter Town/City:" required />
                       </div>
                       <div class="form-group">
                         <label for="listing-state">Listing State:</label>
@@ -145,15 +131,15 @@
                       <h2 class="modal-step-title"> New Listing - Owner Information </h2>
                       <div class="form-group">
                         <label for="listing-owner-name">Owner Name:</label>
-                        <input type="text" id="listing-owner-name" name="listing-owner-name" placeholder= "Enter Owner Name:" required />
+                        <input type="text" id="listing-owner-name" name="listing-owner-name" placeholder="Enter Owner Name:" required />
                       </div>
                       <div class="form-group">
                         <label for="listing-owner-email">Owner Email:</label>
-                        <input type="email" id="listing-owner-email" name="listing-owner-email" placeholder= "Enter Owner Email:" required />
+                        <input type="email" id="listing-owner-email" name="listing-owner-email" placeholder="Enter Owner Email:" required />
                       </div>
                       <div class="form-group">
                         <label for="listing-owner-phone">Owner Phone Number:</label>
-                        <input type="tel" id="listing-owner-phone" name="listing-owner-phone" placeholder= "Enter Owner Phone Number:" required />
+                        <input type="tel" id="listing-owner-phone" name="listing-owner-phone" placeholder="Enter Owner Phone Number:" required />
                       </div>
                     </div>
                     <div class="modal-step main-form-step" id="main-step3">
@@ -169,15 +155,15 @@
                       </div>
                       <div class="form-group">
                         <label for="listing-price">Listing Price:</label>
-                        <input type="text" id="listing-price" name="listing-price" placeholder= "Enter Listing Price:" required />
+                        <input type="text" id="listing-price" name="listing-price" placeholder="Enter Listing Price:" required />
                       </div>
                       <div class="form-group">
                         <label for="listing-start-date">Listing Starting Date:</label>
-                        <input type="text" id="listing-start-date" name="listing-start-date" placeholder= "Enter Listing Start Date:" required />
+                        <input type="text" id="listing-start-date" name="listing-start-date" placeholder="Enter Listing Start Date:" required />
                       </div>
                       <div class="form-group">
                         <label for="listing-end-date">Listing Closing Date:</label>
-                        <input type="text" id="listing-end-date" name="listing-end-date" placeholder= "Enter Listing Closing Date:" required />
+                        <input type="text" id="listing-end-date" name="listing-end-date" placeholder="Enter Listing Closing Date:" required />
                       </div>
                       <div class="form-group">
                         <label for="listing-brokers">Brokers:</label>
@@ -286,9 +272,9 @@
                         <input type="text" id="edit-listing-price" name="edit-listing-price" required />
                       </div>
                       <div class="form-group">
-                        <button id="upload-listing-agreement" type="button"> Upload Listing Agreement </button>
-                        <input id="listing-agreement" type="file" style="display: none" accept=".pdf" />
-                        <input type="hidden" id="listing-agreement-file-base64" name="listing-agreement-file-base64" />
+                        <button id="edit-upload-listing-agreement" type="button"> Upload Listing Agreement </button>
+                        <input id="edit-listing-agreement" type="file" style="display: none" accept=".pdf" />
+                        <input type="hidden" id="edit-listing-agreement-file-base64" name="edit-listing-agreement-file-base64" />
                       </div>
                     </div>
                     <div class="modal-navigation">

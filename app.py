@@ -372,7 +372,7 @@ def send_pdf_response(collection, item_id, pdf_key, default_filename):
 @app.route("/download_listing_pdf/<listing_id>", methods=["GET"])
 @login_required
 def download_listing_pdf(listing_id):
-    return send_pdf_response(listings, listing_id, "pdf_file_base64", "listing.pdf")
+    return send_pdf_response(listings, listing_id, "listing_agreement_file_base64", "listing.pdf")
 
 
 @app.route("/download_sale_pdf/<sale_id>", methods=["GET"])
@@ -675,6 +675,9 @@ def edit_record(record_id, collection, fields):
 @app.route("/edit_listing/<listing_id>", methods=["POST"])
 @login_required
 def edit_listing(listing_id):
+    existing_listing = listings.find_one({"_id": listing_id})
+    if not request.json.get('listing_agreement_file_base64') and existing_listing.get('listing_agreement_file_base64'):
+        request.json.pop('listing_agreement_file_base64', None)
     fields = [
         "listing_street",
         "listing_city",

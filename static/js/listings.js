@@ -1,6 +1,8 @@
 $(document).ready(function() {
 	var fileInput = document.getElementById("listing-agreement");
 	var uploadButton = document.getElementById("upload-listing-agreement");
+	var editFileInput = document.getElementById("edit-listing-agreement");
+	var editUploadButton = document.getElementById("edit-upload-listing-agreement");
 	const ownerPhoneInput = document.getElementById("listing-owner-phone");
 	const editOwnerPhoneInput = document.getElementById("edit-listing-owner-phone");
 	const listingPriceInput = document.getElementById("listing-price");
@@ -9,6 +11,37 @@ $(document).ready(function() {
 	editOwnerPhoneInput.addEventListener("input", () => formatPhoneNumber(editOwnerPhoneInput));
 	listingPriceInput.addEventListener("input", () => formatPrice(listingPriceInput));
 	editListingPriceInput.addEventListener("input", () => formatPrice(editListingPriceInput));
+
+	function toggleErrorClass($element, isError) {
+		isError ? $element.addClass("error") : $element.removeClass("error");
+	}
+	
+	function validateStep() {
+		var currentStep = $(".active-step.main-form-step");
+		var inputs = currentStep.find("input:required, select:required");
+		var isValid = true;
+	
+		inputs.each(function() {
+			var isEmpty = $(this).val().trim() === "";
+			toggleErrorClass($(this), isEmpty);
+			if (isEmpty) isValid = false;
+		});
+		return isValid;
+	}
+	
+	function validateBrokers() {
+		var $brokerInput = $("#listing-brokers");
+		var isValid = $brokerInput.val() && $brokerInput.val().length > 0;
+		toggleErrorClass($brokerInput, !isValid);
+		return isValid;
+	}
+	
+	function validateDates() {
+		var $startDateInput = $("#listing-start-date");
+		var isValid = $startDateInput.val().trim().length > 0;
+		toggleErrorClass($startDateInput, !isValid);
+		return isValid;
+	}	
 
 	function showNotification(message, elementId) {
 		var notification = $("#" + elementId);
@@ -113,7 +146,7 @@ $(document).ready(function() {
 		setInputValue("#edit-listing-owner-email", getEmailFromCell(9));
 		setInputValue("#edit-listing-owner-phone", getPhoneFromCell(9));
 	});
-	
+
 
 	// CLOSE ADD LISTING MODAL
 	$("#add-listing-modal .close").click(function() {
@@ -127,46 +160,6 @@ $(document).ready(function() {
 		$("#edit-listing-modal").hide();
 	});
 
-	function validateStep() {
-		var currentStep = $(".active-step.main-form-step");
-		var inputs = currentStep.find("input:required, select:required");
-		var isValid = true;
-
-		inputs.each(function() {
-			if ($(this).val().trim() === "") {
-				isValid = false;
-				$(this).addClass("error");
-			} else {
-				$(this).removeClass("error");
-			}
-		});
-		return isValid;
-	}
-
-	function validateBrokers() {
-		var selectedBrokers = $("#listing-brokers").val(); // use the .val() method instead
-		var isValid = selectedBrokers && selectedBrokers.length > 0;
-
-		if (!isValid) {
-			$("#listing-brokers").addClass("error");
-		} else {
-			$("#listing-brokers").removeClass("error");
-		}
-		return isValid;
-	}
-
-	function validateDates() {
-		var startDateInput = $("#listing-start-date");
-		var isValid = startDateInput.val().trim().length > 0;
-
-		if (!isValid) {
-			$("#listing-start-date").addClass("error");
-		} else {
-			$("#listing-start-date").removeClass("error");
-		}
-		return isValid;
-	}
-
 	let currentPage = 1;
 	const searchListings = (page) => {
 		const searchTerm = $("#search-input").val().toLowerCase();
@@ -174,7 +167,10 @@ $(document).ready(function() {
 			url: "/search_listings",
 			method: "POST",
 			contentType: "application/json",
-			data: JSON.stringify({ query: searchTerm, page }),
+			data: JSON.stringify({
+				query: searchTerm,
+				page
+			}),
 			success: renderSearchResults,
 			error: handleSearchError
 		});
@@ -228,11 +224,6 @@ $(document).ready(function() {
 		}
 	});
 
-
-	uploadButton.addEventListener("click", function(e) {
-		fileInput.click();
-	});
-
 	$(".modal-content").click(function(event) {
 		event.stopPropagation();
 	});
@@ -276,12 +267,14 @@ $(document).ready(function() {
 					var listingOwner = $("#edit-listing-owner-name").val();
 					var listingEmail = $("#edit-listing-owner-email").val();
 					var listingPhone = $("#edit-listing-owner-phone").val();
+					var fileBase64 = $("#edit-listing-agreement-file-base64").val();
 
 					var data = {
 						listing_property_type: listingPropertyType,
 						listing_type: listingType,
 						listing_price: listingPrice,
 						listing_start_date: listingStartDate,
+						listing_agreement_file_base64: fileBase64,
 						listing_end_date: listingEndDate,
 						listing_street: listingStreet,
 						listing_city: listingCity,
@@ -325,7 +318,7 @@ $(document).ready(function() {
 		if (prevStep.length) {
 			currentStep.removeClass("active-step");
 			prevStep.addClass("active-step");
-	
+
 			if (!prevStep.next(".modal-step").length) {
 				if (currentModal.data("mode") === "add") {
 					nextButton.text("Submit Listing");
@@ -335,40 +328,52 @@ $(document).ready(function() {
 			} else {
 				nextButton.text("Next");
 			}
-	
+
 			if (currentModal.data("mode") === "add") {
 				currentStep.find("input:required, select:required").removeClass("error");
 			}
 		}
 	});
 
-	// UPLOAD DOCUMENT
-	fileInput.addEventListener("change", function(e) {
-		var file = this.files[0];
-		var formData = new FormData();
-		formData.append("file", file);
+	// UPLOAD LISTING AGREEMENT FUNCTION
+	function handleFileUpload(inputElement, buttonElement, resultElementId) {
+		inputElement.addEventListener("change", function(e) {
+			var file = this.files[0];
+			var formData = new FormData();
+			formData.append("file", file);
 
-		$.ajax({
-			url: "/upload_pdf",
-			type: "POST",
-			data: formData,
-			processData: false,
-			contentType: false,
-			success: function(data) {
-				if (data.success) {
-					uploadButton.textContent = "Document Uploaded ✔";
-					uploadButton.disabled = true;
-					document.getElementById("listing-agreement-file-base64").value =
-						data.fileBase64;
-				} else {
+			$.ajax({
+				url: "/upload_pdf",
+				type: "POST",
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function(data) {
+					if (data.success) {
+						buttonElement.textContent = "Document Uploaded ✔";
+						buttonElement.disabled = true;
+						document.getElementById(resultElementId).value = data.fileBase64;
+					} else {
+						showNotification("Error Uploading Document", "error-notification-modal");
+					}
+				},
+				error: function(xhr, status, error) {
 					showNotification("Error Uploading Document", "error-notification-modal");
 				}
-			},
-			error: function(xhr, status, error) {
-				showNotification("Error Uploading Document", "error-notification-modal");
-			},
+			});
 		});
-	});
+	}
+
+	function handleButtonClick(buttonElement, inputElement) {
+		buttonElement.addEventListener("click", function(e) {
+			inputElement.click();
+		});
+	}
+
+	handleButtonClick(uploadButton, fileInput);
+	handleFileUpload(fileInput, uploadButton, "listing-agreement-file-base64");
+	handleButtonClick(editUploadButton, editFileInput);
+	handleFileUpload(editFileInput, editUploadButton, "edit-listing-agreement-file-base64");
 
 	// OPEN ACTION MODAL
 	var isAdmin = $("body").data("is-admin") === "True";
