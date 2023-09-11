@@ -309,25 +309,42 @@ $(document).ready(function() {
 
 	const createRowForLease = (result) => {
 		const $row = $("<tr>").attr("data-lease-id", result._id);
+		console.log(result.lease_agreement_file_base64);
+		let price = parseFloat(result.lease_price.replace("$", "").replace(",", ""));
+		let sqft = parseFloat(result.lease_sqft.replace(",", ""));
+		let pricePerSqft = price / sqft;
+		const stateMapping = {
+			"New Jersey": "NJ",
+			"Pennsylvania": "PA"
+		};
+		let stateValue = stateMapping[result.lease_state] || result.lease_state;
 		const cells = [
 			result.lease_property_type,
-			result.lease_price || "None",
+			result.lease_price,
 			result.lease_sqft,
-			calculatePricePerSqft(result.lease_price, result.lease_sqft),
+			"$" + pricePerSqft.toFixed(2),
 			result.lease_percentage_space,
 			result.lease_term_length,
 			result.lease_street,
 			result.lease_city,
-			`<a href="mailto:${result.lease_lessor_email}">${result.lease_lessor_name}</a>`,
-			`<a href="mailto:${result.lease_lesse_email}">${result.lease_lesse_name}</a>`,
+			stateValue,
+			`<div class="contact-info">
+				<a href="mailto:${result.lease_lessor_email}">${result.lease_lessor_name}</a>
+				<a href="tel:${result.lease_lessor_phone}">${result.lease_lessor_phone}</a>
+			 </div>`,
+			`<div class="contact-info">
+				<a href="mailto:${result.lease_lesse_email}">${result.lease_lesse_name}</a>
+				<a href="tel:${result.lease_lesse_phone}">${result.lease_lesse_phone}</a>
+			 </div>`
 		];
 		cells.forEach(cell => $row.append($("<td>").html(cell)));
 		const brokerElements = $.map(result.brokers, broker => $("<span>").addClass("broker-name").text(broker));
-		$row.append($("<td>").append(brokerElements));
-		$row.append($("<td>").html(result.lease_agreement_pdf_file_base64 ? `<a href="/download_lease_agreement_pdf/${result._id}">Fully Executed</a>` : "Pending"));
-		$row.append($("<td>").html(result.lease_commision_pdf_file_base64 ? `<a href="/download_lease_commision_pdf/${result._id}">Fully Executed</a>` : "Pending"));
+		$row.append($("<td>").addClass("brokers").append(brokerElements));
+		$row.append($("<td>").html(result.lease_agreement_file_base64 ? `<form method="POST"><a href="/download_lease_agreement_pdf/${result._id}">Fully Executed</a></form>` : "Pending"));
+		$row.append($("<td>").html(result.lease_commision_file_base64 ? `<form method="POST"><a href="/download_lease_commision_pdf/${result._id}">Fully Executed</a></form>` : "Pending"));
 		return $row;
 	};
+	
 
 	const handleSearchError = (textStatus, errorThrown) => {
 		console.error("Error Fetching Lease Results:", textStatus, errorThrown);
