@@ -477,13 +477,12 @@ $(document).ready(function() {
 		}
 	});
 
-	// UPLOAD LEASE AGREEMENT FUNCTION
-	function handleFileUpload(inputElement, buttonElement, resultElementId) {
-		inputElement.addEventListener("change", function(e) {
+	function handleFileUpload(config) {
+		config.inputElement.addEventListener("change", function(e) {
 			var file = this.files[0];
 			var formData = new FormData();
 			formData.append("file", file);
-
+	
 			$.ajax({
 				url: "/upload_pdf",
 				type: "POST",
@@ -492,9 +491,9 @@ $(document).ready(function() {
 				contentType: false,
 				success: function(data) {
 					if (data.success) {
-						buttonElement.textContent = "Document Uploaded ✔";
-						buttonElement.disabled = true;
-						document.getElementById(resultElementId).value = data.fileBase64;
+						config.buttonElement.textContent = "Document Uploaded ✔";
+						config.buttonElement.disabled = true;
+						document.getElementById(config.resultElementId).value = data.fileBase64;
 					} else {
 						showNotification("Error Uploading Document", "error-notification-modal");
 					}
@@ -504,23 +503,38 @@ $(document).ready(function() {
 				}
 			});
 		});
-	}
-
-	function handleButtonClick(buttonElement, inputElement) {
-		buttonElement.addEventListener("click", function(e) {
-			inputElement.click();
+		config.buttonElement.addEventListener("click", function(e) {
+			config.inputElement.click();
 		});
 	}
-
-	handleButtonClick(uploadButtonAgreement, agreementFileInput);
-	handleFileUpload(agreementFileInput, uploadButtonAgreement, "lease-agreement-file-base64");
-	handleButtonClick(editUploadButtonAgreement, editAgreementFileInput);
-	handleFileUpload(editAgreementFileInput, editUploadButtonAgreement, "edit-lease-agreement-file-base64");
 	
-	handleButtonClick(uploadButtonCommision, commisionFileInput);
-	handleFileUpload(commisionFileInput, uploadButtonCommision, "lease-commision-agreement-file-base64");
-	handleButtonClick(editUploadButtonCommision, editCommisionFileInput);
-	handleFileUpload(editCommisionFileInput, editUploadButtonCommision, "edit-lease-commision-agreement-file-base64");
+	var configurations = [
+		{
+			inputElement: agreementFileInput,
+			buttonElement: uploadButtonAgreement,
+			resultElementId: "lease-agreement-file-base64"
+		},
+		{
+			inputElement: editAgreementFileInput,
+			buttonElement: editUploadButtonAgreement,
+			resultElementId: "edit-lease-agreement-file-base64"
+		},
+		{
+			inputElement: commisionFileInput,
+			buttonElement: uploadButtonCommision,
+			resultElementId: "lease-commision-agreement-file-base64"
+		},
+		{
+			inputElement: editCommisionFileInput,
+			buttonElement: editUploadButtonCommision,
+			resultElementId: "edit-lease-commision-agreement-file-base64"
+		}
+	];
+	
+	// Loop through configurations and set up event listeners
+	configurations.forEach(function(config) {
+		handleFileUpload(config);
+	});	
 	
 	
 	// OPEN ACTION MODAL

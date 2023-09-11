@@ -720,10 +720,14 @@ def edit_sale(sale_id):
 @login_required
 def edit_lease(lease_id):
     existing_lease = leases.find_one({"_id": ObjectId(lease_id)})
-    if not request.json.get('lease_agreement_file_base64') and existing_lease.get('lease_agreement_file_base64'):
-        request.json.pop('lease_agreement_file_base64', None)
-    if not request.json.get('lease_commision_file_base64') and existing_lease.get('lease_commision_file_base64'):
-        request.json.pop('lease_commision_file_base64', None)
+    base64_fields = [
+        'lease_agreement_file_base64',
+        'lease_commision_file_base64'
+    ]
+    for field in base64_fields:
+        if not request.json.get(field) and existing_lease.get(field):
+            request.json.pop(field, None)
+
     fields = [
         "lease_street",
         "lease_city",
@@ -731,15 +735,15 @@ def edit_lease(lease_id):
         "lease_property_type",
         "lease_price",
         "lease_term_length",
-        "lease_percentage_space",
-        "lease_agreement_file_base64",
-        "lease_commision_file_base64",
+        "lease_percentage_space"
+    ] + base64_fields + [
         "lease_lessor_name",
         "lease_lessor_email",
         "lease_lesse_name",
-        "lease_lesse_email",
+        "lease_lesse_email"
     ]
     return edit_record(lease_id, leases, fields)
+
 
 
 def search_in_collection(collection, fields, page, search_query, items_per_page=12):

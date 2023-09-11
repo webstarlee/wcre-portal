@@ -335,13 +335,12 @@ $(document).ready(function() {
 		}
 	});
 
-	// UPLOAD LISTING AGREEMENT FUNCTION
-	function handleFileUpload(inputElement, buttonElement, resultElementId) {
-		inputElement.addEventListener("change", function(e) {
+	function handleFileUpload(config) {
+		config.inputElement.addEventListener("change", function(e) {
 			var file = this.files[0];
 			var formData = new FormData();
 			formData.append("file", file);
-
+	
 			$.ajax({
 				url: "/upload_pdf",
 				type: "POST",
@@ -350,9 +349,9 @@ $(document).ready(function() {
 				contentType: false,
 				success: function(data) {
 					if (data.success) {
-						buttonElement.textContent = "Document Uploaded ✔";
-						buttonElement.disabled = true;
-						document.getElementById(resultElementId).value = data.fileBase64;
+						config.buttonElement.textContent = "Document Uploaded ✔";
+						config.buttonElement.disabled = true;
+						document.getElementById(config.resultElementId).value = data.fileBase64;
 					} else {
 						showNotification("Error Uploading Document", "error-notification-modal");
 					}
@@ -362,18 +361,28 @@ $(document).ready(function() {
 				}
 			});
 		});
-	}
-
-	function handleButtonClick(buttonElement, inputElement) {
-		buttonElement.addEventListener("click", function(e) {
-			inputElement.click();
+		config.buttonElement.addEventListener("click", function(e) {
+			config.inputElement.click();
 		});
 	}
-
-	handleButtonClick(uploadButton, fileInput);
-	handleFileUpload(fileInput, uploadButton, "listing-agreement-file-base64");
-	handleButtonClick(editUploadButton, editFileInput);
-	handleFileUpload(editFileInput, editUploadButton, "edit-listing-agreement-file-base64");
+	
+	var configurations = [
+		{
+			inputElement: fileInput,
+			buttonElement: uploadButton,
+			resultElementId: "listing-agreement-file-base64"
+		},
+		{
+			inputElement: editFileInput,
+			buttonElement: editUploadButton,
+			resultElementId: "edit-listing-agreement-file-base64"
+		}
+	];
+	
+	// Loop through configurations and set up event listeners
+	configurations.forEach(function(config) {
+		handleFileUpload(config);
+	});	
 
 	// OPEN ACTION MODAL
 	var isAdmin = $("body").data("is-admin") === "True";
