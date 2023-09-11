@@ -733,7 +733,7 @@ def edit_lease(lease_id):
         "lease_term_length",
         "lease_percentage_space",
         "lease_agreement_file_base64",
-        "lease_commision_file_base64"
+        "lease_commision_file_base64",
         "lease_lessor_name",
         "lease_lessor_email",
         "lease_lesse_name",

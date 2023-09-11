@@ -514,13 +514,11 @@ $(document).ready(function() {
 
 	handleButtonClick(uploadButtonAgreement, agreementFileInput);
 	handleFileUpload(agreementFileInput, uploadButtonAgreement, "lease-agreement-file-base64");
-	
 	handleButtonClick(editUploadButtonAgreement, editAgreementFileInput);
 	handleFileUpload(editAgreementFileInput, editUploadButtonAgreement, "edit-lease-agreement-file-base64");
 	
 	handleButtonClick(uploadButtonCommision, commisionFileInput);
 	handleFileUpload(commisionFileInput, uploadButtonCommision, "lease-commision-agreement-file-base64");
-	
 	handleButtonClick(editUploadButtonCommision, editCommisionFileInput);
 	handleFileUpload(editCommisionFileInput, editUploadButtonCommision, "edit-lease-commision-agreement-file-base64");
 	
@@ -529,7 +527,6 @@ $(document).ready(function() {
 	var isAdmin = $("body").data("is-admin") === "True";
 	$(".centered-table tbody tr").on("contextmenu", function(e) {
 		if (isAdmin) {
-			// Check if user is an admin
 			e.preventDefault();
 			const actionModal = $("#action-modal");
 			actionModal
