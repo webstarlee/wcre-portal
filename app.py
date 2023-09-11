@@ -99,6 +99,34 @@ try:
 except Exception as e:
     logger.error(f"Error connecting to MongoDB: {str(e)}")
 
+def send_email(subject, template, data):
+    try:
+        msg = Message(
+            subject,
+            sender="portal@wolfcre.com",
+            recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
+        )
+        email_content = render_template(template, **data)
+        msg.html = transform(email_content)
+        mail.send(msg)
+    except Exception as e:
+        print("Error Sending Email", e)
+
+@app.route("/count/<string:collection_type>")
+@login_required
+def get_count(collection_type):
+    collection_map = {
+        "listings": listings,
+        "sales": sales,
+        "leases": leases,
+    }
+    collection = collection_map.get(collection_type)
+    if collection is None:
+        return jsonify(error=f"Invalid collection type: {collection_type}"), 400
+    count = collection.count_documents({})
+    return jsonify(count=count)
+
+
 
 @app.route("/")
 def login_page():
@@ -285,22 +313,6 @@ def view_leases():
         )
     return redirect(url_for("login"))
 
-
-@app.route("/count/<string:collection_type>")
-@login_required
-def get_count(collection_type):
-    collection_map = {
-        "listings": listings,
-        "sales": sales,
-        "leases": leases,
-    }
-    collection = collection_map.get(collection_type)
-    if collection is None:
-        return jsonify(error=f"Invalid collection type: {collection_type}"), 400
-    count = collection.count_documents({})
-    return jsonify(count=count)
-
-
 @app.route("/get_documents")
 @login_required
 def get_documents():
@@ -461,19 +473,6 @@ def submit_listing():
         result = listings.insert_one(new_listing)
         if not result.inserted_id:
             raise Exception("Error inserting the listing.")
-        try:
-            msg = Message(
-                "WCRE Portal - A New Listing Has Been Submitted",
-                sender="portal@wolfcre.com",
-                recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
-            )
-            email_content = render_template(
-                "email_templates/email_new_listing.html", listing=new_listing
-            )
-            msg.html = transform(email_content)
-            mail.send(msg)
-        except Exception as e:
-            print("Error Sending Email", e)
         return make_response(
             {"status": "success", "redirect": url_for("view_listings")}, 200
         )
@@ -519,19 +518,6 @@ def submit_sale():
         result = sales.insert_one(new_sale)
         if not result.inserted_id:
             raise Exception("Error Inserting the Sale")
-        try:
-            msg = Message(
-                "WCRE Portal - A New Sale Has Been Submitted",
-                sender="portal@wolfcre.com",
-                recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
-            )
-            email_content = render_template(
-                "email_templates/email_new_sale.html", sale=new_sale
-            )
-            msg.html = transform(email_content)
-            mail.send(msg)
-        except Exception as e:
-            print("Error Sending Email", e)
         return make_response(
             {"status": "success", "redirect": url_for("view_sales")}, 200
         )
@@ -584,19 +570,6 @@ def submit_lease():
         result = leases.insert_one(new_lease)
         if not result.inserted_id:
             raise Exception("Error Inserting the Lease")
-        try:
-            msg = Message(
-                "WCRE Portal - A New Lease Has Been Submitted",
-                sender="portal@wolfcre.com",
-                recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
-            )
-            email_content = render_template(
-                "email_templates/email_new_lease.html", lease=new_lease
-            )
-            msg.html = transform(email_content)
-            mail.send(msg)
-        except Exception as e:
-            print("Error Sending Email", e)
         return make_response(
             {"status": "success", "redirect": url_for("view_leases")}, 200
         )
@@ -766,7 +739,6 @@ def search_in_collection(collection, fields, page, search_query, items_per_page=
         "$options": "i",
     }
     query = {"$or": [{field: regex_query} for field in fields]}
-
     search_results = (
         collection.find(query)
         .sort("_id", -1)
