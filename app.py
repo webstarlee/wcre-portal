@@ -459,7 +459,6 @@ def submit_listing():
             "listing-agreement-file-base64",
             "listing-property-type",
             "listing-type",
-            "investment-sale",
             "listing-price",
         ]
         new_listing = {
