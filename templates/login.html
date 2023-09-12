@@ -104,11 +104,43 @@
             </p>
           </div>
         </div>
-        <div class="col-md-8 col-lg-6 col-xl-5 col-12 bg-white rounded-end p-5 glow" style="clip-path: inset(-1000px -500px -1000px 0px)">
-          <form class="form d-flex w-100 flex-column align-items-center justify-content-center" action="{{ url_for('login') }}" method="post">
-            <h2 class="text-center mb-5 w-100 fw-bold fs-1"> WCRE Management Portal </h2>
-            <input class="form-control m-3" type="text" placeholder="Username" id="username" name="username" required />
-            <input class="form-control m-3" type="password" placeholder="Password" id="password" name="password" required /> {% if error %} <p class="error">{{ error }}</p> {% endif %} <button class="form__button button submit m-3 py-3 px-5" type="submit"> SIGN IN </button>
+        <div
+          class="col-md-8 col-lg-6 col-xl-6 col-12 bg-white rounded-end p-5 glow"
+          style="clip-path: inset(0px -500px 0px 0px)"
+        >
+          <form
+            class="form d-flex w-100 flex-column align-items-center justify-content-center"
+            action="{{ url_for('login') }}"
+            method="post"
+          >
+            <h2 class="text-center mb-5 w-100 fw-bold fs-1">
+              WCRE Management Portal
+            </h2>
+            <input
+              class="form-control m-3"
+              type="text"
+              placeholder="Username"
+              id="username"
+              name="username"
+              required
+            />
+            <input
+              class="form-control m-3"
+              type="password"
+              placeholder="Password"
+              id="password"
+              name="password"
+              required
+            />
+            {% if error %}
+            <p class="error">{{ error }}</p>
+            {% endif %}
+            <button
+              class="form__button button submit m-3 py-3 px-5"
+              type="submit"
+            >
+              SIGN IN
+            </button>
           </form>
         </div>
       </div>
