@@ -1,18 +1,47 @@
 $(document).ready(function() {
 	var agreementFileInput = document.getElementById("lease-agreement");
-	var commisionFileInput = document.getElementById("commision-agreement");
-  	var uploadButtonAgreement = document.getElementById("upload-lease-agreement");
-  	var uploadButtonCommision = document.getElementById("upload-commision-agreement");
-	const leasePriceInput = document.getElementById("lease-price");
+	var uploadButtonAgreement = document.getElementById("upload-lease-agreement");
+	var editAgreementFileInput = document.getElementById("edit-lease-agreement");
+	var editUploadButtonAgreement = document.getElementById("edit-upload-lease-agreement");
+	var commisionFileInput = document.getElementById("lease-commision-agreement");
+	var uploadButtonCommision = document.getElementById("upload-lease-commision-agreement");
+	var editCommisionFileInput = document.getElementById("edit-lease-commision-agreement");
+  	var editUploadButtonCommision = document.getElementById("edit-upload-lease-commision-agreement");
 	const sqFootageInput = document.getElementById("lease-sqft");
+	const editsqFootageInput = document.getElementById("edit-lease-sqft");
 	const lessorPhoneNumberInput = document.getElementById("lease-lessor-phone");
-	const lessePhoneNumberInput = document.getElementById("lease-lesse-phone");
-	const leasePercentageSpaceInput = document.getElementById("lease-percentage-space");
-	leasePercentageSpaceInput.addEventListener("input", () => formatPercentage(leasePercentageSpaceInput));
-	leasePriceInput.addEventListener("input", () => formatPrice(leasePriceInput));
+	const lesseePhoneNumberInput = document.getElementById("lease-lessee-phone");
 	sqFootageInput.addEventListener("input", () => formatSqFootage(sqFootageInput));
 	lessorPhoneNumberInput.addEventListener("input", () => formatPhoneNumber(lessorPhoneNumberInput));
-	lessePhoneNumberInput.addEventListener("input", () => formatPhoneNumber(lessePhoneNumberInput));
+	lesseePhoneNumberInput.addEventListener("input", () => formatPhoneNumber(lesseePhoneNumberInput));
+	editsqFootageInput.addEventListener("input", () => formatSqFootage(editsqFootageInput));
+	document.getElementById('years').addEventListener('change', adjustTerm);
+	document.getElementById('months').addEventListener('change', adjustTerm);
+
+	function toggleErrorClass($element, isError) {
+		isError ? $element.addClass("error") : $element.removeClass("error");
+	}
+	
+	function validateStep() {
+		var currentStep = $(".active-step.main-form-step");
+		var inputs = currentStep.find("input:required, select:required");
+		var isValid = true;
+	
+		inputs.each(function() {
+			var isEmpty = $(this).val().trim() === "";
+			toggleErrorClass($(this), isEmpty);
+			if (isEmpty) isValid = false;
+		});
+		return isValid;
+	}
+	
+	function validateBrokers() {
+		var $brokerInput = $("#lease-brokers");
+		var isValid = $brokerInput.val() && $brokerInput.val().length > 0;
+		toggleErrorClass($brokerInput, !isValid);
+		return isValid;
+	}
+
 
 	function showNotification(message, elementId) {
 		var notification = $("#" + elementId);
@@ -23,48 +52,42 @@ $(document).ready(function() {
 		}, 2000);
 	}
 
-	function formatPrice(inputElement) {
-		let inputText = inputElement.value.trim();
-		if (isNaN(inputText.replace(/[,.$]/g, ""))) {
-			inputElement.value = inputText;
-			return;
+	function adjustTerm() {
+		const yearsSelect = document.getElementById('years');
+		const monthsSelect = document.getElementById('months');
+		const years = parseInt(yearsSelect.value);
+		const months = parseInt(monthsSelect.value);
+	
+		if (months === 12) {
+			monthsSelect.value = "0";
+			yearsSelect.value = (years + 1).toString();
 		}
-
-		let numericValue = inputText.replace(/[^0-9.,]/g, "");
-		numericValue = numericValue.replace(/\.+/g, ".").replace(/,+/g, ",");
-		const parts = numericValue.split(".");
-		if (parts.length > 1) {
-			parts[1] = parts[1].substring(0, 2);
-			numericValue = parts.join(".");
-		}
-
-		let cents = "";
-		if (numericValue.includes(".")) {
-			[numericValue, cents] = numericValue.split(".");
-			cents = "." + cents;
-		}
-		numericValue = numericValue.replace(/,/g, "");
-		const numberValue = isNaN(parseFloat(numericValue)) ?
-			0 :
-			parseFloat(numericValue);
-		const formattedNumber = new Intl.NumberFormat("en-US").format(numberValue);
-		const formattedPrice = numberValue ? `$${formattedNumber}${cents}` : "";
-		inputElement.value = formattedPrice;
 	}
 
-	function formatPercentage(inputElement) {
-		let numericValue = inputElement.value.replace(/[^0-9.]/g, "");
-		numericValue = numericValue.replace(/\.+/g, ".");
-		const parts = numericValue.split(".");
-		if (parts.length > 1) {
-			parts[1] = parts[1].substring(0, 2);
-			numericValue = parts.join(".");
+	document.addEventListener('DOMContentLoaded', function() {
+		document.getElementById('submit-button').addEventListener('click', function() {
+			var years = document.getElementById('years').value;
+			var months = document.getElementById('months').value;
+			var leaseTermLength = years + " Years " + months + " Months";
+			document.getElementById('lease-term-cell').innerText = leaseTermLength;
+		});
+	});
+
+	function formatPhoneNumber(inputElement) {
+		let phoneNumber = inputElement.value.replace(/\D/g, "");
+		if (phoneNumber.length > 10) {
+			phoneNumber = phoneNumber.substr(0, 10);
 		}
-		if (numericValue) {
-			inputElement.value = `${numericValue}%`;
-		} else {
-			inputElement.value = "";
-		}
+		const formattedPhoneNumber = formatToPhoneNumber(phoneNumber);
+		inputElement.value = formattedPhoneNumber;
+	}
+
+	function formatToPhoneNumber(phoneNumber) {
+		const formattedNumber = phoneNumber.replace(
+			/(\d{3})(\d{3})(\d{4})/,
+			"$1-$2-$3"
+		);
+		return formattedNumber;
 	}
 
 	function formatSqFootage(inputElement) {
@@ -86,13 +109,13 @@ $(document).ready(function() {
 			0 :
 			parseFloat(numericValue);
 		const formattedNumber = new Intl.NumberFormat("en-US").format(numberValue);
-		const formattedSqft = numberValue ? `${formattedNumber}${cents}` : "";
+		const formattedSqft = numberValue ? `${formattedNumber}${cents} SF` : "";
 		inputElement.value = formattedSqft;
 	}
+
 	$(document).ready(function() {
 		const iconVisible = $(".fa-caret-right");
 		const iconHidden = $(".fa-caret-down");
-
 		iconHidden.hide();
 		$(".centered-table tbody tr[data-lease-id] button").click(function() {
 			$(this)
@@ -131,6 +154,7 @@ $(document).ready(function() {
 			$(this).next().next(".hidden-row").toggle();
 		});
 	});
+
 	$(document).ready(function() {
 		$(".parent-row").each(function(index) {
 			if (index % 3 === 0) {
@@ -140,23 +164,6 @@ $(document).ready(function() {
 			}
 		});
 	});
-
-	function formatPhoneNumber(inputElement) {
-		let phoneNumber = inputElement.value.replace(/\D/g, "");
-		if (phoneNumber.length > 10) {
-			phoneNumber = phoneNumber.substr(0, 10);
-		}
-		const formattedPhoneNumber = formatToPhoneNumber(phoneNumber);
-		inputElement.value = formattedPhoneNumber;
-	}
-
-	function formatToPhoneNumber(phoneNumber) {
-		const formattedNumber = phoneNumber.replace(
-			/(\d{3})(\d{3})(\d{4})/,
-			"$1-$2-$3"
-		);
-		return formattedNumber;
-	}
 
 	// OPEN ADD LEASES MODAL
 	$("#add-lease-button").click(function() {
@@ -179,8 +186,11 @@ $(document).ready(function() {
 		const actionModal = $("#action-modal");
 		const selectedRow = $(`.centered-table tbody tr[data-lease-id="${lease_id}"]`);
 		const getCellText = (index) => selectedRow.find(`td:nth-child(${index})`).text().trim();
-		const getEmailFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a`).attr("href").replace("mailto:", "").trim();
+		const getEmailFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="mailto:"]`).attr("href").replace("mailto:", "").trim();
+		const getPhoneFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="tel:"]`).attr("href").replace("tel:", "").trim();
+		const getNameFromCell = (index) => getCellText(index).replace(getEmailFromCell(index), '').replace(getPhoneFromCell(index), '').trim();
 		const setInputValue = (selector, value) => $(selector).val(value);
+		
 		resetModalSteps(editModal);
 		$("body").addClass("modal-open");
 		$("#add-lease-modal").hide();
@@ -189,16 +199,17 @@ $(document).ready(function() {
 		actionModal.hide();
 		editModal.find(".modal-step-title").text("Edit Lease - " + getCellText(7));
 		setInputValue("#edit-lease-property-type", getCellText(1));
-		setInputValue("#edit-lease-price", getCellText(2));
-		setInputValue("#edit-lease-sqft", getCellText(3));
-		setInputValue("#edit-lease-percentage-space", getCellText(5));
-		setInputValue("#edit-lease-term-length", getCellText(6));
-		setInputValue("#edit-lease-street", getCellText(7));
-		setInputValue("#edit-lease-city", getCellText(8));
-		setInputValue("#edit-lease-lessor-name", getCellText(9));
-		setInputValue("#edit-lease-lessor-email", getEmailFromCell(9));
-		setInputValue("#edit-lease-lesse-name", getCellText(10));
-		setInputValue("#edit-lease-lesse-email", getEmailFromCell(10));
+		setInputValue("#edit-lease-sqft", getCellText(2));
+		setInputValue("#edit-lease-term-length", getCellText(3));
+		setInputValue("#edit-lease-street", getCellText(4));
+		setInputValue("#edit-lease-city", getCellText(5));
+		setInputValue("#edit-lease-state", getCellText(6));
+		setInputValue("#edit-lease-lessor-name", getNameFromCell(7));
+		setInputValue("#edit-lease-lessor-email", getEmailFromCell(7));
+		setInputValue("#edit-lease-lessor-phone", getPhoneFromCell(7));
+		setInputValue("#edit-lease-lessee-name", getNameFromCell(8));
+		setInputValue("#edit-lease-lessee-email", getEmailFromCell(8));
+		setInputValue("#edit-lease-lessee-phone", getPhoneFromCell(8));
 	});
 	
 
@@ -214,33 +225,84 @@ $(document).ready(function() {
 		$("#edit-lease-modal").hide();
 	});
 
-	function validateStep() {
-		var currentStep = $(".active-step.main-form-step");
-		var inputs = currentStep.find("input:required, select:required");
-		var isValid = true;
-
-		inputs.each(function() {
-			if ($(this).val().trim() === "") {
-				isValid = false;
-				$(this).addClass("error");
-			} else {
-				$(this).removeClass("error");
-			}
+	let currentPage = 1;
+	const searchLeases = (page) => {
+		const searchTerm = $("#search-input").val().toLowerCase();
+		$.ajax({
+			url: "/search_leases",
+			method: "POST",
+			contentType: "application/json",
+			data: JSON.stringify({ query: searchTerm, page }),
+			success: renderSearchResults,
+			error: handleSearchError
 		});
-		return isValid;
-	}
+	};
 
-	function validateBrokers() {
-		var selectedBrokers = $("#lease-brokers").val(); // use the .val() method instead
-		var isValid = selectedBrokers && selectedBrokers.length > 0;
+	const renderSearchResults = (search_results_data) => {
+		const rows = search_results_data.map(result => createRowForLease(result));
+		$(".centered-table tbody").empty().append(rows);
+	};
 
-		if (!isValid) {
-			$("#lease-brokers").addClass("error");
-		} else {
-			$("#lease-brokers").removeClass("error");
+	const createRowForLease = (result) => {
+		const $row = $("<tr>").attr("data-lease-id", result._id);
+		let price = parseFloat(result.lease_price.replace("$", "").replace(",", ""));
+		let sqft = parseFloat(result.lease_sqft.replace(",", ""));
+		let pricePerSqft = price / sqft;
+		const stateMapping = {
+			"New Jersey": "NJ",
+			"Pennsylvania": "PA"
+		};
+		let stateValue = stateMapping[result.lease_state] || result.lease_state;
+		const cells = [
+			result.lease_property_type,
+			result.lease_sqft,
+			result.lease_term_length,
+			result.lease_street,
+			result.lease_city,
+			stateValue,
+			`<div class="contact-info">
+				<a href="mailto:${result.lease_lessor_email}">${result.lease_lessor_name}</a>
+				<a href="tel:${result.lease_lessor_phone}">${result.lease_lessor_phone}</a>
+			 </div>`,
+			`<div class="contact-info">
+				<a href="mailto:${result.lease_lessee_email}">${result.lease_lessee_name}</a>
+				<a href="tel:${result.lease_lessee_phone}">${result.lease_lessee_phone}</a>
+			 </div>`
+		];
+		cells.forEach(cell => $row.append($("<td>").html(cell)));
+		const brokerElements = $.map(result.brokers, broker => $("<span>").addClass("broker-name").text(broker));
+		$row.append($("<td>").addClass("brokers").append(brokerElements));
+		$row.append($("<td>").html(result.lease_agreement_file_base64 ? `<form method="POST"><a href="/download_lease_agreement_pdf/${result._id}">Fully Executed</a></form>` : "Pending"));
+		$row.append($("<td>").html(result.lease_commision_file_base64 ? `<form method="POST"><a href="/download_lease_commision_pdf/${result._id}">Fully Executed</a></form>` : "Pending"));
+		return $row;
+	};
+	
+
+	const handleSearchError = (textStatus, errorThrown) => {
+		console.error("Error Fetching Lease Results:", textStatus, errorThrown);
+		showNotification("Error Fetching Lease Results", "error-notification-modal");
+	};
+
+	$("#search-input").on("input", () => {
+		currentPage = 1;
+		searchLeases(currentPage);
+	});
+
+	$("#next-page").on("click", () => {
+		currentPage++;
+		searchLeases(currentPage);
+	});
+
+	$("#prev-page").on("click", () => {
+		if (currentPage > 1) {
+			currentPage--;
+			searchLeases(currentPage);
 		}
-		return isValid;
-	}
+	});
+
+	$(".modal-content").click(function(event) {
+		event.stopPropagation();
+	});
 
 	$(".next-step").on("click", function() {
 		var currentModal = $(this).closest(".lease-modal");
@@ -271,27 +333,36 @@ $(document).ready(function() {
 					console.log("in here")
 					$("#edit-lease-modal").css("display", "none");
 					var leasePropertyType = $("#edit-lease-property-type").val();
-					var leasePrice = $("#edit-lease-price").val();
 					var leaseSqFt = $("#edit-lease-sqft").val();
 					var leaseTermLength = $("#edit-lease-term-length").val();
 					var leaseStreet = $("#edit-lease-street").val();
 					var leaseCity = $("#edit-lease-city").val();
+					var leaseState = $("#edit-lease-state").val();
 					var leaseLessor = $("#edit-lease-lessor-name").val();
 					var leaseLessorEmail = $("#edit-lease-lessor-email").val();
-					var leaseLesse = $("#edit-lease-lesse-name").val();
-					var leaseLesseEmail = $("#edit-lease-lesse-email").val();
+					var leaseLessorPhone = $("#edit-lease-lessor-phone").val();
+					var leaselessee = $("#edit-lease-lessee-name").val();
+					var leaselesseeEmail = $("#edit-lease-lessee-email").val();
+					var leaselesseePhone = $("#edit-lease-lessee-phone").val();
+					var agreementFileBase64 = $("#edit-lease-agreement-file-base64").val();
+					var commisionFileBase64 = $("#edit-lease-commision-agreement-file-base64").val();
 
 					var data = {
 						lease_property_type: leasePropertyType,
 						lease_price: leasePrice,
 						lease_sqft: leaseSqFt,
 						lease_term_length: leaseTermLength,
+						lease_agreement_file_base64: agreementFileBase64,
+						lease_commision_file_base64: commisionFileBase64,
 						lease_street: leaseStreet,
 						lease_city: leaseCity,
+						lease_state: leaseState,
 						lease_lessor_name: leaseLessor,
 						lease_lessor_email: leaseLessorEmail,
-						lease_lesse_name: leaseLesse,
-						lease_lesse_email: leaseLesseEmail,
+						lease_lessor_phone: leaseLessorPhone,
+						lease_lessee_name: leaselessee,
+						lease_lessee_email: leaselesseeEmail,
+						lease_lessee_phone: leaselesseePhone
 					};
 
 					$.ajax({
@@ -351,13 +422,70 @@ $(document).ready(function() {
 			}
 		}
 	});
-	
 
+	function handleFileUpload(config) {
+		config.inputElement.addEventListener("change", function(e) {
+			var file = this.files[0];
+			var formData = new FormData();
+			formData.append("file", file);
+	
+			$.ajax({
+				url: "/upload_pdf",
+				type: "POST",
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function(data) {
+					if (data.success) {
+						config.buttonElement.textContent = "Document Uploaded ✔";
+						config.buttonElement.disabled = true;
+						document.getElementById(config.resultElementId).value = data.fileBase64;
+					} else {
+						showNotification("Error Uploading Document", "error-notification-modal");
+					}
+				},
+				error: function() {
+					showNotification("Error Uploading Document", "error-notification-modal");
+				}
+			});
+		});
+		config.buttonElement.addEventListener("click", function(e) {
+			config.inputElement.click();
+		});
+	}
+	
+	var configurations = [
+		{
+			inputElement: agreementFileInput,
+			buttonElement: uploadButtonAgreement,
+			resultElementId: "lease-agreement-file-base64"
+		},
+		{
+			inputElement: editAgreementFileInput,
+			buttonElement: editUploadButtonAgreement,
+			resultElementId: "edit-lease-agreement-file-base64"
+		},
+		{
+			inputElement: commisionFileInput,
+			buttonElement: uploadButtonCommision,
+			resultElementId: "lease-commision-agreement-file-base64"
+		},
+		{
+			inputElement: editCommisionFileInput,
+			buttonElement: editUploadButtonCommision,
+			resultElementId: "edit-lease-commision-agreement-file-base64"
+		}
+	];
+	
+	configurations.forEach(function(config) {
+		handleFileUpload(config);
+	});	
+	
+	
 	// OPEN ACTION MODAL
 	var isAdmin = $("body").data("is-admin") === "True";
 	$(".centered-table tbody tr").on("contextmenu", function(e) {
 		if (isAdmin) {
-			// Check if user is an admin
 			e.preventDefault();
 			const actionModal = $("#action-modal");
 			actionModal
@@ -410,121 +538,6 @@ $(document).ready(function() {
 		});
 	});
 
-	function uploadDocument(fileInput, uploadButton, fileBase64Id) {
-		fileInput.addEventListener("change", function(e) {
-			var file = this.files[0];
-			var formData = new FormData();
-			formData.append("file", file);
-			$.ajax({
-				url: "/upload_pdf",
-				type: "POST",
-				data: formData,
-				processData: false,
-				contentType: false,
-				success: function(data) {
-					if (data.success) {
-						uploadButton.textContent = "Document Uploaded ✔";
-						uploadButton.disabled = true;
-						document.getElementById(fileBase64Id).value = data.fileBase64;
-					} else {
-						showNotification("Error Uploading Document", "error-notification-modal");
-					}
-				},
-				error: function() {
-					showNotification("Error Uploading Document", "error-notification-modal");
-				},
-			});
-		});
-	}
-
-	let currentPage = 1;
-	const searchLeases = (page) => {
-		const searchTerm = $("#search-input").val().toLowerCase();
-		$.ajax({
-			url: "/search_leases",
-			method: "POST",
-			contentType: "application/json",
-			data: JSON.stringify({ query: searchTerm, page }),
-			success: renderSearchResults,
-			error: handleSearchError
-		});
-	};
-
-	const renderSearchResults = (search_results_data) => {
-		const rows = search_results_data.map(result => createRowForLease(result));
-		$(".centered-table tbody").empty().append(rows);
-	};
-
-	const createRowForLease = (result) => {
-		const $row = $("<tr>").attr("data-lease-id", result._id);
-		const cells = [
-			result.lease_property_type,
-			result.lease_price || "None",
-			result.lease_sqft,
-			calculatePricePerSqft(result.lease_price, result.lease_sqft),
-			result.lease_percentage_space,
-			result.lease_term_length,
-			result.lease_street,
-			result.lease_city,
-			`<a href="mailto:${result.lease_lessor_email}">${result.lease_lessor_name}</a>`,
-			`<a href="mailto:${result.lease_lesse_email}">${result.lease_lesse_name}</a>`,
-		];
-		cells.forEach(cell => $row.append($("<td>").html(cell)));
-		const brokerElements = $.map(result.brokers, broker => $("<span>").addClass("broker-name").text(broker));
-		$row.append($("<td>").append(brokerElements));
-		$row.append($("<td>").html(result.lease_agreement_pdf_file_base64 ? `<a href="/download_lease_agreement_pdf/${result._id}">Fully Executed</a>` : "Pending"));
-		$row.append($("<td>").html(result.lease_commision_pdf_file_base64 ? `<a href="/download_lease_commision_pdf/${result._id}">Fully Executed</a>` : "Pending"));
-		return $row;
-	};
-
-	const calculatePricePerSqft = (price, sqft) => {
-		const parsedPrice = parseFloat(price.replace(/\$/g, '').replace(/,/g, ''));
-		const parsedSqft = parseFloat(sqft.replace(/,/g, ''));
-	
-		if (!isNaN(parsedPrice) && !isNaN(parsedSqft) && parsedSqft !== 0) {
-			const rawValue = parsedPrice / parsedSqft;
-			return "$" + rawValue.toFixed(2);
-		} 
-		return "N/A";
-	};	
-
-	const handleSearchError = (textStatus, errorThrown) => {
-		console.error("Error Fetching Lease Results:", textStatus, errorThrown);
-		showNotification("Error Fetching Lease Results", "error-notification-modal");
-	};
-
-	$("#search-input").on("input", () => {
-		currentPage = 1;
-		searchLeases(currentPage);
-	});
-
-	$("#next-page").on("click", () => {
-		currentPage++;
-		searchLeases(currentPage);
-	});
-
-	$("#prev-page").on("click", () => {
-		if (currentPage > 1) {
-			currentPage--;
-			searchLeases(currentPage);
-		}
-	});
-
-	function setupButtonAndInput(button, input) {
-		button.addEventListener("click", function(e) {
-			input.click();
-		});
-	}
-
-	setupButtonAndInput(uploadButtonAgreement, agreementFileInput);
-	setupButtonAndInput(uploadButtonCommision, commisionFileInput);
-	uploadDocument(agreementFileInput, uploadButtonAgreement, "lease-agreement-file-base64");
-	uploadDocument(commisionFileInput, uploadButtonCommision, "commision-agreement-file-base64");
-
-	$(".modal-content").click(function(event) {
-		event.stopPropagation();
-	});
-
 	// SUBMIT LEASE
 	$("#submit-lease-form").on("submit", function(e) {
 		e.preventDefault();
@@ -532,9 +545,9 @@ $(document).ready(function() {
 		if (validateStep() && validateBrokers()) {
 			var formData = new FormData(this);
 			var leaseAgreementFileBase64 = $("#lease-agreement-file-base64").val();
-			var commisionAgreementFileBase64 = $("#commision-agreement-file-base64").val();
+			var commisionAgreementFileBase64 = $("#lease-commision-agreement-file-base64").val();
 			formData.append("lease-agreement-file-base64", leaseAgreementFileBase64);
-      		formData.append("commision-agreement-file-base64", commisionAgreementFileBase64);
+      		formData.append("lease-commision-agreement-file-base64", commisionAgreementFileBase64);
 			$.ajax({
 					url: "/submit_lease",
 					type: "POST",

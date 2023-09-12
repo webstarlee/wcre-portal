@@ -1,12 +1,16 @@
 $(document).ready(function() {
 	var fileInput = document.getElementById("sale-agreement");
 	var uploadButton = document.getElementById("upload-sale-agreement");
+	var editFileInput = document.getElementById("edit-sale-agreement");
+	var editUploadButton = document.getElementById("edit-upload-sale-agreement");
 	const buyerPhoneInput = document.getElementById("sale-buyer-phone");
 	const editBuyerPhoneInput = document.getElementById("edit-sale-buyer-phone");
 	const sellerPhoneInput = document.getElementById("sale-seller-phone");
 	const editSellerPhoneInput = document.getElementById("edit-sale-seller-phone");
 	const salePriceInput = document.getElementById("sale-price");
 	const editSalePriceInput = document.getElementById("edit-sale-price");
+	const commisionPriceInput = document.getElementById("sale-commision");
+	const editCommisionPriceInput = document.getElementById("edit-sale-commision");
 	const sqFootageInput = document.getElementById("sale-sqft");
 	const editsqFootageInput = document.getElementById("edit-sale-sqft");
 	buyerPhoneInput.addEventListener("input", () => formatPhoneNumber(buyerPhoneInput));
@@ -15,9 +19,34 @@ $(document).ready(function() {
 	editSellerPhoneInput.addEventListener("input", () => formatPhoneNumber(editSellerPhoneInput));
 	salePriceInput.addEventListener("input", () => formatPrice(salePriceInput));
 	editSalePriceInput.addEventListener("input", () => formatPrice(editSalePriceInput));
+	commisionPriceInput.addEventListener("input", () => formatPrice(commisionPriceInput));
+	editCommisionPriceInput.addEventListener("input", () => formatPrice(editCommisionPriceInput));
 	sqFootageInput.addEventListener("input", () => formatSqFootage(sqFootageInput));
 	editsqFootageInput.addEventListener("input", () => formatSqFootage(editsqFootageInput));
 
+	function toggleErrorClass($element, isError) {
+		isError ? $element.addClass("error") : $element.removeClass("error");
+	}
+
+	function validateStep() {
+		var currentStep = $(".active-step.main-form-step");
+		var inputs = currentStep.find("input:required, select:required");
+		var isValid = true;
+	
+		inputs.each(function() {
+			var isEmpty = $(this).val().trim() === "";
+			toggleErrorClass($(this), isEmpty);
+			if (isEmpty) isValid = false;
+		});
+		return isValid;
+	}
+	
+	function validateBrokers() {
+		var $brokerInput = $("#sale-brokers");
+		var isValid = $brokerInput.val() && $brokerInput.val().length > 0;
+		toggleErrorClass($brokerInput, !isValid);
+		return isValid;
+	}
 
 	function showNotification(message, elementId) {
 		var notification = $("#" + elementId);
@@ -72,13 +101,13 @@ $(document).ready(function() {
 	function formatSqFootage(inputElement) {
 		let numericValue = inputElement.value.replace(/[^0-9.,]/g, "");
 		numericValue = numericValue.replace(/\.+/g, ".").replace(/,+/g, ",");
-
+	
 		const parts = numericValue.split(".");
 		if (parts.length > 1) {
 			parts[1] = parts[1].substring(0, 2);
 			numericValue = parts.join(".");
 		}
-
+	
 		let cents = "";
 		if (numericValue.includes(".")) {
 			[numericValue, cents] = numericValue.split(".");
@@ -87,10 +116,10 @@ $(document).ready(function() {
 		numericValue = numericValue.replace(/,/g, "");
 		const numberValue = isNaN(parseFloat(numericValue)) ? 0 : parseFloat(numericValue);
 		const formattedNumber = new Intl.NumberFormat("en-US").format(numberValue);
-		const formattedSqft = numberValue ? `${formattedNumber}${cents}` : "";
+		const formattedSqft = numberValue ? `${formattedNumber}${cents} SF` : "";
 		inputElement.value = formattedSqft;
 	}
-
+	
 	$(function() {
 		$("#sale-end-date").datepicker();
 		$("#edit-sale-end-date").datepicker();
@@ -117,28 +146,35 @@ $(document).ready(function() {
 		const actionModal = $("#action-modal");
 		const selectedRow = $(`.centered-table tbody tr[data-sale-id="${sale_id}"]`);
 		const getCellText = (index) => selectedRow.find(`td:nth-child(${index})`).text().trim();
-		const getEmailFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a`).attr("href").replace("mailto:", "").trim();
+		const getEmailFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="mailto:"]`).attr("href").replace("mailto:", "").trim();
+		const getPhoneFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="tel:"]`).attr("href").replace("tel:", "").trim();
+		const getNameFromCell = (index) => getCellText(index).replace(getEmailFromCell(index), '').replace(getPhoneFromCell(index), '').trim();
 		const setInputValue = (selector, value) => $(selector).val(value);
+	
 		resetModalSteps(editModal);
 		$("body").addClass("modal-open");
 		$("#add-sale-modal").hide();
 		editModal.show();
 		editModal.find(".prev-step").addClass("hidden");
 		actionModal.hide();
-		editModal.find(".modal-step-title").text("Edit Sale - " + getCellText(7));
+		editModal.find(".modal-step-title").text("Edit Sale - " + getCellText(8));
+		setInputValue("#edit-sale-property-type", getCellText(1));
 		setInputValue("#edit-sale-type", getCellText(2));
 		setInputValue("#edit-sale-end-date", getCellText(3));
 		setInputValue("#edit-sale-price", getCellText(4));
-		setInputValue("#edit-sale-sqft", getCellText(5));
-		setInputValue("#edit-sale-street", getCellText(7));
-		setInputValue("#edit-sale-city", getCellText(8));
-		setInputValue("#edit-sale-buyer-name", getCellText(9));
-		setInputValue("#edit-sale-buyer-email", getEmailFromCell(9));
-		setInputValue("#edit-sale-buyer-phone", getCellText(10));
-		setInputValue("#edit-sale-seller-name", getCellText(11));
-		setInputValue("#edit-sale-seller-email", getEmailFromCell(11));
-		setInputValue("#edit-sale-seller-phone", getCellText(12));
+		setInputValue("#edit-sale-commision", getCellText(5));
+		setInputValue("#edit-sale-sqft", getCellText(6));
+		setInputValue("#edit-sale-street", getCellText(8));
+		setInputValue("#edit-sale-city", getCellText(9));
+		setInputValue("#edit-sale-state", getCellText(10));
+		setInputValue("#edit-sale-buyer-name", getNameFromCell(11));
+		setInputValue("#edit-sale-buyer-email", getEmailFromCell(11));
+		setInputValue("#edit-sale-buyer-phone", getPhoneFromCell(11));
+		setInputValue("#edit-sale-seller-name", getNameFromCell(12));
+		setInputValue("#edit-sale-seller-email", getEmailFromCell(12));
+		setInputValue("#edit-sale-seller-phone", getPhoneFromCell(12));
 	});
+	
 	
 
 	// CLOSE ADD SALE MODAL
@@ -152,34 +188,6 @@ $(document).ready(function() {
 		$("body").removeClass("modal-open");
 		$("#edit-sale-modal").hide();
 	});
-
-	function validateStep() {
-		var currentStep = $(".active-step.main-form-step");
-		var inputs = currentStep.find("input:required, select:required");
-		var isValid = true;
-
-		inputs.each(function() {
-			if ($(this).val().trim() === "") {
-				isValid = false;
-				$(this).addClass("error");
-			} else {
-				$(this).removeClass("error");
-			}
-		});
-		return isValid;
-	}
-
-	function validateBrokers() {
-		var selectedBrokers = $("#sale-brokers").val(); // use the .val() method instead
-		var isValid = selectedBrokers && selectedBrokers.length > 0;
-
-		if (!isValid) {
-			$("#sale-brokers").addClass("error");
-		} else {
-			$("#sale-brokers").removeClass("error");
-		}
-		return isValid;
-	}
 
 	let currentPage = 1;
 	const searchSales = (page) => {
@@ -201,38 +209,40 @@ $(document).ready(function() {
 
 	const createRowForSale = (result) => {
 		const $row = $("<tr>").attr("data-sale-id", result._id);
+		let price = parseFloat(result.sale_price.replace("$", "").replace(",", ""));
+		let sqft = parseFloat(result.sale_sqft.replace(",", ""));
+		let pricePerSqft = price / sqft;
+		const stateMapping = {
+			"New Jersey": "NJ",
+			"Pennsylvania": "PA"
+		};
+		let stateValue = stateMapping[result.sale_state] || result.sale_state;
 		const cells = [
 			result.sale_property_type,
 			result.sale_type,
 			result.sale_end_date,
 			result.sale_price || "None",
+			result.sale_commision || "None",
 			result.sale_sqft,
-			calculatePricePerSqft(result.sale_price, result.sale_sqft),
+			"$" + pricePerSqft.toFixed(2),
 			result.sale_street,
 			result.sale_city,
-			`<a href="mailto:${result.sale_buyer_email}">${result.sale_buyer_name}</a>`,
-			`<a href="tel:${result.sale_buyer_phone}">${result.sale_buyer_phone}</a>`,
-			`<a href="mailto:${result.sale_seller_email}">${result.sale_seller_name}</a>`,
-			`<a href="tel:${result.sale_seller_phone}">${result.sale_seller_phone}</a>`,
+			stateValue,
+			`<div class="contact-info">
+				<a href="mailto:${result.sale_buyer_email}">${result.sale_buyer_name}</a>
+				<a href="tel:${result.sale_buyer_phone}">${result.sale_buyer_phone}</a>
+			 </div>`,
+			 `<div class="contact-info">
+				<a href="mailto:${result.sale_seller_email}">${result.sale_seller_name}</a>
+				<a href="tel:${result.sale_seller_phone}">${result.sale_seller_phone}</a>
+			 </div>`
 		];
-
 		cells.forEach(cell => $row.append($("<td>").html(cell)));
 		const brokerElements = $.map(result.brokers, broker => $("<span>").addClass("broker-name").text(broker));
 		$row.append($("<td>").append(brokerElements));
-		$row.append($("<td>").html(result.pdf_file_base64 ? `<a href="/download_sale_pdf/${result._id}">Fully Executed</a>` : "Pending"));
+		$row.append($("<td>").html(result.sale_agreement_file_base64 ? `<a href="/download_sale_pdf/${result._id}">Fully Executed</a>` : "Pending"));
 		return $row;
 	};
-
-	const calculatePricePerSqft = (price, sqft) => {
-		const parsedPrice = parseFloat(price.replace(/\$/g, '').replace(/,/g, ''));
-		const parsedSqft = parseFloat(sqft.replace(/,/g, ''));
-	
-		if (!isNaN(parsedPrice) && !isNaN(parsedSqft) && parsedSqft !== 0) {
-			const rawValue = parsedPrice / parsedSqft;
-			return "$" + rawValue.toFixed(2);
-		} 
-		return "N/A";
-	};	
 	
 
 	const handleSalesError = (textStatus, errorThrown) => {
@@ -255,11 +265,6 @@ $(document).ready(function() {
 			currentPage--;
 			searchSales(currentPage);
 		}
-	});
-
-
-	uploadButton.addEventListener("click", function(e) {
-		fileInput.click();
 	});
 
 	$(".modal-content").click(function(event) {
@@ -294,29 +299,37 @@ $(document).ready(function() {
 				} else if (mode === "edit" && $(this).text() === "Submit Sale Edits") {
 					$("#edit-sale-modal").css("display", "none");
 					var saleType = $("#edit-sale-type").val();
+					var salePropertyType = $("#edit-sale-property-type").val();
 					var saleClosingDate = $("#edit-sale-end-date").val();
 					var salePrice = $("#edit-sale-price").val();
+					var saleCommision = $("#edit-sale-commision").val();
 					var saleSqFt = $("#edit-sale-sqft").val();
 					var saleStreet = $("#edit-sale-street").val();
 					var saleCity = $("#edit-sale-city").val();
+					var saleState = $("#edit-sale-state").val();
 					var saleBuyer = $("#edit-sale-buyer-name").val();
 					var saleBuyerEmail = $("#edit-sale-buyer-email").val();
 					var saleBuyerPhone = $("#edit-sale-seller-phone").val();
 					var saleSeller = $("#edit-sale-seller-name").val();
 					var saleSellerEmail = $("#edit-sale-seller-email").val();
 					var saleSellerPhone = $("#edit-sale-seller-phone").val();
+					var fileBase64 = $("#edit-sale-agreement-file-base64").val();
 
 					var data = {
 						sale_type: saleType,
+						sale_property_type: salePropertyType,
 						sale_end_date: saleClosingDate,
+						sale_agreement_file_base64: fileBase64,
 						sale_price: salePrice,
+						sale_commision: saleCommision,
 						sale_sqft: saleSqFt,
 						sale_street: saleStreet,
 						sale_city: saleCity,
-						sale_buyer: saleBuyer,
+						sale_state: saleState,
+						sale_buyer_name: saleBuyer,
 						sale_buyer_email: saleBuyerEmail,
 						sale_buyer_phone: saleBuyerPhone,
-						sale_seller: saleSeller,
+						sale_seller_name: saleSeller,
 						sale_seller_email: saleSellerEmail,
 						sale_seller_phone: saleSellerPhone
 					};
@@ -328,7 +341,6 @@ $(document).ready(function() {
 						data: JSON.stringify(data),
 						success: function(response) {
 							if (response.success) {
-								console.log("Sale Edited Successfully");
 								location.reload();
 							} else {
 								showNotification("Error Editing Sale", "error-notification-modal");
@@ -373,33 +385,54 @@ $(document).ready(function() {
 		}
 	});
 
-	// UPLOAD DOCUMENT
-	fileInput.addEventListener("change", function(e) {
-		var file = this.files[0];
-		var formData = new FormData();
-		formData.append("file", file);
-
-		$.ajax({
-			url: "/upload_pdf",
-			type: "POST",
-			data: formData,
-			processData: false,
-			contentType: false,
-			success: function(data) {
-				if (data.success) {
-					uploadButton.textContent = "Document Uploaded ✔";
-					uploadButton.disabled = true;
-					document.getElementById("sale-agreement-file-base64").value =
-						data.fileBase64;
-				} else {
+	function handleFileUpload(config) {
+		config.inputElement.addEventListener("change", function(e) {
+			var file = this.files[0];
+			var formData = new FormData();
+			formData.append("file", file);
+	
+			$.ajax({
+				url: "/upload_pdf",
+				type: "POST",
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function(data) {
+					if (data.success) {
+						config.buttonElement.textContent = "Document Uploaded ✔";
+						config.buttonElement.disabled = true;
+						document.getElementById(config.resultElementId).value = data.fileBase64;
+					} else {
+						showNotification("Error Uploading Document", "error-notification-modal");
+					}
+				},
+				error: function() {
 					showNotification("Error Uploading Document", "error-notification-modal");
 				}
-			},
-			error: function() {
-				showNotification("Error Uploading Document", "error-notification-modal");
-			},
+			});
 		});
+		config.buttonElement.addEventListener("click", function(e) {
+			config.inputElement.click();
+		});
+	}
+	
+	var configurations = [
+		{
+			inputElement: fileInput,
+			buttonElement: uploadButton,
+			resultElementId: "sale-agreement-file-base64"
+		},
+		{
+			inputElement: editFileInput,
+			buttonElement: editUploadButton,
+			resultElementId: "edit-sale-agreement-file-base64"
+		}
+	];
+	
+	configurations.forEach(function(config) {
+		handleFileUpload(config);
 	});
+	
 
 	// OPEN ACTION MODAL
 	$(document).ready(function() {

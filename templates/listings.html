@@ -10,16 +10,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>  
     <script src="{{ url_for('static', filename='js/listings.js') }}"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBoKJVMAXzJSwPJUgSLzbbwWz-px77dK_s&callback=initMap"></script>
   </head>
   <body data-is-admin="{{ is_admin }}">
     <div id="error-notification" class="error-notification"></div>
-    <div id="success-notification" class="success-notification"></div> 
-    {% include 'sidebar.html' %} 
-    <div class="content">
+    <div id="success-notification" class="success-notification"></div> {% include 'sidebar.html' %} <div class="content">
       <div class="toolbar" style="padding: 10px 0; position: relative">
         <form id="search-form" class="search-form" style="
             text-align: start;
@@ -43,33 +42,37 @@
               row-gap: 10px;
             ">
             <input type="text" class="listings-count-div" style="flex-shrink: 0" id="search-input" placeholder="Search Listings..." />
-            <button id="open-map-button" class="header-btns" style="flex-shrink: 0" type="button"> Open Listings Map </button>
+            <button id="open-listing-map-button" class="header-btns" style="flex-shrink: 0" type="button"> Open Listings Map </button>
             <button id="add-listing-button" class="header-btns" style="flex-shrink: 0" type="button"> Add Listing </button>
           </div>
         </form>
+      </div>
+      <div id="mapModal" class="map-modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <div id="map" style="height: 400px; width: 100%;"></div>
+        </div>
       </div>
       <div class="table-div">
         <table class="centered-table" style="width: 100%; margin: 0; border-radius: 6px; overflow: hidden">
           <thead>
             <tr>
               <th style="border-top-left-radius: 7px">Property Type</th>
-              <th>Listing Type</th>
-              <th>Start Date</th>
-              <th>Closing Date</th>
+              <th>Month-to-Month</th>
+              <th>Starting Date</th>
+              <th>Expiration Date</th>
               <th>Price</th>
               <th>Street</th>
               <th>City</th>
+              <th>State</th>
               <th>Owner</th>
-              <th>Phone</th>
               <th>Brokers</th>
               <th style="border-top-right-radius: 7px">Listing Agreement</th>
             </tr>
           </thead>
-          <tbody> 
-            {% for listing in listings %} 
-            <tr data-listing-id="{{ listing._id }}">
+          <tbody> {% for listing in listings %} <tr data-listing-id="{{ listing._id }}">
               <td>{{ listing.listing_property_type }}</td>
-              <td>{{ listing.listing_type }}</td>
+              <td>{{ listing.listing_month_to_month }}</td>
               <td>{{ listing.listing_start_date }}</td>
               <td>
                 <a href="{{ url_for('create_ics_listing', listing_id=listing._id) }}">{{ listing.listing_end_date }}</a>
@@ -77,19 +80,18 @@
               <td>{{ listing.listing_price }}</td>
               <td>{{ listing.listing_street }}</td>
               <td>{{ listing.listing_city }}</td>
+              <td> {% if listing.listing_state == "New Jersey" %} NJ {% elif listing.listing_state == "Pennsylvania" %} PA {% else %} {{ listing.listing_state }} {% endif %} </td>
               <td>
-                <a href="mailto:{{ listing.listing_owner_email }}">{{ listing.listing_owner_name }}</a>
-              </td>
-              <td>
-                <a href="tel:{{ listing.listing_phone }}">{{ listing.listing_owner_phone }}</a>
+                <div class="contact-info">
+                  <a href="mailto:{{ listing.listing_owner_email }}">{{ listing.listing_owner_name }}</a>
+                  <a href="tel:{{ listing.listing_owner_phone }}">{{ listing.listing_owner_phone }}</a>
+                </div>
               </td>
               <td class="brokers"> {% for broker in listing.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
               <td>
-                <form method="POST"> {% if listing.pdf_file_base64 %} <a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
+                <form method="POST"> {% if listing.listing_agreement_file_base64 %} <a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
               </td>
-            </tr> 
-            {% endfor %} 
-          </tbody>
+            </tr> {% endfor %} </tbody>
           <table>
             {{ pagination.links }}
             <div>
@@ -107,11 +109,11 @@
                       <h2 class="modal-step-title"> New Listing - Property Information </h2>
                       <div class="form-group">
                         <label for="listing-street">Listing Street:</label>
-                        <input type="text" id="listing-street" name="listing-street" required />
+                        <input type="text" id="listing-street" name="listing-street" placeholder="Enter Street Address:" required />
                       </div>
                       <div class="form-group">
                         <label for="listing-city">Listing City:</label>
-                        <input type="text" id="listing-city" name="listing-city" required />
+                        <input type="text" id="listing-city" name="listing-city" placeholder="Enter Town/City:" required />
                       </div>
                       <div class="form-group">
                         <label for="listing-state">Listing State:</label>
@@ -131,44 +133,42 @@
                           <option value="Land">Land</option>
                         </select>
                       </div>
+                      <div class="form-group">
+                        <label for="listing-month-to-month">Month-to-Month:</label>
+                        <select id="listing-month-to-month" name="listing-month-to-month" required>
+                          <option value="No">No</option>
+                          <option value="Yes">Yes</option>
+                        </select>
+                      </div>
                     </div>
                     <div class="modal-step main-form-step" id="main-step2">
                       <h2 class="modal-step-title"> New Listing - Owner Information </h2>
                       <div class="form-group">
                         <label for="listing-owner-name">Owner Name:</label>
-                        <input type="text" id="listing-owner-name" name="listing-owner-name" required />
+                        <input type="text" id="listing-owner-name" name="listing-owner-name" placeholder="Enter Owner Name:" required />
                       </div>
                       <div class="form-group">
                         <label for="listing-owner-email">Owner Email:</label>
-                        <input type="email" id="listing-owner-email" name="listing-owner-email" required />
+                        <input type="email" id="listing-owner-email" name="listing-owner-email" placeholder="Enter Owner Email:" required />
                       </div>
                       <div class="form-group">
                         <label for="listing-owner-phone">Owner Phone Number:</label>
-                        <input type="tel" id="listing-owner-phone" name="listing-owner-phone" required />
+                        <input type="tel" id="listing-owner-phone" name="listing-owner-phone" placeholder="Enter Owner Phone Number:" required />
                       </div>
                     </div>
                     <div class="modal-step main-form-step" id="main-step3">
                       <h2 class="modal-step-title"> New Listing - General Information </h2>
                       <div class="form-group">
-                        <label for="listing-type">Listing Type:</label>
-                        <select id="listing-type" name="listing-type" required>
-                          <option value="Sale">Sale</option>
-                          <option value="Lease">Lease</option>
-                          <option value="Sale and Lease">Sale and Lease</option>
-                          <option value="Sublease">Sublease</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
                         <label for="listing-price">Listing Price:</label>
-                        <input type="text" id="listing-price" name="listing-price" required />
+                        <input type="text" id="listing-price" name="listing-price" placeholder="Enter Listing Price:" required />
                       </div>
                       <div class="form-group">
-                        <label for="listing-start-date">Listing Start Date:</label>
-                        <input type="text" id="listing-start-date" name="listing-start-date" required />
+                        <label for="listing-start-date">Listing Starting Date:</label>
+                        <input type="text" id="listing-start-date" name="listing-start-date" placeholder="Enter Listing Start Date:" required />
                       </div>
                       <div class="form-group">
-                        <label for="listing-end-date">Listing End Date:</label>
-                        <input type="text" id="listing-end-date" name="listing-end-date" required />
+                        <label for="listing-end-date">Listing Expiration Date:</label>
+                        <input type="text" id="listing-end-date" name="listing-end-date" placeholder="Enter Listing Expiration Date:" required />
                       </div>
                       <div class="form-group">
                         <label for="listing-brokers">Brokers:</label>
@@ -221,6 +221,31 @@
                         <label for="edit-listing-city">Listing City:</label>
                         <input type="text" id="edit-listing-city" name="edit-listing-city" required />
                       </div>
+                      <div class="form-group">
+                        <label for="edit-listing-state">Listing State:</label>
+                        <select id="edit-listing-state" name="edit-listing-state" required>
+                          <option value="NJ">NJ</option>
+                          <option value="PA">PA</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="edit-listing-property-type">Property Type:</label>
+                        <select id="edit-listing-property-type" name="edit-listing-property-type" required>
+                          <option value="Office">Office</option>
+                          <option value="Industrial">Industrial</option>
+                          <option value="Flex">Flex</option>
+                          <option value="Retail">Retail</option>
+                          <option value="Medical">Medical</option>
+                          <option value="Land">Land</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="edit-listing-month-to-month">Month-to-Month:</label>
+                        <select id="edit-listing-month-to-month" name="edit-listing-month-to-month" required>
+                          <option value="No">No</option>
+                          <option value="Yes">Yes</option>
+                        </select>
+                      </div>
                     </div>
                     <div class="modal-step edit-form-step" id="edit-step2">
                       <div class="form-group">
@@ -238,7 +263,7 @@
                     </div>
                     <div class="modal-step edit-form-step" id="edit-step3">
                       <div class="form-group">
-                        <label for="edit-listing-start-date">Listing Start Date:</label>
+                        <label for="edit-listing-start-date">Listing Starting Date:</label>
                         <input type="text" id="edit-listing-start-date" name="edit-listing-start-date" required />
                       </div>
                       <div class="form-group">
@@ -250,9 +275,9 @@
                         <input type="text" id="edit-listing-price" name="edit-listing-price" required />
                       </div>
                       <div class="form-group">
-                        <button id="upload-listing-agreement" type="button"> Upload Listing Agreement </button>
-                        <input id="listing-agreement" type="file" style="display: none" accept=".pdf" />
-                        <input type="hidden" id="listing-agreement-file-base64" name="listing-agreement-file-base64" />
+                        <button id="edit-upload-listing-agreement" type="button"> Upload Listing Agreement </button>
+                        <input id="edit-listing-agreement" type="file" style="display: none" accept=".pdf" />
+                        <input type="hidden" id="edit-listing-agreement-file-base64" name="edit-listing-agreement-file-base64" />
                       </div>
                     </div>
                     <div class="modal-navigation">

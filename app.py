@@ -15,11 +15,14 @@ from flask_login import (
     current_user,
     login_required,
 )
+import json
+import requests
 from pymongo import MongoClient
 from flask_bcrypt import Bcrypt
 from models import User
 from flask_paginate import Pagination, get_page_args
 from bson.objectid import ObjectId
+from bson import json_util
 from gridfs import GridFS
 from dotenv import load_dotenv
 from flask import Flask, Response
@@ -98,6 +101,41 @@ try:
     logger.info("Connected to MongoDB successfully")
 except Exception as e:
     logger.error(f"Error connecting to MongoDB: {str(e)}")
+
+def send_email(subject, template, data):
+    try:
+        msg = Message(
+            subject,
+            sender="portal@wolfcre.com",
+            recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
+        )
+        email_content = render_template(template, **data)
+        msg.html = transform(email_content)
+        mail.send(msg)
+    except Exception as e:
+        print("Error Sending Email", e)
+
+def convert_state_code_to_full_name(state_code):
+    state_mapping = {
+        "NJ": "New Jersey",
+        "PA": "Pennsylvania"
+    }
+    return state_mapping.get(state_code, state_code)
+
+@app.route("/count/<string:collection_type>")
+@login_required
+def get_count(collection_type):
+    collection_map = {
+        "listings": listings,
+        "sales": sales,
+        "leases": leases,
+    }
+    collection = collection_map.get(collection_type)
+    if collection is None:
+        return jsonify(error=f"Invalid collection type: {collection_type}"), 400
+    count = collection.count_documents({})
+    return jsonify(count=count)
+
 
 
 @app.route("/")
@@ -205,7 +243,7 @@ def view_listings():
         )
         pagination = Pagination(
             page=page, per_page=per_page, total=total, css_framework="bootstrap4"
-        )
+        )   
         return render_template(
             "listings.html",
             listings=listings_data,
@@ -285,22 +323,6 @@ def view_leases():
         )
     return redirect(url_for("login"))
 
-
-@app.route("/count/<string:collection_type>")
-@login_required
-def get_count(collection_type):
-    collection_map = {
-        "listings": listings,
-        "sales": sales,
-        "leases": leases,
-    }
-    collection = collection_map.get(collection_type)
-    if collection is None:
-        return jsonify(error=f"Invalid collection type: {collection_type}"), 400
-    count = collection.count_documents({})
-    return jsonify(count=count)
-
-
 @app.route("/get_documents")
 @login_required
 def get_documents():
@@ -325,6 +347,7 @@ def documents():
         "BOV Reports",
         "Quarterly Reports",
         "Key Marketing Pieces",
+        "Other Documents"
     ]
     document_counts = {}
     for document_type in document_types:
@@ -360,29 +383,25 @@ def send_pdf_response(collection, item_id, pdf_key, default_filename):
 @app.route("/download_listing_pdf/<listing_id>", methods=["GET"])
 @login_required
 def download_listing_pdf(listing_id):
-    return send_pdf_response(listings, listing_id, "pdf_file_base64", "listing.pdf")
+    return send_pdf_response(listings, listing_id, "listing_agreement_file_base64", "listing_agreement.pdf")
 
 
 @app.route("/download_sale_pdf/<sale_id>", methods=["GET"])
 @login_required
 def download_sale_pdf(sale_id):
-    return send_pdf_response(sales, sale_id, "pdf_file_base64", "sale.pdf")
+    return send_pdf_response(sales, sale_id, "sale_agreement_file_base64", "sale_agreement.pdf")
 
 
 @app.route("/download_lease_agreement_pdf/<lease_id>", methods=["GET"])
 @login_required
-def download_lease_agreement(lease_id):
-    return send_pdf_response(
-        leases, lease_id, "lease_agreement_pdf_file_base64", "lease_agreement.pdf"
-    )
+def download_lease_agreement_pdf(lease_id):
+    return send_pdf_response(leases, lease_id, "lease_agreement_file_base64", "lease_agreement.pdf")
 
 
 @app.route("/download_lease_commision_pdf/<lease_id>", methods=["GET"])
 @login_required
-def download_lease_commision(lease_id):
-    return send_pdf_response(
-        leases, lease_id, "lease_commision_pdf_file_base64", "lease_commision.pdf"
-    )
+def download_lease_commision_pdf(lease_id):
+    return send_pdf_response(leases, lease_id, "lease_commision_file_base64", "lease_commision.pdf")
 
 
 def handle_upload():
@@ -446,34 +465,19 @@ def submit_listing():
             "listing-start-date",
             "listing-agreement-file-base64",
             "listing-property-type",
-            "listing-type",
-            "investment-sale",
+            "listing-month-to-month",
             "listing-price",
+            "listing-lat",
+            "listing-long"
         ]
         new_listing = {
             key.replace("-", "_"): request.form.get(key) for key in form_keys
         }
         new_listing["brokers"] = request.form.getlist("brokers[]")
-
-        state_mapping = {"NJ": "New Jersey", "PA": "Pennsylvania"}
-        if new_listing["listing_state"] in state_mapping:
-            new_listing["listing_state"] = state_mapping[new_listing["listing_state"]]
+        new_listing["listing_state"] = convert_state_code_to_full_name(new_listing["listing_state"])
         result = listings.insert_one(new_listing)
         if not result.inserted_id:
             raise Exception("Error inserting the listing.")
-        try:
-            msg = Message(
-                "WCRE Portal - A New Listing Has Been Submitted",
-                sender="portal@wolfcre.com",
-                recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
-            )
-            email_content = render_template(
-                "email_templates/email_new_listing.html", listing=new_listing
-            )
-            msg.html = transform(email_content)
-            mail.send(msg)
-        except Exception as e:
-            print("Error Sending Email", e)
         return make_response(
             {"status": "success", "redirect": url_for("view_listings")}, 200
         )
@@ -510,28 +514,14 @@ def submit_sale():
             "sale-property-type",
             "sale-type",
             "sale-price",
+            "sale-commision"
         ]
         new_sale = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
         new_sale["brokers"] = request.form.getlist("brokers[]")
-        state_mapping = {"NJ": "New Jersey", "PA": "Pennsylvania"}
-        if new_sale["sale_state"] in state_mapping:
-            new_sale["sale_state"] = state_mapping[new_sale["sale_state"]]
+        new_sale["sale_state"] = convert_state_code_to_full_name(new_sale["sale_state"])
         result = sales.insert_one(new_sale)
         if not result.inserted_id:
             raise Exception("Error Inserting the Sale")
-        try:
-            msg = Message(
-                "WCRE Portal - A New Sale Has Been Submitted",
-                sender="portal@wolfcre.com",
-                recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
-            )
-            email_content = render_template(
-                "email_templates/email_new_sale.html", sale=new_sale
-            )
-            msg.html = transform(email_content)
-            mail.send(msg)
-        except Exception as e:
-            print("Error Sending Email", e)
         return make_response(
             {"status": "success", "redirect": url_for("view_sales")}, 200
         )
@@ -558,43 +548,28 @@ def submit_lease():
             "lease-state",
             "lease-sqft",
             "lease-property-type",
-            "lease-price",
-            "lease-term-length",
-            "lease-percentage-space",
             "lease-lessor-name",
             "lease-lessor-email",
             "lease-lessor-phone",
-            "lease-lesse-name",
-            "lease-lesse-email",
-            "lease-lesse-phone",
+            "lease-lessee-name",
+            "lease-lessee-email",
+            "lease-lessee-phone",
         ]
         new_lease = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
+        years = request.form.get("lease-years")
+        months = request.form.get("lease-months")
+        new_lease["lease_term_length"] = f"{years} Years, {months} Months"
         new_lease["brokers"] = request.form.getlist("brokers[]")
-        new_lease["lease_agreement_pdf_file_base64"] = request.form.get(
+        new_lease["lease_agreement_file_base64"] = request.form.get(
             "lease-agreement-file-base64"
         )
-        new_lease["lease_commision_pdf_file_base64"] = request.form.get(
-            "commision-agreement-file-base64"
+        new_lease["lease_commision_file_base64"] = request.form.get(
+            "lease-commision-agreement-file-base64"
         )
-        state_mapping = {"NJ": "New Jersey", "PA": "Pennsylvania"}
-        if new_lease["lease_state"] in state_mapping:
-            new_lease["lease_state"] = state_mapping[new_lease["lease_state"]]
+        new_lease["lease_state"] = convert_state_code_to_full_name(new_lease["lease_state"])
         result = leases.insert_one(new_lease)
         if not result.inserted_id:
             raise Exception("Error Inserting the Lease")
-        try:
-            msg = Message(
-                "WCRE Portal - A New Lease Has Been Submitted",
-                sender="portal@wolfcre.com",
-                recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
-            )
-            email_content = render_template(
-                "email_templates/email_new_lease.html", lease=new_lease
-            )
-            msg.html = transform(email_content)
-            mail.send(msg)
-        except Exception as e:
-            print("Error Sending Email", e)
         return make_response(
             {"status": "success", "redirect": url_for("view_leases")}, 200
         )
@@ -701,6 +676,11 @@ def edit_record(record_id, collection, fields):
 @app.route("/edit_listing/<listing_id>", methods=["POST"])
 @login_required
 def edit_listing(listing_id):
+    existing_listing = listings.find_one({"_id": ObjectId(listing_id)})
+    if not request.json.get('listing_agreement_file_base64') and existing_listing.get('listing_agreement_file_base64'):
+        request.json.pop('listing_agreement_file_base64', None)
+    if request.json.get("listing_state"):
+        request.json["listing_state"] = convert_state_code_to_full_name(request.json["listing_state"])
     fields = [
         "listing_street",
         "listing_city",
@@ -712,8 +692,7 @@ def edit_listing(listing_id):
         "listing_start_date",
         "listing_agreement_file_base64",
         "listing_property_type",
-        "listing_type",
-        "investment_sale",
+        "listing_month_to_month",
         "listing_price",
     ]
     return edit_record(listing_id, listings, fields)
@@ -722,6 +701,11 @@ def edit_listing(listing_id):
 @app.route("/edit_sale/<sale_id>", methods=["POST"])
 @login_required
 def edit_sale(sale_id):
+    existing_sale = sales.find_one({"_id": ObjectId(sale_id)})
+    if not request.json.get('sale_agreement_file_base64') and existing_sale.get('sale_agreement_file_base64'):
+        request.json.pop('sale_agreement_file_base64', None)
+    if request.json.get("sale_state"):
+        request.json["sale_state"] = convert_state_code_to_full_name(request.json["sale_state"])
     fields = [
         "sale_street",
         "sale_city",
@@ -733,9 +717,11 @@ def edit_sale(sale_id):
         "sale_buyer_email",
         "sale_buyer_phone",
         "sale_end_date",
+        "sale_agreement_file_base64",
         "sale_property_type",
         "sale_type",
         "sale_price",
+        "sale_commision",
     ]
     return edit_record(sale_id, sales, fields)
 
@@ -743,6 +729,16 @@ def edit_sale(sale_id):
 @app.route("/edit_lease/<lease_id>", methods=["POST"])
 @login_required
 def edit_lease(lease_id):
+    existing_lease = leases.find_one({"_id": ObjectId(lease_id)})
+    base64_fields = [
+        'lease_agreement_file_base64',
+        'lease_commision_file_base64'
+    ]
+    for field in base64_fields:
+        if not request.json.get(field) and existing_lease.get(field):
+            request.json.pop(field, None)
+    if request.json.get("sale_state"):
+        request.json["lease_state"] = convert_state_code_to_full_name(request.json["lease_state"])
     fields = [
         "lease_street",
         "lease_city",
@@ -750,13 +746,15 @@ def edit_lease(lease_id):
         "lease_property_type",
         "lease_price",
         "lease_term_length",
-        "lease_percentage_space",
+        "lease_percentage_space"
+    ] + base64_fields + [
         "lease_lessor_name",
         "lease_lessor_email",
-        "lease_lesse_name",
-        "lease_lesse_email",
+        "lease_lessee_name",
+        "lease_lessee_email"
     ]
     return edit_record(lease_id, leases, fields)
+
 
 
 def search_in_collection(collection, fields, page, search_query, items_per_page=12):
@@ -765,7 +763,6 @@ def search_in_collection(collection, fields, page, search_query, items_per_page=
         "$options": "i",
     }
     query = {"$or": [{field: regex_query} for field in fields]}
-
     search_results = (
         collection.find(query)
         .sort("_id", -1)
@@ -796,7 +793,7 @@ def search_listings():
         "listing_end_date",
         "listing_start_date",
         "listing_property_type",
-        "listing_type",
+        "listing_month_to_month",
         "listing_price",
     ]
     results = search_in_collection(listings, fields, page, search_query)
@@ -824,6 +821,7 @@ def search_sales():
         "sale_end_date",
         "sale_type",
         "sale_price",
+        "sale_commision",
     ]
     results = search_in_collection(sales, fields, page, search_query)
     return jsonify(results)

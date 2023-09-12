@@ -86,7 +86,7 @@ body {
 #upload-lease-agreement:hover {
   background-color: #ddd;
 }
-#upload-commision-agreement {
+#upload-lease-commision-agreement {
   margin-top: 1px;
   background-color: #f0f0f0;
   border: none;
@@ -96,7 +96,33 @@ body {
   font-size: 14px;
   cursor: pointer;
 }
-#upload-commision-agreement:hover {
+#upload-lease-commision-agreement:hover {
+  background-color: #ddd;
+}
+#edit-upload-lease-agreement {
+  margin-top: 1px;
+  background-color: #f0f0f0;
+  border: none;
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+#edit-upload-lease-agreement:hover {
+  background-color: #ddd;
+}
+#edit-upload-lease-commision-agreement {
+  margin-top: 1px;
+  background-color: #f0f0f0;
+  border: none;
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+#edit-upload-lease-commision-agreement:hover {
   background-color: #ddd;
 }
 /* table */
@@ -187,6 +213,7 @@ body {
 .centered-table th:nth-child(1),
 .centered-table th:nth-child(2),
 .centered-table th:nth-child(3),
+.centered-table th:nth-child(4),
 .centered-table th:nth-child(5),
 .centered-table th:nth-child(6),
 .centered-table th:nth-child(7),
@@ -194,8 +221,10 @@ body {
 .centered-table th:nth-child(9) {
   max-width: 150px;
 }
-.centered-table th:nth-child(4) {
-  width: 80px;
+.contact-info a:first-child {
+  display: block;
+  margin-bottom: 5px; /* Adjust this value as needed */
+  padding-bottom: 3px; /* Space above the visual separation */
 }
 /* pagination */
 .pagination {
