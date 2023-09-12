@@ -9,6 +9,8 @@ $(document).ready(function() {
 	const editSellerPhoneInput = document.getElementById("edit-sale-seller-phone");
 	const salePriceInput = document.getElementById("sale-price");
 	const editSalePriceInput = document.getElementById("edit-sale-price");
+	const commisionPriceInput = document.getElementById("sale-commision");
+	const editCommisionPriceInput = document.getElementById("edit-sale-commision");
 	const sqFootageInput = document.getElementById("sale-sqft");
 	const editsqFootageInput = document.getElementById("edit-sale-sqft");
 	buyerPhoneInput.addEventListener("input", () => formatPhoneNumber(buyerPhoneInput));
@@ -17,6 +19,8 @@ $(document).ready(function() {
 	editSellerPhoneInput.addEventListener("input", () => formatPhoneNumber(editSellerPhoneInput));
 	salePriceInput.addEventListener("input", () => formatPrice(salePriceInput));
 	editSalePriceInput.addEventListener("input", () => formatPrice(editSalePriceInput));
+	commisionPriceInput.addEventListener("input", () => formatPrice(commisionPriceInput));
+	editCommisionPriceInput.addEventListener("input", () => formatPrice(editCommisionPriceInput));
 	sqFootageInput.addEventListener("input", () => formatSqFootage(sqFootageInput));
 	editsqFootageInput.addEventListener("input", () => formatSqFootage(editsqFootageInput));
 
@@ -97,13 +101,13 @@ $(document).ready(function() {
 	function formatSqFootage(inputElement) {
 		let numericValue = inputElement.value.replace(/[^0-9.,]/g, "");
 		numericValue = numericValue.replace(/\.+/g, ".").replace(/,+/g, ",");
-
+	
 		const parts = numericValue.split(".");
 		if (parts.length > 1) {
 			parts[1] = parts[1].substring(0, 2);
 			numericValue = parts.join(".");
 		}
-
+	
 		let cents = "";
 		if (numericValue.includes(".")) {
 			[numericValue, cents] = numericValue.split(".");
@@ -112,10 +116,10 @@ $(document).ready(function() {
 		numericValue = numericValue.replace(/,/g, "");
 		const numberValue = isNaN(parseFloat(numericValue)) ? 0 : parseFloat(numericValue);
 		const formattedNumber = new Intl.NumberFormat("en-US").format(numberValue);
-		const formattedSqft = numberValue ? `${formattedNumber}${cents}` : "";
+		const formattedSqft = numberValue ? `${formattedNumber}${cents} SF` : "";
 		inputElement.value = formattedSqft;
 	}
-
+	
 	$(function() {
 		$("#sale-end-date").datepicker();
 		$("#edit-sale-end-date").datepicker();
@@ -153,21 +157,22 @@ $(document).ready(function() {
 		editModal.show();
 		editModal.find(".prev-step").addClass("hidden");
 		actionModal.hide();
-		editModal.find(".modal-step-title").text("Edit Sale - " + getCellText(7));
+		editModal.find(".modal-step-title").text("Edit Sale - " + getCellText(8));
 		setInputValue("#edit-sale-property-type", getCellText(1));
 		setInputValue("#edit-sale-type", getCellText(2));
 		setInputValue("#edit-sale-end-date", getCellText(3));
 		setInputValue("#edit-sale-price", getCellText(4));
-		setInputValue("#edit-sale-sqft", getCellText(5));
-		setInputValue("#edit-sale-street", getCellText(7));
-		setInputValue("#edit-sale-city", getCellText(8));
-		setInputValue("#edit-sale-state", getCellText(9));
-		setInputValue("#edit-sale-buyer-name", getNameFromCell(10));
-		setInputValue("#edit-sale-buyer-email", getEmailFromCell(10));
-		setInputValue("#edit-sale-buyer-phone", getPhoneFromCell(10));
-		setInputValue("#edit-sale-seller-name", getNameFromCell(11));
-		setInputValue("#edit-sale-seller-email", getEmailFromCell(11));
-		setInputValue("#edit-sale-seller-phone", getPhoneFromCell(11));
+		setInputValue("#edit-sale-commision", getCellText(5));
+		setInputValue("#edit-sale-sqft", getCellText(6));
+		setInputValue("#edit-sale-street", getCellText(8));
+		setInputValue("#edit-sale-city", getCellText(9));
+		setInputValue("#edit-sale-state", getCellText(10));
+		setInputValue("#edit-sale-buyer-name", getNameFromCell(11));
+		setInputValue("#edit-sale-buyer-email", getEmailFromCell(11));
+		setInputValue("#edit-sale-buyer-phone", getPhoneFromCell(11));
+		setInputValue("#edit-sale-seller-name", getNameFromCell(12));
+		setInputValue("#edit-sale-seller-email", getEmailFromCell(12));
+		setInputValue("#edit-sale-seller-phone", getPhoneFromCell(12));
 	});
 	
 	
@@ -217,6 +222,7 @@ $(document).ready(function() {
 			result.sale_type,
 			result.sale_end_date,
 			result.sale_price || "None",
+			result.sale_commision || "None",
 			result.sale_sqft,
 			"$" + pricePerSqft.toFixed(2),
 			result.sale_street,
@@ -296,6 +302,7 @@ $(document).ready(function() {
 					var salePropertyType = $("#edit-sale-property-type").val();
 					var saleClosingDate = $("#edit-sale-end-date").val();
 					var salePrice = $("#edit-sale-price").val();
+					var saleCommision = $("#edit-sale-commision").val();
 					var saleSqFt = $("#edit-sale-sqft").val();
 					var saleStreet = $("#edit-sale-street").val();
 					var saleCity = $("#edit-sale-city").val();
@@ -314,6 +321,7 @@ $(document).ready(function() {
 						sale_end_date: saleClosingDate,
 						sale_agreement_file_base64: fileBase64,
 						sale_price: salePrice,
+						sale_commision: saleCommision,
 						sale_sqft: saleSqFt,
 						sale_street: saleStreet,
 						sale_city: saleCity,

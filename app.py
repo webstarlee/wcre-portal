@@ -514,6 +514,7 @@ def submit_sale():
             "sale-property-type",
             "sale-type",
             "sale-price",
+            "sale-commision"
         ]
         new_sale = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
         new_sale["brokers"] = request.form.getlist("brokers[]")
@@ -720,6 +721,7 @@ def edit_sale(sale_id):
         "sale_property_type",
         "sale_type",
         "sale_price",
+        "sale_commision",
     ]
     return edit_record(sale_id, sales, fields)
 
@@ -819,6 +821,7 @@ def search_sales():
         "sale_end_date",
         "sale_type",
         "sale_price",
+        "sale_commision",
     ]
     results = search_in_collection(sales, fields, page, search_query)
     return jsonify(results)

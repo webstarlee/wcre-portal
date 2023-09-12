@@ -90,51 +90,6 @@ $(document).ready(function() {
 		return formattedNumber;
 	}
 
-
-	function formatPrice(inputElement) {
-		let inputText = inputElement.value.trim();
-		if (isNaN(inputText.replace(/[,.$]/g, ""))) {
-			inputElement.value = inputText;
-			return;
-		}
-
-		let numericValue = inputText.replace(/[^0-9.,]/g, "");
-		numericValue = numericValue.replace(/\.+/g, ".").replace(/,+/g, ",");
-		const parts = numericValue.split(".");
-		if (parts.length > 1) {
-			parts[1] = parts[1].substring(0, 2);
-			numericValue = parts.join(".");
-		}
-
-		let cents = "";
-		if (numericValue.includes(".")) {
-			[numericValue, cents] = numericValue.split(".");
-			cents = "." + cents;
-		}
-		numericValue = numericValue.replace(/,/g, "");
-		const numberValue = isNaN(parseFloat(numericValue)) ?
-			0 :
-			parseFloat(numericValue);
-		const formattedNumber = new Intl.NumberFormat("en-US").format(numberValue);
-		const formattedPrice = numberValue ? `$${formattedNumber}${cents}` : "";
-		inputElement.value = formattedPrice;
-	}
-
-	function formatPercentage(inputElement) {
-		let numericValue = inputElement.value.replace(/[^0-9.]/g, "");
-		numericValue = numericValue.replace(/\.+/g, ".");
-		const parts = numericValue.split(".");
-		if (parts.length > 1) {
-			parts[1] = parts[1].substring(0, 2);
-			numericValue = parts.join(".");
-		}
-		if (numericValue) {
-			inputElement.value = `${numericValue}%`;
-		} else {
-			inputElement.value = "";
-		}
-	}
-
 	function formatSqFootage(inputElement) {
 		let numericValue = inputElement.value.replace(/[^0-9.,]/g, "");
 		numericValue = numericValue.replace(/\.+/g, ".").replace(/,+/g, ",");
@@ -154,7 +109,7 @@ $(document).ready(function() {
 			0 :
 			parseFloat(numericValue);
 		const formattedNumber = new Intl.NumberFormat("en-US").format(numberValue);
-		const formattedSqft = numberValue ? `${formattedNumber}${cents}` : "";
+		const formattedSqft = numberValue ? `${formattedNumber}${cents} SF` : "";
 		inputElement.value = formattedSqft;
 	}
 
@@ -269,17 +224,6 @@ $(document).ready(function() {
 		$("body").removeClass("modal-open");
 		$("#edit-lease-modal").hide();
 	});
-
-	const calculatePricePerSqft = (price, sqft) => {
-		const parsedPrice = parseFloat(price.replace(/\$/g, '').replace(/,/g, ''));
-		const parsedSqft = parseFloat(sqft.replace(/,/g, ''));
-	
-		if (!isNaN(parsedPrice) && !isNaN(parsedSqft) && parsedSqft !== 0) {
-			const rawValue = parsedPrice / parsedSqft;
-			return "$" + rawValue.toFixed(2);
-		} 
-		return "N/A";
-	};	
 
 	let currentPage = 1;
 	const searchLeases = (page) => {
