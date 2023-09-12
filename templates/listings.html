@@ -10,10 +10,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>  
     <script src="{{ url_for('static', filename='js/listings.js') }}"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBoKJVMAXzJSwPJUgSLzbbwWz-px77dK_s&callback=initMap"></script>
   </head>
   <body data-is-admin="{{ is_admin }}">
     <div id="error-notification" class="error-notification"></div>
@@ -41,10 +42,16 @@
               row-gap: 10px;
             ">
             <input type="text" class="listings-count-div" style="flex-shrink: 0" id="search-input" placeholder="Search Listings..." />
-            <button id="open-map-button" class="header-btns" style="flex-shrink: 0" type="button"> Open Listings Map </button>
+            <button id="open-listing-map-button" class="header-btns" style="flex-shrink: 0" type="button"> Open Listings Map </button>
             <button id="add-listing-button" class="header-btns" style="flex-shrink: 0" type="button"> Add Listing </button>
           </div>
         </form>
+      </div>
+      <div id="mapModal" class="map-modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <div id="map" style="height: 400px; width: 100%;"></div>
+        </div>
       </div>
       <div class="table-div">
         <table class="centered-table" style="width: 100%; margin: 0; border-radius: 6px; overflow: hidden">

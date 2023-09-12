@@ -37,7 +37,7 @@ body {
   outline: 0;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
 }
-#open-map-button {
+#open-listing-map-button {
   background-color: #f0f0f0;
   border: none;
   color: #333;
@@ -46,7 +46,7 @@ body {
   font-size: 14px;
   cursor: pointer;
 }
-#open-map-button:hover {
+#open-listing-map-button:hover {
   background-color: #ddd;
 }
 #delete-all-button {
@@ -200,7 +200,7 @@ table tr:hover td a {
   color: #fff;
 }
 /* modals */
-.listing-modal {
+.map-modal, .listing-modal {
   display: none;
   position: fixed;
   z-index: 1;
@@ -345,6 +345,11 @@ body.modal-open {
   overflow: hidden;
 }
 .modal-open #add-listing-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-open #mapModal {
   display: flex;
   align-items: center;
   justify-content: center;

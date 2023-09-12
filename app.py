@@ -15,11 +15,14 @@ from flask_login import (
     current_user,
     login_required,
 )
+import json
+import requests
 from pymongo import MongoClient
 from flask_bcrypt import Bcrypt
 from models import User
 from flask_paginate import Pagination, get_page_args
 from bson.objectid import ObjectId
+from bson import json_util
 from gridfs import GridFS
 from dotenv import load_dotenv
 from flask import Flask, Response
@@ -111,6 +114,13 @@ def send_email(subject, template, data):
         mail.send(msg)
     except Exception as e:
         print("Error Sending Email", e)
+
+def convert_state_code_to_full_name(state_code):
+    state_mapping = {
+        "NJ": "New Jersey",
+        "PA": "Pennsylvania"
+    }
+    return state_mapping.get(state_code, state_code)
 
 @app.route("/count/<string:collection_type>")
 @login_required
@@ -233,7 +243,7 @@ def view_listings():
         )
         pagination = Pagination(
             page=page, per_page=per_page, total=total, css_framework="bootstrap4"
-        )
+        )   
         return render_template(
             "listings.html",
             listings=listings_data,
@@ -456,15 +466,14 @@ def submit_listing():
             "listing-property-type",
             "listing-type",
             "listing-price",
+            "listing-lat",
+            "listing-long"
         ]
         new_listing = {
             key.replace("-", "_"): request.form.get(key) for key in form_keys
         }
         new_listing["brokers"] = request.form.getlist("brokers[]")
-
-        state_mapping = {"NJ": "New Jersey", "PA": "Pennsylvania"}
-        if new_listing["listing_state"] in state_mapping:
-            new_listing["listing_state"] = state_mapping[new_listing["listing_state"]]
+        new_listing["listing_state"] = convert_state_code_to_full_name(new_listing["listing_state"])
         result = listings.insert_one(new_listing)
         if not result.inserted_id:
             raise Exception("Error inserting the listing.")
@@ -507,9 +516,7 @@ def submit_sale():
         ]
         new_sale = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
         new_sale["brokers"] = request.form.getlist("brokers[]")
-        state_mapping = {"NJ": "New Jersey", "PA": "Pennsylvania"}
-        if new_sale["sale_state"] in state_mapping:
-            new_sale["sale_state"] = state_mapping[new_sale["sale_state"]]
+        new_sale["sale_state"] = convert_state_code_to_full_name(new_sale["sale_state"])
         result = sales.insert_one(new_sale)
         if not result.inserted_id:
             raise Exception("Error Inserting the Sale")
@@ -559,9 +566,7 @@ def submit_lease():
         new_lease["lease_commision_file_base64"] = request.form.get(
             "lease-commision-agreement-file-base64"
         )
-        state_mapping = {"NJ": "New Jersey", "PA": "Pennsylvania"}
-        if new_lease["lease_state"] in state_mapping:
-            new_lease["lease_state"] = state_mapping[new_lease["lease_state"]]
+        new_lease["lease_state"] = convert_state_code_to_full_name(new_lease["lease_state"])
         result = leases.insert_one(new_lease)
         if not result.inserted_id:
             raise Exception("Error Inserting the Lease")
@@ -674,6 +679,8 @@ def edit_listing(listing_id):
     existing_listing = listings.find_one({"_id": ObjectId(listing_id)})
     if not request.json.get('listing_agreement_file_base64') and existing_listing.get('listing_agreement_file_base64'):
         request.json.pop('listing_agreement_file_base64', None)
+    if request.json.get("listing_state"):
+        request.json["listing_state"] = convert_state_code_to_full_name(request.json["listing_state"])
     fields = [
         "listing_street",
         "listing_city",
@@ -697,6 +704,8 @@ def edit_sale(sale_id):
     existing_sale = sales.find_one({"_id": ObjectId(sale_id)})
     if not request.json.get('sale_agreement_file_base64') and existing_sale.get('sale_agreement_file_base64'):
         request.json.pop('sale_agreement_file_base64', None)
+    if request.json.get("sale_state"):
+        request.json["sale_state"] = convert_state_code_to_full_name(request.json["sale_state"])
     fields = [
         "sale_street",
         "sale_city",
@@ -727,7 +736,8 @@ def edit_lease(lease_id):
     for field in base64_fields:
         if not request.json.get(field) and existing_lease.get(field):
             request.json.pop(field, None)
-
+    if request.json.get("sale_state"):
+        request.json["lease_state"] = convert_state_code_to_full_name(request.json["lease_state"])
     fields = [
         "lease_street",
         "lease_city",

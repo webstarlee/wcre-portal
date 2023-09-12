@@ -11,6 +11,35 @@ $(document).ready(function() {
 	editOwnerPhoneInput.addEventListener("input", () => formatPhoneNumber(editOwnerPhoneInput));
 	listingPriceInput.addEventListener("input", () => formatPrice(listingPriceInput));
 	editListingPriceInput.addEventListener("input", () => formatPrice(editListingPriceInput));
+	let modal = document.getElementById("mapModal");
+	let btn = document.getElementById("open-listing-map-button");
+	let span = document.getElementsByClassName("close")[0];
+
+	btn.onclick = function() {
+		initMap();
+	}
+
+	span.onclick = function() {
+		modal.style.display = "none";
+	}
+	
+
+	function initMap() {
+		let map = new google.maps.Map(document.getElementById('map'), {
+			zoom: 4,
+			center: new google.maps.LatLng(-25.363, 131.044)
+		});
+		let listings = [
+			{ lat: -25.363, lng: 131.044 },
+		];
+		for (let i = 0; i < listings.length; i++) {
+			new google.maps.Marker({
+				position: listings[i],
+				map: map
+			});
+		}
+	}
+	
 
 	function toggleErrorClass($element, isError) {
 		isError ? $element.addClass("error") : $element.removeClass("error");
@@ -104,6 +133,7 @@ $(document).ready(function() {
 	$("#add-listing-button").click(function() {
 		resetModalSteps($("#add-listing-modal"));
 		$("body").addClass("modal-open");
+		$("#mapModal").hide();
 		$("#edit-listing-modal").hide();
 		$("#add-listing-modal").show();
 		$("#add-listing-modal .prev-step").addClass("hidden");
@@ -115,6 +145,14 @@ $(document).ready(function() {
 		modal.find(".prev-step").addClass("hidden");
 		modal.find(".next-step").text("Next");
 	}
+
+	$("#open-listing-map-button").click(function() {
+		$("#edit-listing-modal").hide();
+		$("#add-listing-modal").hide();
+		$("body").addClass("modal-open");
+		$("#mapModal").show();
+	});
+
 
 
 	// OPEN EDIT LISTING MODAL
@@ -130,6 +168,7 @@ $(document).ready(function() {
 		resetModalSteps(editModal);
 		$("body").addClass("modal-open");
 		$("#add-listing-modal").hide();
+		$("#mapModal").hide();
 		editModal.show();
 		editModal.find(".prev-step").addClass("hidden");
 		actionModal.hide();
@@ -159,6 +198,7 @@ $(document).ready(function() {
 		$("body").removeClass("modal-open");
 		$("#edit-listing-modal").hide();
 	});
+	
 
 	let currentPage = 1;
 	const searchListings = (page) => {
@@ -291,22 +331,31 @@ $(document).ready(function() {
 						listing_owner_phone: listingPhone,
 					};
 
-					$.ajax({
-						url: "/edit_listing/" + listing_id,
-						type: "POST",
-						contentType: "application/json",
-						data: JSON.stringify(data),
-						success: function(response) {
-							if (response.success) {
-								location.reload();
-							} else {
-								showNotification("Error Editing listing", "error-notification-modal");
-							}
-						},
-						error: function() {
-							showNotification("Error Editing listing", "error-notification-modal");
-						},
-					});
+					console.log(listingStreet)
+					getLatLng(listingStreet, listingCity, listingState, function(locationData) {
+						if (locationData) {
+							data.listing_lat = locationData.lat;
+        					data.listing_long = locationData.lng;
+							$.ajax({
+								url: "/edit_listing/" + listing_id,
+								type: "POST",
+								contentType: "application/json",
+								data: JSON.stringify(data),
+								success: function(response) {
+									if (response.success) {
+										location.reload();
+									} else {
+										showNotification("Error Editing listing", "error-notification-modal");
+									}
+								},
+								error: function() {
+									showNotification("Error Editing listing", "error-notification-modal");
+								},
+							});
+						} else {
+							showNotification("Error Getting Location Data", "error-notification");
+						}
+					});	
 				} else {
 					showNotification("Please Fill Out All Required Fields", "error-notification-modal");
 				}
@@ -394,7 +443,6 @@ $(document).ready(function() {
 	var isAdmin = $("body").data("is-admin") === "True";
 	$(".centered-table tbody tr").on("contextmenu", function(e) {
 		if (isAdmin) {
-			// Check if user is an admin
 			e.preventDefault();
 			const actionModal = $("#action-modal");
 			actionModal
@@ -447,6 +495,21 @@ $(document).ready(function() {
 		});
 	});
 
+	function getLatLng(street, city, state, callback) {
+		var address = `${street}, ${city}, ${state}`;
+		console.log(address)
+		var url = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=AIzaSyBoKJVMAXzJSwPJUgSLzbbwWz-px77dK_s`
+		$.get(url, function(data) {
+			if (data.status === 'OK') {
+				callback(data.results[0].geometry.location);
+			} else {
+				showNotification("Error Retreiving Location Data", "error-notification");
+				callback(null);
+			}
+		});
+	}
+	
+
 	// SUBMIT LISTING
 	$("#submit-listing-form").on("submit", function(e) {
 		e.preventDefault();
@@ -456,25 +519,37 @@ $(document).ready(function() {
 			var formData = new FormData(this);
 			var fileBase64 = $("#listing-agreement-file-base64").val();
 			formData.append("fileBase64", fileBase64);
+			var street = $("#listing-street").val();
+			var city = $("#listing-city").val();
+			var state = $("#listing-state").val();
 
-			$.ajax({
-					url: "/submit_listing",
-					type: "POST",
-					data: formData,
-					processData: false,
-					contentType: false,
-					dataType: "json",
-				})
-				.done(function(response, jqXHR) {
-					if (response.status === "success") {
-						window.location.href = response.redirect;
-					} else {
+			getLatLng(street, city, state, function(location) {
+				if (location) {
+					formData.append("listing-lat", location.lat);
+					formData.append("listing-long", location.lng);
+					console.log(formData)
+					$.ajax({
+						url: "/submit_listing",
+						type: "POST",
+						data: formData,
+						processData: false,
+						contentType: false,
+						dataType: "json",
+					})
+					.done(function(response, jqXHR) {
+						if (response.status === "success") {
+							window.location.href = response.redirect;
+						} else {
+							showNotification("Error Uploading Listing", "error-notification")
+						}
+					})
+					.fail(function() {
 						showNotification("Error Uploading Listing", "error-notification")
-					}
-				})
-				.fail(function() {
-					showNotification("Error Uploading Listing", "error-notification")
-				});
+					});
+				} else {
+					showNotification("Error Getting Location Data", "error-notification");
+				}
+			});	
 		}
 	});
 });
