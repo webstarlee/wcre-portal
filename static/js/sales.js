@@ -204,38 +204,40 @@ $(document).ready(function() {
 
 	const createRowForSale = (result) => {
 		const $row = $("<tr>").attr("data-sale-id", result._id);
+		let price = parseFloat(result.sale_price.replace("$", "").replace(",", ""));
+		let sqft = parseFloat(result.sale_sqft.replace(",", ""));
+		let pricePerSqft = price / sqft;
+		const stateMapping = {
+			"New Jersey": "NJ",
+			"Pennsylvania": "PA"
+		};
+		let stateValue = stateMapping[result.sale_state] || result.sale_state;
 		const cells = [
 			result.sale_property_type,
 			result.sale_type,
 			result.sale_end_date,
 			result.sale_price || "None",
 			result.sale_sqft,
-			calculatePricePerSqft(result.sale_price, result.sale_sqft),
+			"$" + pricePerSqft.toFixed(2),
 			result.sale_street,
 			result.sale_city,
-			`<a href="mailto:${result.sale_buyer_email}">${result.sale_buyer_name}</a>`,
-			`<a href="tel:${result.sale_buyer_phone}">${result.sale_buyer_phone}</a>`,
-			`<a href="mailto:${result.sale_seller_email}">${result.sale_seller_name}</a>`,
-			`<a href="tel:${result.sale_seller_phone}">${result.sale_seller_phone}</a>`,
+			stateValue,
+			`<div class="contact-info">
+				<a href="mailto:${result.sale_buyer_email}">${result.sale_buyer_name}</a>
+				<a href="tel:${result.sale_buyer_phone}">${result.sale_buyer_phone}</a>
+			 </div>`,
+			 `<div class="contact-info">
+				<a href="mailto:${result.sale_seller_email}">${result.sale_seller_name}</a>
+				<a href="tel:${result.sale_seller_phone}">${result.sale_seller_phone}</a>
+			 </div>`
 		];
 
 		cells.forEach(cell => $row.append($("<td>").html(cell)));
 		const brokerElements = $.map(result.brokers, broker => $("<span>").addClass("broker-name").text(broker));
 		$row.append($("<td>").append(brokerElements));
-		$row.append($("<td>").html(result.pdf_file_base64 ? `<a href="/download_sale_pdf/${result._id}">Fully Executed</a>` : "Pending"));
+		$row.append($("<td>").html(result.sale_agreement_file_base64 ? `<a href="/download_sale_pdf/${result._id}">Fully Executed</a>` : "Pending"));
 		return $row;
 	};
-
-	const calculatePricePerSqft = (price, sqft) => {
-		const parsedPrice = parseFloat(price.replace(/\$/g, '').replace(/,/g, ''));
-		const parsedSqft = parseFloat(sqft.replace(/,/g, ''));
-	
-		if (!isNaN(parsedPrice) && !isNaN(parsedSqft) && parsedSqft !== 0) {
-			const rawValue = parsedPrice / parsedSqft;
-			return "$" + rawValue.toFixed(2);
-		} 
-		return "N/A";
-	};	
 	
 
 	const handleSalesError = (textStatus, errorThrown) => {

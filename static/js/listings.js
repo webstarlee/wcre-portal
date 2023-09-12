@@ -183,6 +183,11 @@ $(document).ready(function() {
 
 	const createRowForListing = (result) => {
 		const $row = $("<tr>").attr("data-listing-id", result._id);
+		const stateMapping = {
+			"New Jersey": "NJ",
+			"Pennsylvania": "PA"
+		};
+		let stateValue = stateMapping[result.listing_state] || result.listing_state;
 		const cells = [
 			result.listing_property_type,
 			result.listing_type,
@@ -191,14 +196,17 @@ $(document).ready(function() {
 			result.listing_price || "None",
 			result.listing_street,
 			result.listing_city,
-			`<a href="mailto:${result.listing_owner_email}">${result.listing_owner_name}</a>`,
-			`<a href="tel:${result.listing_owner_phone}">${result.listing_owner_phone}</a>`,
+			stateValue,
+			`<div class="contact-info">
+				<a href="mailto:${result.listing_owner_email}">${result.listing_owner_name}</a>
+				<a href="tel:${result.listing_owner_phone}">${result.listing_owner_phone}</a>
+			 </div>`,
 		];
 
 		cells.forEach(cell => $row.append($("<td>").html(cell)));
 		const brokerElements = $.map(result.brokers, broker => $("<span>").addClass("broker-name").text(broker));
 		$row.append($("<td>").append(brokerElements));
-		$row.append($("<td>").html(result.pdf_file_base64 ? `<a href="/download_listing_pdf/${result._id}">Fully Executed</a>` : "Pending"));
+		$row.append($("<td>").html(result.listing_agreement_file_base64 ? `<a href="/download_listing_pdf/${result._id}">Fully Executed</a>` : "Pending"));
 		return $row;
 	};
 
