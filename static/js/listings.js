@@ -26,11 +26,11 @@ $(document).ready(function() {
 
 	function initMap() {
 		let map = new google.maps.Map(document.getElementById('map'), {
-			zoom: 4,
-			center: new google.maps.LatLng(-25.363, 131.044)
+			zoom: 12,
+			center: new google.maps.LatLng(39.905020, -74.938890)
 		});
 		let listings = [
-			{ lat: -25.363, lng: 131.044 },
+			{ lat: 39.905020, lng: -74.938890 },
 		];
 		for (let i = 0; i < listings.length; i++) {
 			new google.maps.Marker({
