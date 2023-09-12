@@ -11,7 +11,7 @@ $(document).ready(function() {
 	const sqFootageInput = document.getElementById("lease-sqft");
 	const editsqFootageInput = document.getElementById("edit-lease-sqft");
 	const lessorPhoneNumberInput = document.getElementById("lease-lessor-phone");
-	const lessePhoneNumberInput = document.getElementById("lease-lesse-phone");
+	const lesseePhoneNumberInput = document.getElementById("lease-lessee-phone");
 	const leasePercentageSpaceInput = document.getElementById("lease-percentage-space");
 	const editLeasePercentageSpaceInput = document.getElementById("edit-lease-percentage-space");
 	leasePercentageSpaceInput.addEventListener("input", () => formatPercentage(leasePercentageSpaceInput));
@@ -19,7 +19,7 @@ $(document).ready(function() {
 	leasePriceInput.addEventListener("input", () => formatPrice(leasePriceInput));
 	sqFootageInput.addEventListener("input", () => formatSqFootage(sqFootageInput));
 	lessorPhoneNumberInput.addEventListener("input", () => formatPhoneNumber(lessorPhoneNumberInput));
-	lessePhoneNumberInput.addEventListener("input", () => formatPhoneNumber(lessePhoneNumberInput));
+	lesseePhoneNumberInput.addEventListener("input", () => formatPhoneNumber(lesseePhoneNumberInput));
 	editsqFootageInput.addEventListener("input", () => formatSqFootage(editsqFootageInput));
 	document.getElementById('years').addEventListener('change', adjustTerm);
 	document.getElementById('months').addEventListener('change', adjustTerm);
@@ -260,9 +260,9 @@ $(document).ready(function() {
 		setInputValue("#edit-lease-lessor-name", getNameFromCell(10));
 		setInputValue("#edit-lease-lessor-email", getEmailFromCell(10));
 		setInputValue("#edit-lease-lessor-phone", getPhoneFromCell(10));
-		setInputValue("#edit-lease-lesse-name", getNameFromCell(11));
-		setInputValue("#edit-lease-lesse-email", getEmailFromCell(11));
-		setInputValue("#edit-lease-lesse-phone", getPhoneFromCell(11));
+		setInputValue("#edit-lease-lessee-name", getNameFromCell(11));
+		setInputValue("#edit-lease-lessee-email", getEmailFromCell(11));
+		setInputValue("#edit-lease-lessee-phone", getPhoneFromCell(11));
 	});
 	
 
@@ -332,8 +332,8 @@ $(document).ready(function() {
 				<a href="tel:${result.lease_lessor_phone}">${result.lease_lessor_phone}</a>
 			 </div>`,
 			`<div class="contact-info">
-				<a href="mailto:${result.lease_lesse_email}">${result.lease_lesse_name}</a>
-				<a href="tel:${result.lease_lesse_phone}">${result.lease_lesse_phone}</a>
+				<a href="mailto:${result.lease_lessee_email}">${result.lease_lessee_name}</a>
+				<a href="tel:${result.lease_lessee_phone}">${result.lease_lessee_phone}</a>
 			 </div>`
 		];
 		cells.forEach(cell => $row.append($("<td>").html(cell)));
@@ -410,9 +410,9 @@ $(document).ready(function() {
 					var leaseLessor = $("#edit-lease-lessor-name").val();
 					var leaseLessorEmail = $("#edit-lease-lessor-email").val();
 					var leaseLessorPhone = $("#edit-lease-lessor-phone").val();
-					var leaseLesse = $("#edit-lease-lesse-name").val();
-					var leaseLesseEmail = $("#edit-lease-lesse-email").val();
-					var leaseLessePhone = $("#edit-lease-lesse-phone").val();
+					var leaselessee = $("#edit-lease-lessee-name").val();
+					var leaselesseeEmail = $("#edit-lease-lessee-email").val();
+					var leaselesseePhone = $("#edit-lease-lessee-phone").val();
 					var agreementFileBase64 = $("#edit-lease-agreement-file-base64").val();
 					var commisionFileBase64 = $("#edit-lease-commision-agreement-file-base64").val();
 
@@ -430,9 +430,9 @@ $(document).ready(function() {
 						lease_lessor_name: leaseLessor,
 						lease_lessor_email: leaseLessorEmail,
 						lease_lessor_phone: leaseLessorPhone,
-						lease_lesse_name: leaseLesse,
-						lease_lesse_email: leaseLesseEmail,
-						lease_lesse_phone: leaseLessePhone
+						lease_lessee_name: leaselessee,
+						lease_lessee_email: leaselesseeEmail,
+						lease_lessee_phone: leaselesseePhone
 					};
 
 					$.ajax({

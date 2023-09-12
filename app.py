@@ -544,9 +544,9 @@ def submit_lease():
             "lease-lessor-name",
             "lease-lessor-email",
             "lease-lessor-phone",
-            "lease-lesse-name",
-            "lease-lesse-email",
-            "lease-lesse-phone",
+            "lease-lessee-name",
+            "lease-lessee-email",
+            "lease-lessee-phone",
         ]
         new_lease = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
         years = request.form.get("lease-years")
@@ -739,8 +739,8 @@ def edit_lease(lease_id):
     ] + base64_fields + [
         "lease_lessor_name",
         "lease_lessor_email",
-        "lease_lesse_name",
-        "lease_lesse_email"
+        "lease_lessee_name",
+        "lease_lessee_email"
     ]
     return edit_record(lease_id, leases, fields)
 

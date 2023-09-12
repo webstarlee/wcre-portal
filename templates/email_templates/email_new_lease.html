@@ -78,8 +78,8 @@
           <span class="lease-value">{{ lease.lease_lessor }}</span>
         </p>
         <p>
-          <span class="lease-label">Lesse:</span>
-          <span class="lease-value">{{ lease.lease_lesse }}</span>
+          <span class="lease-label">Lessee:</span>
+          <span class="lease-value">{{ lease.lease_Lessee }}</span>
         </p>
         <div class="lease-brokers">
           <span class="lease-label">Brokers:</span> {% for broker in lease.brokers %} <span>{{ broker }}</span>{% if not loop.last %}, {% endif %} {% endfor

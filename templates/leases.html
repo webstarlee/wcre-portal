@@ -103,8 +103,8 @@
               </td>
               <td>
                 <div class="contact-info">
-                    <a href="mailto:{{ lease.lease_lesse_email }}">{{ lease.lease_lesse_name }}</a>
-                    <a href="tel:{{ lease.lease_lesse_phone }}">{{ lease.lease_lesse_phone }}</a>
+                    <a href="mailto:{{ lease.lease_lessee_email }}">{{ lease.lease_lessee_name }}</a>
+                    <a href="tel:{{ lease.lease_lessee_phone }}">{{ lease.lease_lessee_phone }}</a>
                 </div>
               </td>
               <td class="brokers"> {% for broker in lease.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
@@ -183,18 +183,18 @@
               </div>
             </div>
             <div class="modal-step main-form-step" id="main-step3">
-              <h2 class="modal-step-title">New Lease - Lesse Information</h2>
+              <h2 class="modal-step-title">New Lease - Lessee Information</h2>
               <div class="form-group">
-                <label for="lease-lesse-name">Lesse Name:</label>
-                <input type="text" id="lease-lesse-name" name="lease-lesse-name" placeholder= "Enter Lesse Name:" required />
+                <label for="lease-lessee-name">Lessee Name:</label>
+                <input type="text" id="lease-lessee-name" name="lease-lessee-name" placeholder= "Enter Lessee Name:" required />
               </div>
               <div class="form-group">
-                <label for="lease-lesse-email">Lesse Email:</label>
-                <input type="email" id="lease-lesse-email" name="lease-lesse-email" placeholder= "Enter Lesse Email:" required />
+                <label for="lease-lessee-email">lessee Email:</label>
+                <input type="email" id="lease-lessee-email" name="lease-lessee-email" placeholder= "Enter Lessee Email:" required />
               </div>
               <div class="form-group">
-                <label for="lesse-lesse-phone">Lesse Phone Number:</label>
-                <input type="tel" id="lease-lesse-phone" name="lease-lesse-phone" placeholder= "Enter Lesse Phone Number:" required />
+                <label for="lessee-lessee-phone">lessee Phone Number:</label>
+                <input type="tel" id="lease-lessee-phone" name="lease-lessee-phone" placeholder= "Enter Lessee Phone Number:" required />
               </div>
             </div>
             <div class="modal-step main-form-step" id="main-step4">
@@ -333,16 +333,16 @@
             </div>
             <div class="modal-step edit-form-step" id="edit-step3">
               <div class="form-group">
-                <label for="edit-lease-lesse-name">Lesse Name:</label>
-                <input type="text" id="edit-lease-lesse-name" name="edit-lease-lesse-name" required />
+                <label for="edit-lease-lessee-name">Lessee Name:</label>
+                <input type="text" id="edit-lease-lessee-name" name="edit-lease-lessee-name" required />
               </div>
               <div class="form-group">
-                <label for="edit-lease-lesse-email">Lesse Email:</label>
-                <input type="email" id="edit-lease-lesse-email" name="edit-lease-lesse-email" required />
+                <label for="edit-lease-lessee-email">Lessee Email:</label>
+                <input type="email" id="edit-lease-lessee-email" name="edit-lease-lessee-email" required />
               </div>
               <div class="form-group">
-                <label for="edit-lease-lesse-phone">Lesse Phone Number:</label>
-                <input type="tel" id="edit-lease-lesse-phone" name="edit-lease-lesse-phone" required />
+                <label for="edit-lease-lessee-phone">Lessee Phone Number:</label>
+                <input type="tel" id="edit-lease-lessee-phone" name="edit-lease-lessee-phone" required />
               </div>
             </div>
             <div class="modal-step edit-form-step" id="edit-step4">
