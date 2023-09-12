@@ -34,5 +34,5 @@ button:hover {
 }
 
 .glow {
-  box-shadow: 10px 10px 30px #1c92d2, -10px -10px 30px #f2fcfe;
+  box-shadow: 10px 20px 30px #1c92d2, -10px -10px 30px #f2fcfe
 }
