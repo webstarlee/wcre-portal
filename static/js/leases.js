@@ -547,7 +547,6 @@ $(document).ready(function() {
 		}
 	];
 	
-	// Loop through configurations and set up event listeners
 	configurations.forEach(function(config) {
 		handleFileUpload(config);
 	});	

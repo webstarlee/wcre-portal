@@ -231,7 +231,6 @@ $(document).ready(function() {
 				<a href="tel:${result.sale_seller_phone}">${result.sale_seller_phone}</a>
 			 </div>`
 		];
-
 		cells.forEach(cell => $row.append($("<td>").html(cell)));
 		const brokerElements = $.map(result.brokers, broker => $("<span>").addClass("broker-name").text(broker));
 		$row.append($("<td>").append(brokerElements));

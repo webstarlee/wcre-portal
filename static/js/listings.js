@@ -202,7 +202,6 @@ $(document).ready(function() {
 				<a href="tel:${result.listing_owner_phone}">${result.listing_owner_phone}</a>
 			 </div>`,
 		];
-
 		cells.forEach(cell => $row.append($("<td>").html(cell)));
 		const brokerElements = $.map(result.brokers, broker => $("<span>").addClass("broker-name").text(broker));
 		$row.append($("<td>").append(brokerElements));
@@ -387,7 +386,6 @@ $(document).ready(function() {
 		}
 	];
 	
-	// Loop through configurations and set up event listeners
 	configurations.forEach(function(config) {
 		handleFileUpload(config);
 	});	
