@@ -347,6 +347,7 @@ def documents():
         "BOV Reports",
         "Quarterly Reports",
         "Key Marketing Pieces",
+        "Other Documents"
     ]
     document_counts = {}
     for document_type in document_types:
@@ -546,8 +547,6 @@ def submit_lease():
             "lease-state",
             "lease-sqft",
             "lease-property-type",
-            "lease-price",
-            "lease-percentage-space",
             "lease-lessor-name",
             "lease-lessor-email",
             "lease-lessor-phone",

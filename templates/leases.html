@@ -52,10 +52,7 @@
           <thead>
             <tr>
               <th style="border-top-left-radius: 7px">Property Type</th>
-              <th>Annual Price</th>
               <th>Square Footage</th>
-              <th>Price/SF</th>
-              <th>Space Percentage</th>
               <th>Term Length</th>
               <th>Property Address</th>
               <th>City</th>
@@ -71,17 +68,7 @@
             {% for lease in leases %} 
             <tr data-lease-id="{{ lease._id }}">
               <td>{{ lease.lease_property_type }}</td>
-              <td>{{ lease.lease_price }}</td>
               <td>{{ lease.lease_sqft }}</td>
-              <td>
-                <script>
-                  var price = parseFloat('{{ lease.lease_price.replace("$", "").replace(",", "") }}');
-                  var sqft = parseFloat('{{ lease.lease_sqft.replace(",", "") }}');
-                  var pricePerSqft = price / sqft;
-                  document.write("$" + pricePerSqft.toFixed(2));
-                </script>
-              </td>
-              <td>{{ lease.lease_percentage_space }}</td>
               <td>{{ lease.lease_term_length }}</td>
               </td>
               <td>{{ lease.lease_street }}</td>
@@ -161,16 +148,12 @@
               <div class="form-group">
                 <label for="lease-sqft">Lease Square Footage:</label>
                 <input type="text" id="lease-sqft" name="lease-sqft" placeholder="Enter Square Footage:" required />
-              </div>
-              <div class="form-group">
-                  <label for="lease-percentage-space">Lease Space Percentage:</label>
-                  <input type="text" id="lease-percentage-space" name="lease-percentage-space" placeholder="Enter Percentage:" required />
-              </div>            
+              </div>          
             </div>
             <div class="modal-step main-form-step" id="main-step2">
               <h2 class="modal-step-title">New Lease - Lessor Information</h2>
               <div class="form-group">
-                <label for="lease-lessor-name">Lessor Name:</label>
+                <label for="lease-lessor-name">Lessor Name (DBA):</label>
                 <input type="text" id="lease-lessor-name" name="lease-lessor-name" placeholder= "Enter Lessor Name:" required />
               </div>
               <div class="form-group">
@@ -185,24 +168,20 @@
             <div class="modal-step main-form-step" id="main-step3">
               <h2 class="modal-step-title">New Lease - Lessee Information</h2>
               <div class="form-group">
-                <label for="lease-lessee-name">Lessee Name:</label>
+                <label for="lease-lessee-name">Lessee Name (DBA):</label>
                 <input type="text" id="lease-lessee-name" name="lease-lessee-name" placeholder= "Enter Lessee Name:" required />
               </div>
               <div class="form-group">
-                <label for="lease-lessee-email">lessee Email:</label>
+                <label for="lease-lessee-email">Lessee Email:</label>
                 <input type="email" id="lease-lessee-email" name="lease-lessee-email" placeholder= "Enter Lessee Email:" required />
               </div>
               <div class="form-group">
-                <label for="lessee-lessee-phone">lessee Phone Number:</label>
+                <label for="lessee-lessee-phone">Lessee Phone Number:</label>
                 <input type="tel" id="lease-lessee-phone" name="lease-lessee-phone" placeholder= "Enter Lessee Phone Number:" required />
               </div>
             </div>
             <div class="modal-step main-form-step" id="main-step4">
               <h2 class="modal-step-title">New Lease - General Information</h2>
-              <div class="form-group">
-                <label for="lease-price">Annual Price:</label>
-                <input type="text" id="lease-price" name="lease-price" placeholder= "Enter Lease Annual Price:" required />
-              </div>
               <div class="form-group">
                 <label for="lease-term-length">Lease Term Length:</label>
                 <select id="years" name="lease-years">
@@ -312,10 +291,6 @@
                 <label for="edit-lease-sqft">Lease Square Footage:</label>
                 <input type="text" id="edit-lease-sqft" name="edit-lease-sqft" required />
               </div>
-              <div class="form-group">
-                <label for="edit-lease-percentage-space">Lease Space Percentage:</label>
-                <input type="text" id="edit-lease-percentage-space" name="edit-lease-percentage-space" required />
-              </div>
             </div>
             <div class="modal-step edit-form-step" id="edit-step2">
               <div class="form-group">
@@ -346,10 +321,6 @@
               </div>
             </div>
             <div class="modal-step edit-form-step" id="edit-step4">
-              <div class="form-group">
-                <label for="edit-lease-price">Annual Price:</label>
-                <input type="text" id="edit-lease-price" name="edit-lease-price" required />
-              </div>
               <div class="form-group">
                 <label for="edit-lease-term-length">Lease Term Length:</label>
                 <input type="text" id="edit-lease-term-length" name="edit-lease-term-length" required />

@@ -7,16 +7,10 @@ $(document).ready(function() {
 	var uploadButtonCommision = document.getElementById("upload-lease-commision-agreement");
 	var editCommisionFileInput = document.getElementById("edit-lease-commision-agreement");
   	var editUploadButtonCommision = document.getElementById("edit-upload-lease-commision-agreement");
-	const leasePriceInput = document.getElementById("lease-price");
 	const sqFootageInput = document.getElementById("lease-sqft");
 	const editsqFootageInput = document.getElementById("edit-lease-sqft");
 	const lessorPhoneNumberInput = document.getElementById("lease-lessor-phone");
 	const lesseePhoneNumberInput = document.getElementById("lease-lessee-phone");
-	const leasePercentageSpaceInput = document.getElementById("lease-percentage-space");
-	const editLeasePercentageSpaceInput = document.getElementById("edit-lease-percentage-space");
-	leasePercentageSpaceInput.addEventListener("input", () => formatPercentage(leasePercentageSpaceInput));
-	editLeasePercentageSpaceInput.addEventListener("input", () => formatPercentage(editLeasePercentageSpaceInput));
-	leasePriceInput.addEventListener("input", () => formatPrice(leasePriceInput));
 	sqFootageInput.addEventListener("input", () => formatSqFootage(sqFootageInput));
 	lessorPhoneNumberInput.addEventListener("input", () => formatPhoneNumber(lessorPhoneNumberInput));
 	lesseePhoneNumberInput.addEventListener("input", () => formatPhoneNumber(lesseePhoneNumberInput));
@@ -250,19 +244,17 @@ $(document).ready(function() {
 		actionModal.hide();
 		editModal.find(".modal-step-title").text("Edit Lease - " + getCellText(7));
 		setInputValue("#edit-lease-property-type", getCellText(1));
-		setInputValue("#edit-lease-price", getCellText(2));
-		setInputValue("#edit-lease-sqft", getCellText(3));
-		setInputValue("#edit-lease-percentage-space", getCellText(5));
-		setInputValue("#edit-lease-term-length", getCellText(6));
-		setInputValue("#edit-lease-street", getCellText(7));
-		setInputValue("#edit-lease-city", getCellText(8));
-		setInputValue("#edit-lease-state", getCellText(9));
-		setInputValue("#edit-lease-lessor-name", getNameFromCell(10));
-		setInputValue("#edit-lease-lessor-email", getEmailFromCell(10));
-		setInputValue("#edit-lease-lessor-phone", getPhoneFromCell(10));
-		setInputValue("#edit-lease-lessee-name", getNameFromCell(11));
-		setInputValue("#edit-lease-lessee-email", getEmailFromCell(11));
-		setInputValue("#edit-lease-lessee-phone", getPhoneFromCell(11));
+		setInputValue("#edit-lease-sqft", getCellText(2));
+		setInputValue("#edit-lease-term-length", getCellText(3));
+		setInputValue("#edit-lease-street", getCellText(4));
+		setInputValue("#edit-lease-city", getCellText(5));
+		setInputValue("#edit-lease-state", getCellText(6));
+		setInputValue("#edit-lease-lessor-name", getNameFromCell(7));
+		setInputValue("#edit-lease-lessor-email", getEmailFromCell(7));
+		setInputValue("#edit-lease-lessor-phone", getPhoneFromCell(7));
+		setInputValue("#edit-lease-lessee-name", getNameFromCell(8));
+		setInputValue("#edit-lease-lessee-email", getEmailFromCell(8));
+		setInputValue("#edit-lease-lessee-phone", getPhoneFromCell(8));
 	});
 	
 
@@ -319,10 +311,7 @@ $(document).ready(function() {
 		let stateValue = stateMapping[result.lease_state] || result.lease_state;
 		const cells = [
 			result.lease_property_type,
-			result.lease_price,
 			result.lease_sqft,
-			"$" + pricePerSqft.toFixed(2),
-			result.lease_percentage_space,
 			result.lease_term_length,
 			result.lease_street,
 			result.lease_city,
@@ -400,9 +389,7 @@ $(document).ready(function() {
 					console.log("in here")
 					$("#edit-lease-modal").css("display", "none");
 					var leasePropertyType = $("#edit-lease-property-type").val();
-					var leasePrice = $("#edit-lease-price").val();
 					var leaseSqFt = $("#edit-lease-sqft").val();
-					var leaseSpacePercentage = $("#edit-lease-percentage-space").val();
 					var leaseTermLength = $("#edit-lease-term-length").val();
 					var leaseStreet = $("#edit-lease-street").val();
 					var leaseCity = $("#edit-lease-city").val();
@@ -421,7 +408,6 @@ $(document).ready(function() {
 						lease_price: leasePrice,
 						lease_sqft: leaseSqFt,
 						lease_term_length: leaseTermLength,
-						lease_percentage_space: leaseSpacePercentage,
 						lease_agreement_file_base64: agreementFileBase64,
 						lease_commision_file_base64: commisionFileBase64,
 						lease_street: leaseStreet,
