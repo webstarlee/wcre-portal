@@ -174,7 +174,7 @@ $(document).ready(function() {
 		actionModal.hide();
 		editModal.find(".modal-step-title").text("Edit Listing - " + getCellText(6));
 		setInputValue("#edit-listing-property-type", getCellText(1));
-		setInputValue("#edit-listing-type", getCellText(2));
+		setInputValue("#edit-listing-month-to-month", getCellText(2));
 		setInputValue("#edit-listing-start-date", getCellText(3));
 		setInputValue("#edit-listing-end-date", getCellText(4));
 		setInputValue("#edit-listing-price", getCellText(5));
@@ -230,7 +230,6 @@ $(document).ready(function() {
 		let stateValue = stateMapping[result.listing_state] || result.listing_state;
 		const cells = [
 			result.listing_property_type,
-			result.listing_type,
 			result.listing_start_date,
 			`<a href="/create_ics_listing/${result._id}">${result.listing_end_date}</a>`,
 			result.listing_price || "None",
@@ -304,7 +303,7 @@ $(document).ready(function() {
 				} else if (mode === "edit" && $(this).text() === "Submit Listing Edits") {
 					$("#edit-listing-modal").css("display", "none");
 					var listingPropertyType = $("#edit-listing-property-type").val();
-					var listingType = $("#edit-listing-type").val();
+					var listingMonthToMonth = $("#edit-listing-month-to-month").val();
 					var listingPrice = $("#edit-listing-price").val();
 					var listingStartDate = $("#edit-listing-start-date").val();
 					var listingEndDate = $("#edit-listing-end-date").val();
@@ -318,7 +317,7 @@ $(document).ready(function() {
 
 					var data = {
 						listing_property_type: listingPropertyType,
-						listing_type: listingType,
+						listing_month_to_month: listingMonthToMonth,
 						listing_price: listingPrice,
 						listing_start_date: listingStartDate,
 						listing_agreement_file_base64: fileBase64,

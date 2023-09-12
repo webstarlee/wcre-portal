@@ -465,7 +465,7 @@ def submit_listing():
             "listing-start-date",
             "listing-agreement-file-base64",
             "listing-property-type",
-            "listing-type",
+            "listing-month-to-month",
             "listing-price",
             "listing-lat",
             "listing-long"
@@ -692,7 +692,7 @@ def edit_listing(listing_id):
         "listing_start_date",
         "listing_agreement_file_base64",
         "listing_property_type",
-        "listing_type",
+        "listing_month_to_month",
         "listing_price",
     ]
     return edit_record(listing_id, listings, fields)
@@ -793,7 +793,7 @@ def search_listings():
         "listing_end_date",
         "listing_start_date",
         "listing_property_type",
-        "listing_type",
+        "listing_month_to_month",
         "listing_price",
     ]
     results = search_in_collection(listings, fields, page, search_query)

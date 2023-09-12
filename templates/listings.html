@@ -58,7 +58,7 @@
           <thead>
             <tr>
               <th style="border-top-left-radius: 7px">Property Type</th>
-              <th>Listing Type</th>
+              <th>Month-to-Month</th>
               <th>Starting Date</th>
               <th>Expiration Date</th>
               <th>Price</th>
@@ -72,7 +72,7 @@
           </thead>
           <tbody> {% for listing in listings %} <tr data-listing-id="{{ listing._id }}">
               <td>{{ listing.listing_property_type }}</td>
-              <td>{{ listing.listing_type }}</td>
+              <td>{{ listing.listing_month_to_month }}</td>
               <td>{{ listing.listing_start_date }}</td>
               <td>
                 <a href="{{ url_for('create_ics_listing', listing_id=listing._id) }}">{{ listing.listing_end_date }}</a>
@@ -133,6 +133,13 @@
                           <option value="Land">Land</option>
                         </select>
                       </div>
+                      <div class="form-group">
+                        <label for="listing-month-to-month">Month-to-Month:</label>
+                        <select id="listing-month-to-month" name="listing-month-to-month" required>
+                          <option value="No">No</option>
+                          <option value="Yes">Yes</option>
+                        </select>
+                      </div>
                     </div>
                     <div class="modal-step main-form-step" id="main-step2">
                       <h2 class="modal-step-title"> New Listing - Owner Information </h2>
@@ -151,15 +158,6 @@
                     </div>
                     <div class="modal-step main-form-step" id="main-step3">
                       <h2 class="modal-step-title"> New Listing - General Information </h2>
-                      <div class="form-group">
-                        <label for="listing-type">Listing Type:</label>
-                        <select id="listing-type" name="listing-type" required>
-                          <option value="Sale">Sale</option>
-                          <option value="Lease">Lease</option>
-                          <option value="Sale and Lease">Sale and Lease</option>
-                          <option value="Sublease">Sublease</option>
-                        </select>
-                      </div>
                       <div class="form-group">
                         <label for="listing-price">Listing Price:</label>
                         <input type="text" id="listing-price" name="listing-price" placeholder="Enter Listing Price:" required />
@@ -241,6 +239,13 @@
                           <option value="Land">Land</option>
                         </select>
                       </div>
+                      <div class="form-group">
+                        <label for="edit-listing-month-to-month">Month-to-Month:</label>
+                        <select id="edit-listing-month-to-month" name="edit-listing-month-to-month" required>
+                          <option value="No">No</option>
+                          <option value="Yes">Yes</option>
+                        </select>
+                      </div>
                     </div>
                     <div class="modal-step edit-form-step" id="edit-step2">
                       <div class="form-group">
@@ -257,15 +262,6 @@
                       </div>
                     </div>
                     <div class="modal-step edit-form-step" id="edit-step3">
-                      <div class="form-group">
-                        <label for="edit-listing-type">Listing Type:</label>
-                        <select id="edit-listing-type" name="edit-listing-type" required>
-                          <option value="Sale">Sale</option>
-                          <option value="Lease">Lease</option>
-                          <option value="Sale and Lease">Sale and Lease</option>
-                          <option value="Sublease">Sublease</option>
-                        </select>
-                      </div>
                       <div class="form-group">
                         <label for="edit-listing-start-date">Listing Starting Date:</label>
                         <input type="text" id="edit-listing-start-date" name="edit-listing-start-date" required />
