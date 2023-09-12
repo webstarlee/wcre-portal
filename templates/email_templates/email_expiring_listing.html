@@ -1,94 +1,66 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>New Listing Notification</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-      }
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
 
-      .container {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #f5f5f5;
-      }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
 
-      h1 {
-        color: #333;
-      }
+        h1,p  {
+            color: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
 
-      p {
-        color: #555;
-        margin-top: 10px;
-      }
+        .listing-details {
+            margin-top: 20px;
+        }
 
-      .listing-details {
-        margin-top: 20px;
-      }
+        .listing-label {
+            font-weight: bold;
+            display: block;
+        }
 
-      .listing-label {
-        font-weight: bold;
-      }
-
-      .listing-value {
-        margin-left: 10px;
-      }
-
-      .listing-label,
-      .listing-value {
-        display: inline-block;
-        vertical-align: top;
-      }
-    .header, .footer {
-          background-color: #333;
-          color: #fff;
-          padding: 10px 0;
-          text-align: center;
-      }
-
-      .listing-image {
-          max-width: 100%;
-          margin-bottom: 15px;
-      }
-
-      .cta-button {
-          display: block;
-          margin-top: 20px;
-          padding: 10px 15px;
-          background-color: #007BFF;
-          color: #fff;
-          text-align: center;
-          border-radius: 5px;
-          text-decoration: none;
-      }
+        .listing-value {
+            margin-left: 10px;
+            display: block;
+            color: #ffffff;
+        }
     </style>
-  </head>
-  <body>
+</head>
+
+<body>
     <div class="container">
-      <div class="header">
-        <img src="/static/icons/image001.png" alt="Company Logo" width="150">
+        <h1>A LISTING IS EXPIRING SOON - PLEASE CHECK THE PORTAL FOR MORE INFORMATION</h1>
+        <div class="listing-details">
+            <p>
+                <span class="listing-label">Property Address:</span>
+                <span class="listing-value">{{ listing.listing_street }}</span>
+            </p>
+            <p>
+                <span class="listing-label">Expiration Date:</span>
+                <span class="listing-value">{{ listing.listing_end_date }}</span>
+            </p>
+            <p>Note to Broker: Always Stay in Front of Clients!</p>
+        </div>
+        <div class="footer">
+          This email was automatically sent by the WCRE Management Portal. For any inquiries, please contact the Development Team.
+        </div>
     </div>
-      <h1> A Listing is Expiring Soon: </h1>
-      <div class="listing-details">
-        <p>
-          <span class="listing-label">Street:</span>
-          <span class="listing-value">{{ listing.listing_street }}</span>
-        </p>
-        <p>
-          <span class="listing-label">Starting Date:</span>
-          <span class="listing-value">{{ listing.listing_start_date }}</span>
-        </p>
-        <p>
-          <span class="listing-label">Expiration Date:</span>
-          <span class="listing-value">{{ listing.listing_end_date }}</span>
-        </p>
-      </div>
-      <div class="footer">
-        For any queries, please contact us at <a href="mailto:support@yourcompany.com">support@yourcompany.com</a>
-    </div>
-    </div>
-  </body>
+</body>
 </html>

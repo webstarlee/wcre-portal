@@ -109,7 +109,7 @@ def send_email(subject, template, data, conn):
     except Exception as e:
         print("Error Sending Email: ", e)
 
-@scheduler.task('interval', id='do_alert_for_expiring_listings', seconds=15, misfire_grace_time=900)
+@scheduler.task('interval', id='do_alert_for_expiring_listings', seconds=43200, misfire_grace_time=900)
 def alert_for_expiring_listings():
     upcoming_expiration_date = datetime.now() + timedelta(days=7)
     formatted_upcoming_expiration_date = upcoming_expiration_date.strftime('%m/%d/%Y')
@@ -117,13 +117,13 @@ def alert_for_expiring_listings():
     if len(expiring_listings) > 0:
         for listing in expiring_listings:
             listing_expiry_date = datetime.strptime(listing['listing_end_date'], '%m/%d/%Y')
-            days_left = (listing_expiry_date - datetime.now()).days
-            subject = f"ACTION NEEDED - A Listing is Expiring in {days_left} Days!"
-            # with app.app_context():
-            #     with mail.connect() as conn:
-            #         send_email(subject, 'email_templates/email_expiring_listing.html', {"listing": listing}, conn)
+            days_left = (listing_expiry_date - datetime.now()).days + 1
+            subject = f"ACTION NEEDED - A LISTING IS EXPIRING IN {days_left} DAYS"
+            with app.app_context():
+                with mail.connect() as conn:
+                    send_email(subject, 'email_templates/email_expiring_listing.html', {"listing": listing}, conn)
     else:
-        print("No Upcoming Expiring Listings!")
+        print("No Upcoming Expiring Listings")
 
 
 def convert_state_code_to_full_name(state_code):
@@ -489,6 +489,12 @@ def submit_listing():
         result = listings.insert_one(new_listing)
         if not result.inserted_id:
             raise Exception("Error inserting the listing.")
+        try:
+            with app.app_context():
+                with mail.connect() as conn:
+                    send_email("New Listing Notification", 'email_templates/email_new_listing.html', {"listing": new_listing}, conn)
+        except Exception as e:
+            print("Error Sending Email: ", e)
         return make_response(
             {"status": "success", "redirect": url_for("view_listings")}, 200
         )
@@ -533,6 +539,12 @@ def submit_sale():
         result = sales.insert_one(new_sale)
         if not result.inserted_id:
             raise Exception("Error Inserting the Sale")
+        try:
+            with app.app_context():
+                with mail.connect() as conn:
+                    send_email("New Sale Notification", 'email_templates/email_new_sale.html', {"sale": new_sale}, conn)
+        except Exception as e:
+            print("Error Sending Email: ", e)
         return make_response(
             {"status": "success", "redirect": url_for("view_sales")}, 200
         )
@@ -581,6 +593,12 @@ def submit_lease():
         result = leases.insert_one(new_lease)
         if not result.inserted_id:
             raise Exception("Error Inserting the Lease")
+        try:
+            with app.app_context():
+                with mail.connect() as conn:
+                    send_email("New Lease Notification", 'email_templates/email_new_lease.html', {"lease": new_lease}, conn)
+        except Exception as e:
+            print("Error Sending Email: ", e)
         return make_response(
             {"status": "success", "redirect": url_for("view_leases")}, 200
         )
@@ -867,4 +885,4 @@ def search_leases():
 
 Talisman(app, content_security_policy=None)
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=6969, debug=False)
+    app.run(host="0.0.0.0", port=6969, debug=True)

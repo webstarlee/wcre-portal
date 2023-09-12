@@ -245,9 +245,6 @@ $(document).ready(function() {
 
 	const createRowForLease = (result) => {
 		const $row = $("<tr>").attr("data-lease-id", result._id);
-		let price = parseFloat(result.lease_price.replace("$", "").replace(",", ""));
-		let sqft = parseFloat(result.lease_sqft.replace(",", ""));
-		let pricePerSqft = price / sqft;
 		const stateMapping = {
 			"New Jersey": "NJ",
 			"Pennsylvania": "PA"

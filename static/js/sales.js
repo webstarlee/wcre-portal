@@ -211,7 +211,6 @@ $(document).ready(function() {
 		const $row = $("<tr>").attr("data-sale-id", result._id);
 		let price = parseFloat(result.sale_price.replace("$", "").replace(",", ""));
 		let sqft = parseFloat(result.sale_sqft.replace(",", ""));
-		let pricePerSqft = price / sqft;
 		const stateMapping = {
 			"New Jersey": "NJ",
 			"Pennsylvania": "PA"
@@ -224,7 +223,7 @@ $(document).ready(function() {
 			result.sale_price || "None",
 			result.sale_commision || "None",
 			result.sale_sqft,
-			"$" + pricePerSqft.toFixed(2),
+			calculatePricePerSqft(result.sale_price, result.sale_sqft),
 			result.sale_street,
 			result.sale_city,
 			stateValue,
@@ -243,6 +242,16 @@ $(document).ready(function() {
 		$row.append($("<td>").html(result.sale_agreement_file_base64 ? `<a href="/download_sale_pdf/${result._id}">Fully Executed</a>` : "Pending"));
 		return $row;
 	};
+
+	const calculatePricePerSqft = (price, sqft) => {
+		const parsedPrice = parseFloat(price.replace(/\$/g, '').replace(/,/g, ''));
+		const parsedSqft = parseFloat(sqft.replace(/,/g, ''));
+		if (!isNaN(parsedPrice) && !isNaN(parsedSqft) && parsedSqft !== 0) {
+			const rawValue = parsedPrice / parsedSqft;
+			return "$" + rawValue.toFixed(2);
+		} 
+		return "N/A";
+	};	
 	
 
 	const handleSalesError = (textStatus, errorThrown) => {

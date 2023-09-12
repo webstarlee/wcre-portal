@@ -43,57 +43,28 @@
         vertical-align: top;
       }
 
-      .sale-brokers {
-        margin-top: 10px;
-      }
-
-      .sale-brokers p {
-        margin: 5px 0;
-        font-weight: normal;
+      .footer {
+          padding: 10px;
+          background-color: #E9E9E9; 
+          border-top: 1px solid #CCC; 
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1> A New Sale Has Been Uploaded to The WCRE Portal By {{ current_user.fullname }}: </h1>
-      <div class="sale-details">
-        <p>
-          <span class="sale-label">Property Type:</span>
-          <span class="sale-value">{{ sale.sale_property_type }}</span>
-        </p>
-        <p>
-          <span class="sale-label">Closing Date:</span>
-          <span class="sale-value">{{ sale.sale_end_date }}</span>
-        </p>
-        <p>
-          <span class="sale-label">Price:</span>
-          <span class="sale-value">{{ sale.sale_price }}</span>
-        </p>
-        <p>
-          <span class="sale-label">Total Commision:</span>
-          <span class="sale-value">{{ sale.sale_commision }}</span>
-        </p>
-        <p>
-          <span class="sale-label">Street:</span>
-          <span class="sale-value">{{ sale.sale_street }}</span>
-        </p>
-        <p>
-          <span class="sale-label">City:</span>
-          <span class="sale-value">{{ sale.sale_city }}</span>
-        </p>
-        <p>
-          <span class="sale-label">Seller:</span>
-          <span class="sale-value">{{ sale.sale_seller }}</span>
-        </p>
-        <p>
-          <span class="sale-label">Buyer:</span>
-          <span class="sale-value">{{ sale.sale_buyer }}</span>
-        </p>
-        <div class="sale-brokers">
-          <span class="sale-label">Brokers:</span> {% for broker in sale.brokers %} <span>{{ broker }}</span>{% if not loop.last %}, {% endif %} {% endfor
-          %}
+        <h1>New Sale Submitted By: {{ current_user.fullname }}</h1>
+        <div class="sale-details">
+            <p><span class="sale-label">Property Address:</span> <span class="sale-value">{{ sale.sale_street }}</span></p>
+            <p><span class="sale-label">Price:</span> <span class="sale-value">{{ sale.sale_price }}</span></p>
+            <p><span class="sale-label">Square Footage:</span> <span class="sale-value">{{ sale.sale_sqft }}</span></p>
+            <p><span class="sale-label">Closing Date:</span> <span class="sale-value">{{ sale.sale_end_date }}</span></p>
+            <p><span class="sale-label">Buyer:</span> <span class="sale-value">{{ sale.sale_buyer_name }}</span></p>
+            <p><span class="sale-label">Seller:</span> <span class="sale-value">{{ sale.sale_seller_name }}</span></p>
+            <p>For more details, psale view the sale on the Management Portal.</p>
         </div>
-      </div>
+        <div class="footer">
+            This email was automatically sent by the WCRE Management Portal. For any inquiries, psale contact the Development Team.
+        </div>
     </div>
-  </body>
+</body>
 </html>

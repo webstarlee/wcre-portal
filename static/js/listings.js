@@ -230,6 +230,7 @@ $(document).ready(function() {
 		let stateValue = stateMapping[result.listing_state] || result.listing_state;
 		const cells = [
 			result.listing_property_type,
+			result.listing_month_to_month,
 			result.listing_start_date,
 			`<a href="/create_ics_listing/${result._id}">${result.listing_end_date}</a>`,
 			result.listing_price || "None",

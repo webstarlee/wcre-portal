@@ -43,49 +43,27 @@
         vertical-align: top;
       }
 
-      .lease-brokers {
-        margin-top: 10px;
-      }
-
-      .lease-brokers p {
-        margin: 5px 0;
-        font-weight: normal;
+      .footer {
+          padding: 10px;
+          background-color: #E9E9E9;  
+          border-top: 1px solid #CCC;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1> A New Lease Has Been Uploaded to The WCRE Portal By {{ current_user.fullname }}: </h1>
-      <div class="lease-details">
-        <p>
-          <span class="lease-label">Property Type:</span>
-          <span class="lease-value">{{ lease.lease_property_type }}</span>
-        </p>
-        <p>
-          <span class="lease-label">Price:</span>
-          <span class="lease-value">{{ lease.lease_price }}</span>
-        </p>
-        <p>
-          <span class="lease-label">Street:</span>
-          <span class="lease-value">{{ lease.lease_street }}</span>
-        </p>
-        <p>
-          <span class="lease-label">City:</span>
-          <span class="lease-value">{{ lease.lease_city }}</span>
-        </p>
-        <p>
-          <span class="lease-label">Lessor:</span>
-          <span class="lease-value">{{ lease.lease_lessor }}</span>
-        </p>
-        <p>
-          <span class="lease-label">Lessee:</span>
-          <span class="lease-value">{{ lease.lease_Lessee }}</span>
-        </p>
-        <div class="lease-brokers">
-          <span class="lease-label">Brokers:</span> {% for broker in lease.brokers %} <span>{{ broker }}</span>{% if not loop.last %}, {% endif %} {% endfor
-          %}
+        <h1>New Lease Submitted By: {{ current_user.fullname }}</h1>
+        <div class="lease-details">
+            <p><span class="lease-label">Property Address:</span> <span class="lease-value">{{ lease.lease_street }}</span></p>
+            <p><span class="lease-label">Square Footage:</span> <span class="lease-value">{{ lease.lease_sqft }}</span></p>
+            <p><span class="lease-label">Term Length:</span> <span class="lease-value">{{ lease.lease_term_length }}</span></p>
+            <p><span class="lease-label">Lessor:</span> <span class="lease-value">{{ lease.lease_lessor_name }}</span></p>
+            <p><span class="lease-label">Lessee:</span> <span class="lease-value">{{ lease.lease_lessee_name }}</span></p>
+            <p>For more details, please view the lease on the Management Portal.</p>
         </div>
-      </div>
+        <div class="footer">
+            This email was automatically sent by the WCRE Management Portal. For any inquiries, please contact the Development Team.
+        </div>
     </div>
-  </body>
+</body>
 </html>
