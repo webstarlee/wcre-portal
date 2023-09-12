@@ -15,14 +15,13 @@ from flask_login import (
     current_user,
     login_required,
 )
-import json
-import requests
+from flask_apscheduler import APScheduler
 from pymongo import MongoClient
+from datetime import datetime, timedelta
 from flask_bcrypt import Bcrypt
 from models import User
 from flask_paginate import Pagination, get_page_args
 from bson.objectid import ObjectId
-from bson import json_util
 from gridfs import GridFS
 from dotenv import load_dotenv
 from flask import Flask, Response
@@ -39,18 +38,13 @@ import sentry_sdk
 from flask import Flask
 from sentry_sdk.integrations.flask import FlaskIntegration
 
-# Constants
 ALLOWED_EXTENSIONS = {"pdf"}
-
-# Logging setup
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s: %(message)s",
     datefmt="%d/%b/%Y %H:%M:%S",
 )
 logger = logging.getLogger(__name__)
-
-# Sentry setup
 sentry_sdk.init(
     dsn="https://903f368e70906f512655f4f4555be8c6@o4505664587694081.ingest.sentry.io/4505664611155968",
     integrations=[
@@ -58,51 +52,51 @@ sentry_sdk.init(
     ],
     traces_sample_rate=1.0,
 )
-
-# Utils
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-# Flask app setup
 try:
     app = Flask(__name__)
     load_dotenv()
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-    app.config["MAIL_SERVER"] = "smtpout.secureserver.net"
+    app.config["MAIL_SERVER"] = "smtp.gmail.com"
     app.config["MAIL_PORT"] = 465
     app.config["MAIL_USERNAME"] = os.getenv("EMAIL_USER")
     app.config["MAIL_PASSWORD"] = os.getenv("EMAIL_PW")
     app.config["MAIL_USE_TLS"] = False
     app.config["MAIL_USE_SSL"] = True
+    scheduler = APScheduler()
+    app.config['SCHEDULER_API_ENABLED'] = True
+    scheduler.init_app(app)
+    scheduler.start()
     mail = Mail(app)
     bcrypt = Bcrypt(app)
     login_manager = LoginManager(app)
     login_manager.login_view = "login"
 except Exception as e:
     logger.error(f"Error Starting Flask App: {str(e)}")
+else:
+    try:
+        client = MongoClient(
+            os.environ.get("MONGODB_URI"),
+            tls=True,
+            tlsAllowInvalidCertificates=True,
+            serverSelectionTimeoutMS=5000,
+        )
+        db = client["wcre_panel"]
+        users = db["Users"]
+        logins = db["Logins"]
+        listings = db["Listings"]
+        sales = db["Sales"]
+        leases = db["Leases"]
+        docs = db["Documents"]
+        fs = GridFS(db)
+        logger.info("Connected to MongoDB successfully")
+    except Exception as e:
+        logger.error(f"Error connecting to MongoDB: {str(e)}")
 
-# MongoDB setup
-try:
-    client = MongoClient(
-        os.environ.get("MONGODB_URI"),
-        tls=True,
-        tlsAllowInvalidCertificates=True,
-        serverSelectionTimeoutMS=5000,
-    )
-    db = client["wcre_panel"]
-    users = db["Users"]
-    logins = db["Logins"]
-    listings = db["Listings"]
-    sales = db["Sales"]
-    leases = db["Leases"]
-    docs = db["Documents"]
-    fs = GridFS(db)
-    logger.info("Connected to MongoDB successfully")
-except Exception as e:
-    logger.error(f"Error connecting to MongoDB: {str(e)}")
-
-def send_email(subject, template, data):
+def send_email(subject, template, data, conn):
     try:
         msg = Message(
             subject,
@@ -111,9 +105,26 @@ def send_email(subject, template, data):
         )
         email_content = render_template(template, **data)
         msg.html = transform(email_content)
-        mail.send(msg)
+        conn.send(msg)
     except Exception as e:
-        print("Error Sending Email", e)
+        print("Error Sending Email: ", e)
+
+@scheduler.task('interval', id='do_alert_for_expiring_listings', seconds=15, misfire_grace_time=900)
+def alert_for_expiring_listings():
+    upcoming_expiration_date = datetime.now() + timedelta(days=7)
+    formatted_upcoming_expiration_date = upcoming_expiration_date.strftime('%m/%d/%Y')
+    expiring_listings = list(listings.find({"listing_end_date": {"$lte": formatted_upcoming_expiration_date}}))
+    if len(expiring_listings) > 0:
+        for listing in expiring_listings:
+            listing_expiry_date = datetime.strptime(listing['listing_end_date'], '%m/%d/%Y')
+            days_left = (listing_expiry_date - datetime.now()).days
+            subject = f"ACTION NEEDED - A Listing is Expiring in {days_left} Days!"
+            # with app.app_context():
+            #     with mail.connect() as conn:
+            #         send_email(subject, 'email_templates/email_expiring_listing.html', {"listing": listing}, conn)
+    else:
+        print("No Upcoming Expiring Listings!")
+
 
 def convert_state_code_to_full_name(state_code):
     state_mapping = {
@@ -856,4 +867,4 @@ def search_leases():
 
 Talisman(app, content_security_policy=None)
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=6969, debug=True)
+    app.run(host="0.0.0.0", port=6969, debug=False)
