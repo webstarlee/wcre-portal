@@ -106,7 +106,6 @@ else:
                 scheduler.start()
         elif ENV == "production":
             logging.info("Production Build")
-            scheduler_locks = db["SchedulerLocks"]
             lock_acquired = scheduler_locks.find_one_and_update(
                 {"_id": ObjectId("6501f81b496e0d9bfaac4680"), "locked": False},
                 {"$set": {"locked": True}},
