@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
 	var fileInput = document.getElementById("sale-agreement");
 	var uploadButton = document.getElementById("upload-sale-agreement");
 	var editFileInput = document.getElementById("edit-sale-agreement");
@@ -32,15 +32,15 @@ $(document).ready(function() {
 		var currentStep = $(".active-step.main-form-step");
 		var inputs = currentStep.find("input:required, select:required");
 		var isValid = true;
-	
-		inputs.each(function() {
+
+		inputs.each(function () {
 			var isEmpty = $(this).val().trim() === "";
 			toggleErrorClass($(this), isEmpty);
 			if (isEmpty) isValid = false;
 		});
 		return isValid;
 	}
-	
+
 	function validateBrokers() {
 		var $brokerInput = $("#sale-brokers");
 		var isValid = $brokerInput.val() && $brokerInput.val().length > 0;
@@ -52,7 +52,7 @@ $(document).ready(function() {
 		var notification = $("#" + elementId);
 		notification.text(message);
 		notification.addClass("show");
-		setTimeout(function() {
+		setTimeout(function () {
 			notification.removeClass("show");
 		}, 2000);
 	}
@@ -101,13 +101,13 @@ $(document).ready(function() {
 	function formatSqFootage(inputElement) {
 		let numericValue = inputElement.value.replace(/[^0-9.,]/g, "");
 		numericValue = numericValue.replace(/\.+/g, ".").replace(/,+/g, ",");
-	
+
 		const parts = numericValue.split(".");
 		if (parts.length > 1) {
 			parts[1] = parts[1].substring(0, 2);
 			numericValue = parts.join(".");
 		}
-	
+
 		let cents = "";
 		if (numericValue.includes(".")) {
 			[numericValue, cents] = numericValue.split(".");
@@ -119,14 +119,12 @@ $(document).ready(function() {
 		const formattedSqft = numberValue ? `${formattedNumber}${cents} SF` : "";
 		inputElement.value = formattedSqft;
 	}
-	
-	$(function() {
+
+	$(function () {
 		$("#sale-end-date").datepicker();
 		$("#edit-sale-end-date").datepicker();
 	});
-
-	// OPEN ADD SALES MODAL
-	$("#add-sale-button").click(function() {
+	$("#add-sale-button").click(function () {
 		resetModalSteps($("#add-sale-modal"));
 		$("body").addClass("modal-open");
 		$("#edit-sale-modal").hide();
@@ -141,7 +139,7 @@ $(document).ready(function() {
 		modal.find(".next-step").text("Next");
 	}
 
-	$("#edit-button").click(function() {
+	$("#edit-button").click(function () {
 		const editModal = $("#edit-sale-modal");
 		const actionModal = $("#action-modal");
 		const selectedRow = $(`.centered-table tbody tr[data-sale-id="${sale_id}"]`);
@@ -150,7 +148,7 @@ $(document).ready(function() {
 		const getPhoneFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="tel:"]`).attr("href").replace("tel:", "").trim();
 		const getNameFromCell = (index) => getCellText(index).replace(getEmailFromCell(index), '').replace(getPhoneFromCell(index), '').trim();
 		const setInputValue = (selector, value) => $(selector).val(value);
-	
+
 		resetModalSteps(editModal);
 		$("body").addClass("modal-open");
 		$("#add-sale-modal").hide();
@@ -174,17 +172,11 @@ $(document).ready(function() {
 		setInputValue("#edit-sale-seller-email", getEmailFromCell(12));
 		setInputValue("#edit-sale-seller-phone", getPhoneFromCell(12));
 	});
-	
-	
-
-	// CLOSE ADD SALE MODAL
-	$("#add-sale-modal .close").click(function() {
+	$("#add-sale-modal .close").click(function () {
 		$("body").removeClass("modal-open");
 		$("#add-sale-modal").hide();
 	});
-
-	// CLOSE EDIT SALE MODAL
-	$("#edit-sale-modal .close").click(function() {
+	$("#edit-sale-modal .close").click(function () {
 		$("body").removeClass("modal-open");
 		$("#edit-sale-modal").hide();
 	});
@@ -196,7 +188,10 @@ $(document).ready(function() {
 			url: "/search_sales",
 			method: "POST",
 			contentType: "application/json",
-			data: JSON.stringify({ query: searchTerm, page }),
+			data: JSON.stringify({
+				query: searchTerm,
+				page
+			}),
 			success: renderSalesResults,
 			error: handleSalesError
 		});
@@ -231,7 +226,7 @@ $(document).ready(function() {
 				<a href="mailto:${result.sale_buyer_email}">${result.sale_buyer_name}</a>
 				<a href="tel:${result.sale_buyer_phone}">${result.sale_buyer_phone}</a>
 			 </div>`,
-			 `<div class="contact-info">
+			`<div class="contact-info">
 				<a href="mailto:${result.sale_seller_email}">${result.sale_seller_name}</a>
 				<a href="tel:${result.sale_seller_phone}">${result.sale_seller_phone}</a>
 			 </div>`
@@ -249,10 +244,10 @@ $(document).ready(function() {
 		if (!isNaN(parsedPrice) && !isNaN(parsedSqft) && parsedSqft !== 0) {
 			const rawValue = parsedPrice / parsedSqft;
 			return "$" + rawValue.toFixed(2);
-		} 
+		}
 		return "N/A";
-	};	
-	
+	};
+
 
 	const handleSalesError = (textStatus, errorThrown) => {
 		console.error("Error Fetching Search Results:", textStatus, errorThrown);
@@ -276,11 +271,11 @@ $(document).ready(function() {
 		}
 	});
 
-	$(".modal-content").click(function(event) {
+	$(".modal-content").click(function (event) {
 		event.stopPropagation();
 	});
 
-	$(".next-step").on("click", function() {
+	$(".next-step").on("click", function () {
 		var currentModal = $(this).closest(".sale-modal");
 		var mode = currentModal.data("mode");
 		var currentStep = currentModal.find(".active-step");
@@ -348,14 +343,14 @@ $(document).ready(function() {
 						type: "POST",
 						contentType: "application/json",
 						data: JSON.stringify(data),
-						success: function(response) {
+						success: function (response) {
 							if (response.success) {
 								location.reload();
 							} else {
 								showNotification("Error Editing Sale", "error-notification");
 							}
 						},
-						error: function() {
+						error: function () {
 							showErrorNotificationModal("Error Editing Sale");
 						},
 					});
@@ -368,16 +363,16 @@ $(document).ready(function() {
 		}
 	});
 
-	$(".prev-step").on("click", function() {
+	$(".prev-step").on("click", function () {
 		var currentModal = $(this).closest(".sale-modal");
 		var currentStep = currentModal.find(".active-step");
 		var prevStep = currentStep.prev(".modal-step");
 		var nextButton = currentModal.find(".next-step");
-	
+
 		if (prevStep.length) {
 			currentStep.removeClass("active-step");
 			prevStep.addClass("active-step");
-	
+
 			if (!prevStep.next(".modal-step").length) {
 				if (currentModal.data("mode") === "add") {
 					nextButton.text("Submit Sale");
@@ -387,7 +382,7 @@ $(document).ready(function() {
 			} else {
 				nextButton.text("Next");
 			}
-	
+
 			if (currentModal.data("mode") === "add") {
 				currentStep.find("input:required, select:required").removeClass("error");
 			}
@@ -395,18 +390,18 @@ $(document).ready(function() {
 	});
 
 	function handleFileUpload(config) {
-		config.inputElement.addEventListener("change", function(e) {
+		config.inputElement.addEventListener("change", function (e) {
 			var file = this.files[0];
 			var formData = new FormData();
 			formData.append("file", file);
-	
+
 			$.ajax({
 				url: "/upload_pdf",
 				type: "POST",
 				data: formData,
 				processData: false,
 				contentType: false,
-				success: function(data) {
+				success: function (data) {
 					if (data.success) {
 						config.buttonElement.textContent = "Document Uploaded ✔";
 						config.buttonElement.disabled = true;
@@ -415,38 +410,34 @@ $(document).ready(function() {
 						showNotification("Error Uploading Document", "error-notification");
 					}
 				},
-				error: function() {
+				error: function () {
 					showNotification("Error Uploading Document", "error-notification");
 				}
 			});
 		});
-		config.buttonElement.addEventListener("click", function(e) {
+		config.buttonElement.addEventListener("click", function (e) {
 			config.inputElement.click();
 		});
 	}
-	
-	var configurations = [
-		{
-			inputElement: fileInput,
-			buttonElement: uploadButton,
-			resultElementId: "sale-agreement-file-base64"
-		},
-		{
-			inputElement: editFileInput,
-			buttonElement: editUploadButton,
-			resultElementId: "edit-sale-agreement-file-base64"
-		}
+
+	var configurations = [{
+		inputElement: fileInput,
+		buttonElement: uploadButton,
+		resultElementId: "sale-agreement-file-base64"
+	},
+	{
+		inputElement: editFileInput,
+		buttonElement: editUploadButton,
+		resultElementId: "edit-sale-agreement-file-base64"
+	}
 	];
-	
-	configurations.forEach(function(config) {
+
+	configurations.forEach(function (config) {
 		handleFileUpload(config);
 	});
-	
-
-	// OPEN ACTION MODAL
-	$(document).ready(function() {
+	$(document).ready(function () {
 		var isAdmin = $("body").data("is-admin") === "True";
-		$(".centered-table tbody tr").on("contextmenu", function(e) {
+		$(".centered-table tbody tr").on("contextmenu", function (e) {
 			if (isAdmin) {
 				e.preventDefault();
 				const actionModal = $("#action-modal");
@@ -462,7 +453,7 @@ $(document).ready(function() {
 	});
 
 
-	$(document).bind("click", function(e) {
+	$(document).bind("click", function (e) {
 		const actionModal = $("#action-modal");
 		if (!$(e.target).closest(actionModal).length) {
 			actionModal.hide();
@@ -470,41 +461,39 @@ $(document).ready(function() {
 	});
 
 	let sale_id = null;
-	$(".centered-table tbody tr").on("contextmenu", function(e) {
+	$(".centered-table tbody tr").on("contextmenu", function (e) {
 		e.preventDefault();
 		sale_id = $(this).data("sale-id");
 		console.log("Sale id:", sale_id);
 	});
 
-	$("#delete-button").click(function() {
+	$("#delete-button").click(function () {
 		console.log(sale_id);
 		const selectedRow = $(
 			'.centered-table tbody tr[data-sale-id="' + sale_id + '"]'
 		);
-		const deleteModal = $("#action-modal"); // assuming this is the ID of your deletion modal
+		const deleteModal = $("#action-modal");
 		$.ajax({
 			url: "/delete_sale/" + sale_id,
 			type: "GET",
-			success: function(data) {
+			success: function (data) {
 				if (data.success) {
 					showNotification("Sale Deleted", "error-notification");
 					selectedRow.remove();
 					deleteModal.hide();
-					$.get("/count/sales", function(response) {
+					$.get("/count/sales", function (response) {
 						$("#sales-count").html("Total Sales: " + response.count);
 					});
 				} else {
 					showNotification("Failed to Delete Sale", "error-notification");
 				}
 			},
-			error: function() {
+			error: function () {
 				showNotification("Failed to Delete Sale", "error-notification");
 			},
 		});
 	});
-
-	// SUBMIT Sale
-	$("#submit-sale-form").on("submit", function(e) {
+	$("#submit-sale-form").on("submit", function (e) {
 		e.preventDefault();
 		$("#add-sale-modal").css("display", "none");
 
@@ -514,14 +503,14 @@ $(document).ready(function() {
 			formData.append("fileBase64", fileBase64);
 
 			$.ajax({
-					url: "/submit_sale",
-					type: "POST",
-					data: formData,
-					processData: false,
-					contentType: false,
-					dataType: "json",
-				})
-				.done(function(response, jqXHR) {
+				url: "/submit_sale",
+				type: "POST",
+				data: formData,
+				processData: false,
+				contentType: false,
+				dataType: "json",
+			})
+				.done(function (response, jqXHR) {
 					if (response.status === "success") {
 						window.location.href = response.redirect;
 					} else {
@@ -529,7 +518,7 @@ $(document).ready(function() {
 						console.log("Unexpected status code: " + jqXHR.status);
 					}
 				})
-				.fail(function(textStatus, errorThrown) {
+				.fail(function (textStatus, errorThrown) {
 					showNotification("Error Uploading Sale", "error-notification");
 					console.log("Error Uploading Sale: ", textStatus, errorThrown);
 				});

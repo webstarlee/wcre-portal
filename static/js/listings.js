@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
 	var fileInput = document.getElementById("listing-agreement");
 	var uploadButton = document.getElementById("upload-listing-agreement");
 	var editFileInput = document.getElementById("edit-listing-agreement");
@@ -15,23 +15,24 @@ $(document).ready(function() {
 	let btn = document.getElementById("open-listing-map-button");
 	let span = document.getElementsByClassName("close")[0];
 
-	btn.onclick = function() {
+	btn.onclick = function () {
 		initMap();
 	}
 
-	span.onclick = function() {
+	span.onclick = function () {
 		modal.style.display = "none";
 	}
-	
+
 
 	function initMap() {
 		let map = new google.maps.Map(document.getElementById('map'), {
 			zoom: 12,
 			center: new google.maps.LatLng(39.905020, -74.938890)
 		});
-		let listings = [
-			{ lat: 39.905020, lng: -74.938890 },
-		];
+		let listings = [{
+			lat: 39.905020,
+			lng: -74.938890
+		},];
 		for (let i = 0; i < listings.length; i++) {
 			new google.maps.Marker({
 				position: listings[i],
@@ -39,44 +40,44 @@ $(document).ready(function() {
 			});
 		}
 	}
-	
+
 
 	function toggleErrorClass($element, isError) {
 		isError ? $element.addClass("error") : $element.removeClass("error");
 	}
-	
+
 	function validateStep() {
 		var currentStep = $(".active-step.main-form-step");
 		var inputs = currentStep.find("input:required, select:required");
 		var isValid = true;
-	
-		inputs.each(function() {
+
+		inputs.each(function () {
 			var isEmpty = $(this).val().trim() === "";
 			toggleErrorClass($(this), isEmpty);
 			if (isEmpty) isValid = false;
 		});
 		return isValid;
 	}
-	
+
 	function validateBrokers() {
 		var $brokerInput = $("#listing-brokers");
 		var isValid = $brokerInput.val() && $brokerInput.val().length > 0;
 		toggleErrorClass($brokerInput, !isValid);
 		return isValid;
 	}
-	
+
 	function validateDates() {
 		var $startDateInput = $("#listing-start-date");
 		var isValid = $startDateInput.val().trim().length > 0;
 		toggleErrorClass($startDateInput, !isValid);
 		return isValid;
-	}	
+	}
 
 	function showNotification(message, elementId) {
 		var notification = $("#" + elementId);
 		notification.text(message);
 		notification.addClass("show");
-		setTimeout(function() {
+		setTimeout(function () {
 			notification.removeClass("show");
 		}, 2000);
 	}
@@ -122,15 +123,14 @@ $(document).ready(function() {
 		return formattedNumber;
 	}
 
-	$(function() {
+	$(function () {
 		$("#listing-start-date").datepicker();
 		$("#listing-end-date").datepicker();
 		$("#edit-listing-start-date").datepicker();
 		$("#edit-listing-end-date").datepicker();
 	});
 
-	// OPEN ADD LISTING MODAL
-	$("#add-listing-button").click(function() {
+	$("#add-listing-button").click(function () {
 		resetModalSteps($("#add-listing-modal"));
 		$("body").addClass("modal-open");
 		$("#mapModal").hide();
@@ -146,7 +146,7 @@ $(document).ready(function() {
 		modal.find(".next-step").text("Next");
 	}
 
-	$("#open-listing-map-button").click(function() {
+	$("#open-listing-map-button").click(function () {
 		$("#edit-listing-modal").hide();
 		$("#add-listing-modal").hide();
 		$("body").addClass("modal-open");
@@ -155,8 +155,7 @@ $(document).ready(function() {
 
 
 
-	// OPEN EDIT LISTING MODAL
-	$("#edit-button").click(function() {
+	$("#edit-button").click(function () {
 		const editModal = $("#edit-listing-modal");
 		const actionModal = $("#action-modal");
 		const selectedRow = $(`.centered-table tbody tr[data-listing-id="${listing_id}"]`);
@@ -187,18 +186,16 @@ $(document).ready(function() {
 	});
 
 
-	// CLOSE ADD LISTING MODAL
-	$("#add-listing-modal .close").click(function() {
+	$("#add-listing-modal .close").click(function () {
 		$("body").removeClass("modal-open");
 		$("#add-listing-modal").hide();
 	});
 
-	// CLOSE EDIT LISTING MODAL
-	$("#edit-listing-modal .close").click(function() {
+	$("#edit-listing-modal .close").click(function () {
 		$("body").removeClass("modal-open");
 		$("#edit-listing-modal").hide();
 	});
-	
+
 
 	let currentPage = 1;
 	const searchListings = (page) => {
@@ -271,12 +268,12 @@ $(document).ready(function() {
 		}
 	});
 
-	$(".modal-content").click(function(event) {
+	$(".modal-content").click(function (event) {
 		event.stopPropagation();
 	});
 
 
-	$(".next-step").on("click", function() {
+	$(".next-step").on("click", function () {
 		var currentModal = $(this).closest(".listing-modal");
 		var mode = currentModal.data("mode");
 		var currentStep = currentModal.find(".active-step");
@@ -332,30 +329,30 @@ $(document).ready(function() {
 					};
 
 					console.log(listingStreet)
-					getLatLng(listingStreet, listingCity, listingState, function(locationData) {
+					getLatLng(listingStreet, listingCity, listingState, function (locationData) {
 						if (locationData) {
 							data.listing_lat = locationData.lat;
-        					data.listing_long = locationData.lng;
+							data.listing_long = locationData.lng;
 							$.ajax({
 								url: "/edit_listing/" + listing_id,
 								type: "POST",
 								contentType: "application/json",
 								data: JSON.stringify(data),
-								success: function(response) {
+								success: function (response) {
 									if (response.success) {
 										location.reload();
 									} else {
 										showNotification("Error Editing listing", "error-notification");
 									}
 								},
-								error: function() {
+								error: function () {
 									showNotification("Error Editing listing", "error-notification");
 								},
 							});
 						} else {
 							showNotification("Error Getting Location Data", "error-notification");
 						}
-					});	
+					});
 				} else {
 					showNotification("Please Fill Out All Required Fields", "error-notification");
 				}
@@ -365,7 +362,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$(".prev-step").on("click", function() {
+	$(".prev-step").on("click", function () {
 		var currentModal = $(this).closest(".listing-modal");
 		var currentStep = currentModal.find(".active-step");
 		var prevStep = currentStep.prev(".modal-step");
@@ -392,18 +389,18 @@ $(document).ready(function() {
 	});
 
 	function handleFileUpload(config) {
-		config.inputElement.addEventListener("change", function(e) {
+		config.inputElement.addEventListener("change", function (e) {
 			var file = this.files[0];
 			var formData = new FormData();
 			formData.append("file", file);
-	
+
 			$.ajax({
 				url: "/upload_pdf",
 				type: "POST",
 				data: formData,
 				processData: false,
 				contentType: false,
-				success: function(data) {
+				success: function (data) {
 					if (data.success) {
 						config.buttonElement.textContent = "Document Uploaded ✔";
 						config.buttonElement.disabled = true;
@@ -412,36 +409,34 @@ $(document).ready(function() {
 						showNotification("Error Uploading Document", "error-notification");
 					}
 				},
-				error: function() {
+				error: function () {
 					showNotification("Error Uploading Document", "error-notification");
 				}
 			});
 		});
-		config.buttonElement.addEventListener("click", function(e) {
+		config.buttonElement.addEventListener("click", function (e) {
 			config.inputElement.click();
 		});
 	}
-	
-	var configurations = [
-		{
-			inputElement: fileInput,
-			buttonElement: uploadButton,
-			resultElementId: "listing-agreement-file-base64"
-		},
-		{
-			inputElement: editFileInput,
-			buttonElement: editUploadButton,
-			resultElementId: "edit-listing-agreement-file-base64"
-		}
-	];
-	
-	configurations.forEach(function(config) {
-		handleFileUpload(config);
-	});	
 
-	// OPEN ACTION MODAL
+	var configurations = [{
+		inputElement: fileInput,
+		buttonElement: uploadButton,
+		resultElementId: "listing-agreement-file-base64"
+	},
+	{
+		inputElement: editFileInput,
+		buttonElement: editUploadButton,
+		resultElementId: "edit-listing-agreement-file-base64"
+	}
+	];
+
+	configurations.forEach(function (config) {
+		handleFileUpload(config);
+	});
+
 	var isAdmin = $("body").data("is-admin") === "True";
-	$(".centered-table tbody tr").on("contextmenu", function(e) {
+	$(".centered-table tbody tr").on("contextmenu", function (e) {
 		if (isAdmin) {
 			e.preventDefault();
 			const actionModal = $("#action-modal");
@@ -455,7 +450,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$(document).bind("click", function(e) {
+	$(document).bind("click", function (e) {
 		const actionModal = $("#action-modal");
 		if (!$(e.target).closest(actionModal).length) {
 			actionModal.hide();
@@ -463,33 +458,33 @@ $(document).ready(function() {
 	});
 
 	let listing_id = null;
-	$(".centered-table tbody tr").on("contextmenu", function(e) {
+	$(".centered-table tbody tr").on("contextmenu", function (e) {
 		e.preventDefault();
 		listing_id = $(this).data("listing-id");
 		console.log("Listing ID:", listing_id);
 	});
 
-	$("#delete-button").click(function() {
+	$("#delete-button").click(function () {
 		const selectedRow = $(
 			'.centered-table tbody tr[data-listing-id="' + listing_id + '"]'
 		);
-		const deleteModal = $("#action-modal"); // assuming this is the ID of your deletion modal
+		const deleteModal = $("#action-modal");
 		$.ajax({
 			url: "/delete_listing/" + listing_id,
 			type: "GET",
-			success: function(data) {
+			success: function (data) {
 				if (data.success) {
 					showNotification("Listing Deleted", "error-notification");
 					selectedRow.remove();
 					deleteModal.hide();
-					$.get("/count/listings", function(response) {
+					$.get("/count/listings", function (response) {
 						$("#listings-count").html("Total Listings: " + response.count);
 					});
 				} else {
 					showNotification("Failed to Delete Listing", "error-notification");
 				}
 			},
-			error: function() {
+			error: function () {
 				showNotification("Failed to Delete Listing", "error-notification");
 			},
 		});
@@ -499,7 +494,7 @@ $(document).ready(function() {
 		var address = `${street}, ${city}, ${state}`;
 		console.log(address)
 		var url = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=AIzaSyBoKJVMAXzJSwPJUgSLzbbwWz-px77dK_s`
-		$.get(url, function(data) {
+		$.get(url, function (data) {
 			if (data.status === 'OK') {
 				callback(data.results[0].geometry.location);
 			} else {
@@ -508,10 +503,9 @@ $(document).ready(function() {
 			}
 		});
 	}
-	
 
-	// SUBMIT LISTING
-	$("#submit-listing-form").on("submit", function(e) {
+
+	$("#submit-listing-form").on("submit", function (e) {
 		e.preventDefault();
 		$("#add-listing-modal").css("display", "none");
 
@@ -523,7 +517,7 @@ $(document).ready(function() {
 			var city = $("#listing-city").val();
 			var state = $("#listing-state").val();
 
-			getLatLng(street, city, state, function(location) {
+			getLatLng(street, city, state, function (location) {
 				if (location) {
 					formData.append("listing-lat", location.lat);
 					formData.append("listing-long", location.lng);
@@ -536,20 +530,20 @@ $(document).ready(function() {
 						contentType: false,
 						dataType: "json",
 					})
-					.done(function(response, jqXHR) {
-						if (response.status === "success") {
-							window.location.href = response.redirect;
-						} else {
+						.done(function (response, jqXHR) {
+							if (response.status === "success") {
+								window.location.href = response.redirect;
+							} else {
+								showNotification("Error Uploading Listing", "error-notification")
+							}
+						})
+						.fail(function () {
 							showNotification("Error Uploading Listing", "error-notification")
-						}
-					})
-					.fail(function() {
-						showNotification("Error Uploading Listing", "error-notification")
-					});
+						});
 				} else {
 					showNotification("Error Getting Location Data", "error-notification");
 				}
-			});	
+			});
 		}
 	});
 });

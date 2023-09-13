@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
 	var agreementFileInput = document.getElementById("lease-agreement");
 	var uploadButtonAgreement = document.getElementById("upload-lease-agreement");
 	var editAgreementFileInput = document.getElementById("edit-lease-agreement");
@@ -6,7 +6,7 @@ $(document).ready(function() {
 	var commisionFileInput = document.getElementById("lease-commision-agreement");
 	var uploadButtonCommision = document.getElementById("upload-lease-commision-agreement");
 	var editCommisionFileInput = document.getElementById("edit-lease-commision-agreement");
-  	var editUploadButtonCommision = document.getElementById("edit-upload-lease-commision-agreement");
+	var editUploadButtonCommision = document.getElementById("edit-upload-lease-commision-agreement");
 	const sqFootageInput = document.getElementById("lease-sqft");
 	const editsqFootageInput = document.getElementById("edit-lease-sqft");
 	const lessorPhoneNumberInput = document.getElementById("lease-lessor-phone");
@@ -21,20 +21,20 @@ $(document).ready(function() {
 	function toggleErrorClass($element, isError) {
 		isError ? $element.addClass("error") : $element.removeClass("error");
 	}
-	
+
 	function validateStep() {
 		var currentStep = $(".active-step.main-form-step");
 		var inputs = currentStep.find("input:required, select:required");
 		var isValid = true;
-	
-		inputs.each(function() {
+
+		inputs.each(function () {
 			var isEmpty = $(this).val().trim() === "";
 			toggleErrorClass($(this), isEmpty);
 			if (isEmpty) isValid = false;
 		});
 		return isValid;
 	}
-	
+
 	function validateBrokers() {
 		var $brokerInput = $("#lease-brokers");
 		var isValid = $brokerInput.val() && $brokerInput.val().length > 0;
@@ -47,7 +47,7 @@ $(document).ready(function() {
 		var notification = $("#" + elementId);
 		notification.text(message);
 		notification.addClass("show");
-		setTimeout(function() {
+		setTimeout(function () {
 			notification.removeClass("show");
 		}, 2000);
 	}
@@ -57,15 +57,15 @@ $(document).ready(function() {
 		const monthsSelect = document.getElementById('months');
 		const years = parseInt(yearsSelect.value);
 		const months = parseInt(monthsSelect.value);
-	
+
 		if (months === 12) {
 			monthsSelect.value = "0";
 			yearsSelect.value = (years + 1).toString();
 		}
 	}
 
-	document.addEventListener('DOMContentLoaded', function() {
-		document.getElementById('submit-button').addEventListener('click', function() {
+	document.addEventListener('DOMContentLoaded', function () {
+		document.getElementById('submit-button').addEventListener('click', function () {
 			var years = document.getElementById('years').value;
 			var months = document.getElementById('months').value;
 			var leaseTermLength = years + " Years " + months + " Months";
@@ -113,19 +113,19 @@ $(document).ready(function() {
 		inputElement.value = formattedSqft;
 	}
 
-	$(document).ready(function() {
+	$(document).ready(function () {
 		const iconVisible = $(".fa-caret-right");
 		const iconHidden = $(".fa-caret-down");
 		iconHidden.hide();
-		$(".centered-table tbody tr[data-lease-id] button").click(function() {
+		$(".centered-table tbody tr[data-lease-id] button").click(function () {
 			$(this)
 				.closest(".centered-table tbody tr[data-lease-id]")
 				.next(".hidden-row-headers")
 				.toggle();
 			if (
 				$(this)
-				.closest(".centered-table tbody tr[data-lease-id]")
-				.hasClass("selected-child")
+					.closest(".centered-table tbody tr[data-lease-id]")
+					.hasClass("selected-child")
 			) {
 				$(this)
 					.closest(".centered-table tbody tr[data-lease-id]")
@@ -141,9 +141,9 @@ $(document).ready(function() {
 			}
 			if (
 				$(this)
-				.closest(".centered-table tbody tr[data-lease-id]")
-				.next(".hidden-row-headers")
-				.is(":hidden")
+					.closest(".centered-table tbody tr[data-lease-id]")
+					.next(".hidden-row-headers")
+					.is(":hidden")
 			) {
 				$(this).find(".fa-caret-right").show();
 				$(this).find(".fa-caret-down").hide();
@@ -155,8 +155,8 @@ $(document).ready(function() {
 		});
 	});
 
-	$(document).ready(function() {
-		$(".parent-row").each(function(index) {
+	$(document).ready(function () {
+		$(".parent-row").each(function (index) {
 			if (index % 3 === 0) {
 				$(this).addClass("selected-parent");
 			} else {
@@ -165,8 +165,7 @@ $(document).ready(function() {
 		});
 	});
 
-	// OPEN ADD LEASES MODAL
-	$("#add-lease-button").click(function() {
+	$("#add-lease-button").click(function () {
 		resetModalSteps($("#add-lease-modal"));
 		$("body").addClass("modal-open");
 		$("#edit-lease-modal").hide();
@@ -181,7 +180,7 @@ $(document).ready(function() {
 		modal.find(".next-step").text("Next");
 	}
 
-	$("#edit-button").click(function() {
+	$("#edit-button").click(function () {
 		const editModal = $("#edit-lease-modal");
 		const actionModal = $("#action-modal");
 		const selectedRow = $(`.centered-table tbody tr[data-lease-id="${lease_id}"]`);
@@ -190,7 +189,7 @@ $(document).ready(function() {
 		const getPhoneFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="tel:"]`).attr("href").replace("tel:", "").trim();
 		const getNameFromCell = (index) => getCellText(index).replace(getEmailFromCell(index), '').replace(getPhoneFromCell(index), '').trim();
 		const setInputValue = (selector, value) => $(selector).val(value);
-		
+
 		resetModalSteps(editModal);
 		$("body").addClass("modal-open");
 		$("#add-lease-modal").hide();
@@ -211,16 +210,14 @@ $(document).ready(function() {
 		setInputValue("#edit-lease-lessee-email", getEmailFromCell(8));
 		setInputValue("#edit-lease-lessee-phone", getPhoneFromCell(8));
 	});
-	
 
-	// CLOSE ADD LESAE MODAL
-	$("#add-lease-modal .close").click(function() {
+
+	$("#add-lease-modal .close").click(function () {
 		$("body").removeClass("modal-open");
 		$("#add-lease-modal").hide();
 	});
 
-	// CLOSE EDIT LEASE MODAL
-	$("#edit-lease-modal .close").click(function() {
+	$("#edit-lease-modal .close").click(function () {
 		$("body").removeClass("modal-open");
 		$("#edit-lease-modal").hide();
 	});
@@ -232,7 +229,10 @@ $(document).ready(function() {
 			url: "/search_leases",
 			method: "POST",
 			contentType: "application/json",
-			data: JSON.stringify({ query: searchTerm, page }),
+			data: JSON.stringify({
+				query: searchTerm,
+				page
+			}),
 			success: renderSearchResults,
 			error: handleSearchError
 		});
@@ -273,7 +273,7 @@ $(document).ready(function() {
 		$row.append($("<td>").html(result.lease_commision_file_base64 ? `<form method="POST"><a href="/download_lease_commision_pdf/${result._id}">Fully Executed</a></form>` : "Pending"));
 		return $row;
 	};
-	
+
 
 	const handleSearchError = (textStatus, errorThrown) => {
 		console.error("Error Fetching Lease Results:", textStatus, errorThrown);
@@ -297,11 +297,11 @@ $(document).ready(function() {
 		}
 	});
 
-	$(".modal-content").click(function(event) {
+	$(".modal-content").click(function (event) {
 		event.stopPropagation();
 	});
 
-	$(".next-step").on("click", function() {
+	$(".next-step").on("click", function () {
 		var currentModal = $(this).closest(".lease-modal");
 		var mode = currentModal.data("mode");
 		var currentStep = currentModal.find(".active-step");
@@ -367,14 +367,14 @@ $(document).ready(function() {
 						type: "POST",
 						contentType: "application/json",
 						data: JSON.stringify(data),
-						success: function(response) {
+						success: function (response) {
 							if (response.success) {
 								location.reload();
 							} else {
 								showNotification("Error Editing lease", "error-notification");
 							}
 						},
-						error: function() {
+						error: function () {
 							showErrorNotificationModal("Error Editing lease");
 						},
 					});
@@ -393,17 +393,16 @@ $(document).ready(function() {
 		}
 	});
 
-	// PREV STEP
-	$(".prev-step").on("click", function() {
+	$(".prev-step").on("click", function () {
 		var currentModal = $(this).closest(".lease-modal");
 		var currentStep = currentModal.find(".active-step");
 		var prevStep = currentStep.prev(".modal-step");
 		var nextButton = currentModal.find(".next-step");
-	
+
 		if (prevStep.length) {
 			currentStep.removeClass("active-step");
 			prevStep.addClass("active-step");
-	
+
 			if (!prevStep.next(".modal-step").length) {
 				if (currentModal.data("mode") === "add") {
 					nextButton.text("Submit Lease");
@@ -413,7 +412,7 @@ $(document).ready(function() {
 			} else {
 				nextButton.text("Next");
 			}
-	
+
 			if (currentModal.data("mode") === "add") {
 				currentStep.find("input:required, select:required").removeClass("error");
 			}
@@ -421,18 +420,18 @@ $(document).ready(function() {
 	});
 
 	function handleFileUpload(config) {
-		config.inputElement.addEventListener("change", function(e) {
+		config.inputElement.addEventListener("change", function (e) {
 			var file = this.files[0];
 			var formData = new FormData();
 			formData.append("file", file);
-	
+
 			$.ajax({
 				url: "/upload_pdf",
 				type: "POST",
 				data: formData,
 				processData: false,
 				contentType: false,
-				success: function(data) {
+				success: function (data) {
 					if (data.success) {
 						config.buttonElement.textContent = "Document Uploaded ✔";
 						config.buttonElement.disabled = true;
@@ -441,47 +440,45 @@ $(document).ready(function() {
 						showNotification("Error Uploading Document", "error-notification");
 					}
 				},
-				error: function() {
+				error: function () {
 					showNotification("Error Uploading Document", "error-notification");
 				}
 			});
 		});
-		config.buttonElement.addEventListener("click", function(e) {
+		config.buttonElement.addEventListener("click", function (e) {
 			config.inputElement.click();
 		});
 	}
-	
-	var configurations = [
-		{
-			inputElement: agreementFileInput,
-			buttonElement: uploadButtonAgreement,
-			resultElementId: "lease-agreement-file-base64"
-		},
-		{
-			inputElement: editAgreementFileInput,
-			buttonElement: editUploadButtonAgreement,
-			resultElementId: "edit-lease-agreement-file-base64"
-		},
-		{
-			inputElement: commisionFileInput,
-			buttonElement: uploadButtonCommision,
-			resultElementId: "lease-commision-agreement-file-base64"
-		},
-		{
-			inputElement: editCommisionFileInput,
-			buttonElement: editUploadButtonCommision,
-			resultElementId: "edit-lease-commision-agreement-file-base64"
-		}
+
+	var configurations = [{
+		inputElement: agreementFileInput,
+		buttonElement: uploadButtonAgreement,
+		resultElementId: "lease-agreement-file-base64"
+	},
+	{
+		inputElement: editAgreementFileInput,
+		buttonElement: editUploadButtonAgreement,
+		resultElementId: "edit-lease-agreement-file-base64"
+	},
+	{
+		inputElement: commisionFileInput,
+		buttonElement: uploadButtonCommision,
+		resultElementId: "lease-commision-agreement-file-base64"
+	},
+	{
+		inputElement: editCommisionFileInput,
+		buttonElement: editUploadButtonCommision,
+		resultElementId: "edit-lease-commision-agreement-file-base64"
+	}
 	];
-	
-	configurations.forEach(function(config) {
+
+	configurations.forEach(function (config) {
 		handleFileUpload(config);
-	});	
-	
-	
-	// OPEN ACTION MODAL
+	});
+
+
 	var isAdmin = $("body").data("is-admin") === "True";
-	$(".centered-table tbody tr").on("contextmenu", function(e) {
+	$(".centered-table tbody tr").on("contextmenu", function (e) {
 		if (isAdmin) {
 			e.preventDefault();
 			const actionModal = $("#action-modal");
@@ -495,7 +492,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$(document).bind("click", function(e) {
+	$(document).bind("click", function (e) {
 		const actionModal = $("#action-modal");
 		if (!$(e.target).closest(actionModal).length) {
 			actionModal.hide();
@@ -503,40 +500,39 @@ $(document).ready(function() {
 	});
 
 	let lease_id = null;
-	$(".centered-table tbody tr").on("contextmenu", function(e) {
+	$(".centered-table tbody tr").on("contextmenu", function (e) {
 		e.preventDefault();
 		lease_id = $(this).data("lease-id");
 		console.log("Lease ID:", lease_id);
 	});
 
-	$("#delete-button").click(function() {
+	$("#delete-button").click(function () {
 		const selectedRow = $(
 			'.centered-table tbody tr[data-lease-id="' + lease_id + '"]'
 		);
-		const deleteModal = $("#action-modal"); // assuming this is the ID of your deletion modal
+		const deleteModal = $("#action-modal");
 		$.ajax({
 			url: "/delete_lease/" + lease_id,
 			type: "GET",
-			success: function(data) {
+			success: function (data) {
 				if (data.success) {
 					showNotification("Lease Deleted", "error-notification");
 					selectedRow.remove();
 					deleteModal.hide();
-					$.get("/count/leases", function(response) {
+					$.get("/count/leases", function (response) {
 						$("#leases-count").html("Total Leases: " + response.count);
 					});
 				} else {
 					showNotification("Failed to Delete Lease", "error-notification");
 				}
 			},
-			error: function() {
+			error: function () {
 				showNotification("Failed to Delete Lease", "error-notification");
 			},
 		});
 	});
 
-	// SUBMIT LEASE
-	$("#submit-lease-form").on("submit", function(e) {
+	$("#submit-lease-form").on("submit", function (e) {
 		e.preventDefault();
 		$("#add-lease-modal").css("display", "none");
 		if (validateStep() && validateBrokers()) {
@@ -544,23 +540,23 @@ $(document).ready(function() {
 			var leaseAgreementFileBase64 = $("#lease-agreement-file-base64").val();
 			var commisionAgreementFileBase64 = $("#lease-commision-agreement-file-base64").val();
 			formData.append("lease-agreement-file-base64", leaseAgreementFileBase64);
-      		formData.append("lease-commision-agreement-file-base64", commisionAgreementFileBase64);
+			formData.append("lease-commision-agreement-file-base64", commisionAgreementFileBase64);
 			$.ajax({
-					url: "/submit_lease",
-					type: "POST",
-					data: formData,
-					processData: false,
-					contentType: false,
-					dataType: "json",
-				})
-				.done(function(response) {
+				url: "/submit_lease",
+				type: "POST",
+				data: formData,
+				processData: false,
+				contentType: false,
+				dataType: "json",
+			})
+				.done(function (response) {
 					if (response.status === "success") {
 						window.location.href = response.redirect;
 					} else {
 						showNotification("Error Uploading Lease", "error-notification");
 					}
 				})
-				.fail(function() {
+				.fail(function () {
 					showNotification("Error Uploading Lease", "error-notification");
 				});
 		}

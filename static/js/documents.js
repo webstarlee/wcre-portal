@@ -3,13 +3,13 @@ $(document).ready(function () {
   var uploadButton = document.getElementById("upload-document-file");
 
   function showNotification(message, elementId) {
-		var notification = $("#" + elementId);
-		notification.text(message);
-		notification.addClass("show");
-		setTimeout(function() {
-			notification.removeClass("show");
-		}, 2000);
-	}
+    var notification = $("#" + elementId);
+    notification.text(message);
+    notification.addClass("show");
+    setTimeout(function () {
+      notification.removeClass("show");
+    }, 2000);
+  }
 
   function toggleModalDisplay(modalId) {
     const modal = $(modalId);
@@ -31,9 +31,8 @@ $(document).ready(function () {
     toggleModalDisplay("#upload-document-modal");
   });
 
-  // CLOSE MODAL
   $(".close").click(function (e) {
-    e.stopPropagation(); // Stop event bubbling up and closing the modal
+    e.stopPropagation();
     $(this).parents(".modal").hide();
     resetForm();
   });
@@ -68,7 +67,6 @@ $(document).ready(function () {
     event.stopPropagation();
   });
 
-  // Handle document file button click
   fileInput.addEventListener("change", function (e) {
     var file = this.files[0];
     var formData = new FormData();
@@ -95,7 +93,6 @@ $(document).ready(function () {
     });
   });
 
-  // Handle Form Submission
   $("#submit-document-form").on("submit", function (e) {
     if ($("#document-file")[0].files.length === 0) {
       e.preventDefault();
@@ -180,11 +177,11 @@ $(document).ready(function () {
         documents[i].document_name +
         '.pdf"><i class="fa fa-download"></i></a>';
       li.innerHTML = `
-                  <div class="d-flex gap-2 align-items-center">
-                    <i class="far fa-file-pdf text-dark" style="color: #1c92d2; font-size:22px;"></i>
-                    <p class="mb-0">${documents[i].document_name}</p>
-                  </div>
-                  <span>${downloadButton}</span>`;
+                <div class="d-flex gap-2 align-items-center">
+                  <i class="far fa-file-pdf text-dark" style="color: #1c92d2; font-size:22px;"></i>
+                  <p class="mb-0">${documents[i].document_name}</p>
+                </div>
+                <span>${downloadButton}</span>`;
       documentList.appendChild(li);
     }
   }
@@ -197,10 +194,9 @@ $(document).ready(function () {
       .find("#card-title")
       .text();
     $.get(
-      "get_documents",
-      {
-        document_type: documentType,
-      },
+      "get_documents", {
+      document_type: documentType,
+    },
       function (data) {
         $("#document-modal .modal-title").text(
           "Documents Files - " + documentType
