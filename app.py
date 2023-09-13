@@ -37,6 +37,9 @@ import logging
 import sentry_sdk
 from flask import Flask
 from sentry_sdk.integrations.flask import FlaskIntegration
+from pymongo.collection import ReturnDocument
+from bson.objectid import ObjectId
+
 
 ALLOWED_EXTENSIONS = {"pdf"}
 logging.basicConfig(
@@ -69,8 +72,6 @@ try:
     scheduler = APScheduler()
     app.config['SCHEDULER_API_ENABLED'] = True
     scheduler.init_app(app)
-    if os.environ.get('DYNO') == 'web.1':
-        scheduler.start()
     mail = Mail(app)
     bcrypt = Bcrypt(app)
     login_manager = LoginManager(app)
@@ -92,10 +93,28 @@ else:
         sales = db["Sales"]
         leases = db["Leases"]
         docs = db["Documents"]
+        scheduler_locks = db["SchedulerLocks"]
         fs = GridFS(db)
         logger.info("Connected to MongoDB successfully")
     except Exception as e:
         logger.error(f"Error connecting to MongoDB: {str(e)}")
+    else:
+        ENV = os.environ.get("ENV", "development")
+        if ENV == "development":
+            logging.info("Development Build")
+            scheduler.start()
+        elif ENV == "production":
+            logging.info("Production Build")
+            scheduler_locks = db["SchedulerLocks"]
+            lock_acquired = scheduler_locks.find_one_and_update(
+                {"_id": ObjectId("6501f81b496e0d9bfaac4680"), "locked": False},
+                {"$set": {"locked": True}},
+                return_document=ReturnDocument.AFTER
+            )
+            if lock_acquired and lock_acquired.get("locked"):
+                scheduler.start()
+            else:
+                logger.info("Scheduler already started by another worker.")
 
 def send_email(subject, template, data, conn):
     try:
