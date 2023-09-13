@@ -885,4 +885,4 @@ def search_leases():
 
 Talisman(app, content_security_policy=None)
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=6969, debug=True)
+    app.run(host="0.0.0.0", port=6969, debug=False)
