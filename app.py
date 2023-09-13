@@ -99,10 +99,11 @@ else:
     except Exception as e:
         logger.error(f"Error connecting to MongoDB: {str(e)}")
     else:
-        ENV = os.environ.get("ENV", "development")
+        ENV = os.environ.get("ENV")
         if ENV == "development":
             logging.info("Development Build")
-            scheduler.start()
+            if os.environ.get("WERKZEUG_RUN_MAIN") == "true" or not app.debug:
+                scheduler.start()
         elif ENV == "production":
             logging.info("Production Build")
             scheduler_locks = db["SchedulerLocks"]
