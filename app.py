@@ -69,7 +69,12 @@ try:
     scheduler = APScheduler()
     app.config['SCHEDULER_API_ENABLED'] = True
     scheduler.init_app(app)
-    scheduler.start()
+    if 'DYNO' in os.environ:
+        if os.environ.get('RUN_SCHEDULER', 'false') == 'true':
+            scheduler.start()
+    else:
+        # We are local!
+        scheduler.start()
     mail = Mail(app)
     bcrypt = Bcrypt(app)
     login_manager = LoginManager(app)
