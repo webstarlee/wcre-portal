@@ -418,7 +418,7 @@ body.modal-open {
 }
 .error-notification {
   position: fixed;
-  top: 20px;
+  top: 60px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #f44336;
@@ -429,9 +429,10 @@ body.modal-open {
   transition: opacity 0.3s;
   z-index: 9999;
 }
+
 .success-notification {
   position: fixed;
-  top: 20px;
+  top: 60px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #4bb543;
@@ -442,37 +443,12 @@ body.modal-open {
   transition: opacity 0.3s;
   z-index: 9999;
 }
-.error-notification-modal {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #f44336;
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 4px;
-  opacity: 0;
-  transition: opacity 0.3s;
-  z-index: 9999;
-}
-.success-notification-modal {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #4bb543;
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 4px;
-  opacity: 0;
-  transition: opacity 0.3s;
-  z-index: 9999;
-}
-.error-notification-modal.show,
-.success-notification-modal.show .success-notification.show,
+
+.success-notification.show,
 .error-notification.show {
   opacity: 1;
 }
+
 .action-modal {
   display: none;
   position: fixed;
@@ -534,7 +510,6 @@ body.modal-open {
   width: 0 !important;
   display: none;
 }
-
 
 .search-form,
 .table-div {

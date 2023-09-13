@@ -177,7 +177,7 @@ input[type="file"] {
 #upload-document-modal {
   display: none;
   position: fixed;
-  z-index: 9999;
+  z-index: 9998;
   left: 0;
   top: 0;
   width: 100%;
@@ -250,7 +250,7 @@ body.modal-open {
 }
 .error-notification {
   position: fixed;
-  top: 20px;
+  top: 60px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #f44336;
@@ -278,34 +278,6 @@ body.modal-open {
 .error-notification.show,
 .success-notification.show {
   opacity: 1;
-}
-
-.error-notification-modal {
-  position: fixed;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #f44336;
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 4px;
-  opacity: 0;
-  transition: opacity 0.3s;
-  z-index: 9999;
-}
-
-.success-notification-modal {
-  position: fixed;
-  top: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #4bb543;
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 4px;
-  opacity: 0;
-  transition: opacity 0.3s;
-  z-index: 9999;
 }
 
 .pagination {
@@ -345,11 +317,6 @@ body.modal-open {
 
 .upload-modal-btn-style:hover {
   background-color: #1669c2 !important;
-}
-
-.error-notification-modal.show,
-.success-notification-modal.show {
-  opacity: 1;
 }
 
 .card-wrapper {

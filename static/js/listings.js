@@ -251,7 +251,7 @@ $(document).ready(function() {
 
 	const handleSearchError = (textStatus, errorThrown) => {
 		console.error("Error Fetching Search Results:", textStatus, errorThrown);
-		showNotification("Error Fetching Search Results", "error-notification-modal");
+		showNotification("Error Fetching Search Results", "error-notification");
 	};
 
 	$("#search-input").on("input", () => {
@@ -345,11 +345,11 @@ $(document).ready(function() {
 									if (response.success) {
 										location.reload();
 									} else {
-										showNotification("Error Editing listing", "error-notification-modal");
+										showNotification("Error Editing listing", "error-notification");
 									}
 								},
 								error: function() {
-									showNotification("Error Editing listing", "error-notification-modal");
+									showNotification("Error Editing listing", "error-notification");
 								},
 							});
 						} else {
@@ -357,11 +357,11 @@ $(document).ready(function() {
 						}
 					});	
 				} else {
-					showNotification("Please Fill Out All Required Fields", "error-notification-modal");
+					showNotification("Please Fill Out All Required Fields", "error-notification");
 				}
 			}
 		} else {
-			showNotification("Please Fill Out All Required Fields", "error-notification-modal");
+			showNotification("Please Fill Out All Required Fields", "error-notification");
 		}
 	});
 
@@ -409,11 +409,11 @@ $(document).ready(function() {
 						config.buttonElement.disabled = true;
 						document.getElementById(config.resultElementId).value = data.fileBase64;
 					} else {
-						showNotification("Error Uploading Document", "error-notification-modal");
+						showNotification("Error Uploading Document", "error-notification");
 					}
 				},
 				error: function() {
-					showNotification("Error Uploading Document", "error-notification-modal");
+					showNotification("Error Uploading Document", "error-notification");
 				}
 			});
 		});

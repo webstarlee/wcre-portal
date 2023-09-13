@@ -86,11 +86,11 @@ $(document).ready(function () {
           document.getElementById("document-file-base64").value =
             data.fileBase64;
         } else {
-          showNotification("Error Uploading Document", "error-notification-modal");
+          showNotification("Error Uploading Document", "error-notification");
         }
       },
       error: function () {
-        showNotification("Error Uploading Document", "error-notification-modal");
+        showNotification("Error Uploading Document", "error-notification");
       },
     });
   });
@@ -99,7 +99,7 @@ $(document).ready(function () {
   $("#submit-document-form").on("submit", function (e) {
     if ($("#document-file")[0].files.length === 0) {
       e.preventDefault();
-      showNotification("Plesae Upload a PDF File", "error-notification-modal");
+      showNotification("Plesae Upload a PDF File", "error-notification");
       return;
     }
 
