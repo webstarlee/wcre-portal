@@ -166,16 +166,11 @@ $(document).ready(function () {
     const endIndex = startIndex + itemsPerPage;
     for (let i = startIndex; i < endIndex && i < documents.length; i++) {
       const li = document.createElement("li");
-      li.classList =
-        "d-flex justify-content-between align-items-center file-item";
+      li.classList = "d-flex justify-content-between align-items-center file-item";
       li.setAttribute("data-document-id", documents[i]._id);
       li.setAttribute("data-document-type", documents[i].document_type);
-      var downloadButton =
-        '<a class="download-button" href="data:application/pdf;base64,' +
-        documents[i].pdf_file_base64 +
-        '" download="' +
-        documents[i].document_name +
-        '.pdf"><i class="fa fa-download"></i></a>';
+      var downloadButton = '<a class="download-button" href="data:application/pdf;base64,' + documents[i].document_file_base64 +
+        '" download="' + documents[i].document_name + '.pdf"><i class="fa fa-download"></i></a>';
       li.innerHTML = `
                 <div class="d-flex gap-2 align-items-center">
                   <i class="far fa-file-pdf text-dark" style="color: #1c92d2; font-size:22px;"></i>
@@ -199,11 +194,10 @@ $(document).ready(function () {
     },
       function (data) {
         $("#document-modal .modal-title").text(
-          "Documents Files - " + documentType
+          "Documents - " + documentType
         );
         var modal = document.getElementById("document-modal");
         modal.style.display = "block";
-
         const documents = data;
 
         if (documents.length === 0) {
@@ -214,14 +208,10 @@ $(document).ready(function () {
         } else {
           emptyMessage.classList = "";
           emptyMessage.classList = "d-none";
-
           const totalPages = Math.ceil(documents.length / itemsPerPage);
-
           displayDocuments(documents, 1);
-
           function createPaginationButtons(totalPages, currentPage) {
             pagination.innerHTML = "";
-
             if (totalPages <= 7) {
               for (let i = 1; i <= totalPages; i++) {
                 createPaginationButton(i, currentPage);
@@ -230,11 +220,9 @@ $(document).ready(function () {
               for (let i = 1; i <= 2; i++) {
                 createPaginationButton(i, currentPage);
               }
-
               const ellipsisBefore = document.createElement("span");
               ellipsisBefore.textContent = "...";
               pagination.appendChild(ellipsisBefore);
-
               for (let i = currentPage - 1; i <= currentPage + 1; i++) {
                 if (i > 2 && i < totalPages - 1) {
                   createPaginationButton(i, currentPage);
@@ -243,7 +231,6 @@ $(document).ready(function () {
               const ellipsisAfter = document.createElement("span");
               ellipsisAfter.textContent = "...";
               pagination.appendChild(ellipsisAfter);
-
               for (let i = totalPages - 1; i <= totalPages; i++) {
                 createPaginationButton(i, currentPage);
               }
@@ -251,7 +238,6 @@ $(document).ready(function () {
           }
 
           createPaginationButtons(totalPages, 1);
-
           function createPaginationButton(pageNumber, currentPage) {
             const button = document.createElement("button");
             button.textContent = pageNumber;
@@ -270,8 +256,6 @@ $(document).ready(function () {
     );
   });
   $("#delete-button").click(function () {
-    console.log(document_id);
-    const actionModal = $("#action-modal");
     $.ajax({
       url: "/delete_document/" + document_id,
       type: "GET",
