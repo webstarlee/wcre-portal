@@ -69,7 +69,6 @@ try:
     scheduler = APScheduler()
     app.config['SCHEDULER_API_ENABLED'] = True
     scheduler.init_app(app)
-    print("DYNO value:", os.environ.get('DYNO'))
     if os.environ.get('DYNO') == 'web.1':
         scheduler.start()
     mail = Mail(app)
