@@ -416,6 +416,11 @@ def send_pdf_response(collection, item_id, pdf_key, default_filename):
 def download_listing_pdf(listing_id):
     return send_pdf_response(listings, listing_id, "listing_agreement_file_base64", "listing_agreement.pdf")
 
+@app.route("/download_listing_amendment_pdf/<listing_id>", methods=["GET"])
+@login_required
+def download_listing_amendment_pdf(listing_id):
+    return send_pdf_response(listings, listing_id, "listing_amendment_file_base64", "listing_amendment.pdf")
+
 
 @app.route("/download_sale_pdf/<sale_id>", methods=["GET"])
 @login_required
@@ -494,7 +499,6 @@ def submit_listing():
             "listing-owner-phone",
             "listing-end-date",
             "listing-start-date",
-            "listing-agreement-file-base64",
             "listing-property-type",
             "listing-month-to-month",
             "listing-price",
@@ -506,6 +510,8 @@ def submit_listing():
         }
         new_listing["brokers"] = request.form.getlist("brokers[]")
         new_listing["listing_state"] = convert_state_code_to_full_name(new_listing["listing_state"])
+        new_listing["listing_agreement_file_base64"] = request.form.get("listing-agreement-file-base64")
+        new_listing["listing_amendment_file_base64"] = request.form.get("listing-amendment-file-base64" )
         result = listings.insert_one(new_listing)
         if not result.inserted_id:
             raise Exception("Error inserting the listing.")
@@ -726,8 +732,13 @@ def edit_record(record_id, collection, fields):
 @login_required
 def edit_listing(listing_id):
     existing_listing = listings.find_one({"_id": ObjectId(listing_id)})
-    if not request.json.get('listing_agreement_file_base64') and existing_listing.get('listing_agreement_file_base64'):
-        request.json.pop('listing_agreement_file_base64', None)
+    base64_fields = [
+        'listing_agreement_file_base64',
+        'listing_amendment_file_base64'
+    ]
+    for field in base64_fields:
+        if not request.json.get(field) and existing_listing.get(field):
+            request.json.pop(field, None)
     if request.json.get("listing_state"):
         request.json["listing_state"] = convert_state_code_to_full_name(request.json["listing_state"])
     fields = [
@@ -738,8 +749,8 @@ def edit_listing(listing_id):
         "listing_owner_email",
         "listing_owner_phone",
         "listing_end_date",
-        "listing_start_date",
-        "listing_agreement_file_base64",
+        "listing_start_date"
+        ] + base64_fields + [
         "listing_property_type",
         "listing_month_to_month",
         "listing_price",
@@ -905,4 +916,4 @@ def search_leases():
 
 Talisman(app, content_security_policy=None)
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=6969, debug=False)
+    app.run(host="0.0.0.0", port=6969, debug=True)

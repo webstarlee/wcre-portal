@@ -68,7 +68,8 @@
               <th>State</th>
               <th>Owner</th>
               <th>Brokers</th>
-              <th style="border-top-right-radius: 7px">Listing Agreement</th>
+              <th>Listing Agreement</th>
+              <th style="border-top-right-radius: 7px">Listing Amendment</th>
             </tr>
           </thead>
           <tbody> {% for listing in listings %} <tr data-listing-id="{{ listing._id }}">
@@ -91,6 +92,9 @@
               <td class="brokers"> {% for broker in listing.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
               <td>
                 <form method="POST"> {% if listing.listing_agreement_file_base64 %} <a href="{{ url_for('download_listing_pdf', listing_id=listing._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
+              </td>
+              <td>
+                <form method="POST"> {% if listing.listing_amendment_file_base64 %} <a href="{{ url_for('download_listing_amendment_pdf', listing_id=listing._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
               </td>
             </tr> {% endfor %} </tbody>
           <table>
@@ -197,6 +201,11 @@
                         <input id="listing-agreement" type="file" style="display: none" accept=".pdf" />
                         <input type="hidden" id="listing-agreement-file-base64" name="listing-agreement-file-base64" />
                       </div>
+                      <div class="form-group">
+                        <button id="upload-listing-amendment" type="button"> Upload Listing Amendment </button>
+                        <input id="listing-amendment" type="file" style="display: none" accept=".pdf" />
+                        <input type="hidden" id="listing-amendment-file-base64" name="listing-amendment-file-base64" />
+                      </div>
                     </div>
                     <div class="modal-navigation">
                       <button class="minimal-button prev-step" type="button"> Previous </button>
@@ -276,6 +285,11 @@
                         <button id="edit-upload-listing-agreement" type="button"> Upload Listing Agreement </button>
                         <input id="edit-listing-agreement" type="file" style="display: none" accept=".pdf" />
                         <input type="hidden" id="edit-listing-agreement-file-base64" name="edit-listing-agreement-file-base64" />
+                      </div>
+                      <div class="form-group">
+                        <button id="edit-upload-listing-amendment" type="button"> Upload Listing Amendment </button>
+                        <input id="edit-listing-amendment" type="file" style="display: none" accept=".pdf" />
+                        <input type="hidden" id="edit-listing-amendment-file-base64" name="edit-listing-amendment-file-base64" />
                       </div>
                     </div>
                     <div class="modal-navigation">

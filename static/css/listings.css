@@ -87,7 +87,8 @@ body {
   background-color: #ddd;
 }
 
-#upload-listing-agreement {
+#upload-listing-agreement,
+#upload-listing-amendment {
   margin-top: 1px;
   background-color: #f0f0f0;
   border: none;
@@ -98,11 +99,13 @@ body {
   cursor: pointer;
 }
 
-#upload-listing-agreement:hover {
+#upload-listing-agreement:hover,
+#upload-listing-amendment:hover {
   background-color: #ddd;
 }
 
-#edit-upload-listing-agreement {
+#edit-upload-listing-agreement,
+#edit-upload-listing-amendment {
   margin-top: 1px;
   background-color: #f0f0f0;
   border: none;
@@ -113,9 +116,11 @@ body {
   cursor: pointer;
 }
 
-#edit-upload-listing-agreement:hover {
+#edit-upload-listing-agreement:hover,
+#edit-upload-listing-amendment:hover {
   background-color: #ddd;
 }
+
 
 /* table */
 .centered-table {

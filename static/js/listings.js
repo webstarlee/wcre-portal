@@ -1,8 +1,12 @@
 $(document).ready(function () {
-	var fileInput = document.getElementById("listing-agreement");
-	var uploadButton = document.getElementById("upload-listing-agreement");
-	var editFileInput = document.getElementById("edit-listing-agreement");
-	var editUploadButton = document.getElementById("edit-upload-listing-agreement");
+	var agreementFileInput = document.getElementById("listing-agreement");
+	var uploadButtonAgreement = document.getElementById("upload-listing-agreement");
+	var editAgreementFileInput = document.getElementById("edit-listing-agreement");
+	var editUploadButtonAgreement = document.getElementById("edit-upload-listing-agreement");
+	var amendmentFileInput = document.getElementById("listing-amendment");
+	var uploadButtonAmendment = document.getElementById("upload-listing-amendment");
+	var editAmendmentFileInput = document.getElementById("edit-listing-amendment");
+	var editUploadButtonAmendment = document.getElementById("edit-upload-listing-amendment");
 	const ownerPhoneInput = document.getElementById("listing-owner-phone");
 	const editOwnerPhoneInput = document.getElementById("edit-listing-owner-phone");
 	const listingPriceInput = document.getElementById("listing-price");
@@ -243,6 +247,7 @@ $(document).ready(function () {
 		const brokerElements = $.map(result.brokers, broker => $("<span>").addClass("broker-name").text(broker));
 		$row.append($("<td>").append(brokerElements));
 		$row.append($("<td>").html(result.listing_agreement_file_base64 ? `<a href="/download_listing_pdf/${result._id}">Fully Executed</a>` : "Pending"));
+		$row.append($("<td>").html(result.listing_amendment_file_base64 ? `<a href="/download_listing_amendment_pdf/${result._id}">Fully Executed</a>` : "Pending"));
 		return $row;
 	};
 
@@ -311,14 +316,17 @@ $(document).ready(function () {
 					var listingOwner = $("#edit-listing-owner-name").val();
 					var listingEmail = $("#edit-listing-owner-email").val();
 					var listingPhone = $("#edit-listing-owner-phone").val();
-					var fileBase64 = $("#edit-listing-agreement-file-base64").val();
+					var agreementFileBase64 = $("#edit-listing-agreement-file-base64").val();
+					var amendmentFileBase64 = $("#edit-listing-amendment-file-base64").val();
+
 
 					var data = {
 						listing_property_type: listingPropertyType,
 						listing_month_to_month: listingMonthToMonth,
 						listing_price: listingPrice,
 						listing_start_date: listingStartDate,
-						listing_agreement_file_base64: fileBase64,
+						listing_agreement_file_base64: agreementFileBase64,
+						listing_amendment_file_base64: amendmentFileBase64,
 						listing_end_date: listingEndDate,
 						listing_street: listingStreet,
 						listing_city: listingCity,
@@ -420,15 +428,25 @@ $(document).ready(function () {
 	}
 
 	var configurations = [{
-		inputElement: fileInput,
-		buttonElement: uploadButton,
+		inputElement: agreementFileInput,
+		buttonElement: uploadButtonAgreement,
 		resultElementId: "listing-agreement-file-base64"
 	},
 	{
-		inputElement: editFileInput,
-		buttonElement: editUploadButton,
+		inputElement: editAgreementFileInput,
+		buttonElement: editUploadButtonAgreement,
 		resultElementId: "edit-listing-agreement-file-base64"
-	}
+	},
+	{
+		inputElement: amendmentFileInput,
+		buttonElement: uploadButtonAmendment,
+		resultElementId: "listing-agreement-file-base64"
+	},
+	{
+		inputElement: editAmendmentFileInput,
+		buttonElement: editUploadButtonAmendment,
+		resultElementId: "edit-listing-amendment-file-base64"
+	},
 	];
 
 	configurations.forEach(function (config) {
