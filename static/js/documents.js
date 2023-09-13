@@ -2,48 +2,14 @@ $(document).ready(function () {
   var fileInput = document.getElementById("document-file");
   var uploadButton = document.getElementById("upload-document-file");
 
-  // SHOW ERROR NOTI
-  function showErrorNotification(message) {
-    var errorNotification = $("#error-notification");
-    errorNotification.text(message);
-    errorNotification.addClass("show");
-
-    setTimeout(function () {
-      errorNotification.removeClass("show");
-    }, 2000);
-  }
-
-  function showSuccessNotification(message) {
-    var successNotification = $("#success-notification");
-    successNotification.text(message);
-    successNotification.addClass("show");
-
-    setTimeout(function () {
-      successNotification.removeClass("show");
-    }, 2000);
-  }
-
-  // SHOW SUCCESS NOTI - MODAL
-  function showSuccessNotificationModal(message) {
-    var successNotification = $("#success-notification-modal");
-    successNotification.text(message);
-    successNotification.addClass("show");
-
-    setTimeout(function () {
-      successNotification.removeClass("show");
-    }, 2000);
-  }
-
-  // SHOW ERROR NOTI - MODAL
-  function showErrorNotificationModal(message) {
-    var errorNotification = $("#error-notification-modal");
-    errorNotification.text(message);
-    errorNotification.addClass("show");
-
-    setTimeout(function () {
-      errorNotification.removeClass("show");
-    }, 2000);
-  }
+  function showNotification(message, elementId) {
+		var notification = $("#" + elementId);
+		notification.text(message);
+		notification.addClass("show");
+		setTimeout(function() {
+			notification.removeClass("show");
+		}, 2000);
+	}
 
   function toggleModalDisplay(modalId) {
     const modal = $(modalId);
@@ -120,11 +86,11 @@ $(document).ready(function () {
           document.getElementById("document-file-base64").value =
             data.fileBase64;
         } else {
-          showErrorNotificationModal("Error Uploading Document");
+          showNotification("Error Uploading Document", "error-notification-modal");
         }
       },
       error: function () {
-        showErrorNotificationModal("Error Uploading Document");
+        showNotification("Error Uploading Document", "error-notification-modal");
       },
     });
   });
@@ -133,7 +99,7 @@ $(document).ready(function () {
   $("#submit-document-form").on("submit", function (e) {
     if ($("#document-file")[0].files.length === 0) {
       e.preventDefault();
-      showErrorNotificationModal("Please Upload a PDF File");
+      showNotification("Plesae Upload a PDF File", "error-notification-modal");
       return;
     }
 
@@ -152,15 +118,13 @@ $(document).ready(function () {
     })
       .done(function (response, jqXHR) {
         if (response.status === "success") {
-          console.log("Document Uploaded Successfully");
           window.location.href = response.redirect;
         } else {
-          showErrorNotification("Unexpected Status Code: " + jqXHR.status);
-          console.log("Unexpected Status Code: " + jqXHR.status);
+          showNotification("Error Uploading Document", "error-notification");
         }
       })
       .fail(function (textStatus, errorThrown) {
-        showErrorNotification("Error Uploading Document");
+        showNotification("Error Uploading Document", "error-notification");
         console.log("Error Uploading Document: ", textStatus, errorThrown);
       });
   });
