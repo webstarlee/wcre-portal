@@ -115,7 +115,7 @@ else:
             if lock_acquired and lock_acquired.get("locked"):
                 scheduler.start()
             else:
-                logger.info("Scheduler already started by another worker.")
+                logging.info("Scheduler already started by another worker.")
 
 def send_email(subject, template, data, conn):
     try:
