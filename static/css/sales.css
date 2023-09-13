@@ -99,7 +99,7 @@ body {
 #edit-upload-sale-agreement:hover {
   background-color: #ddd;
 }
-/* table */
+
 .centered-table {
   margin-left: 220px;
   margin-right: auto;
@@ -161,10 +161,10 @@ body {
 }
 .contact-info a:first-child {
   display: block;
-  margin-bottom: 5px; /* Adjust this value as needed */
-  padding-bottom: 3px; /* Space above the visual separation */
+  margin-bottom: 5px; 
+  padding-bottom: 3px; 
 }
-/* pagination */
+
 .pagination {
   display: flex;
   column-gap: 10px;
@@ -199,7 +199,7 @@ body {
 table tr:hover td a {
   color: #fff;
 }
-/* modals */
+
 .sale-modal {
   display: none;
   position: fixed;
@@ -213,7 +213,7 @@ table tr:hover td a {
   background-color: rgba(0, 0, 0, 0.4);
 }
 .truncate-text {
-  white-space: normal; /* Allow text to wrap on hover */
+  white-space: normal; 
 }
 .modal-content {
   background: #fff;
@@ -424,55 +424,32 @@ body.modal-open {
 .error-notification.show {
   opacity: 1;
 }
-.action-modal {
-  display: none;
-  position: fixed;
-  z-index: 999;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #9da1a1;
-  border-radius: 10px;
-  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1);
-  padding: 5px;
-  width: 150px;
-  text-align: center;
-}
 .action-modal button {
   display: block;
   border: none;
-  color: #fff;
-  padding: 5px 10px;
-  margin-top: 5px;
+  background-color: transparent; 
+  color: #000000; 
+  padding: 0px 4px 0px 10px;
+  font-weight: bold;
+  margin-top: 10px; 
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  border-radius: 3px;
-  width: 100%;
+  transition: color 0.3s ease, opacity 0.3s ease; 
   text-align: center;
   line-height: 1.5;
 }
-#delete-button {
-  background-color: #f44336;
-}
-#delete-button:hover {
-  background-color: #e33f2e;
-}
-#edit-button {
-  background-color: #4caf50;
-}
-#edit-button:hover {
-  background-color: #45a049;
+.action-modal button:hover {
+  color: #7a7a7acb; 
 }
 .sales-count {
   position: absolute;
   left: 240px;
-  padding: 10px; /* Set padding similar to other buttons */
-  font-size: 14px; /* Set font size similar to other buttons */
+  padding: 10px; 
+  font-size: 14px; 
   color: #333;
-  font-weight: bold; /* Keep text bold */
-  background-color: #f0f0f0; /* Set background color similar to other buttons */
-  border-radius: 4px; /* Set border radius similar to other buttons */
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3); /* Add a slight shadow similar to the input field when focused */
+  font-weight: bold; 
+  background-color: #f0f0f0; 
+  border-radius: 4px; 
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3); 
 }
 .table-div {
   width: 80%;
@@ -493,12 +470,12 @@ body.modal-open {
   display: none;
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
+
 .search-form,
 .table-div {
-  -ms-overflow-style: none; /* IE and Edge */
+  -ms-overflow-style: none; 
   scrollbar-width: none;
-  /* Firefox */
+  
 }
 .user-details-wrapper {
   display: flex;
@@ -580,7 +557,7 @@ body.modal-open {
   }
 }
 
-/* width: 90%; */
+
 
 @media only screen and (min-width: 550px) {
   .toolbar {
