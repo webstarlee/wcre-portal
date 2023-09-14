@@ -477,10 +477,12 @@ $(document).ready(function () {
 	});
 
 
+	let lease_id = null;
 	var isAdmin = $("body").data("is-admin") === "True";
-	$(".centered-table tbody tr").on("contextmenu", function (e) {
+	$(".centered-table tbody").on("contextmenu", "tr", function (e) {
+		e.preventDefault();
+
 		if (isAdmin) {
-			e.preventDefault();
 			const actionModal = $("#action-modal");
 			actionModal
 				.css({
@@ -490,20 +492,17 @@ $(document).ready(function () {
 				.show();
 			$(this).focus();
 		}
+
+		lease_id = $(this).data("lease-id");
+		console.log("Lease ID:", lease_id);
 	});
+
 
 	$(document).bind("click", function (e) {
 		const actionModal = $("#action-modal");
 		if (!$(e.target).closest(actionModal).length) {
 			actionModal.hide();
 		}
-	});
-
-	let lease_id = null;
-	$(".centered-table tbody tr").on("contextmenu", function (e) {
-		e.preventDefault();
-		lease_id = $(this).data("lease-id");
-		console.log("Lease ID:", lease_id);
 	});
 
 	$("#delete-button").click(function () {

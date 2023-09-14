@@ -453,10 +453,12 @@ $(document).ready(function () {
 		handleFileUpload(config);
 	});
 
+	let listing_id = null;
 	var isAdmin = $("body").data("is-admin") === "True";
-	$(".centered-table tbody tr").on("contextmenu", function (e) {
+	$(".centered-table tbody").on("contextmenu", "tr", function (e) {
+		e.preventDefault();
+
 		if (isAdmin) {
-			e.preventDefault();
 			const actionModal = $("#action-modal");
 			actionModal
 				.css({
@@ -466,20 +468,17 @@ $(document).ready(function () {
 				.show();
 			$(this).focus();
 		}
+
+		listing_id = $(this).data("listing-id");
+		console.log("Listing ID:", listing_id);
 	});
+
 
 	$(document).bind("click", function (e) {
 		const actionModal = $("#action-modal");
 		if (!$(e.target).closest(actionModal).length) {
 			actionModal.hide();
 		}
-	});
-
-	let listing_id = null;
-	$(".centered-table tbody tr").on("contextmenu", function (e) {
-		e.preventDefault();
-		listing_id = $(this).data("listing-id");
-		console.log("Listing ID:", listing_id);
 	});
 
 	$("#delete-button").click(function () {

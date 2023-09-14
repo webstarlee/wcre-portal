@@ -435,21 +435,26 @@ $(document).ready(function () {
 	configurations.forEach(function (config) {
 		handleFileUpload(config);
 	});
-	$(document).ready(function () {
-		var isAdmin = $("body").data("is-admin") === "True";
-		$(".centered-table tbody tr").on("contextmenu", function (e) {
-			if (isAdmin) {
-				e.preventDefault();
-				const actionModal = $("#action-modal");
-				actionModal
-					.css({
-						top: e.pageY + "px",
-						left: e.pageX + "px",
-					})
-					.show();
-				$(this).focus();
-			}
-		});
+
+
+	let sale_id = null;
+	var isAdmin = $("body").data("is-admin") === "True";
+	$(".centered-table tbody").on("contextmenu", "tr", function (e) {
+		e.preventDefault();
+
+		if (isAdmin) {
+			const actionModal = $("#action-modal");
+			actionModal
+				.css({
+					top: e.pageY + "px",
+					left: e.pageX + "px",
+				})
+				.show();
+			$(this).focus();
+		}
+
+		sale_id = $(this).data("sale-id");
+		console.log("Sale ID:", sale_id);
 	});
 
 
@@ -458,13 +463,6 @@ $(document).ready(function () {
 		if (!$(e.target).closest(actionModal).length) {
 			actionModal.hide();
 		}
-	});
-
-	let sale_id = null;
-	$(".centered-table tbody tr").on("contextmenu", function (e) {
-		e.preventDefault();
-		sale_id = $(this).data("sale-id");
-		console.log("Sale id:", sale_id);
 	});
 
 	$("#delete-button").click(function () {
