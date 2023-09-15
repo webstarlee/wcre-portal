@@ -7,6 +7,7 @@ from flask import (
     redirect,
     url_for,
     request,
+    session
 )
 from flask_login import (
     LoginManager,
@@ -41,6 +42,7 @@ from pymongo.collection import ReturnDocument
 from bson.objectid import ObjectId
 
 
+
 ALLOWED_EXTENSIONS = {"pdf"}
 logging.basicConfig(
     level=logging.INFO,
@@ -71,6 +73,7 @@ try:
     app.config["MAIL_USE_SSL"] = True
     scheduler = APScheduler()
     app.config['SCHEDULER_API_ENABLED'] = True
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=15)
     scheduler.init_app(app)
     mail = Mail(app)
     bcrypt = Bcrypt(app)
@@ -115,6 +118,10 @@ else:
                 scheduler.start()
             else:
                 logging.info("Scheduler already started by another worker.")
+
+@app.before_request
+def refresh_session():
+    session.modified = True
 
 def send_email(subject, template, data, conn):
     try:
