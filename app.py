@@ -1,21 +1,6 @@
 import os
-from flask import (
-    Flask,
-    jsonify,
-    make_response,
-    render_template,
-    redirect,
-    url_for,
-    request,
-    session,
-)
-from flask_login import (
-    LoginManager,
-    login_user,
-    logout_user,
-    current_user,
-    login_required,
-)
+from flask import Flask, jsonify, make_response, render_template, redirect, url_for, request, session, Response
+from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from flask_apscheduler import APScheduler
 from pymongo import MongoClient
 from datetime import datetime, timedelta
@@ -25,8 +10,6 @@ from flask_paginate import Pagination, get_page_args
 from bson.objectid import ObjectId
 from gridfs import GridFS
 from dotenv import load_dotenv
-from flask import Flask, Response
-from datetime import datetime
 import pytz
 from ics import Calendar, Event
 import arrow
@@ -36,10 +19,8 @@ from premailer import transform
 from flask_talisman import Talisman
 import logging
 import sentry_sdk
-from flask import Flask
 from sentry_sdk.integrations.flask import FlaskIntegration
 from pymongo.collection import ReturnDocument
-from bson.objectid import ObjectId
 
 
 ALLOWED_EXTENSIONS = {"pdf"}
