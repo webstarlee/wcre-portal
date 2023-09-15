@@ -56,7 +56,7 @@
               <th>Sale Type</th>
               <th>Closing Date</th>
               <th>Price</th>
-              <th>Total Commision</th>
+              <th>Total Commission</th>
               <th>Square Footage</th>
               <th>Price/SF</th>
               <th>Street</th>
@@ -73,7 +73,7 @@
               <td>{{ sale.sale_type }}</td>
               <td>{{ sale.sale_end_date }}</td>
               <td>{{ sale.sale_price }}</td>
-              <td>{{ sale.sale_commision }}</td>
+              <td>{{ sale.sale_commission }}</td>
               <td>{{ sale.sale_sqft }}</td>
               <td>
                 <script>
@@ -199,8 +199,8 @@
                         <input type="text" id="sale-price" name="sale-price" placeholder= "Enter Sale Price:" required />
                       </div>
                       <div class="form-group">
-                        <label for="sale-commision">Total Sale Commision:</label>
-                        <input type="text" id="sale-commision" name="sale-commision" placeholder= "Enter Sale Commision:" required />
+                        <label for="sale-commission">Total Sale Commission:</label>
+                        <input type="text" id="sale-commission" name="sale-commission" placeholder= "Enter Sale Commission:" required />
                       </div>
                       <div class="form-group">
                         <label for="sale-end-date">Sale Closing Date:</label>
@@ -323,8 +323,8 @@
                         <input type="text" id="edit-sale-price" name="edit-sale-price" required />
                       </div>
                       <div class="form-group">
-                        <label for="sale-commision">Total Sale Commision:</label>
-                        <input type="text" id="edit-sale-commision" name="edit-sale-commision" placeholder= "Enter Sale Commision:" required />
+                        <label for="sale-commission">Total Sale Commission:</label>
+                        <input type="text" id="edit-sale-commission" name="edit-sale-commission" placeholder= "Enter Sale Commission:" required />
                       </div>
                       <div class="form-group">
                         <button id="edit-upload-sale-agreement" type="button"> Upload Sale Agreement </button>

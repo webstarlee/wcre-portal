@@ -3,10 +3,10 @@ $(document).ready(function () {
 	var uploadButtonAgreement = document.getElementById("upload-lease-agreement");
 	var editAgreementFileInput = document.getElementById("edit-lease-agreement");
 	var editUploadButtonAgreement = document.getElementById("edit-upload-lease-agreement");
-	var commisionFileInput = document.getElementById("lease-commision-agreement");
-	var uploadButtonCommision = document.getElementById("upload-lease-commision-agreement");
-	var editCommisionFileInput = document.getElementById("edit-lease-commision-agreement");
-	var editUploadButtonCommision = document.getElementById("edit-upload-lease-commision-agreement");
+	var commissionFileInput = document.getElementById("lease-commission-agreement");
+	var uploadButtoncommission = document.getElementById("upload-lease-commission-agreement");
+	var editcommissionFileInput = document.getElementById("edit-lease-commission-agreement");
+	var editUploadButtoncommission = document.getElementById("edit-upload-lease-commission-agreement");
 	const sqFootageInput = document.getElementById("lease-sqft");
 	const editsqFootageInput = document.getElementById("edit-lease-sqft");
 	const lessorPhoneNumberInput = document.getElementById("lease-lessor-phone");
@@ -165,6 +165,7 @@ $(document).ready(function () {
 		});
 	});
 
+	// OPEN ADD LEASES MODAL
 	$("#add-lease-button").click(function () {
 		resetModalSteps($("#add-lease-modal"));
 		$("body").addClass("modal-open");
@@ -212,11 +213,13 @@ $(document).ready(function () {
 	});
 
 
+	// CLOSE ADD LESAE MODAL
 	$("#add-lease-modal .close").click(function () {
 		$("body").removeClass("modal-open");
 		$("#add-lease-modal").hide();
 	});
 
+	// CLOSE EDIT LEASE MODAL
 	$("#edit-lease-modal .close").click(function () {
 		$("body").removeClass("modal-open");
 		$("#edit-lease-modal").hide();
@@ -270,7 +273,7 @@ $(document).ready(function () {
 		const brokerElements = $.map(result.brokers, broker => $("<span>").addClass("broker-name").text(broker));
 		$row.append($("<td>").addClass("brokers").append(brokerElements));
 		$row.append($("<td>").html(result.lease_agreement_file_base64 ? `<form method="POST"><a href="/download_lease_agreement_pdf/${result._id}">Fully Executed</a></form>` : "Pending"));
-		$row.append($("<td>").html(result.lease_commision_file_base64 ? `<form method="POST"><a href="/download_lease_commision_pdf/${result._id}">Fully Executed</a></form>` : "Pending"));
+		$row.append($("<td>").html(result.lease_commission_file_base64 ? `<form method="POST"><a href="/download_lease_commission_pdf/${result._id}">Fully Executed</a></form>` : "Pending"));
 		return $row;
 	};
 
@@ -342,15 +345,14 @@ $(document).ready(function () {
 					var leaselesseeEmail = $("#edit-lease-lessee-email").val();
 					var leaselesseePhone = $("#edit-lease-lessee-phone").val();
 					var agreementFileBase64 = $("#edit-lease-agreement-file-base64").val();
-					var commisionFileBase64 = $("#edit-lease-commision-agreement-file-base64").val();
+					var commissionFileBase64 = $("#edit-lease-commission-agreement-file-base64").val();
 
 					var data = {
 						lease_property_type: leasePropertyType,
-						lease_price: leasePrice,
 						lease_sqft: leaseSqFt,
 						lease_term_length: leaseTermLength,
 						lease_agreement_file_base64: agreementFileBase64,
-						lease_commision_file_base64: commisionFileBase64,
+						lease_commission_file_base64: commissionFileBase64,
 						lease_street: leaseStreet,
 						lease_city: leaseCity,
 						lease_state: leaseState,
@@ -393,6 +395,7 @@ $(document).ready(function () {
 		}
 	});
 
+	// PREV STEP
 	$(".prev-step").on("click", function () {
 		var currentModal = $(this).closest(".lease-modal");
 		var currentStep = currentModal.find(".active-step");
@@ -441,7 +444,7 @@ $(document).ready(function () {
 					}
 				},
 				error: function () {
-					showNotification("Error Uploading Document", "error-notification");
+					showNotification("Error Uploading Document", "error-notification-modal");
 				}
 			});
 		});
@@ -450,26 +453,27 @@ $(document).ready(function () {
 		});
 	}
 
-	var configurations = [{
-		inputElement: agreementFileInput,
-		buttonElement: uploadButtonAgreement,
-		resultElementId: "lease-agreement-file-base64"
-	},
-	{
-		inputElement: editAgreementFileInput,
-		buttonElement: editUploadButtonAgreement,
-		resultElementId: "edit-lease-agreement-file-base64"
-	},
-	{
-		inputElement: commisionFileInput,
-		buttonElement: uploadButtonCommision,
-		resultElementId: "lease-commision-agreement-file-base64"
-	},
-	{
-		inputElement: editCommisionFileInput,
-		buttonElement: editUploadButtonCommision,
-		resultElementId: "edit-lease-commision-agreement-file-base64"
-	}
+	var configurations = [
+		{
+			inputElement: agreementFileInput,
+			buttonElement: uploadButtonAgreement,
+			resultElementId: "lease-agreement-file-base64"
+		},
+		{
+			inputElement: editAgreementFileInput,
+			buttonElement: editUploadButtonAgreement,
+			resultElementId: "edit-lease-agreement-file-base64"
+		},
+		{
+			inputElement: commissionFileInput,
+			buttonElement: uploadButtoncommission,
+			resultElementId: "lease-commission-agreement-file-base64"
+		},
+		{
+			inputElement: editcommissionFileInput,
+			buttonElement: editUploadButtoncommission,
+			resultElementId: "edit-lease-commission-agreement-file-base64"
+		}
 	];
 
 	configurations.forEach(function (config) {
@@ -477,11 +481,9 @@ $(document).ready(function () {
 	});
 
 
-	let lease_id = null;
+	// OPEN ACTION MODAL
 	var isAdmin = $("body").data("is-admin") === "True";
-	$(".centered-table tbody").on("contextmenu", "tr", function (e) {
-		e.preventDefault();
-
+	$(".centered-table tbody tr").on("contextmenu", function (e) {
 		if (isAdmin) {
 			const actionModal = $("#action-modal");
 			actionModal
@@ -497,12 +499,18 @@ $(document).ready(function () {
 		console.log("Lease ID:", lease_id);
 	});
 
-
 	$(document).bind("click", function (e) {
 		const actionModal = $("#action-modal");
 		if (!$(e.target).closest(actionModal).length) {
 			actionModal.hide();
 		}
+	});
+
+	let lease_id = null;
+	$(".centered-table tbody tr").on("contextmenu", function (e) {
+		e.preventDefault();
+		lease_id = $(this).data("lease-id");
+		console.log("Lease ID:", lease_id);
 	});
 
 	$("#delete-button").click(function () {
@@ -531,15 +539,16 @@ $(document).ready(function () {
 		});
 	});
 
+	// SUBMIT LEASE
 	$("#submit-lease-form").on("submit", function (e) {
 		e.preventDefault();
 		$("#add-lease-modal").css("display", "none");
 		if (validateStep() && validateBrokers()) {
 			var formData = new FormData(this);
 			var leaseAgreementFileBase64 = $("#lease-agreement-file-base64").val();
-			var commisionAgreementFileBase64 = $("#lease-commision-agreement-file-base64").val();
+			var commissionAgreementFileBase64 = $("#lease-commission-agreement-file-base64").val();
 			formData.append("lease-agreement-file-base64", leaseAgreementFileBase64);
-			formData.append("lease-commision-agreement-file-base64", commisionAgreementFileBase64);
+			formData.append("lease-commission-agreement-file-base64", commissionAgreementFileBase64);
 			$.ajax({
 				url: "/submit_lease",
 				type: "POST",

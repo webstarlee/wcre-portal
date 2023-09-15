@@ -434,10 +434,10 @@ def download_lease_agreement_pdf(lease_id):
     return send_pdf_response(leases, lease_id, "lease_agreement_file_base64", "lease_agreement.pdf")
 
 
-@app.route("/download_lease_commision_pdf/<lease_id>", methods=["GET"])
+@app.route("/download_lease_commission_pdf/<lease_id>", methods=["GET"])
 @login_required
-def download_lease_commision_pdf(lease_id):
-    return send_pdf_response(leases, lease_id, "lease_commision_file_base64", "lease_commision.pdf")
+def download_lease_commission_pdf(lease_id):
+    return send_pdf_response(leases, lease_id, "lease_commission_file_base64", "lease_commission.pdf")
 
 
 def handle_upload():
@@ -557,7 +557,7 @@ def submit_sale():
             "sale-property-type",
             "sale-type",
             "sale-price",
-            "sale-commision"
+            "sale-commission"
         ]
         new_sale = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
         new_sale["brokers"] = request.form.getlist("brokers[]")
@@ -612,8 +612,8 @@ def submit_lease():
         new_lease["lease_agreement_file_base64"] = request.form.get(
             "lease-agreement-file-base64"
         )
-        new_lease["lease_commision_file_base64"] = request.form.get(
-            "lease-commision-agreement-file-base64"
+        new_lease["lease_commission_file_base64"] = request.form.get(
+            "lease-commission-agreement-file-base64"
         )
         new_lease["lease_state"] = convert_state_code_to_full_name(new_lease["lease_state"])
         result = leases.insert_one(new_lease)
@@ -781,7 +781,7 @@ def edit_sale(sale_id):
         "sale_property_type",
         "sale_type",
         "sale_price",
-        "sale_commision",
+        "sale_commission",
     ]
     return edit_record(sale_id, sales, fields)
 
@@ -792,7 +792,7 @@ def edit_lease(lease_id):
     existing_lease = leases.find_one({"_id": ObjectId(lease_id)})
     base64_fields = [
         'lease_agreement_file_base64',
-        'lease_commision_file_base64'
+        'lease_commission_file_base64'
     ]
     for field in base64_fields:
         if not request.json.get(field) and existing_lease.get(field):
@@ -881,7 +881,7 @@ def search_sales():
         "sale_end_date",
         "sale_type",
         "sale_price",
-        "sale_commision",
+        "sale_commission",
     ]
     results = search_in_collection(sales, fields, page, search_query)
     return jsonify(results)

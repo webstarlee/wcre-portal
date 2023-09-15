@@ -9,8 +9,8 @@ $(document).ready(function () {
 	const editSellerPhoneInput = document.getElementById("edit-sale-seller-phone");
 	const salePriceInput = document.getElementById("sale-price");
 	const editSalePriceInput = document.getElementById("edit-sale-price");
-	const commisionPriceInput = document.getElementById("sale-commision");
-	const editCommisionPriceInput = document.getElementById("edit-sale-commision");
+	const commissionPriceInput = document.getElementById("sale-commission");
+	const editcommissionPriceInput = document.getElementById("edit-sale-commission");
 	const sqFootageInput = document.getElementById("sale-sqft");
 	const editsqFootageInput = document.getElementById("edit-sale-sqft");
 	buyerPhoneInput.addEventListener("input", () => formatPhoneNumber(buyerPhoneInput));
@@ -19,8 +19,8 @@ $(document).ready(function () {
 	editSellerPhoneInput.addEventListener("input", () => formatPhoneNumber(editSellerPhoneInput));
 	salePriceInput.addEventListener("input", () => formatPrice(salePriceInput));
 	editSalePriceInput.addEventListener("input", () => formatPrice(editSalePriceInput));
-	commisionPriceInput.addEventListener("input", () => formatPrice(commisionPriceInput));
-	editCommisionPriceInput.addEventListener("input", () => formatPrice(editCommisionPriceInput));
+	commissionPriceInput.addEventListener("input", () => formatPrice(commissionPriceInput));
+	editcommissionPriceInput.addEventListener("input", () => formatPrice(editcommissionPriceInput));
 	sqFootageInput.addEventListener("input", () => formatSqFootage(sqFootageInput));
 	editsqFootageInput.addEventListener("input", () => formatSqFootage(editsqFootageInput));
 
@@ -160,7 +160,7 @@ $(document).ready(function () {
 		setInputValue("#edit-sale-type", getCellText(2));
 		setInputValue("#edit-sale-end-date", getCellText(3));
 		setInputValue("#edit-sale-price", getCellText(4));
-		setInputValue("#edit-sale-commision", getCellText(5));
+		setInputValue("#edit-sale-commission", getCellText(5));
 		setInputValue("#edit-sale-sqft", getCellText(6));
 		setInputValue("#edit-sale-street", getCellText(8));
 		setInputValue("#edit-sale-city", getCellText(9));
@@ -216,7 +216,7 @@ $(document).ready(function () {
 			result.sale_type,
 			result.sale_end_date,
 			result.sale_price || "None",
-			result.sale_commision || "None",
+			result.sale_commission || "None",
 			result.sale_sqft,
 			calculatePricePerSqft(result.sale_price, result.sale_sqft),
 			result.sale_street,
@@ -306,7 +306,7 @@ $(document).ready(function () {
 					var salePropertyType = $("#edit-sale-property-type").val();
 					var saleClosingDate = $("#edit-sale-end-date").val();
 					var salePrice = $("#edit-sale-price").val();
-					var saleCommision = $("#edit-sale-commision").val();
+					var salecommission = $("#edit-sale-commission").val();
 					var saleSqFt = $("#edit-sale-sqft").val();
 					var saleStreet = $("#edit-sale-street").val();
 					var saleCity = $("#edit-sale-city").val();
@@ -325,7 +325,7 @@ $(document).ready(function () {
 						sale_end_date: saleClosingDate,
 						sale_agreement_file_base64: fileBase64,
 						sale_price: salePrice,
-						sale_commision: saleCommision,
+						sale_commission: salecommission,
 						sale_sqft: saleSqFt,
 						sale_street: saleStreet,
 						sale_city: saleCity,
