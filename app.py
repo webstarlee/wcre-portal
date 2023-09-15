@@ -7,7 +7,7 @@ from flask import (
     redirect,
     url_for,
     request,
-    session,
+    session
 )
 from flask_login import (
     LoginManager,
@@ -42,6 +42,7 @@ from pymongo.collection import ReturnDocument
 from bson.objectid import ObjectId
 
 
+
 ALLOWED_EXTENSIONS = {"pdf"}
 logging.basicConfig(
     level=logging.INFO,
@@ -56,8 +57,6 @@ sentry_sdk.init(
     ],
     traces_sample_rate=1.0,
 )
-
-
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -73,8 +72,8 @@ try:
     app.config["MAIL_USE_TLS"] = False
     app.config["MAIL_USE_SSL"] = True
     scheduler = APScheduler()
-    app.config["SCHEDULER_API_ENABLED"] = True
-    app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=15)
+    app.config['SCHEDULER_API_ENABLED'] = True
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=15)
     scheduler.init_app(app)
     mail = Mail(app)
     bcrypt = Bcrypt(app)
@@ -103,25 +102,26 @@ else:
     except Exception as e:
         logger.error(f"Error connecting to MongoDB: {str(e)}")
     else:
-        scheduler_locks.find_one_and_update(
-            {"_id": ObjectId("6501f81b496e0d9bfaac4680")},
-            {"$set": {"locked": False}},
-        )
-        lock_acquired = scheduler_locks.find_one_and_update(
-            {"_id": ObjectId("6501f81b496e0d9bfaac4680"), "locked": False},
-            {"$set": {"locked": True}},
-            return_document=ReturnDocument.AFTER,
-        )
-        if lock_acquired and lock_acquired.get("locked"):
-            scheduler.start()
-        else:
-            logging.info("Scheduler already started by another worker.")
-
+        ENV = os.environ.get("ENV")
+        if ENV == "development":
+            logging.info("Development Build")
+            if os.environ.get("WERKZEUG_RUN_MAIN") == "true" or not app.debug:
+                scheduler.start()
+        elif ENV == "production":
+            logging.info("Production Build")
+            lock_acquired = scheduler_locks.find_one_and_update(
+                {"_id": ObjectId("6501f81b496e0d9bfaac4680"), "locked": False},
+                {"$set": {"locked": True}},
+                return_document=ReturnDocument.AFTER
+            )
+            if lock_acquired and lock_acquired.get("locked"):
+                scheduler.start()
+            else:
+                logging.info("Scheduler already started by another worker.")
 
 @app.before_request
 def refresh_session():
     session.modified = True
-
 
 def send_email(subject, template, data, conn):
     try:
@@ -136,60 +136,29 @@ def send_email(subject, template, data, conn):
     except Exception as e:
         print("Error Sending Email: ", e)
 
-
-@scheduler.task(
-    "interval",
-    id="do_alert_for_expiring_listings",
-    seconds=43200,
-    misfire_grace_time=900,
-    next_run_time=datetime.now(),
-)
+@scheduler.task('interval', id='do_alert_for_expiring_listings', seconds=43200, misfire_grace_time=900)
 def alert_for_expiring_listings():
-    logging.info("Scheduler task started: Checking for expiring listings.")
-    current_date = datetime.now()
-    upcoming_expiration_date = current_date + timedelta(days=7)
-    logging.info(f"Current Date: {current_date}")
-    logging.info(f"Checking listings that will expire by: {upcoming_expiration_date}")
-    expiring_listings = []
-    all_listings = list(listings.find())
-    for listing in all_listings:
-        listing_end_date_obj = datetime.strptime(
-            listing["listing_end_date"], "%m/%d/%Y"
-        )
-        if listing_end_date_obj <= upcoming_expiration_date:
-            expiring_listings.append(listing)
+    upcoming_expiration_date = datetime.now() + timedelta(days=7)
+    formatted_upcoming_expiration_date = upcoming_expiration_date.strftime('%m/%d/%Y')
+    expiring_listings = list(listings.find({"listing_end_date": {"$lte": formatted_upcoming_expiration_date}}))
     if len(expiring_listings) > 0:
-        logging.info(
-            f"Found {len(expiring_listings)} listings expiring within the next 7 days."
-        )
         for listing in expiring_listings:
-            listing_expiry_date = datetime.strptime(
-                listing["listing_end_date"], "%m/%d/%Y"
-            )
-            days_left = (listing_expiry_date - current_date).days + 1
-            logging.info(
-                f"Listing ID {listing['_id']} is expiring in {days_left} days."
-            )
+            listing_expiry_date = datetime.strptime(listing['listing_end_date'], '%m/%d/%Y')
+            days_left = (listing_expiry_date - datetime.now()).days + 1
             subject = f"ACTION NEEDED - A LISTING IS EXPIRING IN {days_left} DAYS"
             with app.app_context():
                 with mail.connect() as conn:
-                    send_email(
-                        subject,
-                        "email_templates/email_expiring_listing.html",
-                        {"listing": listing},
-                        conn,
-                    )
-                    logging.info(f"Email alert sent for listing ID {listing['_id']}.")
+                    send_email(subject, 'email_templates/email_expiring_listing.html', {"listing": listing}, conn)
     else:
-        logging.info("No Upcoming Expiring Listings")
-    next_run = current_date + timedelta(seconds=43200)
-    logging.info(f"Next check scheduled for: {next_run}")
+        print("No Upcoming Expiring Listings")
 
 
 def convert_state_code_to_full_name(state_code):
-    state_mapping = {"NJ": "New Jersey", "PA": "Pennsylvania"}
+    state_mapping = {
+        "NJ": "New Jersey",
+        "PA": "Pennsylvania"
+    }
     return state_mapping.get(state_code, state_code)
-
 
 @app.route("/count/<string:collection_type>")
 @login_required
@@ -204,6 +173,7 @@ def get_count(collection_type):
         return jsonify(error=f"Invalid collection type: {collection_type}"), 400
     count = collection.count_documents({})
     return jsonify(count=count)
+
 
 
 @app.route("/")
@@ -311,7 +281,7 @@ def view_listings():
         )
         pagination = Pagination(
             page=page, per_page=per_page, total=total, css_framework="bootstrap4"
-        )
+        )   
         return render_template(
             "listings.html",
             listings=listings_data,
@@ -391,7 +361,6 @@ def view_leases():
         )
     return redirect(url_for("login"))
 
-
 @app.route("/get_documents")
 @login_required
 def get_documents():
@@ -416,7 +385,7 @@ def documents():
         "BOV Reports",
         "Quarterly Reports",
         "Key Marketing Pieces",
-        "Other Documents",
+        "Other Documents"
     ]
     document_counts = {}
     for document_type in document_types:
@@ -452,41 +421,30 @@ def send_pdf_response(collection, item_id, pdf_key, default_filename):
 @app.route("/download_listing_pdf/<listing_id>", methods=["GET"])
 @login_required
 def download_listing_pdf(listing_id):
-    return send_pdf_response(
-        listings, listing_id, "listing_agreement_file_base64", "listing_agreement.pdf"
-    )
-
+    return send_pdf_response(listings, listing_id, "listing_agreement_file_base64", "listing_agreement.pdf")
 
 @app.route("/download_listing_amendment_pdf/<listing_id>", methods=["GET"])
 @login_required
 def download_listing_amendment_pdf(listing_id):
-    return send_pdf_response(
-        listings, listing_id, "listing_amendment_file_base64", "listing_amendment.pdf"
-    )
+    return send_pdf_response(listings, listing_id, "listing_amendment_file_base64", "listing_amendment.pdf")
 
 
 @app.route("/download_sale_pdf/<sale_id>", methods=["GET"])
 @login_required
 def download_sale_pdf(sale_id):
-    return send_pdf_response(
-        sales, sale_id, "sale_agreement_file_base64", "sale_agreement.pdf"
-    )
+    return send_pdf_response(sales, sale_id, "sale_agreement_file_base64", "sale_agreement.pdf")
 
 
 @app.route("/download_lease_agreement_pdf/<lease_id>", methods=["GET"])
 @login_required
 def download_lease_agreement_pdf(lease_id):
-    return send_pdf_response(
-        leases, lease_id, "lease_agreement_file_base64", "lease_agreement.pdf"
-    )
+    return send_pdf_response(leases, lease_id, "lease_agreement_file_base64", "lease_agreement.pdf")
 
 
 @app.route("/download_lease_commission_pdf/<lease_id>", methods=["GET"])
 @login_required
 def download_lease_commission_pdf(lease_id):
-    return send_pdf_response(
-        leases, lease_id, "lease_commission_file_base64", "lease_commission.pdf"
-    )
+    return send_pdf_response(leases, lease_id, "lease_commission_file_base64", "lease_commission.pdf")
 
 
 def handle_upload():
@@ -552,33 +510,22 @@ def submit_listing():
             "listing-month-to-month",
             "listing-price",
             "listing-lat",
-            "listing-long",
+            "listing-long"
         ]
         new_listing = {
             key.replace("-", "_"): request.form.get(key) for key in form_keys
         }
         new_listing["brokers"] = request.form.getlist("brokers[]")
-        new_listing["listing_state"] = convert_state_code_to_full_name(
-            new_listing["listing_state"]
-        )
-        new_listing["listing_agreement_file_base64"] = request.form.get(
-            "listing-agreement-file-base64"
-        )
-        new_listing["listing_amendment_file_base64"] = request.form.get(
-            "listing-amendment-file-base64"
-        )
+        new_listing["listing_state"] = convert_state_code_to_full_name(new_listing["listing_state"])
+        new_listing["listing_agreement_file_base64"] = request.form.get("listing-agreement-file-base64")
+        new_listing["listing_amendment_file_base64"] = request.form.get("listing-amendment-file-base64" )
         result = listings.insert_one(new_listing)
         if not result.inserted_id:
             raise Exception("Error inserting the listing.")
         try:
             with app.app_context():
                 with mail.connect() as conn:
-                    send_email(
-                        "New Listing Notification",
-                        "email_templates/email_new_listing.html",
-                        {"listing": new_listing},
-                        conn,
-                    )
+                    send_email("New Listing Notification", 'email_templates/email_new_listing.html', {"listing": new_listing}, conn)
         except Exception as e:
             print("Error Sending Email: ", e)
         return make_response(
@@ -617,7 +564,7 @@ def submit_sale():
             "sale-property-type",
             "sale-type",
             "sale-price",
-            "sale-commission",
+            "sale-commission"
         ]
         new_sale = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
         new_sale["brokers"] = request.form.getlist("brokers[]")
@@ -628,12 +575,7 @@ def submit_sale():
         try:
             with app.app_context():
                 with mail.connect() as conn:
-                    send_email(
-                        "New Sale Notification",
-                        "email_templates/email_new_sale.html",
-                        {"sale": new_sale},
-                        conn,
-                    )
+                    send_email("New Sale Notification", 'email_templates/email_new_sale.html', {"sale": new_sale}, conn)
         except Exception as e:
             print("Error Sending Email: ", e)
         return make_response(
@@ -680,21 +622,14 @@ def submit_lease():
         new_lease["lease_commission_file_base64"] = request.form.get(
             "lease-commission-agreement-file-base64"
         )
-        new_lease["lease_state"] = convert_state_code_to_full_name(
-            new_lease["lease_state"]
-        )
+        new_lease["lease_state"] = convert_state_code_to_full_name(new_lease["lease_state"])
         result = leases.insert_one(new_lease)
         if not result.inserted_id:
             raise Exception("Error Inserting the Lease")
         try:
             with app.app_context():
                 with mail.connect() as conn:
-                    send_email(
-                        "New Lease Notification",
-                        "email_templates/email_new_lease.html",
-                        {"lease": new_lease},
-                        conn,
-                    )
+                    send_email("New Lease Notification", 'email_templates/email_new_lease.html', {"lease": new_lease}, conn)
         except Exception as e:
             print("Error Sending Email: ", e)
         return make_response(
@@ -804,32 +739,29 @@ def edit_record(record_id, collection, fields):
 @login_required
 def edit_listing(listing_id):
     existing_listing = listings.find_one({"_id": ObjectId(listing_id)})
-    base64_fields = ["listing_agreement_file_base64", "listing_amendment_file_base64"]
+    base64_fields = [
+        'listing_agreement_file_base64',
+        'listing_amendment_file_base64'
+    ]
     for field in base64_fields:
         if not request.json.get(field) and existing_listing.get(field):
             request.json.pop(field, None)
     if request.json.get("listing_state"):
-        request.json["listing_state"] = convert_state_code_to_full_name(
-            request.json["listing_state"]
-        )
-    fields = (
-        [
-            "listing_street",
-            "listing_city",
-            "listing_state",
-            "listing_owner_name",
-            "listing_owner_email",
-            "listing_owner_phone",
-            "listing_end_date",
-            "listing_start_date",
-        ]
-        + base64_fields
-        + [
-            "listing_property_type",
-            "listing_month_to_month",
-            "listing_price",
-        ]
-    )
+        request.json["listing_state"] = convert_state_code_to_full_name(request.json["listing_state"])
+    fields = [
+        "listing_street",
+        "listing_city",
+        "listing_state",
+        "listing_owner_name",
+        "listing_owner_email",
+        "listing_owner_phone",
+        "listing_end_date",
+        "listing_start_date"
+        ] + base64_fields + [
+        "listing_property_type",
+        "listing_month_to_month",
+        "listing_price",
+    ]
     return edit_record(listing_id, listings, fields)
 
 
@@ -837,14 +769,10 @@ def edit_listing(listing_id):
 @login_required
 def edit_sale(sale_id):
     existing_sale = sales.find_one({"_id": ObjectId(sale_id)})
-    if not request.json.get("sale_agreement_file_base64") and existing_sale.get(
-        "sale_agreement_file_base64"
-    ):
-        request.json.pop("sale_agreement_file_base64", None)
+    if not request.json.get('sale_agreement_file_base64') and existing_sale.get('sale_agreement_file_base64'):
+        request.json.pop('sale_agreement_file_base64', None)
     if request.json.get("sale_state"):
-        request.json["sale_state"] = convert_state_code_to_full_name(
-            request.json["sale_state"]
-        )
+        request.json["sale_state"] = convert_state_code_to_full_name(request.json["sale_state"])
     fields = [
         "sale_street",
         "sale_city",
@@ -869,33 +797,31 @@ def edit_sale(sale_id):
 @login_required
 def edit_lease(lease_id):
     existing_lease = leases.find_one({"_id": ObjectId(lease_id)})
-    base64_fields = ["lease_agreement_file_base64", "lease_commission_file_base64"]
+    base64_fields = [
+        'lease_agreement_file_base64',
+        'lease_commission_file_base64'
+    ]
     for field in base64_fields:
         if not request.json.get(field) and existing_lease.get(field):
             request.json.pop(field, None)
     if request.json.get("sale_state"):
-        request.json["lease_state"] = convert_state_code_to_full_name(
-            request.json["lease_state"]
-        )
-    fields = (
-        [
-            "lease_street",
-            "lease_city",
-            "lease_sqft",
-            "lease_property_type",
-            "lease_price",
-            "lease_term_length",
-            "lease_percentage_space",
-        ]
-        + base64_fields
-        + [
-            "lease_lessor_name",
-            "lease_lessor_email",
-            "lease_lessee_name",
-            "lease_lessee_email",
-        ]
-    )
+        request.json["lease_state"] = convert_state_code_to_full_name(request.json["lease_state"])
+    fields = [
+        "lease_street",
+        "lease_city",
+        "lease_sqft",
+        "lease_property_type",
+        "lease_price",
+        "lease_term_length",
+        "lease_percentage_space"
+    ] + base64_fields + [
+        "lease_lessor_name",
+        "lease_lessor_email",
+        "lease_lessee_name",
+        "lease_lessee_email"
+    ]
     return edit_record(lease_id, leases, fields)
+
 
 
 def search_in_collection(collection, fields, page, search_query, items_per_page=12):
@@ -967,7 +893,6 @@ def search_sales():
     results = search_in_collection(sales, fields, page, search_query)
     return jsonify(results)
 
-
 @app.route("/search_leases", methods=["POST"])
 @login_required
 def search_leases():
@@ -998,4 +923,4 @@ def search_leases():
 
 Talisman(app, content_security_policy=None)
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=6969, debug=False)
+    app.run(host="0.0.0.0", port=6969, debug=True)
