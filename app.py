@@ -260,6 +260,7 @@ def view_listings():
         pagination = Pagination(
             page=page, per_page=per_page, total=total, css_framework="bootstrap4"
         )   
+        logging.info("Rendering Listings Page")
         return render_template(
             "listings.html",
             listings=listings_data,
