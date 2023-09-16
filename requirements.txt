@@ -17,7 +17,7 @@ docker==6.0.1
 dominate==2.8.0
 dropbox==11.36.2
 duckduckgo-search==2.8.5
-Flask==2.3.3
+Flask==2.3.2
 Flask-Bcrypt==1.0.1
 Flask-Bootstrap==3.3.7.1
 Flask-Login==0.6.2
