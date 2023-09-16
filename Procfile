@@ -1,1 +1,1 @@
-web: gunicorn app:app --access-logfile '-' --disable-redirect-access-to-syslog
+web: gunicorn -c gunicorn_config.py app:app
