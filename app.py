@@ -116,11 +116,16 @@ def send_email(subject, template, data, conn):
     except Exception as e:
         logger.error("Error Sending Email: ", e)
 
-@scheduler.task('interval', id='do_alert_for_expiring_listings', seconds=43200, misfire_grace_time=900)
+@scheduler.task('interval', 
+                id='do_alert_for_expiring_listings', 
+                seconds=43200, 
+                misfire_grace_time=900, 
+                next_run_time=datetime.now())
 def alert_for_expiring_listings():
     upcoming_expiration_date = datetime.now() + timedelta(days=7)
-    formatted_upcoming_expiration_date = upcoming_expiration_date.strftime('%m/%d/%Y')
-    expiring_listings = list(listings.find({"listing_end_date": {"$lte": formatted_upcoming_expiration_date}}))
+    all_listings = list(listings.find({}))
+    expiring_listings = [listing for listing in all_listings 
+                         if datetime.strptime(listing['listing_end_date'], '%m/%d/%Y') <= upcoming_expiration_date]
     if len(expiring_listings) > 0:
         for listing in expiring_listings:
             listing_expiry_date = datetime.strptime(listing['listing_end_date'], '%m/%d/%Y')
@@ -129,10 +134,12 @@ def alert_for_expiring_listings():
             with app.app_context():
                 with mail.connect() as conn:
                     send_email(subject, 'email_templates/email_expiring_listing.html', {"listing": listing}, conn)
+            logger.info(f"Alert Sent for Listing: {listing['_id']}")
     else:
         logger.info("No Upcoming Expiring Listings")
     next_run_time = datetime.now() + timedelta(seconds=43200)
     logger.info(f"Next Check for Expiring Listings Will Be At: {next_run_time.strftime('%Y-%m-%d %H:%M:%S')}")
+
 
 
 def convert_state_code_to_full_name(state_code):
@@ -905,4 +912,4 @@ def search_leases():
 
 Talisman(app, content_security_policy=None)
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=6969, debug=True)
+    app.run(host="0.0.0.0", port=6969, debug=False)
