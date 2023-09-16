@@ -33,6 +33,10 @@ class SuppressStaticFileLogFilter(logging.Filter):
         if '/cart.json' in record.getMessage():
             return False
         return True
+    
+class SuppressBuildLogFilter(logging.Filter):
+    def filter(self, record):
+        return not record.getMessage().startswith('[BUILD]')
 
 logging.basicConfig(
     level=logging.INFO,
@@ -42,6 +46,16 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 log = logging.getLogger('werkzeug')
 log.addFilter(SuppressStaticFileLogFilter())
+custom_formatter = logging.Formatter('[APP] %(asctime)s %(levelname)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+app_logger = logging.getLogger(__name__)
+file_handler = logging.FileHandler('app.log')
+file_handler.setFormatter(custom_formatter)
+app_logger.addHandler(file_handler)
+app_logger.setLevel(logging.INFO)
+app_logger.info('This is a log message from the application.')
+build_logger = logging.getLogger('your-heroku-build-logger-name')
+build_logger.addFilter(SuppressBuildLogFilter())
+
 
 sentry_sdk.init(
     dsn="https://903f368e70906f512655f4f4555be8c6@o4505664587694081.ingest.sentry.io/4505664611155968",
