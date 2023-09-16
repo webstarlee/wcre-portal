@@ -26,12 +26,22 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 from pymongo.collection import ReturnDocument
 from bson.objectid import ObjectId
 
+class SuppressStaticFileLogFilter(logging.Filter):
+    def filter(self, record):
+        if '/static/' in record.getMessage():
+            return False
+        if '/cart.json' in record.getMessage():
+            return False
+        return True
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s: %(message)s",
     datefmt="%d/%b/%Y %H:%M:%S",
 )
 logger = logging.getLogger(__name__)
+log = logging.getLogger('werkzeug')
+log.addFilter(SuppressStaticFileLogFilter())
 
 sentry_sdk.init(
     dsn="https://903f368e70906f512655f4f4555be8c6@o4505664587694081.ingest.sentry.io/4505664611155968",
