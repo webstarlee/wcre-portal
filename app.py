@@ -1,21 +1,6 @@
 import os
-from flask import (
-    Flask,
-    jsonify,
-    make_response,
-    render_template,
-    redirect,
-    url_for,
-    request,
-    session
-)
-from flask_login import (
-    LoginManager,
-    login_user,
-    logout_user,
-    current_user,
-    login_required,
-)
+from flask import Flask, jsonify, make_response, render_template, redirect, url_for, request, session
+from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from flask_apscheduler import APScheduler
 from pymongo import MongoClient
 from datetime import datetime, timedelta
@@ -41,39 +26,38 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 from pymongo.collection import ReturnDocument
 from bson.objectid import ObjectId
 
-
-
-ALLOWED_EXTENSIONS = {"pdf"}
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s: %(message)s",
     datefmt="%d/%b/%Y %H:%M:%S",
 )
 logger = logging.getLogger(__name__)
+
 sentry_sdk.init(
     dsn="https://903f368e70906f512655f4f4555be8c6@o4505664587694081.ingest.sentry.io/4505664611155968",
-    integrations=[
-        FlaskIntegration(),
-    ],
+    integrations=[FlaskIntegration()],
     traces_sample_rate=1.0,
 )
+
+ALLOWED_EXTENSIONS = {"pdf"}
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
 try:
     app = Flask(__name__)
-    load_dotenv()
-    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-    app.config["MAIL_SERVER"] = "smtp.gmail.com"
-    app.config["MAIL_PORT"] = 465
-    app.config["MAIL_USERNAME"] = os.getenv("EMAIL_USER")
-    app.config["MAIL_PASSWORD"] = os.getenv("EMAIL_PW")
-    app.config["MAIL_USE_TLS"] = False
-    app.config["MAIL_USE_SSL"] = True
+    load_dotenv() 
+    app.config.update(
+        SECRET_KEY=os.getenv("SECRET_KEY"),
+        MAIL_SERVER="smtp.gmail.com",
+        MAIL_PORT=465,
+        MAIL_USERNAME=os.getenv("EMAIL_USER"),
+        MAIL_PASSWORD=os.getenv("EMAIL_PW"),
+        MAIL_USE_TLS=False,
+        MAIL_USE_SSL=True,
+        SCHEDULER_API_ENABLED=True,
+        PERMANENT_SESSION_LIFETIME=timedelta(minutes=15)
+    )
     scheduler = APScheduler()
-    app.config['SCHEDULER_API_ENABLED'] = True
-    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=15)
     scheduler.init_app(app)
     mail = Mail(app)
     bcrypt = Bcrypt(app)
@@ -102,22 +86,22 @@ else:
     except Exception as e:
         logger.error(f"Error connecting to MongoDB: {str(e)}")
     else:
-        ENV = os.environ.get("ENV")
-        if ENV == "development":
-            logging.info("Development Build")
-            if os.environ.get("WERKZEUG_RUN_MAIN") == "true" or not app.debug:
-                scheduler.start()
-        elif ENV == "production":
-            logging.info("Production Build")
-            lock_acquired = scheduler_locks.find_one_and_update(
-                {"_id": ObjectId("6501f81b496e0d9bfaac4680"), "locked": False},
-                {"$set": {"locked": True}},
-                return_document=ReturnDocument.AFTER
-            )
-            if lock_acquired and lock_acquired.get("locked"):
-                scheduler.start()
-            else:
-                logging.info("Scheduler already started by another worker.")
+        scheduler_locks.find_one_and_update(
+            {"_id": ObjectId("6501f81b496e0d9bfaac4680")},
+            {"$set": {"locked": False}},
+        )
+        lock_acquired = scheduler_locks.find_one_and_update(
+            {"_id": ObjectId("6501f81b496e0d9bfaac4680"), "locked": False},
+            {"$set": {"locked": True}},
+            return_document=ReturnDocument.AFTER,
+        )
+        if lock_acquired and lock_acquired.get("locked"):
+            scheduler.start()
+        else:
+            logging.info("Scheduler already started by another worker.")
+
+
+
 
 @app.before_request
 def refresh_session():
