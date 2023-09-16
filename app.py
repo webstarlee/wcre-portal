@@ -86,10 +86,6 @@ else:
     except Exception as e:
         logger.error(f"Error connecting to MongoDB: {str(e)}")
     else:
-        scheduler_locks.find_one_and_update(
-            {"_id": ObjectId("6501f81b496e0d9bfaac4680")},
-            {"$set": {"locked": False}},
-        )
         lock_acquired = scheduler_locks.find_one_and_update(
             {"_id": ObjectId("6501f81b496e0d9bfaac4680"), "locked": False},
             {"$set": {"locked": True}},
@@ -99,8 +95,6 @@ else:
             scheduler.start()
         else:
             logging.info("Scheduler already started by another worker.")
-
-
 
 
 @app.before_request
