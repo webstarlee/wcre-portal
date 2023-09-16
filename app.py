@@ -44,6 +44,7 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 try:
+    logger.info("Initializing Portal")
     app = Flask(__name__)
     load_dotenv() 
     app.config.update(
@@ -64,7 +65,7 @@ try:
     login_manager = LoginManager(app)
     login_manager.login_view = "login"
 except Exception as e:
-    logger.error(f"Error Starting Flask App: {str(e)}")
+    logger.error(f"Error Initializing Portal: {str(e)}")
 else:
     try:
         client = MongoClient(
@@ -81,20 +82,13 @@ else:
         leases = db["Leases"]
         docs = db["Documents"]
         scheduler_locks = db["SchedulerLocks"]
+        scheduler.start()
         fs = GridFS(db)
-        logger.info("Connected to MongoDB successfully")
+        logger.info("Connected to MongoDB Successfully")
     except Exception as e:
-        logger.error(f"Error connecting to MongoDB: {str(e)}")
+        logger.error(f"Error Connecting to MongoDB: {str(e)}")
     else:
-        lock_acquired = scheduler_locks.find_one_and_update(
-            {"_id": ObjectId("6501f81b496e0d9bfaac4680"), "locked": False},
-            {"$set": {"locked": True}},
-            return_document=ReturnDocument.AFTER,
-        )
-        if lock_acquired and lock_acquired.get("locked"):
-            scheduler.start()
-        else:
-            logging.info("Scheduler already started by another worker.")
+        logger.info("Initialization Successful")
 
 
 @app.before_request
@@ -112,7 +106,7 @@ def send_email(subject, template, data, conn):
         msg.html = transform(email_content)
         conn.send(msg)
     except Exception as e:
-        print("Error Sending Email: ", e)
+        logger.error("Error Sending Email: ", e)
 
 @scheduler.task('interval', id='do_alert_for_expiring_listings', seconds=43200, misfire_grace_time=900)
 def alert_for_expiring_listings():
@@ -128,7 +122,9 @@ def alert_for_expiring_listings():
                 with mail.connect() as conn:
                     send_email(subject, 'email_templates/email_expiring_listing.html', {"listing": listing}, conn)
     else:
-        print("No Upcoming Expiring Listings")
+        logger.info("No Upcoming Expiring Listings")
+    next_run_time = datetime.now() + timedelta(seconds=43200)
+    logger.info(f"Next Check for Expiring Listings Will Be At: {next_run_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
 
 def convert_state_code_to_full_name(state_code):
@@ -260,7 +256,6 @@ def view_listings():
         pagination = Pagination(
             page=page, per_page=per_page, total=total, css_framework="bootstrap4"
         )   
-        logging.info("Rendering Listings Page")
         return render_template(
             "listings.html",
             listings=listings_data,
@@ -506,7 +501,7 @@ def submit_listing():
                 with mail.connect() as conn:
                     send_email("New Listing Notification", 'email_templates/email_new_listing.html', {"listing": new_listing}, conn)
         except Exception as e:
-            print("Error Sending Email: ", e)
+            logger.error("Error Sending Email: ", e)
         return make_response(
             {"status": "success", "redirect": url_for("view_listings")}, 200
         )
@@ -556,7 +551,7 @@ def submit_sale():
                 with mail.connect() as conn:
                     send_email("New Sale Notification", 'email_templates/email_new_sale.html', {"sale": new_sale}, conn)
         except Exception as e:
-            print("Error Sending Email: ", e)
+            logger.error("Error Sending Email: ", e)
         return make_response(
             {"status": "success", "redirect": url_for("view_sales")}, 200
         )
@@ -610,7 +605,7 @@ def submit_lease():
                 with mail.connect() as conn:
                     send_email("New Lease Notification", 'email_templates/email_new_lease.html', {"lease": new_lease}, conn)
         except Exception as e:
-            print("Error Sending Email: ", e)
+            logger.error("Error Sending Email: ", e)
         return make_response(
             {"status": "success", "redirect": url_for("view_leases")}, 200
         )
