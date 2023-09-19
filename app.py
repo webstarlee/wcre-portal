@@ -99,8 +99,8 @@ else:
         logger.info("Initialization Successful")
 
 @app.errorhandler(404)
-def not_found():
-    return render_template("404_not_found.html")
+def not_found(e):
+    return (render_template("404_not_found.html"), 404)
 
 
 @app.before_request
