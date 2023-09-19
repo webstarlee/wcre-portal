@@ -180,71 +180,70 @@ $(document).ready(function () {
     }
   }
 
+  let allDocuments = [];
+  $.get("get_documents", function (data) {
+    allDocuments = data;
+  });
+
   $(".card-footer").on("click", function (e) {
     e.preventDefault();
     var documentType = $(this).closest(".card-body").find("#text-container").find("#card-title").text();
-    $.get(
-      "get_documents", {
-      document_type: documentType,
-    },
-      function (data) {
-        $("#document-modal .modal-title").text("Documents - " + documentType);
-        var modal = document.getElementById("document-modal");
-        modal.style.display = "block";
-        const documents = data;
-        if (documents.length === 0) {
-          pagination.innerHTML = "";
-          documentList.innerHTML = "";
-          emptyMessage.classList = "";
-          emptyMessage.classList = "d-block mt-3";
+    const filteredDocuments = allDocuments.filter(doc => doc.document_type === documentType);
+    $("#document-modal .modal-title").text("Documents - " + documentType);
+    var modal = document.getElementById("document-modal");
+    modal.style.display = "block";
+    const documents = filteredDocuments;
+    if (documents.length === 0) {
+      pagination.innerHTML = "";
+      documentList.innerHTML = "";
+      emptyMessage.classList = "";
+      emptyMessage.classList = "d-block mt-3";
+    } else {
+      emptyMessage.classList = "";
+      emptyMessage.classList = "d-none";
+      const totalPages = Math.ceil(documents.length / itemsPerPage);
+      displayDocuments(documents, 1);
+      function createPaginationButtons(totalPages, currentPage) {
+        pagination.innerHTML = "";
+        if (totalPages <= 7) {
+          for (let i = 1; i <= totalPages; i++) {
+            createPaginationButton(i, currentPage);
+          }
         } else {
-          emptyMessage.classList = "";
-          emptyMessage.classList = "d-none";
-          const totalPages = Math.ceil(documents.length / itemsPerPage);
-          displayDocuments(documents, 1);
-          function createPaginationButtons(totalPages, currentPage) {
-            pagination.innerHTML = "";
-            if (totalPages <= 7) {
-              for (let i = 1; i <= totalPages; i++) {
-                createPaginationButton(i, currentPage);
-              }
-            } else {
-              for (let i = 1; i <= 2; i++) {
-                createPaginationButton(i, currentPage);
-              }
-              const ellipsisBefore = document.createElement("span");
-              ellipsisBefore.textContent = "...";
-              pagination.appendChild(ellipsisBefore);
-              for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-                if (i > 2 && i < totalPages - 1) {
-                  createPaginationButton(i, currentPage);
-                }
-              }
-              const ellipsisAfter = document.createElement("span");
-              ellipsisAfter.textContent = "...";
-              pagination.appendChild(ellipsisAfter);
-              for (let i = totalPages - 1; i <= totalPages; i++) {
-                createPaginationButton(i, currentPage);
-              }
+          for (let i = 1; i <= 2; i++) {
+            createPaginationButton(i, currentPage);
+          }
+          const ellipsisBefore = document.createElement("span");
+          ellipsisBefore.textContent = "...";
+          pagination.appendChild(ellipsisBefore);
+          for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+            if (i > 2 && i < totalPages - 1) {
+              createPaginationButton(i, currentPage);
             }
           }
-          createPaginationButtons(totalPages, 1);
-          function createPaginationButton(pageNumber, currentPage) {
-            const button = document.createElement("button");
-            button.textContent = pageNumber;
-            button.classList = "page-item border-0";
-            if (pageNumber === currentPage) {
-              button.classList.add("active");
-            }
-            button.addEventListener("click", () => {
-              createPaginationButtons(totalPages, pageNumber);
-              displayDocuments(documents, pageNumber);
-            });
-            pagination.appendChild(button);
+          const ellipsisAfter = document.createElement("span");
+          ellipsisAfter.textContent = "...";
+          pagination.appendChild(ellipsisAfter);
+          for (let i = totalPages - 1; i <= totalPages; i++) {
+            createPaginationButton(i, currentPage);
           }
         }
       }
-    );
+      createPaginationButtons(totalPages, 1);
+      function createPaginationButton(pageNumber, currentPage) {
+        const button = document.createElement("button");
+        button.textContent = pageNumber;
+        button.classList = "page-item border-0";
+        if (pageNumber === currentPage) {
+          button.classList.add("active");
+        }
+        button.addEventListener("click", () => {
+          createPaginationButtons(totalPages, pageNumber);
+          displayDocuments(documents, pageNumber);
+        });
+        pagination.appendChild(button);
+      }
+    }
   });
 
   $("#delete-button").click(function () {

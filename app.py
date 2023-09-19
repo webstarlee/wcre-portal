@@ -356,8 +356,7 @@ def view_leases():
 @app.route("/get_documents")
 @login_required
 def get_documents():
-    document_type = request.args.get("document_type")
-    documents = list(db["Documents"].find({"document_type": document_type}))
+    documents = list(db["Documents"].find())
     for document in documents:
         document["_id"] = str(document["_id"])
     return jsonify(documents)
