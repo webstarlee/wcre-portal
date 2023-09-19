@@ -35,7 +35,6 @@ logger = logging.getLogger(__name__)
 
 class IgnoreStaticLogFilter(logging.Filter):
     def filter(self, record):
-        # The message might indicate a static file being served, adjust this condition as needed
         if "/static/" in record.getMessage():
             return 0
         return 1
