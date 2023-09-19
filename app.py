@@ -912,6 +912,6 @@ def search_leases():
     return jsonify(results)
 
 
-Talisman(app, content_security_policy=None)
+#Talisman(app, content_security_policy=None)
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=6969, debug=False)
+    app.run(host="0.0.0.0", port=6969, debug=True)
