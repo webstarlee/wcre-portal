@@ -1,6 +1,10 @@
 $(document).ready(function () {
   var fileInput = document.getElementById("document-file");
   var uploadButton = document.getElementById("upload-document-file");
+  const documentList = document.getElementById("documentList");
+  const emptyMessage = document.getElementById("empty-message");
+  const pagination = document.getElementById("pagination");
+  const itemsPerPage = 10;
 
   function showNotification(message, elementId) {
     var notification = $("#" + elementId);
@@ -155,11 +159,6 @@ $(document).ready(function () {
     }
   });
 
-  const documentList = document.getElementById("documentList");
-  const emptyMessage = document.getElementById("empty-message");
-  const pagination = document.getElementById("pagination");
-  const itemsPerPage = 10;
-
   function displayDocuments(documents, pageNumber) {
     documentList.innerHTML = "";
     const startIndex = (pageNumber - 1) * itemsPerPage;
@@ -180,26 +179,19 @@ $(document).ready(function () {
       documentList.appendChild(li);
     }
   }
+
   $(".card-footer").on("click", function (e) {
     e.preventDefault();
-
-    var documentType = $(this)
-      .closest(".card-body")
-      .find("#text-container")
-      .find("#card-title")
-      .text();
+    var documentType = $(this).closest(".card-body").find("#text-container").find("#card-title").text();
     $.get(
       "get_documents", {
       document_type: documentType,
     },
       function (data) {
-        $("#document-modal .modal-title").text(
-          "Documents - " + documentType
-        );
+        $("#document-modal .modal-title").text("Documents - " + documentType);
         var modal = document.getElementById("document-modal");
         modal.style.display = "block";
         const documents = data;
-
         if (documents.length === 0) {
           pagination.innerHTML = "";
           documentList.innerHTML = "";
@@ -255,6 +247,7 @@ $(document).ready(function () {
       }
     );
   });
+
   $("#delete-button").click(function () {
     $.ajax({
       url: "/delete_document/" + document_id,
@@ -262,13 +255,12 @@ $(document).ready(function () {
       success: function (data) {
         if (data.success) {
           location.reload();
-          console.log("Document Deleted Successfully");
         } else {
-          console.error("Failed to Delete Document: " + data.message);
+          showNotification("Error Deleting Document", "error-notification");
         }
       },
       error: function () {
-        console.error("Failed to Delete Document");
+        showNotification("Error Deleting Document", "error-notification");
       },
     });
   });

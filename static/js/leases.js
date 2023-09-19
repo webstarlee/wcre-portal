@@ -453,27 +453,26 @@ $(document).ready(function () {
 		});
 	}
 
-	var configurations = [
-		{
-			inputElement: agreementFileInput,
-			buttonElement: uploadButtonAgreement,
-			resultElementId: "lease-agreement-file-base64"
-		},
-		{
-			inputElement: editAgreementFileInput,
-			buttonElement: editUploadButtonAgreement,
-			resultElementId: "edit-lease-agreement-file-base64"
-		},
-		{
-			inputElement: commissionFileInput,
-			buttonElement: uploadButtoncommission,
-			resultElementId: "lease-commission-agreement-file-base64"
-		},
-		{
-			inputElement: editcommissionFileInput,
-			buttonElement: editUploadButtoncommission,
-			resultElementId: "edit-lease-commission-agreement-file-base64"
-		}
+	var configurations = [{
+		inputElement: agreementFileInput,
+		buttonElement: uploadButtonAgreement,
+		resultElementId: "lease-agreement-file-base64"
+	},
+	{
+		inputElement: editAgreementFileInput,
+		buttonElement: editUploadButtonAgreement,
+		resultElementId: "edit-lease-agreement-file-base64"
+	},
+	{
+		inputElement: commissionFileInput,
+		buttonElement: uploadButtoncommission,
+		resultElementId: "lease-commission-agreement-file-base64"
+	},
+	{
+		inputElement: editcommissionFileInput,
+		buttonElement: editUploadButtoncommission,
+		resultElementId: "edit-lease-commission-agreement-file-base64"
+	}
 	];
 
 	configurations.forEach(function (config) {
