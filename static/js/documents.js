@@ -181,7 +181,6 @@ $(document).ready(function () {
   }
 
   let allDocuments = [];
-  let isDocumentsLoaded = false;
   let documentsPromise = $.ajax({
     url: "get_documents",
     method: "GET"
@@ -189,16 +188,10 @@ $(document).ready(function () {
 
   documentsPromise.done(function (data) {
     allDocuments = data;
-    isDocumentsLoaded = true;
   });
 
   $(".card-footer").on("click", function (e) {
     e.preventDefault();
-    if (!isDocumentsLoaded) {
-      showNotification("Documents Are Still Loading, Please Try Again.");
-      return;
-    }
-
     var documentType = $(this).closest(".card-body").find("#text-container").find("#card-title").text();
     const filteredDocuments = allDocuments.filter(doc => doc.document_type === documentType);
     $("#document-modal .modal-title").text("Documents - " + documentType);
