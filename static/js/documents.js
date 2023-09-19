@@ -228,7 +228,6 @@ $(document).ready(function () {
               }
             }
           }
-
           createPaginationButtons(totalPages, 1);
           function createPaginationButton(pageNumber, currentPage) {
             const button = document.createElement("button");
