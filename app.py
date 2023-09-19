@@ -171,7 +171,7 @@ def get_count(collection_type):
 
 @app.route("/")
 def login_page():
-    return redirect(url_for("login"))
+    return redirect(url_for("dashboard"))
 
 
 @app.route("/login", methods=["GET", "POST"])
