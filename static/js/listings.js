@@ -15,18 +15,17 @@ $(document).ready(function () {
 	editOwnerPhoneInput.addEventListener("input", () => formatPhoneNumber(editOwnerPhoneInput));
 	listingPriceInput.addEventListener("input", () => formatPrice(listingPriceInput));
 	editListingPriceInput.addEventListener("input", () => formatPrice(editListingPriceInput));
-	let modal = document.getElementById("mapModal");
-	let btn = document.getElementById("open-listing-map-button");
-	let span = document.getElementsByClassName("close")[0];
+	$(document).on("input", "#search-input", () => updateSearchListings("input"));
+	$(document).on("click", "#next-page", () => updateSearchListings("next"));
+	$(document).on("click", "#prev-page", () => updateSearchListings("prev"));
 
-	btn.onclick = function () {
+	document.getElementById("open-listing-map-button").onclick = function () {
 		initMap();
 	}
 
-	span.onclick = function () {
-		modal.style.display = "none";
+	document.getElementsByClassName("close")[0].onclick = function () {
+		document.getElementById("mapModal").style.display = "none";
 	}
-
 
 	function initMap() {
 		let map = new google.maps.Map(document.getElementById('map'), {
@@ -158,7 +157,6 @@ $(document).ready(function () {
 	});
 
 
-
 	$("#edit-button").click(function () {
 		const editModal = $("#edit-listing-modal");
 		const actionModal = $("#action-modal");
@@ -190,14 +188,9 @@ $(document).ready(function () {
 	});
 
 
-	$("#add-listing-modal .close").click(function () {
+	$(".listing-modal .close").click(function () {
 		$("body").removeClass("modal-open");
-		$("#add-listing-modal").hide();
-	});
-
-	$("#edit-listing-modal .close").click(function () {
-		$("body").removeClass("modal-open");
-		$("#edit-listing-modal").hide();
+		$(this).closest(".listing-modal").hide();
 	});
 
 
@@ -256,26 +249,38 @@ $(document).ready(function () {
 		showNotification("Error Fetching Search Results", "error-notification");
 	};
 
-	$("#search-input").on("input", () => {
-		currentPage = 1;
-		searchListings(currentPage);
-	});
-
-	$("#next-page").on("click", () => {
-		currentPage++;
-		searchListings(currentPage);
-	});
-
-	$("#prev-page").on("click", () => {
-		if (currentPage > 1) {
+	const updateSearchListings = (action) => {
+		if (action === "next") {
+			currentPage++;
+		} else if (action === "prev" && currentPage > 1) {
 			currentPage--;
-			searchListings(currentPage);
+		} else if (action === "input") {
+			currentPage = 1;
 		}
-	});
+		searchListings(currentPage);
+	};
 
 	$(".modal-content").click(function (event) {
 		event.stopPropagation();
 	});
+
+	function updateUIBasedOnStep(currentStep, currentModal) {
+		if (currentStep.is(":first-child")) {
+			currentModal.find(".prev-step").addClass("hidden");
+		} else {
+			currentModal.find(".prev-step").removeClass("hidden");
+		}
+		var nextButton = currentModal.find(".next-step");
+		if (!currentStep.next(".modal-step").length) {
+			if (currentModal.data("mode") === "add") {
+				nextButton.text("Submit Listing");
+			} else {
+				nextButton.text("Submit Listing Edits");
+			}
+		} else {
+			nextButton.text("Next");
+		}
+	}
 
 
 	$(".next-step").on("click", function () {
@@ -284,60 +289,32 @@ $(document).ready(function () {
 		var currentStep = currentModal.find(".active-step");
 		var nextStep = currentStep.next(".modal-step");
 		var isValid = (mode === "edit") || validateStep();
-
 		if (isValid) {
 			if (nextStep.length) {
 				currentStep.removeClass("active-step");
 				nextStep.addClass("active-step");
-				currentModal.find(".prev-step").removeClass("hidden");
-
-				if (!nextStep.next(".modal-step").length) {
-					if (mode === "add") {
-						$(this).text("Submit Listing");
-					} else {
-						$(this).text("Submit Listing Edits");
-					}
-				} else {
-					$(this).text("Next");
-				}
+				updateUIBasedOnStep(nextStep, currentModal);
 			} else {
 				if (mode === "add" && validateBrokers()) {
 					$("#submit-listing-form").submit();
 				} else if (mode === "edit" && $(this).text() === "Submit Listing Edits") {
 					$("#edit-listing-modal").css("display", "none");
-					var listingPropertyType = $("#edit-listing-property-type").val();
-					var listingMonthToMonth = $("#edit-listing-month-to-month").val();
-					var listingPrice = $("#edit-listing-price").val();
-					var listingStartDate = $("#edit-listing-start-date").val();
-					var listingEndDate = $("#edit-listing-end-date").val();
-					var listingStreet = $("#edit-listing-street").val();
-					var listingCity = $("#edit-listing-city").val();
-					var listingState = $("#edit-listing-state").val();
-					var listingOwner = $("#edit-listing-owner-name").val();
-					var listingEmail = $("#edit-listing-owner-email").val();
-					var listingPhone = $("#edit-listing-owner-phone").val();
-					var agreementFileBase64 = $("#edit-listing-agreement-file-base64").val();
-					var amendmentFileBase64 = $("#edit-listing-amendment-file-base64").val();
-
-
 					var data = {
-						listing_property_type: listingPropertyType,
-						listing_month_to_month: listingMonthToMonth,
-						listing_price: listingPrice,
-						listing_start_date: listingStartDate,
-						listing_agreement_file_base64: agreementFileBase64,
-						listing_amendment_file_base64: amendmentFileBase64,
-						listing_end_date: listingEndDate,
-						listing_street: listingStreet,
-						listing_city: listingCity,
-						listing_state: listingState,
-						listing_owner_name: listingOwner,
-						listing_owner_email: listingEmail,
-						listing_owner_phone: listingPhone,
+						listing_property_type: $("#edit-listing-property-type").val(),
+						listing_month_to_month: $("#edit-listing-month-to-month").val(),
+						listing_price: $("#edit-listing-price").val(),
+						listing_start_date: $("#edit-listing-start-date").val(),
+						listing_end_date: $("#edit-listing-end-date").val(),
+						listing_street: $("#edit-listing-street").val(),
+						listing_city: $("#edit-listing-city").val(),
+						listing_state: $("#edit-listing-state").val(),
+						listing_owner_name: $("#edit-listing-owner-name").val(),
+						listing_owner_email: $("#edit-listing-owner-email").val(),
+						listing_owner_phone: $("#edit-listing-owner-phone").val(),
+						listing_agreement_file_base64: $("#edit-listing-agreement-file-base64").val(),
+						listing_amendment_file_base64: $("#edit-listing-amendment-file-base64").val()
 					};
-
-					console.log(listingStreet)
-					getLatLng(listingStreet, listingCity, listingState, function (locationData) {
+					getLatLng(data.listing_street, data.listing_city, data.listing_state, function (locationData) {
 						if (locationData) {
 							data.listing_lat = locationData.lat;
 							data.listing_long = locationData.lng;
@@ -374,22 +351,10 @@ $(document).ready(function () {
 		var currentModal = $(this).closest(".listing-modal");
 		var currentStep = currentModal.find(".active-step");
 		var prevStep = currentStep.prev(".modal-step");
-		var nextButton = currentModal.find(".next-step");
-
 		if (prevStep.length) {
 			currentStep.removeClass("active-step");
 			prevStep.addClass("active-step");
-
-			if (!prevStep.next(".modal-step").length) {
-				if (currentModal.data("mode") === "add") {
-					nextButton.text("Submit Listing");
-				} else {
-					nextButton.text("Submit Listing Edits");
-				}
-			} else {
-				nextButton.text("Next");
-			}
-
+			updateUIBasedOnStep(prevStep, currentModal);
 			if (currentModal.data("mode") === "add") {
 				currentStep.find("input:required, select:required").removeClass("error");
 			}
@@ -440,7 +405,7 @@ $(document).ready(function () {
 	{
 		inputElement: amendmentFileInput,
 		buttonElement: uploadButtonAmendment,
-		resultElementId: "listing-agreement-file-base64"
+		resultElementId: "listing-amendment-file-base64"
 	},
 	{
 		inputElement: editAmendmentFileInput,
@@ -457,7 +422,6 @@ $(document).ready(function () {
 	var isAdmin = $("body").data("is-admin") === "True";
 	$(".centered-table tbody").on("contextmenu", "tr", function (e) {
 		e.preventDefault();
-
 		if (isAdmin) {
 			const actionModal = $("#action-modal");
 			actionModal
@@ -468,7 +432,6 @@ $(document).ready(function () {
 				.show();
 			$(this).focus();
 		}
-
 		listing_id = $(this).data("listing-id");
 		console.log("Listing ID:", listing_id);
 	});
@@ -509,7 +472,6 @@ $(document).ready(function () {
 
 	function getLatLng(street, city, state, callback) {
 		var address = `${street}, ${city}, ${state}`;
-		console.log(address)
 		var url = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=AIzaSyBoKJVMAXzJSwPJUgSLzbbwWz-px77dK_s`
 		$.get(url, function (data) {
 			if (data.status === 'OK') {
@@ -525,20 +487,17 @@ $(document).ready(function () {
 	$("#submit-listing-form").on("submit", function (e) {
 		e.preventDefault();
 		$("#add-listing-modal").css("display", "none");
-
 		if (validateStep() && validateBrokers() && validateDates()) {
 			var formData = new FormData(this);
-			var fileBase64 = $("#listing-agreement-file-base64").val();
-			formData.append("fileBase64", fileBase64);
+			formData.append("listing-agreement-file-base64", $("#listing-agreement-file-base64").val());
+			formData.append("listing-amendment-file-base64", $("#listing-amendment-file-base64").val());
 			var street = $("#listing-street").val();
 			var city = $("#listing-city").val();
 			var state = $("#listing-state").val();
-
 			getLatLng(street, city, state, function (location) {
 				if (location) {
 					formData.append("listing-lat", location.lat);
 					formData.append("listing-long", location.lng);
-					console.log(formData)
 					$.ajax({
 						url: "/submit_listing",
 						type: "POST",
@@ -547,7 +506,7 @@ $(document).ready(function () {
 						contentType: false,
 						dataType: "json",
 					})
-						.done(function (response, jqXHR) {
+						.done(function (response) {
 							if (response.status === "success") {
 								window.location.href = response.redirect;
 							} else {

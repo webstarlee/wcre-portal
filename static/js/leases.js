@@ -544,10 +544,8 @@ $(document).ready(function () {
 		$("#add-lease-modal").css("display", "none");
 		if (validateStep() && validateBrokers()) {
 			var formData = new FormData(this);
-			var leaseAgreementFileBase64 = $("#lease-agreement-file-base64").val();
-			var commissionAgreementFileBase64 = $("#lease-commission-agreement-file-base64").val();
-			formData.append("lease-agreement-file-base64", leaseAgreementFileBase64);
-			formData.append("lease-commission-agreement-file-base64", commissionAgreementFileBase64);
+			formData.append("lease-agreement-file-base64", $("#lease-agreement-file-base64").val());
+			formData.append("lease-commission-agreement-file-base64", $("#lease-commission-agreement-file-base64").val());
 			$.ajax({
 				url: "/submit_lease",
 				type: "POST",
