@@ -23,9 +23,9 @@ $(document).ready(function () {
 	editcommissionPriceInput.addEventListener("input", () => formatPrice(editcommissionPriceInput));
 	sqFootageInput.addEventListener("input", () => formatSqFootage(sqFootageInput));
 	editsqFootageInput.addEventListener("input", () => formatSqFootage(editsqFootageInput));
-	$(document).on("input", "#search-input", () => updateSearchsales("input"));
-	$(document).on("click", "#next-page", () => updateSearchsales("next"));
-	$(document).on("click", "#prev-page", () => updateSearchsales("prev"));
+	$(document).on("input", "#search-input", () => updateSearchSales("input"));
+	$(document).on("click", "#next-page", () => updateSearchSales("next"));
+	$(document).on("click", "#prev-page", () => updateSearchSales("prev"));
 
 	function toggleErrorClass($element, isError) {
 		isError ? $element.addClass("error") : $element.removeClass("error");
@@ -251,7 +251,7 @@ $(document).ready(function () {
 		showNotification("Error Fetching Search Results", "error-notification");
 	};
 
-	const updateSearchsales = (action) => {
+	const updateSearchSales = (action) => {
 		if (action === "next") {
 			currentPage++;
 		} else if (action === "prev" && currentPage > 1) {

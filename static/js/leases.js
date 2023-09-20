@@ -17,6 +17,9 @@ $(document).ready(function () {
 	editsqFootageInput.addEventListener("input", () => formatSqFootage(editsqFootageInput));
 	document.getElementById('years').addEventListener('change', adjustTerm);
 	document.getElementById('months').addEventListener('change', adjustTerm);
+	$(document).on("input", "#search-input", () => updateSearchLeases("input"));
+	$(document).on("click", "#next-page", () => updateSearchLeases("next"));
+	$(document).on("click", "#prev-page", () => updateSearchLeases("prev"));
 
 	function toggleErrorClass($element, isError) {
 		isError ? $element.addClass("error") : $element.removeClass("error");
@@ -114,7 +117,6 @@ $(document).ready(function () {
 	}
 
 	$(document).ready(function () {
-		const iconVisible = $(".fa-caret-right");
 		const iconHidden = $(".fa-caret-down");
 		iconHidden.hide();
 		$(".centered-table tbody tr[data-lease-id] button").click(function () {
@@ -165,7 +167,6 @@ $(document).ready(function () {
 		});
 	});
 
-	// OPEN ADD LEASES MODAL
 	$("#add-lease-button").click(function () {
 		resetModalSteps($("#add-lease-modal"));
 		$("body").addClass("modal-open");
@@ -190,14 +191,13 @@ $(document).ready(function () {
 		const getPhoneFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="tel:"]`).attr("href").replace("tel:", "").trim();
 		const getNameFromCell = (index) => getCellText(index).replace(getEmailFromCell(index), '').replace(getPhoneFromCell(index), '').trim();
 		const setInputValue = (selector, value) => $(selector).val(value);
-
 		resetModalSteps(editModal);
 		$("body").addClass("modal-open");
 		$("#add-lease-modal").hide();
 		editModal.show();
 		editModal.find(".prev-step").addClass("hidden");
 		actionModal.hide();
-		editModal.find(".modal-step-title").text("Edit Lease - " + getCellText(7));
+		editModal.find(".modal-step-title").text("Edit Lease - " + getCellText(4));
 		setInputValue("#edit-lease-property-type", getCellText(1));
 		setInputValue("#edit-lease-sqft", getCellText(2));
 		setInputValue("#edit-lease-term-length", getCellText(3));
@@ -213,16 +213,9 @@ $(document).ready(function () {
 	});
 
 
-	// CLOSE ADD LESAE MODAL
-	$("#add-lease-modal .close").click(function () {
+	$(".lease-modal .close").click(function () {
 		$("body").removeClass("modal-open");
-		$("#add-lease-modal").hide();
-	});
-
-	// CLOSE EDIT LEASE MODAL
-	$("#edit-lease-modal .close").click(function () {
-		$("body").removeClass("modal-open");
-		$("#edit-lease-modal").hide();
+		$(this).closest(".lease-modal").hide();
 	});
 
 	let currentPage = 1;
@@ -283,26 +276,38 @@ $(document).ready(function () {
 		showNotification("Error Fetching Lease Results", "error-notification");
 	};
 
-	$("#search-input").on("input", () => {
-		currentPage = 1;
-		searchLeases(currentPage);
-	});
-
-	$("#next-page").on("click", () => {
-		currentPage++;
-		searchLeases(currentPage);
-	});
-
-	$("#prev-page").on("click", () => {
-		if (currentPage > 1) {
+	const updateSearchLeases = (action) => {
+		if (action === "next") {
+			currentPage++;
+		} else if (action === "prev" && currentPage > 1) {
 			currentPage--;
-			searchLeases(currentPage);
+		} else if (action === "input") {
+			currentPage = 1;
 		}
-	});
+		searchLeases(currentPage);
+	};
 
 	$(".modal-content").click(function (event) {
 		event.stopPropagation();
 	});
+
+	function updateUIBasedOnStep(currentStep, currentModal) {
+		if (currentStep.is(":first-child")) {
+			currentModal.find(".prev-step").addClass("hidden");
+		} else {
+			currentModal.find(".prev-step").removeClass("hidden");
+		}
+		var nextButton = currentModal.find(".next-step");
+		if (!currentStep.next(".modal-step").length) {
+			if (currentModal.data("mode") === "add") {
+				nextButton.text("Submit Lease");
+			} else {
+				nextButton.text("Submit Lease Edits");
+			}
+		} else {
+			nextButton.text("Next");
+		}
+	}
 
 	$(".next-step").on("click", function () {
 		var currentModal = $(this).closest(".lease-modal");
@@ -315,55 +320,28 @@ $(document).ready(function () {
 			if (nextStep.length) {
 				currentStep.removeClass("active-step");
 				nextStep.addClass("active-step");
-				currentModal.find(".prev-step").removeClass("hidden");
-
-				if (!nextStep.next(".modal-step").length) {
-					if (mode === "add") {
-						$(this).text("Submit Lease");
-					} else {
-						$(this).text("Submit Lease Edits");
-					}
-				} else {
-					$(this).text("Next");
-				}
+				updateUIBasedOnStep(nextStep, currentModal);
 			} else {
 				if (mode === "add" && validateBrokers()) {
 					$("#submit-lease-form").submit();
 				} else if (mode === "edit" && $(this).text() === "Submit Lease Edits") {
-					console.log("in here")
 					$("#edit-lease-modal").css("display", "none");
-					var leasePropertyType = $("#edit-lease-property-type").val();
-					var leaseSqFt = $("#edit-lease-sqft").val();
-					var leaseTermLength = $("#edit-lease-term-length").val();
-					var leaseStreet = $("#edit-lease-street").val();
-					var leaseCity = $("#edit-lease-city").val();
-					var leaseState = $("#edit-lease-state").val();
-					var leaseLessor = $("#edit-lease-lessor-name").val();
-					var leaseLessorEmail = $("#edit-lease-lessor-email").val();
-					var leaseLessorPhone = $("#edit-lease-lessor-phone").val();
-					var leaselessee = $("#edit-lease-lessee-name").val();
-					var leaselesseeEmail = $("#edit-lease-lessee-email").val();
-					var leaselesseePhone = $("#edit-lease-lessee-phone").val();
-					var agreementFileBase64 = $("#edit-lease-agreement-file-base64").val();
-					var commissionFileBase64 = $("#edit-lease-commission-agreement-file-base64").val();
-
 					var data = {
-						lease_property_type: leasePropertyType,
-						lease_sqft: leaseSqFt,
-						lease_term_length: leaseTermLength,
-						lease_agreement_file_base64: agreementFileBase64,
-						lease_commission_file_base64: commissionFileBase64,
-						lease_street: leaseStreet,
-						lease_city: leaseCity,
-						lease_state: leaseState,
-						lease_lessor_name: leaseLessor,
-						lease_lessor_email: leaseLessorEmail,
-						lease_lessor_phone: leaseLessorPhone,
-						lease_lessee_name: leaselessee,
-						lease_lessee_email: leaselesseeEmail,
-						lease_lessee_phone: leaselesseePhone
+						lease_property_type: $("#edit-lease-property-type").val(),
+						lease_sqft: $("#edit-lease-sqft").val(),
+						lease_term_length: $("#edit-lease-term-length").val(),
+						lease_agreement_file_base64: $("#edit-lease-agreement-file-base64").val(),
+						lease_commission_file_base64: $("#edit-lease-commission-agreement-file-base64").val(),
+						lease_street: $("#edit-lease-street").val(),
+						lease_city: $("#edit-lease-city").val(),
+						lease_state: $("#edit-lease-state").val(),
+						lease_lessor_name: $("#edit-lease-lessor-name").val(),
+						lease_lessor_email: $("#edit-lease-lessor-email").val(),
+						lease_lessor_phone: $("#edit-lease-lessor-phone").val(),
+						lease_lessee_name: $("#edit-lease-lessee-name").val(),
+						lease_lessee_email: $("#edit-lease-lessee-email").val(),
+						lease_lessee_phone: $("#edit-lease-lessee-phone").val()
 					};
-
 					$.ajax({
 						url: "/edit_lease/" + lease_id,
 						type: "POST",
@@ -373,7 +351,7 @@ $(document).ready(function () {
 							if (response.success) {
 								location.reload();
 							} else {
-								showNotification("Error Editing lease", "error-notification");
+								showNotification("Error Editing Lease", "error-notification");
 							}
 						},
 						error: function () {
@@ -381,41 +359,22 @@ $(document).ready(function () {
 						},
 					});
 				} else {
-					showNotification(
-						"Please Fill Out All Required Fields",
-						"error-notification"
-					);
+					showNotification("Please Fill Out All Required Fields", "error-notification");
 				}
 			}
 		} else {
-			showNotification(
-				"Please Fill Out All Required Fields",
-				"error-notification"
-			);
+			showNotification("Please Fill Out All Required Fields", "error-notification");
 		}
 	});
 
-	// PREV STEP
 	$(".prev-step").on("click", function () {
 		var currentModal = $(this).closest(".lease-modal");
 		var currentStep = currentModal.find(".active-step");
 		var prevStep = currentStep.prev(".modal-step");
-		var nextButton = currentModal.find(".next-step");
-
 		if (prevStep.length) {
 			currentStep.removeClass("active-step");
 			prevStep.addClass("active-step");
-
-			if (!prevStep.next(".modal-step").length) {
-				if (currentModal.data("mode") === "add") {
-					nextButton.text("Submit Lease");
-				} else {
-					nextButton.text("Submit Lease Edits");
-				}
-			} else {
-				nextButton.text("Next");
-			}
-
+			updateUIBasedOnStep(prevStep, currentModal);
 			if (currentModal.data("mode") === "add") {
 				currentStep.find("input:required, select:required").removeClass("error");
 			}
@@ -480,9 +439,10 @@ $(document).ready(function () {
 	});
 
 
-	// OPEN ACTION MODAL
+	let lease_id = null;
 	var isAdmin = $("body").data("is-admin") === "True";
-	$(".centered-table tbody tr").on("contextmenu", function (e) {
+	$(".centered-table tbody").on("contextmenu", "tr", function (e) {
+		e.preventDefault();
 		if (isAdmin) {
 			const actionModal = $("#action-modal");
 			actionModal
@@ -493,23 +453,16 @@ $(document).ready(function () {
 				.show();
 			$(this).focus();
 		}
-
 		lease_id = $(this).data("lease-id");
 		console.log("Lease ID:", lease_id);
 	});
+
 
 	$(document).bind("click", function (e) {
 		const actionModal = $("#action-modal");
 		if (!$(e.target).closest(actionModal).length) {
 			actionModal.hide();
 		}
-	});
-
-	let lease_id = null;
-	$(".centered-table tbody tr").on("contextmenu", function (e) {
-		e.preventDefault();
-		lease_id = $(this).data("lease-id");
-		console.log("Lease ID:", lease_id);
 	});
 
 	$("#delete-button").click(function () {
@@ -538,7 +491,6 @@ $(document).ready(function () {
 		});
 	});
 
-	// SUBMIT LEASE
 	$("#submit-lease-form").on("submit", function (e) {
 		e.preventDefault();
 		$("#add-lease-modal").css("display", "none");

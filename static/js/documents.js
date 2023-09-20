@@ -208,6 +208,7 @@ $(document).ready(function () {
       emptyMessage.classList = "d-none";
       const totalPages = Math.ceil(documents.length / itemsPerPage);
       displayDocuments(documents, 1);
+
       function createPaginationButtons(totalPages, currentPage) {
         pagination.innerHTML = "";
         if (totalPages <= 7) {
@@ -235,6 +236,7 @@ $(document).ready(function () {
         }
       }
       createPaginationButtons(totalPages, 1);
+
       function createPaginationButton(pageNumber, currentPage) {
         const button = document.createElement("button");
         button.textContent = pageNumber;
