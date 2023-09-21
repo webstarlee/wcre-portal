@@ -21,3 +21,7 @@
 .custom-icon-documents {
   background-image: url("/static/icons/documents.png");
 }
+
+.custom-icon-documents-modal {
+  background-image: url("/static/icons/documents-modal.png");
+}

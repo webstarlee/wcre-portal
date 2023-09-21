@@ -73,7 +73,8 @@ ul li a span {
 .custom-icon-dashboard,
 .custom-icon-sales,
 .custom-icon-leases,
-.custom-icon-documents {
+.custom-icon-documents,
+.custom-icon-documents-modal {
   background-size: 24px;
   background-repeat: no-repeat;
   color: white;
