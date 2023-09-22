@@ -295,7 +295,7 @@ $(document).ready(function () {
 				nextStep.addClass("active-step");
 				updateUIBasedOnStep(nextStep, currentModal);
 			} else {
-				if (mode === "add" && validateBrokers()) {
+				if (mode === "add") {
 					$("#submit-listing-form").submit();
 				} else if (mode === "edit" && $(this).text() === "Submit Listing Edits") {
 					$("#edit-listing-modal").css("display", "none");

@@ -117,6 +117,21 @@ body {
     background-color: #ddd;
 }
 
+#upload-lease-commission-invoice {
+    margin-top: 1px;
+    background-color: #f0f0f0;
+    border: none;
+    color: #333;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#upload-lease-commission-invoice:hover {
+    background-color: #ddd;
+}
+
 #edit-upload-lease-agreement {
     margin-top: 1px;
     background-color: #f0f0f0;
@@ -144,6 +159,21 @@ body {
 }
 
 #edit-upload-lease-commission-agreement:hover {
+    background-color: #ddd;
+}
+
+#edit-upload-lease-commission-invoice {
+    margin-top: 1px;
+    background-color: #f0f0f0;
+    border: none;
+    color: #333;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#edit-upload-lease-commission-invoice:hover {
     background-color: #ddd;
 }
 
@@ -213,10 +243,30 @@ body {
     max-width: 150px;
 }
 
+.contact-info {
+    margin-bottom: 5px;
+}
+
+.lessor-entity {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.lessee-entity {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
 .contact-info a:first-child {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 15px;
     padding-bottom: 3px;
+}
+
+.contact-info :nth-child(2) {
+    display: block;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .pagination {
@@ -315,7 +365,7 @@ table tr:hover td a {
 }
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     width: 100%;
 }
 
@@ -329,6 +379,25 @@ table tr:hover td a {
     color: #333;
     font-size: 14px;
 }
+
+.increased-line-height {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.increased-line-height textarea {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #f0f0f0;
+    color: #333;
+    font-size: 14px;
+    line-height: 1.5em;
+    resize: vertical;
+}
+
 
 .modal-navigation {
     display: flex;

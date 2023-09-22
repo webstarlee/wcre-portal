@@ -84,12 +84,14 @@
               </td>   
               <td>
                 <div class="contact-info">
+                  <div class="lessor-entity">{{ lease.lease_lessor_entity }}</div>
                     <a href="mailto:{{ lease.lease_lessor_email }}">{{ lease.lease_lessor_name }}</a>
                     <a href="tel:{{ lease.lease_lessor_phone }}">{{ lease.lease_lessor_phone }}</a>
                 </div>
               </td>
               <td>
                 <div class="contact-info">
+                  <div class="lessee-entity">{{ lease.lease_lessee_entity }}</div>
                     <a href="mailto:{{ lease.lease_lessee_email }}">{{ lease.lease_lessee_name }}</a>
                     <a href="tel:{{ lease.lease_lessee_phone }}">{{ lease.lease_lessee_phone }}</a>
                 </div>
@@ -152,7 +154,7 @@
               <h2 class="modal-step-title">New Lease - Lessor Information</h2>
               <div class="form-group">
                 <label for="lease-lessor-entity">Lessor Entity (DBA):</label>
-                <input type="text" id="lease-lessor-entity" name="lease-entity-entity" placeholder= "Enter Lessor Entity:" required />
+                <input type="text" id="lease-lessor-entity" name="lease-lessor-entity" placeholder= "Enter Lessor Entity:" required />
               </div>
               <div class="form-group">
                 <label for="lease-lessor-name">Lessor Contact Name:</label>
@@ -171,7 +173,7 @@
               <h2 class="modal-step-title">New Lease - Lessee Information</h2>
               <div class="form-group">
                 <label for="lease-lessee-entity">Lessee Entity (DBA):</label>
-                <input type="text" id="lessee-lessor-entity" name="lessee-entity-entity" placeholder= "Enter Lessee Entity:" required />
+                <input type="text" id="lessee-lessee-entity" name="lessee-lessee-entity" placeholder= "Enter Lessee Entity:" required />
               </div>
               <div class="form-group">
                 <label for="lease-lessee-name">Lessee Contact Name:</label>
@@ -190,34 +192,7 @@
               <h2 class="modal-step-title">New Lease - General Information</h2>
               <div class="form-group">
                 <label for="lease-term-length">Lease Term Length:</label>
-                <select id="lease-years" name="lease-years">
-                    <option value="0">0 Years</option>
-                    <option value="1">1 Year</option>
-                    <option value="2">2 Years</option>
-                    <option value="3">3 Years</option>
-                    <option value="4">4 Years</option>
-                    <option value="5">5 Years</option>
-                    <option value="6">6 Years</option>
-                    <option value="7">7 Years</option>
-                    <option value="8">8 Years</option>
-                    <option value="9">9 Years</option>
-                    <option value="10">10 Years</option>
-                </select>
-                <select id="lease-months" name="lease-months">
-                    <option value="0">0 Months</option>
-                    <option value="1">1 Month</option>
-                    <option value="2">2 Months</option>
-                    <option value="3">3 Months</option>
-                    <option value="4">4 Months</option>
-                    <option value="5">5 Months</option>
-                    <option value="6">6 Months</option>
-                    <option value="7">7 Months</option>
-                    <option value="8">8 Months</option>
-                    <option value="9">9 Months</option>
-                    <option value="10">10 Months</option>
-                    <option value="11">11 Months</option>
-                    <option value="12">12 Months</option>
-                </select>
+                <input type="text" id="lease-term-length" name="lease-term-length" placeholder="3 Years, 6 Months" />
               </div>            
               <div class="form-group">
                 <label for="lease-brokers">Brokers:</label>
@@ -252,6 +227,15 @@
                   <option value="Other">Other</option>
                 </select>
               </div>
+              <div class="form-group increased-line-height">
+                <label for="lessee-invoice-contact">Invoice Contact Information:</label>
+                <textarea id="lessee-invoice-contact" name="lessee-invoice-contact" placeholder="Enter Invoice Contact Information:" required></textarea>
+              </div>                      
+              <div class="form-group">
+                <button id="upload-lease-commission-invoice" type="button"> Upload Lease Commision Calculation Document </button>
+                <input id="lease-commission-invoice" type="file" style="display: none" accept=".pdf" />
+                <input type="hidden" id="lease-commision-invoice" name="lease-commission-invoice" />
+              </div>
               <div class="form-group">
                 <button id="upload-lease-agreement" type="button"> Upload Lease Agreement </button>
                 <input id="lease-agreement" type="file" style="display: none" accept=".pdf" />
@@ -261,25 +245,6 @@
                 <button id="upload-lease-commission-agreement" type="button"> Upload Commission Agreement </button>
                 <input id="lease-commission-agreement" type="file" style="display: none" accept=".pdf" />
                 <input type="hidden" id="lease-commission-agreement-file-base64" name="lease-commission-agreement-file-base64" />
-              </div>
-            </div>
-            <div class="modal-step main-form-step" id="main-step5">
-              <h2 class="modal-step-title">New Lease - Invoice Information</h2>
-              <div class="form-group">
-                <label for="lease-lessee-entity">Invoice Entity:</label>
-                <input type="text" id="lessee-invoice-entity" name="lessee-invoice-entity" placeholder= "Enter Invoice Entity:" required />
-              </div>
-              <div class="form-group">
-                <label for="lease-invoice-name">Invoice Contact Name (DBA):</label>
-                <input type="text" id="lease-invoice-name" name="lease-invoice-name" placeholder= "Enter Invoice Name:" required />
-              </div>
-              <div class="form-group">
-                <label for="lease-lessor-email">Lessor Email:</label>
-                <input type="email" id="lease-lessor-email" name="lease-lessor-email" placeholder= "Enter Lessor Email:" required />
-              </div>
-              <div class="form-group">
-                <label for="lease-lessor-phone">Lessor Phone Number:</label>
-                <input type="tel" id="lease-lessor-phone" name="lease-lessor-phone" placeholder= "Enter Lessor Phone Number:" required />
               </div>
             </div>
             <div class="modal-navigation">
@@ -328,7 +293,11 @@
             </div>
             <div class="modal-step edit-form-step" id="edit-step2">
               <div class="form-group">
-                <label for="edit-lease-lessor-name">Lessor Name:</label>
+                <label for="edit-lease-lessor-entity">Lessor Entity (DBA):</label>
+                <input type="text" id="edit-lease-lessor-entity" name="edit-lease-lessor-entity" placeholder= "Enter Lessor Entity:" required />
+              </div>
+              <div class="form-group">
+                <label for="edit-lease-lessor-name">Lessor Contact Name:</label>
                 <input type="text" id="edit-lease-lessor-name" name="edit-lease-lessor-name" required />
               </div>
               <div class="form-group">
@@ -342,7 +311,11 @@
             </div>
             <div class="modal-step edit-form-step" id="edit-step3">
               <div class="form-group">
-                <label for="edit-lease-lessee-name">Lessee Name:</label>
+                <label for="edit-lease-lessee-entity">Lessee Entity (DBA):</label>
+                <input type="text" id="edit-lessee-lessee-entity" name="edit-lessee-lessee-entity" placeholder= "Enter Lessee Entity:" required />
+              </div>
+              <div class="form-group">
+                <label for="edit-lease-lessee-name">Lessee Contact Name:</label>
                 <input type="text" id="edit-lease-lessee-name" name="edit-lease-lessee-name" required />
               </div>
               <div class="form-group">

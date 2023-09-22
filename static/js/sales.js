@@ -303,7 +303,7 @@ $(document).ready(function () {
 				nextStep.addClass("active-step");
 				updateUIBasedOnStep(nextStep, currentModal);
 			} else {
-				if (mode === "add" && validateBrokers()) {
+				if (mode === "add") {
 					$("#submit-sale-form").submit();
 				} else if (mode === "edit" && $(this).text() === "Submit Sale Edits") {
 					$("#edit-sale-modal").css("display", "none");

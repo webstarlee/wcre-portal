@@ -19,8 +19,6 @@ $(document).ready(function () {
 	editLessorPhoneNumberInput.addEventListener("input", () => formatPhoneNumber(editLessorPhoneNumberInput));
 	editLesseePhoneNumberInput.addEventListener("input", () => formatPhoneNumber(editLesseePhoneNumberInput));
 	editsqFootageInput.addEventListener("input", () => formatSqFootage(editsqFootageInput));
-	document.getElementById('lease-years').addEventListener('change', adjustTerm);
-	document.getElementById('lease-months').addEventListener('change', adjustTerm);
 	$(document).on("input", "#search-input", () => updateSearchLeases("input"));
 	$(document).on("click", "#next-page", () => updateSearchLeases("next"));
 	$(document).on("click", "#prev-page", () => updateSearchLeases("prev"));
@@ -33,7 +31,6 @@ $(document).ready(function () {
 		var currentStep = $(".active-step.main-form-step");
 		var inputs = currentStep.find("input:required, select:required");
 		var isValid = true;
-
 		inputs.each(function () {
 			var isEmpty = $(this).val().trim() === "";
 			toggleErrorClass($(this), isEmpty);
@@ -41,6 +38,7 @@ $(document).ready(function () {
 		});
 		return isValid;
 	}
+
 
 	function validateBrokers() {
 		var $brokerInput = $("#lease-brokers");
@@ -58,27 +56,6 @@ $(document).ready(function () {
 			notification.removeClass("show");
 		}, 2000);
 	}
-
-	function adjustTerm() {
-		const yearsSelect = document.getElementById('lease-years');
-		const monthsSelect = document.getElementById('lease-months');
-		const years = parseInt(yearsSelect.value);
-		const months = parseInt(monthsSelect.value);
-
-		if (months === 12) {
-			monthsSelect.value = "0";
-			yearsSelect.value = (years + 1).toString();
-		}
-	}
-
-	document.addEventListener('DOMContentLoaded', function () {
-		document.getElementById('submit-button').addEventListener('click', function () {
-			var years = document.getElementById('lease-years').value;
-			var months = document.getElementById('lease-months').value;
-			var leaseTermLength = years + " Years " + months + " Months";
-			document.getElementById('lease-term-length').innerText = leaseTermLength;
-		});
-	});
 
 	function formatPhoneNumber(inputElement) {
 		let phoneNumber = inputElement.value.replace(/\D/g, "");
@@ -191,6 +168,8 @@ $(document).ready(function () {
 		const getEmailFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="mailto:"]`).attr("href").replace("mailto:", "").trim();
 		const getPhoneFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="tel:"]`).attr("href").replace("tel:", "").trim();
 		const getNameFromCell = (index) => getCellText(index).replace(getEmailFromCell(index), '').replace(getPhoneFromCell(index), '').trim();
+		const getLessorEntityFromCell = (index) => selectedRow.find(`td:nth-child(${index}) .lessor-entity`).text().trim();
+		const getLesseeEntityFromCell = (index) => selectedRow.find(`td:nth-child(${index}) .lessee-entity`).text().trim();
 		const setInputValue = (selector, value) => {
 			const element = $(selector);
 			if (element.is('select')) {
@@ -214,9 +193,11 @@ $(document).ready(function () {
 		setInputValue("#edit-lease-street", getCellText(4));
 		setInputValue("#edit-lease-city", getCellText(5));
 		setInputValue("#edit-lease-state", getCellText(6));
+		setInputValue("#edit-lease-lessor-entity", getLessorEntityFromCell(7));
 		setInputValue("#edit-lease-lessor-name", getNameFromCell(7));
 		setInputValue("#edit-lease-lessor-email", getEmailFromCell(7));
 		setInputValue("#edit-lease-lessor-phone", getPhoneFromCell(7));
+		setInputValue("#edit-lease-lessee-entity", getLesseeEntityFromCell(8));
 		setInputValue("#edit-lease-lessee-name", getNameFromCell(8));
 		setInputValue("#edit-lease-lessee-email", getEmailFromCell(8));
 		setInputValue("#edit-lease-lessee-phone", getPhoneFromCell(8));
@@ -332,7 +313,7 @@ $(document).ready(function () {
 				nextStep.addClass("active-step");
 				updateUIBasedOnStep(nextStep, currentModal);
 			} else {
-				if (mode === "add" && validateBrokers()) {
+				if (mode === "add"()) {
 					$("#submit-lease-form").submit();
 				} else if (mode === "edit" && $(this).text() === "Submit Lease Edits") {
 					$("#edit-lease-modal").css("display", "none");
