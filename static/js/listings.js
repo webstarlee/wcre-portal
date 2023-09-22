@@ -173,15 +173,15 @@ $(document).ready(function () {
 		editModal.show();
 		editModal.find(".prev-step").addClass("hidden");
 		actionModal.hide();
-		editModal.find(".modal-step-title").text("Edit Listing - " + getCellText(6));
+		editModal.find(".modal-step-title").text("Edit Listing - " + getCellText(5));
 		setInputValue("#edit-listing-property-type", getCellText(1));
-		setInputValue("#edit-listing-month-to-month", getCellText(2));
-		setInputValue("#edit-listing-start-date", getCellText(3));
-		setInputValue("#edit-listing-end-date", getCellText(4));
-		setInputValue("#edit-listing-price", getCellText(5));
-		setInputValue("#edit-listing-street", getCellText(6));
-		setInputValue("#edit-listing-city", getCellText(7));
-		setInputValue("#edit-listing-state", getCellText(8));
+		setInputValue("#edit-listing-start-date", getCellText(2));
+		setInputValue("#edit-listing-end-date", getCellText(3));
+		setInputValue("#edit-listing-price", getCellText(4));
+		setInputValue("#edit-listing-street", getCellText(5));
+		setInputValue("#edit-listing-city", getCellText(6));
+		setInputValue("#edit-listing-state", getCellText(7));
+		setInputValue("#edit-listing-owner-entity", getCellText(8));
 		setInputValue("#edit-listing-owner-name", getNameFromCell(9));
 		setInputValue("#edit-listing-owner-email", getEmailFromCell(9));
 		setInputValue("#edit-listing-owner-phone", getPhoneFromCell(9));
@@ -224,13 +224,13 @@ $(document).ready(function () {
 		let stateValue = stateMapping[result.listing_state] || result.listing_state;
 		const cells = [
 			result.listing_property_type,
-			result.listing_month_to_month,
 			result.listing_start_date,
 			`<a href="/create_ics_listing/${result._id}">${result.listing_end_date}</a>`,
 			result.listing_price || "None",
 			result.listing_street,
 			result.listing_city,
 			stateValue,
+			result.listing_owner_entity,
 			`<div class="contact-info">
 				<a href="mailto:${result.listing_owner_email}">${result.listing_owner_name}</a>
 				<a href="tel:${result.listing_owner_phone}">${result.listing_owner_phone}</a>
@@ -301,13 +301,13 @@ $(document).ready(function () {
 					$("#edit-listing-modal").css("display", "none");
 					var data = {
 						listing_property_type: $("#edit-listing-property-type").val(),
-						listing_month_to_month: $("#edit-listing-month-to-month").val(),
 						listing_price: $("#edit-listing-price").val(),
 						listing_start_date: $("#edit-listing-start-date").val(),
 						listing_end_date: $("#edit-listing-end-date").val(),
 						listing_street: $("#edit-listing-street").val(),
 						listing_city: $("#edit-listing-city").val(),
 						listing_state: $("#edit-listing-state").val(),
+						listing_owner_entity: $("#edit-listing-owner-entity").val(),
 						listing_owner_name: $("#edit-listing-owner-name").val(),
 						listing_owner_email: $("#edit-listing-owner-email").val(),
 						listing_owner_phone: $("#edit-listing-owner-phone").val(),

@@ -57,7 +57,7 @@
               <th>Closing Date</th>
               <th>Price</th>
               <th>Total Commission</th>
-              <th>Square Footage</th>
+              <th>Square FT</th>
               <th>Price/SF</th>
               <th>Street</th>
               <th>City</th>
@@ -93,15 +93,17 @@
                 {% else %}
                     {{ sale.sale_state }}
                 {% endif %}
-              </td>            
+              </td>    
               <td>
                 <div class="contact-info">
+                    <div class="buyer-entity">{{ sale.sale_buyer_entity }}</div>
                     <a href="mailto:{{ sale.sale_buyer_email }}">{{ sale.sale_buyer_name }}</a>
                     <a href="tel:{{ sale.sale_buyer_phone }}">{{ sale.sale_buyer_phone }}</a>
                 </div>
-              </td>
+              </td>            
               <td>
                 <div class="contact-info">
+                    <div class="seller-entity">{{ sale.sale_seller_entity }}</div>
                     <a href="mailto:{{ sale.sale_seller_email }}">{{ sale.sale_seller_name }}</a>
                     <a href="tel:{{ sale.sale_seller_phone }}">{{ sale.sale_seller_phone }}</a>
                 </div>
@@ -158,8 +160,12 @@
                     <div class="modal-step main-form-step" id="main-step2">
                       <h2 class="modal-step-title"> New Sale - Buyer Information </h2>
                       <div class="form-group">
-                        <label for="sale-buyer-name">Buyer Name:</label>
-                        <input type="text" id="sale-buyer-name" name="sale-buyer-name" placeholder= "Enter Buyer Name:" required />
+                        <label for="sale-buyer-entity">Buyer Entity (DBA):</label>
+                        <input type="text" id="sale-buyer-entity" name="sale-buyer-entity" placeholder= "Enter Buyer Entity (DBA):" required />
+                      </div>
+                      <div class="form-group">
+                        <label for="sale-buyer-name">Buyer Contact Name:</label>
+                        <input type="text" id="sale-buyer-name" name="sale-buyer-name" placeholder= "Enter Buyer Contact Name:" required />
                       </div>
                       <div class="form-group">
                         <label for="sale-buyer-email">Buyer Email:</label>
@@ -172,6 +178,10 @@
                     </div>
                     <div class="modal-step main-form-step" id="main-step3">
                       <h2 class="modal-step-title"> New Sale - Seller Information </h2>
+                      <div class="form-group">
+                        <label for="sale-seller-entity">Seller Entity (DBA):</label>
+                        <input type="text" id="sale-seller-entity" name="sale-seller-entity" placeholder= "Enter Seller Entity (DBA):" required />
+                      </div>
                       <div class="form-group">
                         <label for="sale-seller-name">Seller Name:</label>
                         <input type="text" id="sale-seller-name" name="sale-seller-name" placeholder= "Enter Seller Name:" required />
@@ -229,6 +239,17 @@
                         </select>
                       </div>
                       <div class="form-group">
+                        <label for="sale-referral-source">Referral Source:</label>
+                        <select id="sale-referral-source" name="sale-referral-source" required>
+                          <option value="WCRE">WCRE</option>
+                          <option value="CoStar">CoStar</option>
+                          <option value="Loopnet">Loopnet</option>
+                          <option value="Networking">Networking</option>
+                          <option value="Relationship">Relationship</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
                         <button id="upload-sale-agreement" type="button"> Upload Settlement (HUD Statement) </button>
                         <input id="sale-agreement" type="file" style="display: none" accept=".pdf" />
                         <input type="hidden" id="sale-agreement-file-base64" name="sale-agreement-file-base64" />
@@ -280,7 +301,11 @@
                     </div>
                     <div class="modal-step edit-form-step" id="edit-step2">
                       <div class="form-group">
-                        <label for="edit-sale-buyer-name">Buyer Name:</label>
+                        <label for="edit-sale-buyer-entity">Buyer Entity (DBA):</label>
+                        <input type="text" id="edit-sale-buyer-entity" name="edit-sale-buyer-entity" placeholder= "Enter Buyer Entity (DBA):" required />
+                      </div>
+                      <div class="form-group">
+                        <label for="edit-sale-buyer-name">Buyer Contact Name:</label>
                         <input type="text" id="edit-sale-buyer-name" name="edit-sale-buyer-name" required />
                       </div>
                       <div class="form-group">
@@ -294,7 +319,11 @@
                     </div>
                     <div class="modal-step edit-form-step" id="edit-step3">
                       <div class="form-group">
-                        <label for="edit-sale-seller-name">Seller Name:</label>
+                        <label for="edit-sale-seller-entity">Seller Entity (DBA):</label>
+                        <input type="text" id="edit-sale-seller-entity" name="edit-sale-seller-entity" placeholder= "Enter Seller Entity (DBA):" required />
+                      </div>
+                      <div class="form-group">
+                        <label for="edit-sale-seller-name">Seller Contact Name:</label>
                         <input type="text" id="edit-sale-seller-name" name="edit-sale-seller-name" required />
                       </div>
                       <div class="form-group">
@@ -325,6 +354,17 @@
                       <div class="form-group">
                         <label for="sale-commission">Total Sale Commission:</label>
                         <input type="text" id="edit-sale-commission" name="edit-sale-commission" placeholder= "Enter Sale Commission:" required />
+                      </div>
+                      <div class="form-group">
+                        <label for="edit-sale-referral-source">Referral Source:</label>
+                        <select id="edit-sale-referral-source" name="edit-sale-referral-source" required>
+                          <option value="WCRE">WCRE</option>
+                          <option value="CoStar">CoStar</option>
+                          <option value="Loopnet">Loopnet</option>
+                          <option value="Networking">Networking</option>
+                          <option value="Relationship">Relationship</option>
+                          <option value="Other">Other</option>
+                        </select>
                       </div>
                       <div class="form-group">
                         <button id="edit-upload-sale-agreement" type="button"> Upload Sale Agreement </button>

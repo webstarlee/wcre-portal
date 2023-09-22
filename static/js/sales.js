@@ -159,7 +159,9 @@ $(document).ready(function () {
 		const getCellText = (index) => selectedRow.find(`td:nth-child(${index})`).text().trim();
 		const getEmailFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="mailto:"]`).attr("href").replace("mailto:", "").trim();
 		const getPhoneFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="tel:"]`).attr("href").replace("tel:", "").trim();
-		const getNameFromCell = (index) => getCellText(index).replace(getEmailFromCell(index), '').replace(getPhoneFromCell(index), '').trim();
+		const getNameFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="mailto:"]`).text().trim();
+		const getBuyerEntityFromCell = (index) => selectedRow.find(`td:nth-child(${index}) .buyer-entity`).text().trim();
+		const getSellerEntityFromCell = (index) => selectedRow.find(`td:nth-child(${index}) .seller-entity`).text().trim();
 		const setInputValue = (selector, value) => $(selector).val(value);
 		resetModalSteps(editModal);
 		$("body").addClass("modal-open");
@@ -177,9 +179,11 @@ $(document).ready(function () {
 		setInputValue("#edit-sale-street", getCellText(8));
 		setInputValue("#edit-sale-city", getCellText(9));
 		setInputValue("#edit-sale-state", getCellText(10));
+		setInputValue("#edit-sale-buyer-entity", getBuyerEntityFromCell(11));
 		setInputValue("#edit-sale-buyer-name", getNameFromCell(11));
 		setInputValue("#edit-sale-buyer-email", getEmailFromCell(11));
 		setInputValue("#edit-sale-buyer-phone", getPhoneFromCell(11));
+		setInputValue("#edit-sale-seller-entity", getSellerEntityFromCell(12));
 		setInputValue("#edit-sale-seller-name", getNameFromCell(12));
 		setInputValue("#edit-sale-seller-email", getEmailFromCell(12));
 		setInputValue("#edit-sale-seller-phone", getPhoneFromCell(12));
@@ -230,10 +234,12 @@ $(document).ready(function () {
 			result.sale_city,
 			stateValue,
 			`<div class="contact-info">
+				<div class="buyer-entity">${result.sale_buyer_entity}</div>
 				<a href="mailto:${result.sale_buyer_email}">${result.sale_buyer_name}</a>
 				<a href="tel:${result.sale_buyer_phone}">${result.sale_buyer_phone}</a>
 			 </div>`,
 			`<div class="contact-info">
+				<div class="seller-entity">${result.sale_seller_entity}</div>
 				<a href="mailto:${result.sale_seller_email}">${result.sale_seller_name}</a>
 				<a href="tel:${result.sale_seller_phone}">${result.sale_seller_phone}</a>
 			 </div>`
@@ -312,9 +318,11 @@ $(document).ready(function () {
 						sale_street: $("#edit-sale-street").val(),
 						sale_city: $("#edit-sale-city").val(),
 						sale_state: $("#edit-sale-state").val(),
+						sale_buyer_entity: $("#edit-sale-buyer-entity").val(),
 						sale_buyer_name: $("#edit-sale-buyer-name").val(),
 						sale_buyer_email: $("#edit-sale-buyer-email").val(),
 						sale_buyer_phone: $("#edit-sale-seller-phone").val(),
+						sale_seller_entity: $("#edit-sale-seller-entity").val(),
 						sale_seller_name: $("#edit-sale-seller-name").val(),
 						sale_seller_email: $("#edit-sale-seller-email").val(),
 						sale_seller_phone: $("#edit-sale-seller-phone").val()

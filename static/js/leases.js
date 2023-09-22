@@ -11,12 +11,16 @@ $(document).ready(function () {
 	const editsqFootageInput = document.getElementById("edit-lease-sqft");
 	const lessorPhoneNumberInput = document.getElementById("lease-lessor-phone");
 	const lesseePhoneNumberInput = document.getElementById("lease-lessee-phone");
+	const editLessorPhoneNumberInput = document.getElementById("edit-lease-lessor-phone");
+	const editLesseePhoneNumberInput = document.getElementById("edit-lease-lessee-phone");
 	sqFootageInput.addEventListener("input", () => formatSqFootage(sqFootageInput));
 	lessorPhoneNumberInput.addEventListener("input", () => formatPhoneNumber(lessorPhoneNumberInput));
 	lesseePhoneNumberInput.addEventListener("input", () => formatPhoneNumber(lesseePhoneNumberInput));
+	editLessorPhoneNumberInput.addEventListener("input", () => formatPhoneNumber(editLessorPhoneNumberInput));
+	editLesseePhoneNumberInput.addEventListener("input", () => formatPhoneNumber(editLesseePhoneNumberInput));
 	editsqFootageInput.addEventListener("input", () => formatSqFootage(editsqFootageInput));
-	document.getElementById('years').addEventListener('change', adjustTerm);
-	document.getElementById('months').addEventListener('change', adjustTerm);
+	document.getElementById('lease-years').addEventListener('change', adjustTerm);
+	document.getElementById('lease-months').addEventListener('change', adjustTerm);
 	$(document).on("input", "#search-input", () => updateSearchLeases("input"));
 	$(document).on("click", "#next-page", () => updateSearchLeases("next"));
 	$(document).on("click", "#prev-page", () => updateSearchLeases("prev"));
@@ -56,8 +60,8 @@ $(document).ready(function () {
 	}
 
 	function adjustTerm() {
-		const yearsSelect = document.getElementById('years');
-		const monthsSelect = document.getElementById('months');
+		const yearsSelect = document.getElementById('lease-years');
+		const monthsSelect = document.getElementById('lease-months');
 		const years = parseInt(yearsSelect.value);
 		const months = parseInt(monthsSelect.value);
 
@@ -69,10 +73,10 @@ $(document).ready(function () {
 
 	document.addEventListener('DOMContentLoaded', function () {
 		document.getElementById('submit-button').addEventListener('click', function () {
-			var years = document.getElementById('years').value;
-			var months = document.getElementById('months').value;
+			var years = document.getElementById('lease-years').value;
+			var months = document.getElementById('lease-months').value;
 			var leaseTermLength = years + " Years " + months + " Months";
-			document.getElementById('lease-term-cell').innerText = leaseTermLength;
+			document.getElementById('lease-term-length').innerText = leaseTermLength;
 		});
 	});
 
@@ -86,10 +90,7 @@ $(document).ready(function () {
 	}
 
 	function formatToPhoneNumber(phoneNumber) {
-		const formattedNumber = phoneNumber.replace(
-			/(\d{3})(\d{3})(\d{4})/,
-			"$1-$2-$3"
-		);
+		const formattedNumber = phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
 		return formattedNumber;
 	}
 
@@ -190,17 +191,26 @@ $(document).ready(function () {
 		const getEmailFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="mailto:"]`).attr("href").replace("mailto:", "").trim();
 		const getPhoneFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="tel:"]`).attr("href").replace("tel:", "").trim();
 		const getNameFromCell = (index) => getCellText(index).replace(getEmailFromCell(index), '').replace(getPhoneFromCell(index), '').trim();
-		const setInputValue = (selector, value) => $(selector).val(value);
+		const setInputValue = (selector, value) => {
+			const element = $(selector);
+			if (element.is('select')) {
+				element.val(value).trigger('change');
+			} else {
+				element.val(value);
+			}
+		};
 		resetModalSteps(editModal);
 		$("body").addClass("modal-open");
 		$("#add-lease-modal").hide();
 		editModal.show();
 		editModal.find(".prev-step").addClass("hidden");
 		actionModal.hide();
+		const termLength = getCellText(3).match(/(\d+)\s*Years?,\s*(\d+)\s*Months?/i);
 		editModal.find(".modal-step-title").text("Edit Lease - " + getCellText(4));
 		setInputValue("#edit-lease-property-type", getCellText(1));
 		setInputValue("#edit-lease-sqft", getCellText(2));
-		setInputValue("#edit-lease-term-length", getCellText(3));
+		setInputValue("#edit-lease-years", termLength[1]);
+		setInputValue("#edit-lease-months", termLength[2]);
 		setInputValue("#edit-lease-street", getCellText(4));
 		setInputValue("#edit-lease-city", getCellText(5));
 		setInputValue("#edit-lease-state", getCellText(6));
@@ -329,7 +339,7 @@ $(document).ready(function () {
 					var data = {
 						lease_property_type: $("#edit-lease-property-type").val(),
 						lease_sqft: $("#edit-lease-sqft").val(),
-						lease_term_length: $("#edit-lease-term-length").val(),
+						lease_years: $("#edit-lease-years").val(),
 						lease_agreement_file_base64: $("#edit-lease-agreement-file-base64").val(),
 						lease_commission_file_base64: $("#edit-lease-commission-agreement-file-base64").val(),
 						lease_street: $("#edit-lease-street").val(),
