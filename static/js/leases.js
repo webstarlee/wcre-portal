@@ -144,10 +144,6 @@ $(document).ready(function () {
 		const actionModal = $("#action-modal");
 		const selectedRow = $(`.centered-table tbody tr[data-lease-id="${lease_id}"]`);
 		const getCellText = (index) => selectedRow.find(`td:nth-child(${index})`).text().trim();
-		const getHiddenCellText = (index) => {
-			const hiddenRow = selectedRow.next('.hidden-row-headers');
-			return hiddenRow.find(`.nested-table-rows td:nth-child(${index})`).text().trim();
-		}
 		const getEmailFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="mailto:"]`).attr("href").replace("mailto:", "").trim();
 		const getPhoneFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="tel:"]`).attr("href").replace("tel:", "").trim();
 		const getNameFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="mailto:"]`).text().trim();
@@ -175,8 +171,8 @@ $(document).ready(function () {
 		setInputValue("#edit-lease-lessee-name", getNameFromCell(8));
 		setInputValue("#edit-lease-lessee-email", getEmailFromCell(8));
 		setInputValue("#edit-lease-lessee-phone", getPhoneFromCell(8));
-		setInputValue("#edit-lease-referral-source", getHiddenCellText(1));
-		setInputValue("#edit-lease-invoice-contact", getHiddenCellText(3));
+		setInputValue("#edit-lease-referral-source", getCellText(13));
+		setInputValue("#edit-lease-invoice-contact", getCellText(14));
 	});
 
 
@@ -426,7 +422,7 @@ $(document).ready(function () {
 
 	let lease_id = null;
 	var isAdmin = $("body").data("is-admin") === "True";
-	$(".centered-table tbody").on("contextmenu", "tr.parent-row", function (e) {
+	$(".centered-table tbody").on("contextmenu", function (e) {
 		e.preventDefault();
 		if (isAdmin) {
 			const actionModal = $("#action-modal");
@@ -504,55 +500,5 @@ $(document).ready(function () {
 		else {
 			showNotification("Please Fill Out All Required Fields", "error-notification");
 		}
-	});
-
-	$(document).ready(function () {
-		const iconHidden = $(".fa-caret-down");
-		iconHidden.hide();
-		$(".centered-table tbody tr[data-lease-id] button").click(function () {
-			$(this)
-				.closest(".centered-table tbody tr[data-lease-id]")
-				.next(".hidden-row-headers")
-				.toggle();
-			if (
-				$(this)
-					.closest(".centered-table tbody tr[data-lease-id]")
-					.hasClass("selected-child")
-			) {
-				$(this)
-					.closest(".centered-table tbody tr[data-lease-id]")
-					.next(".hidden-row-headers")
-					.find(".nested-table tr")
-					.addClass("selected-child");
-			} else {
-				$(this)
-					.closest(".centered-table tbody tr[data-lease-id]")
-					.next(".hidden-row-headers")
-					.find(".nested-table tr")
-					.addClass("selected-parent");
-			}
-			if (
-				$(this)
-					.closest(".centered-table tbody tr[data-lease-id]")
-					.next(".hidden-row-headers")
-					.is(":hidden")
-			) {
-				$(this).find(".fa-caret-right").show();
-				$(this).find(".fa-caret-down").hide();
-			} else {
-				$(this).find(".fa-caret-right").hide();
-				$(this).find(".fa-caret-down").show();
-			}
-			$(this).next().next(".hidden-row").toggle();
-		});
-	});
-	$(document).ready(function () {
-		$(".parent-row").each(function (index) {
-			if (index % 2 === 0) {
-				$(this).addClass("selected-parent");
-			} else {
-				$(this).addClass("selected-child");
-			}
-		});
 	});
 });

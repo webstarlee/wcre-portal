@@ -177,45 +177,6 @@ body {
     background-color: #ddd;
 }
 
-/* table */
-.centered-table {
-    margin-left: 220px;
-    margin-right: auto;
-    margin-top: 5px;
-    width: auto;
-    border-collapse: collapse;
-    margin-bottom: 10px;
-}
-
-.centered-table tr {
-    cursor: pointer;
-}
-
-.centered-table th,
-.centered-table td {
-    border-right: 1px solid #ddd;
-    padding: 3px;
-    text-align: center !important;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    height: 50px;
-    line-height: 1;
-    font-size: 11px;
-}
-
-.centered-table td {
-    cursor: default;
-    width: 150px;
-}
-
-/* .centered-table .parent-rows:nth-child(even) {
-    background-color: #f0f0f0;
-  }
-  .centered-table .parent-rows:nth-child(odd) {
-    background-color: #f2fcfe;
-  } */
-
 .selected-parent {
     background-color: #f2fcfe;
 }
@@ -266,6 +227,78 @@ body {
     background-color: transparent !important;
     width: 150px;
     color: black !important;
+}
+
+.centered-table th:nth-child(1),
+.centered-table th:nth-child(2),
+.centered-table th:nth-child(3),
+.centered-table th:nth-child(4),
+.centered-table th:nth-child(5),
+.centered-table th:nth-child(6),
+.centered-table th:nth-child(7),
+.centered-table th:nth-child(8),
+.centered-table th:nth-child(9) {
+    max-width: 150px;
+}
+
+*/
+
+/* table */
+.centered-table {
+    margin-left: 220px;
+    margin-right: auto;
+    margin-top: 5px;
+    width: auto;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+}
+
+.centered-table tr {
+    cursor: pointer;
+}
+
+.centered-table th,
+.centered-table td {
+    border-right: 1px solid #ddd;
+    padding: 3px;
+    text-align: center !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 50px;
+    line-height: 1;
+    font-size: 11px;
+}
+
+.centered-table td {
+    cursor: default;
+    width: 150px;
+}
+
+.centered-table tr:nth-child(even) {
+    background-color: #f0f0f0;
+}
+
+.centered-table tr:nth-child(odd) {
+    background-color: #f2fcfe;
+}
+
+.centered-table tr:hover {
+    background-color: rgb(57, 112, 206);
+    color: white !important;
+    cursor: pointer;
+}
+
+.row-hover:hover {
+    background-color: rgb(57, 112, 206);
+    color: white !important;
+    cursor: pointer;
+}
+
+.centered-table th {
+    background-color: #1c92d2;
+    width: 150px;
+    color: white;
 }
 
 .centered-table th:nth-child(1),

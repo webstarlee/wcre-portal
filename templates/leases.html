@@ -62,72 +62,43 @@
               <th>Brokers</th>
               <th>Lease Agreement</th>
               <th>Commission Agreement</th>
+              <th>Commission Invoice</th>
+              <th>Referral Source</th>
+              <th style="border-top-right-radius: 7px">Invoice Contact</th>
             </tr>
           </thead>
-          <tbody>
-            {% for lease in leases %} 
-            <tr class="parent-row" data-lease-id="{{ lease._id }}">
-              <td class="d-flex justify-content-center align-items-center gap-2 w-auto">
-                <button data-lease-id="{{ lease._id }}" class="bg-transparent border-0">
-                  <i class="fa fa-caret-right fs-6" aria-hidden="true"></i>
-                  <i class="fa fa-caret-down fs-6" aria-hidden="true"></i>
-                </button>
-                {{lease.lease_property_type }}
-              </td>
+          <tbody> {% for lease in leases %} <tr data-lease-id="{{ lease._id }}">
+              <!-- <td class="d-flex justify-content-center align-items-center gap-2 w-auto"><button data-lease-id="{{ lease._id }}" class="bg-transparent border-0"><i class="fa fa-caret-right fs-6" aria-hidden="true"></i><i class="fa fa-caret-down fs-6" aria-hidden="true"></i></button> -->
+              <td>{{lease.lease_property_type }}</td>
               <td>{{ lease.lease_sqft }}</td>
               <td>{{ lease.lease_term_length }}</td>
-              </td>
               <td>{{ lease.lease_street }}</td>
               <td>{{ lease.lease_city }}</td>
-              <td>
-                {% if lease.lease_state == "New Jersey" %}
-                    NJ
-                {% elif lease.lease_state == "Pennsylvania" %}
-                    PA
-                {% else %}
-                    {{ lease.lease_state }}
-                {% endif %}
-              </td>   
+              <td> {% if lease.lease_state == "New Jersey" %} NJ {% elif lease.lease_state == "Pennsylvania" %} PA {% else %} {{ lease.lease_state }} {% endif %} </td>
               <td>
                 <div class="contact-info">
                   <div class="lessor-entity">{{ lease.lease_lessor_entity }}</div>
-                    <a href="mailto:{{ lease.lease_lessor_email }}">{{ lease.lease_lessor_name }}</a>
-                    <a href="tel:{{ lease.lease_lessor_phone }}">{{ lease.lease_lessor_phone }}</a>
+                  <a href="mailto:{{ lease.lease_lessor_email }}">{{ lease.lease_lessor_name }}</a>
+                  <a href="tel:{{ lease.lease_lessor_phone }}">{{ lease.lease_lessor_phone }}</a>
                 </div>
               </td>
               <td>
                 <div class="contact-info">
                   <div class="lessee-entity">{{ lease.lease_lessee_entity }}</div>
-                    <a href="mailto:{{ lease.lease_lessee_email }}">{{ lease.lease_lessee_name }}</a>
-                    <a href="tel:{{ lease.lease_lessee_phone }}">{{ lease.lease_lessee_phone }}</a>
+                  <a href="mailto:{{ lease.lease_lessee_email }}">{{ lease.lease_lessee_name }}</a>
+                  <a href="tel:{{ lease.lease_lessee_phone }}">{{ lease.lease_lessee_phone }}</a>
                 </div>
               </td>
               <td class="brokers"> {% for broker in lease.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
               <td><form method="POST"> {% if lease.lease_agreement_file_base64 %} <a href="{{ url_for('download_lease_agreement_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form></td>
               <td><form method="POST"> {% if lease.lease_commission_file_base64 %} <a href="{{ url_for('download_lease_commission_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form></td>
-            </tr> 
-            <tr class="hidden-row-headers">
-              <td class="border-0" colspan="100">
-                <table class="mx-auto nested-table" style="width: 99%">
-                  <tbody>
-                    <tr class="child-rows">
-                      <th>Referral Source</th>
-                      <th>Commission Invoice</th>
-                      <th>Invoice Contact Information</th>
-                    </tr>
-                    <tr class="nested-table-rows">
-                      <td>{{ lease.lease_referral_source }}</td>
-                      <td><form method="POST"> {% if lease.lease_commission_invoice_file_base64 %} <a href="{{ url_for('download_lease_commission_invoice_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form></td>
-                      <td>{{ lease.lease_invoice_contact }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </td>
-            </tr> 
-            {% endfor %} 
-          </tbody>
+              <td><form method="POST"> {% if lease.lease_commission_invoice_file_base64 %} <a href="{{ url_for('download_lease_commission_invoice_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form></td>
+              <td>{{ lease.lease_referral_source }}</td>
+              <td>{{ lease.lease_invoice_contact }}</td>
+            </tr>
+            <!-- <tr class="hidden-row-headers"><td class="border-0" colspan="100"><table class="mx-auto nested-table" style="width: 99%"><tbody><tr class="child-rows"><th>Referral Source</th><th>Commission Invoice</th><th>Invoice Contact Information</th></tr><tr class="nested-table-rows"><td>{{ lease.lease_referral_source }}</td><td><form method="POST"> {% if lease.lease_commission_invoice_file_base64 %} <a href="{{ url_for('download_lease_commission_invoice_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form></td><td>{{ lease.lease_invoice_contact }}</td></tr></tbody></table></td></tr>  --> {% endfor %} </tbody>
           <table>
-          {{ pagination.links }}
+            {{ pagination.links }}
       </div>
       <div id="action-modal" class="action-modal">
         <button id="delete-button">Delete Lease</button>
@@ -141,11 +112,11 @@
               <h2 class="modal-step-title">New Lease - Property Information</h2>
               <div class="form-group">
                 <label for="lease-street">Lease Street:</label>
-                <input type="text" id="lease-street" name="lease-street" placeholder= "Enter Street Address:" required />
+                <input type="text" id="lease-street" name="lease-street" placeholder="Enter Street Address:" required />
               </div>
               <div class="form-group">
                 <label for="lease-city">Lease City:</label>
-                <input type="text" id="lease-city" name="lease-city" placeholder= "Enter Town/City:" required />
+                <input type="text" id="lease-city" name="lease-city" placeholder="Enter Town/City:" required />
               </div>
               <div class="form-group">
                 <label for="lease-state">Lease State:</label>
@@ -168,44 +139,44 @@
               <div class="form-group">
                 <label for="lease-sqft">Lease Square Footage:</label>
                 <input type="text" id="lease-sqft" name="lease-sqft" placeholder="Enter Square Footage:" required />
-              </div>          
+              </div>
             </div>
             <div class="modal-step main-form-step" id="main-step2">
               <h2 class="modal-step-title">New Lease - Lessor Information</h2>
               <div class="form-group">
                 <label for="lease-lessor-entity">Lessor Entity (DBA):</label>
-                <input type="text" id="lease-lessor-entity" name="lease-lessor-entity" placeholder= "Enter Lessor Entity:" required />
+                <input type="text" id="lease-lessor-entity" name="lease-lessor-entity" placeholder="Enter Lessor Entity:" required />
               </div>
               <div class="form-group">
                 <label for="lease-lessor-name">Lessor Contact Name:</label>
-                <input type="text" id="lease-lessor-name" name="lease-lessor-name" placeholder= "Enter Lessor Contact Name:" required />
+                <input type="text" id="lease-lessor-name" name="lease-lessor-name" placeholder="Enter Lessor Contact Name:" required />
               </div>
               <div class="form-group">
                 <label for="lease-lessor-email">Lessor Email:</label>
-                <input type="email" id="lease-lessor-email" name="lease-lessor-email" placeholder= "Enter Lessor Email:" required />
+                <input type="email" id="lease-lessor-email" name="lease-lessor-email" placeholder="Enter Lessor Email:" required />
               </div>
               <div class="form-group">
                 <label for="lease-lessor-phone">Lessor Phone Number:</label>
-                <input type="tel" id="lease-lessor-phone" name="lease-lessor-phone" placeholder= "Enter Lessor Phone Number:" required />
+                <input type="tel" id="lease-lessor-phone" name="lease-lessor-phone" placeholder="Enter Lessor Phone Number:" required />
               </div>
             </div>
             <div class="modal-step main-form-step" id="main-step3">
               <h2 class="modal-step-title">New Lease - Lessee Information</h2>
               <div class="form-group">
                 <label for="lease-lessee-entity">Lessee Entity (DBA):</label>
-                <input type="text" id="lease-lessee-entity" name="lease-lessee-entity" placeholder= "Enter Lessee Entity:" required />
+                <input type="text" id="lease-lessee-entity" name="lease-lessee-entity" placeholder="Enter Lessee Entity:" required />
               </div>
               <div class="form-group">
                 <label for="lease-lessee-name">Lessee Contact Name:</label>
-                <input type="text" id="lease-lessee-name" name="lease-lessee-name" placeholder= "Enter Lessee Contact Name:" required />
+                <input type="text" id="lease-lessee-name" name="lease-lessee-name" placeholder="Enter Lessee Contact Name:" required />
               </div>
               <div class="form-group">
                 <label for="lease-lessee-email">Lessee Email:</label>
-                <input type="email" id="lease-lessee-email" name="lease-lessee-email" placeholder= "Enter Lessee Email:" required />
+                <input type="email" id="lease-lessee-email" name="lease-lessee-email" placeholder="Enter Lessee Email:" required />
               </div>
               <div class="form-group">
                 <label for="lessee-lessee-phone">Lessee Phone Number:</label>
-                <input type="tel" id="lease-lessee-phone" name="lease-lessee-phone" placeholder= "Enter Lessee Phone Number:" required />
+                <input type="tel" id="lease-lessee-phone" name="lease-lessee-phone" placeholder="Enter Lessee Phone Number:" required />
               </div>
             </div>
             <div class="modal-step main-form-step" id="main-step4">
@@ -213,44 +184,44 @@
               <div class="form-group">
                 <label for="lease-term-length">Lease Term Length:</label>
                 <select id="years" name="lease-years">
-                    <option value="0">0 Years</option>
-                    <option value="1">1 Year</option>
-                    <option value="2">2 Years</option>
-                    <option value="3">3 Years</option>
-                    <option value="4">4 Years</option>
-                    <option value="5">5 Years</option>
-                    <option value="6">6 Years</option>
-                    <option value="7">7 Years</option>
-                    <option value="8">8 Years</option>
-                    <option value="9">9 Years</option>
-                    <option value="10">10 Years</option>
-                    <option value="11">11 Years</option>
-                    <option value="12">12 Years</option>
-                    <option value="13">13 Years</option>
-                    <option value="14">14 Years</option>
-                    <option value="15">15 Years</option>
-                    <option value="16">16 Years</option>
-                    <option value="17">17 Years</option>
-                    <option value="18">18 Years</option>
-                    <option value="19">19 Years</option>
-                    <option value="20">20 Years</option>
+                  <option value="0">0 Years</option>
+                  <option value="1">1 Year</option>
+                  <option value="2">2 Years</option>
+                  <option value="3">3 Years</option>
+                  <option value="4">4 Years</option>
+                  <option value="5">5 Years</option>
+                  <option value="6">6 Years</option>
+                  <option value="7">7 Years</option>
+                  <option value="8">8 Years</option>
+                  <option value="9">9 Years</option>
+                  <option value="10">10 Years</option>
+                  <option value="11">11 Years</option>
+                  <option value="12">12 Years</option>
+                  <option value="13">13 Years</option>
+                  <option value="14">14 Years</option>
+                  <option value="15">15 Years</option>
+                  <option value="16">16 Years</option>
+                  <option value="17">17 Years</option>
+                  <option value="18">18 Years</option>
+                  <option value="19">19 Years</option>
+                  <option value="20">20 Years</option>
                 </select>
                 <select id="months" name="lease-months">
-                    <option value="0">0 Months</option>
-                    <option value="1">1 Month</option>
-                    <option value="2">2 Months</option>
-                    <option value="3">3 Months</option>
-                    <option value="4">4 Months</option>
-                    <option value="5">5 Months</option>
-                    <option value="6">6 Months</option>
-                    <option value="7">7 Months</option>
-                    <option value="8">8 Months</option>
-                    <option value="9">9 Months</option>
-                    <option value="10">10 Months</option>
-                    <option value="11">11 Months</option>
-                    <option value="12">12 Months</option>
+                  <option value="0">0 Months</option>
+                  <option value="1">1 Month</option>
+                  <option value="2">2 Months</option>
+                  <option value="3">3 Months</option>
+                  <option value="4">4 Months</option>
+                  <option value="5">5 Months</option>
+                  <option value="6">6 Months</option>
+                  <option value="7">7 Months</option>
+                  <option value="8">8 Months</option>
+                  <option value="9">9 Months</option>
+                  <option value="10">10 Months</option>
+                  <option value="11">11 Months</option>
+                  <option value="12">12 Months</option>
                 </select>
-              </div>              
+              </div>
               <div class="form-group">
                 <label for="lease-brokers">Brokers:</label>
                 <select id="lease-brokers" name="brokers[]" multiple>
@@ -287,7 +258,7 @@
               <div class="form-group increased-line-height">
                 <label for="lease-invoice-contact">Invoice Contact Information:</label>
                 <textarea id="lease-invoice-contact" name="lease-invoice-contact" placeholder="Enter Invoice Contact Information:" required></textarea>
-              </div>                      
+              </div>
               <div class="form-group">
                 <button id="upload-lease-agreement" type="button"> Upload Lease Agreement </button>
                 <input id="lease-agreement" type="file" style="display: none" accept=".pdf" />
@@ -351,7 +322,7 @@
             <div class="modal-step edit-form-step" id="edit-step2">
               <div class="form-group">
                 <label for="edit-lease-lessor-entity">Lessor Entity (DBA):</label>
-                <input type="text" id="edit-lease-lessor-entity" name="edit-lease-lessor-entity" placeholder= "Enter Lessor Entity:" required />
+                <input type="text" id="edit-lease-lessor-entity" name="edit-lease-lessor-entity" placeholder="Enter Lessor Entity:" required />
               </div>
               <div class="form-group">
                 <label for="edit-lease-lessor-name">Lessor Contact Name:</label>
@@ -369,7 +340,7 @@
             <div class="modal-step edit-form-step" id="edit-step3">
               <div class="form-group">
                 <label for="edit-lease-lessee-entity">Lessee Entity (DBA):</label>
-                <input type="text" id="edit-lease-lessee-entity" name="edit-lease-lessee-entity" placeholder= "Enter Lessee Entity:" required />
+                <input type="text" id="edit-lease-lessee-entity" name="edit-lease-lessee-entity" placeholder="Enter Lessee Entity:" required />
               </div>
               <div class="form-group">
                 <label for="edit-lease-lessee-name">Lessee Contact Name:</label>
@@ -388,7 +359,7 @@
               <div class="form-group">
                 <label for="edit-lease-term-length">Lease Term Length:</label>
                 <input type="text" id="edit-lease-term-length" name="edit-lease-term-length" placeholder="3 Years, 6 Months" />
-              </div> 
+              </div>
               <div class="form-group">
                 <label for="edit-lease-referral-source">Referral Source:</label>
                 <select id="edit-lease-referral-source" name="edit-lease-referral-source" required>
@@ -403,7 +374,7 @@
               <div class="form-group increased-line-height">
                 <label for="edit-lease-invoice-contact">Invoice Contact Information:</label>
                 <textarea id="edit-lease-invoice-contact" name="edit-lease-invoice-contact" placeholder="Enter Invoice Contact Information:" required></textarea>
-              </div>      
+              </div>
               <div class="form-group">
                 <button id="edit-upload-lease-agreement" type="button"> Upload Lease Agreement </button>
                 <input id="edit-lease-agreement" type="file" style="display: none" accept=".pdf" />

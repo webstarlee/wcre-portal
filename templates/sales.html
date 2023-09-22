@@ -17,9 +17,7 @@
   </head>
   <body data-is-admin="{{ is_admin }}">
     <div id="error-notification" class="error-notification"></div>
-    <div id="success-notification" class="success-notification"></div> 
-    {% include 'sidebar.html' %} 
-    <div class="content">
+    <div id="success-notification" class="success-notification"></div> {% include 'sidebar.html' %} <div class="content">
       <div class="toolbar" style="padding: 10px 0; position: relative">
         <form id="search-form" class="search-form" style="
             text-align: start;
@@ -85,29 +83,21 @@
               </td>
               <td>{{ sale.sale_street }}</td>
               <td>{{ sale.sale_city }}</td>
-              <td>
-                {% if sale.sale_state == "New Jersey" %}
-                    NJ
-                {% elif sale.sale_state == "Pennsylvania" %}
-                    PA
-                {% else %}
-                    {{ sale.sale_state }}
-                {% endif %}
-              </td>    
+              <td> {% if sale.sale_state == "New Jersey" %} NJ {% elif sale.sale_state == "Pennsylvania" %} PA {% else %} {{ sale.sale_state }} {% endif %} </td>
               <td>
                 <div class="contact-info">
-                    <div class="buyer-entity">{{ sale.sale_buyer_entity }}</div>
-                    <a href="mailto:{{ sale.sale_buyer_email }}">{{ sale.sale_buyer_name }}</a>
-                    <a href="tel:{{ sale.sale_buyer_phone }}">{{ sale.sale_buyer_phone }}</a>
+                  <div class="buyer-entity">{{ sale.sale_buyer_entity }}</div>
+                  <a href="mailto:{{ sale.sale_buyer_email }}">{{ sale.sale_buyer_name }}</a>
+                  <a href="tel:{{ sale.sale_buyer_phone }}">{{ sale.sale_buyer_phone }}</a>
                 </div>
-              </td>            
+              </td>
               <td>
                 <div class="contact-info">
-                    <div class="seller-entity">{{ sale.sale_seller_entity }}</div>
-                    <a href="mailto:{{ sale.sale_seller_email }}">{{ sale.sale_seller_name }}</a>
-                    <a href="tel:{{ sale.sale_seller_phone }}">{{ sale.sale_seller_phone }}</a>
+                  <div class="seller-entity">{{ sale.sale_seller_entity }}</div>
+                  <a href="mailto:{{ sale.sale_seller_email }}">{{ sale.sale_seller_name }}</a>
+                  <a href="tel:{{ sale.sale_seller_phone }}">{{ sale.sale_seller_phone }}</a>
                 </div>
-              </td>            
+              </td>
               <td class="brokers"> {% for broker in sale.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
               <td>
                 <form method="POST"> {% if sale.sale_agreement_file_base64 %} <a href="{{ url_for('download_sale_pdf', sale_id=sale._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
@@ -128,11 +118,11 @@
                       <h2 class="modal-step-title"> New Sale - Property Information </h2>
                       <div class="form-group">
                         <label for="sale-street">Sale Street:</label>
-                        <input type="text" id="sale-street" name="sale-street" placeholder= "Enter Street Address:" required />
+                        <input type="text" id="sale-street" name="sale-street" placeholder="Enter Street Address:" required />
                       </div>
                       <div class="form-group">
                         <label for="sale-city">Sale City:</label>
-                        <input type="text" id="sale-city" name="sale-city" placeholder= "Enter Town/City:" required />
+                        <input type="text" id="sale-city" name="sale-city" placeholder="Enter Town/City:" required />
                       </div>
                       <div class="form-group">
                         <label for="sale-state">Sale State:</label>
@@ -161,38 +151,38 @@
                       <h2 class="modal-step-title"> New Sale - Buyer Information </h2>
                       <div class="form-group">
                         <label for="sale-buyer-entity">Buyer Entity (DBA):</label>
-                        <input type="text" id="sale-buyer-entity" name="sale-buyer-entity" placeholder= "Enter Buyer Entity (DBA):" required />
+                        <input type="text" id="sale-buyer-entity" name="sale-buyer-entity" placeholder="Enter Buyer Entity (DBA):" required />
                       </div>
                       <div class="form-group">
                         <label for="sale-buyer-name">Buyer Contact Name:</label>
-                        <input type="text" id="sale-buyer-name" name="sale-buyer-name" placeholder= "Enter Buyer Contact Name:" required />
+                        <input type="text" id="sale-buyer-name" name="sale-buyer-name" placeholder="Enter Buyer Contact Name:" required />
                       </div>
                       <div class="form-group">
                         <label for="sale-buyer-email">Buyer Email:</label>
-                        <input type="email" id="sale-buyer-email" name="sale-buyer-email" placeholder= "Enter Buyer Email:" required />
+                        <input type="email" id="sale-buyer-email" name="sale-buyer-email" placeholder="Enter Buyer Email:" required />
                       </div>
                       <div class="form-group">
                         <label for="sale-buyer-phone">Buyer Phone Number:</label>
-                        <input type="tel" id="sale-buyer-phone" name="sale-buyer-phone" placeholder= "Enter Buyer Phone Number:" required />
+                        <input type="tel" id="sale-buyer-phone" name="sale-buyer-phone" placeholder="Enter Buyer Phone Number:" required />
                       </div>
                     </div>
                     <div class="modal-step main-form-step" id="main-step3">
                       <h2 class="modal-step-title"> New Sale - Seller Information </h2>
                       <div class="form-group">
                         <label for="sale-seller-entity">Seller Entity (DBA):</label>
-                        <input type="text" id="sale-seller-entity" name="sale-seller-entity" placeholder= "Enter Seller Entity (DBA):" required />
+                        <input type="text" id="sale-seller-entity" name="sale-seller-entity" placeholder="Enter Seller Entity (DBA):" required />
                       </div>
                       <div class="form-group">
                         <label for="sale-seller-name">Seller Name:</label>
-                        <input type="text" id="sale-seller-name" name="sale-seller-name" placeholder= "Enter Seller Name:" required />
+                        <input type="text" id="sale-seller-name" name="sale-seller-name" placeholder="Enter Seller Name:" required />
                       </div>
                       <div class="form-group">
                         <label for="sale-seller-email">Seller Email:</label>
-                        <input type="email" id="sale-seller-email" name="sale-seller-email" placeholder= "Enter Seller Email:" required />
+                        <input type="email" id="sale-seller-email" name="sale-seller-email" placeholder="Enter Seller Email:" required />
                       </div>
                       <div class="form-group">
                         <label for="sale-seller-phone">Seller Phone Number:</label>
-                        <input type="tel" id="sale-seller-phone" name="sale-seller-phone" placeholder= "Enter Seller Phone Number:" required />
+                        <input type="tel" id="sale-seller-phone" name="sale-seller-phone" placeholder="Enter Seller Phone Number:" required />
                       </div>
                     </div>
                     <div class="modal-step main-form-step" id="main-step4">
@@ -206,15 +196,15 @@
                       </div>
                       <div class="form-group">
                         <label for="sale-price">Sale Price:</label>
-                        <input type="text" id="sale-price" name="sale-price" placeholder= "Enter Sale Price:" required />
+                        <input type="text" id="sale-price" name="sale-price" placeholder="Enter Sale Price:" required />
                       </div>
                       <div class="form-group">
                         <label for="sale-commission">Total Sale Commission:</label>
-                        <input type="text" id="sale-commission" name="sale-commission" placeholder= "Enter Sale Commission:" required />
+                        <input type="text" id="sale-commission" name="sale-commission" placeholder="Enter Sale Commission:" required />
                       </div>
                       <div class="form-group">
                         <label for="sale-end-date">Sale Closing Date:</label>
-                        <input type="text" id="sale-end-date" name="sale-end-date" placeholder= "Enter Sale Closing Date:" required />
+                        <input type="text" id="sale-end-date" name="sale-end-date" placeholder="Enter Sale Closing Date:" required />
                       </div>
                       <div class="form-group">
                         <label for="sale-brokers">Brokers:</label>
@@ -302,7 +292,7 @@
                     <div class="modal-step edit-form-step" id="edit-step2">
                       <div class="form-group">
                         <label for="edit-sale-buyer-entity">Buyer Entity (DBA):</label>
-                        <input type="text" id="edit-sale-buyer-entity" name="edit-sale-buyer-entity" placeholder= "Enter Buyer Entity (DBA):" required />
+                        <input type="text" id="edit-sale-buyer-entity" name="edit-sale-buyer-entity" placeholder="Enter Buyer Entity (DBA):" required />
                       </div>
                       <div class="form-group">
                         <label for="edit-sale-buyer-name">Buyer Contact Name:</label>
@@ -320,7 +310,7 @@
                     <div class="modal-step edit-form-step" id="edit-step3">
                       <div class="form-group">
                         <label for="edit-sale-seller-entity">Seller Entity (DBA):</label>
-                        <input type="text" id="edit-sale-seller-entity" name="edit-sale-seller-entity" placeholder= "Enter Seller Entity (DBA):" required />
+                        <input type="text" id="edit-sale-seller-entity" name="edit-sale-seller-entity" placeholder="Enter Seller Entity (DBA):" required />
                       </div>
                       <div class="form-group">
                         <label for="edit-sale-seller-name">Seller Contact Name:</label>
@@ -353,7 +343,7 @@
                       </div>
                       <div class="form-group">
                         <label for="sale-commission">Total Sale Commission:</label>
-                        <input type="text" id="edit-sale-commission" name="edit-sale-commission" placeholder= "Enter Sale Commission:" required />
+                        <input type="text" id="edit-sale-commission" name="edit-sale-commission" placeholder="Enter Sale Commission:" required />
                       </div>
                       <div class="form-group">
                         <label for="edit-sale-referral-source">Referral Source:</label>
