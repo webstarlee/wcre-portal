@@ -615,11 +615,14 @@ def submit_lease():
             "lease-invoice-contact"
         ]
         new_lease = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
+        years = request.form.get("lease-years")
+        months = request.form.get("lease-months")
         new_lease["brokers"] = request.form.getlist("brokers[]")
         new_lease["lease_agreement_file_base64"] = request.form.get("lease-agreement-file-base64")
         new_lease["lease_commission_file_base64"] = request.form.get("lease-commission-agreement-file-base64")
         new_lease["lease_commission_invoice_file_base64"] = request.form.get("lease-commission-invoice-file-base64")
         new_lease["lease_state"] = convert_state_code_to_full_name(new_lease["lease_state"])
+        new_lease["lease_term_length"] = f"{years} Years, {months} Months"
         result = leases.insert_one(new_lease)
         if not result.inserted_id:
             raise Exception("Error Inserting the Lease")

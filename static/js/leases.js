@@ -17,7 +17,8 @@ $(document).ready(function () {
 	const lesseePhoneNumberInput = document.getElementById("lease-lessee-phone");
 	const editLessorPhoneNumberInput = document.getElementById("edit-lease-lessor-phone");
 	const editLesseePhoneNumberInput = document.getElementById("edit-lease-lessee-phone");
-	const leaseTermInput = document.getElementById("lease-term-length");
+	document.getElementById('years').addEventListener('change', adjustTerm);
+	document.getElementById('months').addEventListener('change', adjustTerm);
 	sqFootageInput.addEventListener("input", () => formatSqFootage(sqFootageInput));
 	editsqFootageInput.addEventListener("input", () => formatSqFootage(editsqFootageInput));
 	lessorPhoneNumberInput.addEventListener("input", () => formatPhoneNumber(lessorPhoneNumberInput));
@@ -78,6 +79,27 @@ $(document).ready(function () {
 		const formattedNumber = phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
 		return formattedNumber;
 	}
+
+	function adjustTerm() {
+		const yearsSelect = document.getElementById('years');
+		const monthsSelect = document.getElementById('months');
+		const years = parseInt(yearsSelect.value);
+		const months = parseInt(monthsSelect.value);
+
+		if (months === 12) {
+			monthsSelect.value = "0";
+			yearsSelect.value = (years + 1).toString();
+		}
+	}
+
+	document.addEventListener('DOMContentLoaded', function () {
+		document.getElementById('submit-button').addEventListener('click', function () {
+			var years = document.getElementById('years').value;
+			var months = document.getElementById('months').value;
+			var leaseTermLength = years + " Years " + months + " Months";
+			document.getElementById('lease-term-cell').innerText = leaseTermLength;
+		});
+	});
 
 	function formatSqFootage(inputElement) {
 		let numericValue = inputElement.value.replace(/[^0-9.,]/g, "");
