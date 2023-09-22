@@ -27,6 +27,58 @@ $(document).ready(function () {
 	$(document).on("click", "#next-page", () => updateSearchLeases("next"));
 	$(document).on("click", "#prev-page", () => updateSearchLeases("prev"));
 
+	$(document).ready(function () {
+		const iconVisible = $(".fa-caret-right");
+		const iconHidden = $(".fa-caret-down");
+		iconHidden.hide();
+		$(".centered-table tbody tr[data-lease-id] button").click(function () {
+			$(this)
+				.closest(".centered-table tbody tr[data-lease-id]")
+				.next(".hidden-row-headers")
+				.toggle();
+			if (
+				$(this)
+					.closest(".centered-table tbody tr[data-lease-id]")
+					.hasClass("selected-child")
+			) {
+				$(this)
+					.closest(".centered-table tbody tr[data-lease-id]")
+					.next(".hidden-row-headers")
+					.find(".nested-table tr")
+					.addClass("selected-child");
+			} else {
+				$(this)
+					.closest(".centered-table tbody tr[data-lease-id]")
+					.next(".hidden-row-headers")
+					.find(".nested-table tr")
+					.addClass("selected-parent");
+			}
+			if (
+				$(this)
+					.closest(".centered-table tbody tr[data-lease-id]")
+					.next(".hidden-row-headers")
+					.is(":hidden")
+			) {
+				$(this).find(".fa-caret-right").show();
+				$(this).find(".fa-caret-down").hide();
+			} else {
+				$(this).find(".fa-caret-right").hide();
+				$(this).find(".fa-caret-down").show();
+			}
+			$(this).next().next(".hidden-row").toggle();
+		});
+	});
+
+	$(document).ready(function () {
+		$(".parent-row").each(function (index) {
+			if (index % 3 === 0) {
+				$(this).addClass("selected-parent");
+			} else {
+				$(this).addClass("selected-child");
+			}
+		});
+	});
+
 	function toggleErrorClass($element, isError) {
 		isError ? $element.addClass("error") : $element.removeClass("error");
 	}
@@ -98,57 +150,6 @@ $(document).ready(function () {
 		inputElement.value = formattedSqft;
 	}
 
-	$(document).ready(function () {
-		const iconHidden = $(".fa-caret-down");
-		iconHidden.hide();
-		$(".centered-table tbody tr[data-lease-id] button").click(function () {
-			$(this)
-				.closest(".centered-table tbody tr[data-lease-id]")
-				.next(".hidden-row-headers")
-				.toggle();
-			if (
-				$(this)
-					.closest(".centered-table tbody tr[data-lease-id]")
-					.hasClass("selected-child")
-			) {
-				$(this)
-					.closest(".centered-table tbody tr[data-lease-id]")
-					.next(".hidden-row-headers")
-					.find(".nested-table tr")
-					.addClass("selected-child");
-			} else {
-				$(this)
-					.closest(".centered-table tbody tr[data-lease-id]")
-					.next(".hidden-row-headers")
-					.find(".nested-table tr")
-					.addClass("selected-parent");
-			}
-			if (
-				$(this)
-					.closest(".centered-table tbody tr[data-lease-id]")
-					.next(".hidden-row-headers")
-					.is(":hidden")
-			) {
-				$(this).find(".fa-caret-right").show();
-				$(this).find(".fa-caret-down").hide();
-			} else {
-				$(this).find(".fa-caret-right").hide();
-				$(this).find(".fa-caret-down").show();
-			}
-			$(this).next().next(".hidden-row").toggle();
-		});
-	});
-
-	$(document).ready(function () {
-		$(".parent-row").each(function (index) {
-			if (index % 3 === 0) {
-				$(this).addClass("selected-parent");
-			} else {
-				$(this).addClass("selected-child");
-			}
-		});
-	});
-
 	$("#add-lease-button").click(function () {
 		resetModalSteps($("#add-lease-modal"));
 		$("body").addClass("modal-open");
@@ -169,6 +170,10 @@ $(document).ready(function () {
 		const actionModal = $("#action-modal");
 		const selectedRow = $(`.centered-table tbody tr[data-lease-id="${lease_id}"]`);
 		const getCellText = (index) => selectedRow.find(`td:nth-child(${index})`).text().trim();
+		const getHiddenCellText = (index) => {
+			const hiddenRow = selectedRow.next('.hidden-row-headers');
+			return hiddenRow.find(`.nested-table-rows td:nth-child(${index})`).text().trim();
+		}
 		const getEmailFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="mailto:"]`).attr("href").replace("mailto:", "").trim();
 		const getPhoneFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="tel:"]`).attr("href").replace("tel:", "").trim();
 		const getNameFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="mailto:"]`).text().trim();
@@ -196,6 +201,8 @@ $(document).ready(function () {
 		setInputValue("#edit-lease-lessee-name", getNameFromCell(8));
 		setInputValue("#edit-lease-lessee-email", getEmailFromCell(8));
 		setInputValue("#edit-lease-lessee-phone", getPhoneFromCell(8));
+		setInputValue("#edit-lease-referral-source", getHiddenCellText(1));
+		setInputValue("#edit-lease-invoice-contact", getHiddenCellText(3));
 	});
 
 
@@ -255,9 +262,6 @@ $(document).ready(function () {
 		$row.append($("<td>").addClass("brokers").append(brokerElements));
 		$row.append($("<td>").html(result.lease_agreement_file_base64 ? `<form method="POST"><a href="/download_lease_agreement_pdf/${result._id}">Fully Executed</a></form>` : "Pending"));
 		$row.append($("<td>").html(result.lease_commission_file_base64 ? `<form method="POST"><a href="/download_lease_commission_pdf/${result._id}">Fully Executed</a></form>` : "Pending"));
-		$row.append($("<td>").html(result.lease_commission_invoice_file_base64 ? `<form method="POST"><a href="/download_lease_commission_invoice_pdf/${result._id}">Fully Executed</a></form>` : "Pending"));
-
-
 		return $row;
 	};
 
@@ -334,7 +338,9 @@ $(document).ready(function () {
 						lease_lessee_entity: $("#edit-lease-lessee-entity").val(),
 						lease_lessee_name: $("#edit-lease-lessee-name").val(),
 						lease_lessee_email: $("#edit-lease-lessee-email").val(),
-						lease_lessee_phone: $("#edit-lease-lessee-phone").val()
+						lease_lessee_phone: $("#edit-lease-lessee-phone").val(),
+						lease_referral_source: $("#edit-lease-referral-source").val(),
+						lease_invoice_contact: $("#edit-lease-invoice-contact").val()
 					};
 					console.log(data);
 					$.ajax({

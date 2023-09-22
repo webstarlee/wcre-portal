@@ -221,6 +221,35 @@ body {
     cursor: pointer;
 }
 
+
+.selected-parent {
+    background-color: #f2fcfe;
+}
+
+.selected-child {
+    background-color: #f0f0f0;
+}
+
+.nested-table-rows:hover {
+    background-color: rgb(57, 112, 206) !important;
+    color: white !important;
+    cursor: pointer;
+}
+
+.centered-table tr:hover {
+    background-color: rgb(57, 112, 206);
+    color: white !important;
+    cursor: pointer;
+}
+
+.centered-table tr:hover .fa-caret-right {
+    color: white !important;
+}
+
+.centered-table tr:hover .fa-caret-down {
+    color: white !important;
+}
+
 .row-hover:hover {
     background-color: rgb(57, 112, 206);
     color: white !important;
@@ -233,13 +262,27 @@ body {
     color: white;
 }
 
-.centered-table th {
-    background-color: #1c92d2;
+.centered-table .hidden-row-headers {
+    background-color: transparent !important;
     width: 150px;
-    color: white;
+    color: black !important;
 }
 
-.centered-table th:nth-child(1), .centered-table th:nth-child(2), .centered-table th:nth-child(3), .centered-table th:nth-child(4), .centered-table th:nth-child(5), .centered-table th:nth-child(6), .centered-table th:nth-child(7), .centered-table th:nth-child(8), .centered-table th:nth-child(9) {
+.centered-table .hidden-row-headers:hover {
+    background-color: transparent !important;
+    width: 150px;
+    color: black !important;
+}
+
+.centered-table th:nth-child(1),
+.centered-table th:nth-child(2),
+.centered-table th:nth-child(3),
+.centered-table th:nth-child(4),
+.centered-table th:nth-child(5),
+.centered-table th:nth-child(6),
+.centered-table th:nth-child(7),
+.centered-table th:nth-child(8),
+.centered-table th:nth-child(9) {
     max-width: 150px;
 }
 
@@ -646,7 +689,8 @@ body.modal-open {
     column-gap: 10px;
 }
 
-.hidden-row, .hidden-row-headers {
+.hidden-row,
+.hidden-row-headers {
     background-color: #f5f5f5;
     display: none;
 }

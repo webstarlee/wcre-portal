@@ -62,13 +62,18 @@
               <th>Brokers</th>
               <th>Lease Agreement</th>
               <th>Commission Agreement</th>
-              <th>Commission Invoice</th>
             </tr>
           </thead>
           <tbody>
             {% for lease in leases %} 
-            <tr data-lease-id="{{ lease._id }}">
-              <td>{{ lease.lease_property_type }}</td>
+            <tr class="parent-row" data-lease-id="{{ lease._id }}">
+              <td class="d-flex justify-content-center align-items-center gap-2 w-auto">
+                <button data-lease-id="{{ lease._id }}" class="bg-transparent border-0">
+                  <i class="fa fa-caret-right fs-6" aria-hidden="true"></i>
+                  <i class="fa fa-caret-down fs-6" aria-hidden="true"></i>
+                </button>
+                {{lease.lease_property_type }}
+              </td>
               <td>{{ lease.lease_sqft }}</td>
               <td>{{ lease.lease_term_length }}</td>
               </td>
@@ -100,12 +105,29 @@
               <td class="brokers"> {% for broker in lease.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
               <td><form method="POST"> {% if lease.lease_agreement_file_base64 %} <a href="{{ url_for('download_lease_agreement_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form></td>
               <td><form method="POST"> {% if lease.lease_commission_file_base64 %} <a href="{{ url_for('download_lease_commission_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form></td>
-              <td><form method="POST"> {% if lease.lease_commission_invoice_file_base64 %} <a href="{{ url_for('download_lease_commission_invoice_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form></td>
+            </tr> 
+            <tr class="hidden-row-headers">
+              <td class="border-0" colspan="100">
+                <table class="mx-auto nested-table" style="width: 99%">
+                  <tbody>
+                    <tr class="child-rows">
+                      <th>Referral Source</th>
+                      <th>Commission Invoice</th>
+                      <th>Invoice Contact Information</th>
+                    </tr>
+                    <tr class="nested-table-rows">
+                      <td>{{ lease.lease_referral_source }}</td>
+                      <td><form method="POST"> {% if lease.lease_commission_invoice_file_base64 %} <a href="{{ url_for('download_lease_commission_invoice_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form></td>
+                      <td>{{ lease.lease_invoice_contact }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
             </tr> 
             {% endfor %} 
           </tbody>
           <table>
-            {{ pagination.links }}
+          {{ pagination.links }}
       </div>
       <div id="action-modal" class="action-modal">
         <button id="delete-button">Delete Lease</button>
@@ -226,8 +248,8 @@
                 </select>
               </div>
               <div class="form-group increased-line-height">
-                <label for="lessee-invoice-contact">Invoice Contact Information:</label>
-                <textarea id="lessee-invoice-contact" name="lessee-invoice-contact" placeholder="Enter Invoice Contact Information:" required></textarea>
+                <label for="lease-invoice-contact">Invoice Contact Information:</label>
+                <textarea id="lease-invoice-contact" name="lease-invoice-contact" placeholder="Enter Invoice Contact Information:" required></textarea>
               </div>                      
               <div class="form-group">
                 <button id="upload-lease-agreement" type="button"> Upload Lease Agreement </button>
@@ -341,6 +363,10 @@
                   <option value="Other">Other</option>
                 </select>
               </div>
+              <div class="form-group increased-line-height">
+                <label for="edit-lease-invoice-contact">Invoice Contact Information:</label>
+                <textarea id="edit-lease-invoice-contact" name="edit-lease-invoice-contact" placeholder="Enter Invoice Contact Information:" required></textarea>
+              </div>      
               <div class="form-group">
                 <button id="edit-upload-lease-agreement" type="button"> Upload Lease Agreement </button>
                 <input id="edit-lease-agreement" type="file" style="display: none" accept=".pdf" />

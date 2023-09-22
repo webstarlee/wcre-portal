@@ -601,6 +601,7 @@ def submit_lease():
             "lease-city",
             "lease-state",
             "lease-sqft",
+            "lease-term-length",
             "lease-property-type",
             "lease-lessor-entity",
             "lease-lessor-name",
@@ -611,6 +612,8 @@ def submit_lease():
             "lease-lessee-name",
             "lease-lessee-email",
             "lease-lessee-phone",
+            "lease-referral-source",
+            "lease-invoice-contact"
         ]
         new_lease = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
         new_lease["brokers"] = request.form.getlist("brokers[]")
@@ -820,6 +823,8 @@ def edit_lease(lease_id):
         "lease_lessee_name",
         "lease_lessee_email",
         "lease_lessee_phone",
+        "lease_referral_source",
+        "lease_invoice_contact"
     ]
     return edit_record(lease_id, leases, fields)
 
