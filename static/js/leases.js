@@ -17,12 +17,14 @@ $(document).ready(function () {
 	const lesseePhoneNumberInput = document.getElementById("lease-lessee-phone");
 	const editLessorPhoneNumberInput = document.getElementById("edit-lease-lessor-phone");
 	const editLesseePhoneNumberInput = document.getElementById("edit-lease-lessee-phone");
+	const leaseTermInput = document.getElementById("lease-term-length");
+	leaseTermInput.addEventListener("input", () => formatLeaseTerm(leaseTermInput));
 	sqFootageInput.addEventListener("input", () => formatSqFootage(sqFootageInput));
+	editsqFootageInput.addEventListener("input", () => formatSqFootage(editsqFootageInput));
 	lessorPhoneNumberInput.addEventListener("input", () => formatPhoneNumber(lessorPhoneNumberInput));
 	lesseePhoneNumberInput.addEventListener("input", () => formatPhoneNumber(lesseePhoneNumberInput));
 	editLessorPhoneNumberInput.addEventListener("input", () => formatPhoneNumber(editLessorPhoneNumberInput));
 	editLesseePhoneNumberInput.addEventListener("input", () => formatPhoneNumber(editLesseePhoneNumberInput));
-	editsqFootageInput.addEventListener("input", () => formatSqFootage(editsqFootageInput));
 	$(document).on("input", "#search-input", () => updateSearchLeases("input"));
 	$(document).on("click", "#next-page", () => updateSearchLeases("next"));
 	$(document).on("click", "#prev-page", () => updateSearchLeases("prev"));
@@ -76,6 +78,7 @@ $(document).ready(function () {
 			}
 		});
 	});
+
 
 	function toggleErrorClass($element, isError) {
 		isError ? $element.addClass("error") : $element.removeClass("error");
@@ -147,6 +150,7 @@ $(document).ready(function () {
 		const formattedSqft = numberValue ? `${formattedNumber}${cents} SF` : "";
 		inputElement.value = formattedSqft;
 	}
+
 
 	$("#add-lease-button").click(function () {
 		resetModalSteps($("#add-lease-modal"));
