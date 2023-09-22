@@ -28,7 +28,6 @@ $(document).ready(function () {
 	$(document).on("click", "#prev-page", () => updateSearchLeases("prev"));
 
 	$(document).ready(function () {
-		const iconVisible = $(".fa-caret-right");
 		const iconHidden = $(".fa-caret-down");
 		iconHidden.hide();
 		$(".centered-table tbody tr[data-lease-id] button").click(function () {
@@ -68,10 +67,9 @@ $(document).ready(function () {
 			$(this).next().next(".hidden-row").toggle();
 		});
 	});
-
 	$(document).ready(function () {
 		$(".parent-row").each(function (index) {
-			if (index % 3 === 0) {
+			if (index % 2 === 0) {
 				$(this).addClass("selected-parent");
 			} else {
 				$(this).addClass("selected-child");
