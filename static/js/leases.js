@@ -18,7 +18,6 @@ $(document).ready(function () {
 	const editLessorPhoneNumberInput = document.getElementById("edit-lease-lessor-phone");
 	const editLesseePhoneNumberInput = document.getElementById("edit-lease-lessee-phone");
 	const leaseTermInput = document.getElementById("lease-term-length");
-	leaseTermInput.addEventListener("input", () => formatLeaseTerm(leaseTermInput));
 	sqFootageInput.addEventListener("input", () => formatSqFootage(sqFootageInput));
 	editsqFootageInput.addEventListener("input", () => formatSqFootage(editsqFootageInput));
 	lessorPhoneNumberInput.addEventListener("input", () => formatPhoneNumber(lessorPhoneNumberInput));
@@ -28,56 +27,6 @@ $(document).ready(function () {
 	$(document).on("input", "#search-input", () => updateSearchLeases("input"));
 	$(document).on("click", "#next-page", () => updateSearchLeases("next"));
 	$(document).on("click", "#prev-page", () => updateSearchLeases("prev"));
-
-	$(document).ready(function () {
-		const iconHidden = $(".fa-caret-down");
-		iconHidden.hide();
-		$(".centered-table tbody tr[data-lease-id] button").click(function () {
-			$(this)
-				.closest(".centered-table tbody tr[data-lease-id]")
-				.next(".hidden-row-headers")
-				.toggle();
-			if (
-				$(this)
-					.closest(".centered-table tbody tr[data-lease-id]")
-					.hasClass("selected-child")
-			) {
-				$(this)
-					.closest(".centered-table tbody tr[data-lease-id]")
-					.next(".hidden-row-headers")
-					.find(".nested-table tr")
-					.addClass("selected-child");
-			} else {
-				$(this)
-					.closest(".centered-table tbody tr[data-lease-id]")
-					.next(".hidden-row-headers")
-					.find(".nested-table tr")
-					.addClass("selected-parent");
-			}
-			if (
-				$(this)
-					.closest(".centered-table tbody tr[data-lease-id]")
-					.next(".hidden-row-headers")
-					.is(":hidden")
-			) {
-				$(this).find(".fa-caret-right").show();
-				$(this).find(".fa-caret-down").hide();
-			} else {
-				$(this).find(".fa-caret-right").hide();
-				$(this).find(".fa-caret-down").show();
-			}
-			$(this).next().next(".hidden-row").toggle();
-		});
-	});
-	$(document).ready(function () {
-		$(".parent-row").each(function (index) {
-			if (index % 2 === 0) {
-				$(this).addClass("selected-parent");
-			} else {
-				$(this).addClass("selected-child");
-			}
-		});
-	});
 
 
 	function toggleErrorClass($element, isError) {
@@ -98,8 +47,10 @@ $(document).ready(function () {
 
 
 	function validateBrokers() {
+		console.log("checking");
 		var $brokerInput = $("#lease-brokers");
 		var isValid = $brokerInput.val() && $brokerInput.val().length > 0;
+		console.log(isValid)
 		toggleErrorClass($brokerInput, !isValid);
 		return isValid;
 	}
@@ -131,7 +82,6 @@ $(document).ready(function () {
 	function formatSqFootage(inputElement) {
 		let numericValue = inputElement.value.replace(/[^0-9.,]/g, "");
 		numericValue = numericValue.replace(/\.+/g, ".").replace(/,+/g, ",");
-
 		const parts = numericValue.split(".");
 		if (parts.length > 1) {
 			parts[1] = parts[1].substring(0, 2);
@@ -479,9 +429,7 @@ $(document).ready(function () {
 	});
 
 	$("#delete-button").click(function () {
-		const selectedRow = $(
-			'.centered-table tbody tr[data-lease-id="' + lease_id + '"]'
-		);
+		const selectedRow = $('.centered-table tbody tr[data-lease-id="' + lease_id + '"]');
 		const deleteModal = $("#action-modal");
 		$.ajax({
 			url: "/delete_lease/" + lease_id,
@@ -506,8 +454,8 @@ $(document).ready(function () {
 
 	$("#submit-lease-form").on("submit", function (e) {
 		e.preventDefault();
-		$("#add-lease-modal").css("display", "none");
 		if (validateStep() && validateBrokers()) {
+			$("#add-lease-modal").css("display", "none");
 			var formData = new FormData(this);
 			formData.append("lease-agreement-file-base64", $("#lease-agreement-file-base64").val());
 			formData.append("lease-commission-agreement-file-base64", $("#lease-commission-agreement-file-base64").val());
@@ -531,5 +479,58 @@ $(document).ready(function () {
 					showNotification("Error Uploading Lease", "error-notification");
 				});
 		}
+		else {
+			showNotification("Please Fill Out All Required Fields", "error-notification");
+		}
+	});
+
+	$(document).ready(function () {
+		const iconHidden = $(".fa-caret-down");
+		iconHidden.hide();
+		$(".centered-table tbody tr[data-lease-id] button").click(function () {
+			$(this)
+				.closest(".centered-table tbody tr[data-lease-id]")
+				.next(".hidden-row-headers")
+				.toggle();
+			if (
+				$(this)
+					.closest(".centered-table tbody tr[data-lease-id]")
+					.hasClass("selected-child")
+			) {
+				$(this)
+					.closest(".centered-table tbody tr[data-lease-id]")
+					.next(".hidden-row-headers")
+					.find(".nested-table tr")
+					.addClass("selected-child");
+			} else {
+				$(this)
+					.closest(".centered-table tbody tr[data-lease-id]")
+					.next(".hidden-row-headers")
+					.find(".nested-table tr")
+					.addClass("selected-parent");
+			}
+			if (
+				$(this)
+					.closest(".centered-table tbody tr[data-lease-id]")
+					.next(".hidden-row-headers")
+					.is(":hidden")
+			) {
+				$(this).find(".fa-caret-right").show();
+				$(this).find(".fa-caret-down").hide();
+			} else {
+				$(this).find(".fa-caret-right").hide();
+				$(this).find(".fa-caret-down").show();
+			}
+			$(this).next().next(".hidden-row").toggle();
+		});
+	});
+	$(document).ready(function () {
+		$(".parent-row").each(function (index) {
+			if (index % 2 === 0) {
+				$(this).addClass("selected-parent");
+			} else {
+				$(this).addClass("selected-child");
+			}
+		});
 	});
 });

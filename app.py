@@ -253,7 +253,6 @@ def view_listings():
             page_parameter="page", per_page_parameter="per_page"
         )
         per_page = 12
-
         total, listings_data = (
             (
                 listings.count_documents({}),

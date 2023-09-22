@@ -486,8 +486,8 @@ $(document).ready(function () {
 
 	$("#submit-listing-form").on("submit", function (e) {
 		e.preventDefault();
-		$("#add-listing-modal").css("display", "none");
 		if (validateStep() && validateBrokers() && validateDates()) {
+			$("#add-listing-modal").css("display", "none");
 			var formData = new FormData(this);
 			formData.append("listing-agreement-file-base64", $("#listing-agreement-file-base64").val());
 			formData.append("listing-amendment-file-base64", $("#listing-amendment-file-base64").val());
@@ -520,6 +520,9 @@ $(document).ready(function () {
 					showNotification("Error Getting Location Data", "error-notification");
 				}
 			});
+		}
+		else {
+			showNotification("Please Fill Out All Required Fields", "error-notification");
 		}
 	});
 });

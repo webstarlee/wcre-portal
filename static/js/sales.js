@@ -467,8 +467,8 @@ $(document).ready(function () {
 	});
 	$("#submit-sale-form").on("submit", function (e) {
 		e.preventDefault();
-		$("#add-sale-modal").css("display", "none");
 		if (validateStep() && validateBrokers()) {
+			$("#add-sale-modal").css("display", "none");
 			var formData = new FormData(this);
 			var fileBase64 = $("#sale-agreement-file-base64").val();
 			formData.append("fileBase64", fileBase64);
@@ -490,6 +490,9 @@ $(document).ready(function () {
 				.fail(function () {
 					showNotification("Error Uploading Listing", "error-notification");
 				});
+		}
+		else {
+			showNotification("Please Fill Out All Required Fields", "error-notification");
 		}
 	});
 });
