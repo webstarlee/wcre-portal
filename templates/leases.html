@@ -62,6 +62,7 @@
               <th>Brokers</th>
               <th>Lease Agreement</th>
               <th>Commission Agreement</th>
+              <th>Commission Invoice</th>
             </tr>
           </thead>
           <tbody>
@@ -97,12 +98,9 @@
                 </div>
               </td>
               <td class="brokers"> {% for broker in lease.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
-              <td>
-                <form method="POST"> {% if lease.lease_agreement_file_base64 %} <a href="{{ url_for('download_lease_agreement_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
-              </td>
-              <td>
-                <form method="POST"> {% if lease.lease_commission_file_base64 %} <a href="{{ url_for('download_lease_commission_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
-              </td>
+              <td><form method="POST"> {% if lease.lease_agreement_file_base64 %} <a href="{{ url_for('download_lease_agreement_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form></td>
+              <td><form method="POST"> {% if lease.lease_commission_file_base64 %} <a href="{{ url_for('download_lease_commission_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form></td>
+              <td><form method="POST"> {% if lease.lease_commission_invoice_file_base64 %} <a href="{{ url_for('download_lease_commission_invoice_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form></td>
             </tr> 
             {% endfor %} 
           </tbody>
@@ -173,7 +171,7 @@
               <h2 class="modal-step-title">New Lease - Lessee Information</h2>
               <div class="form-group">
                 <label for="lease-lessee-entity">Lessee Entity (DBA):</label>
-                <input type="text" id="lessee-lessee-entity" name="lessee-lessee-entity" placeholder= "Enter Lessee Entity:" required />
+                <input type="text" id="lease-lessee-entity" name="lease-lessee-entity" placeholder= "Enter Lessee Entity:" required />
               </div>
               <div class="form-group">
                 <label for="lease-lessee-name">Lessee Contact Name:</label>
@@ -232,11 +230,6 @@
                 <textarea id="lessee-invoice-contact" name="lessee-invoice-contact" placeholder="Enter Invoice Contact Information:" required></textarea>
               </div>                      
               <div class="form-group">
-                <button id="upload-lease-commission-invoice" type="button"> Upload Lease Commision Calculation Document </button>
-                <input id="lease-commission-invoice" type="file" style="display: none" accept=".pdf" />
-                <input type="hidden" id="lease-commision-invoice" name="lease-commission-invoice" />
-              </div>
-              <div class="form-group">
                 <button id="upload-lease-agreement" type="button"> Upload Lease Agreement </button>
                 <input id="lease-agreement" type="file" style="display: none" accept=".pdf" />
                 <input type="hidden" id="lease-agreement-file-base64" name="lease-agreement-file-base64" />
@@ -245,6 +238,11 @@
                 <button id="upload-lease-commission-agreement" type="button"> Upload Commission Agreement </button>
                 <input id="lease-commission-agreement" type="file" style="display: none" accept=".pdf" />
                 <input type="hidden" id="lease-commission-agreement-file-base64" name="lease-commission-agreement-file-base64" />
+              </div>
+              <div class="form-group">
+                <button id="upload-lease-commission-invoice" type="button"> Upload Lease Commision Calculation Document </button>
+                <input id="lease-commission-invoice" type="file" style="display: none" accept=".pdf" />
+                <input type="hidden" id="lease-commission-invoice-file-base64" name="lease-commission-invoice-file-base64" />
               </div>
             </div>
             <div class="modal-navigation">
@@ -312,7 +310,7 @@
             <div class="modal-step edit-form-step" id="edit-step3">
               <div class="form-group">
                 <label for="edit-lease-lessee-entity">Lessee Entity (DBA):</label>
-                <input type="text" id="edit-lessee-lessee-entity" name="edit-lessee-lessee-entity" placeholder= "Enter Lessee Entity:" required />
+                <input type="text" id="edit-lease-lessee-entity" name="edit-lease-lessee-entity" placeholder= "Enter Lessee Entity:" required />
               </div>
               <div class="form-group">
                 <label for="edit-lease-lessee-name">Lessee Contact Name:</label>
@@ -330,34 +328,7 @@
             <div class="modal-step edit-form-step" id="edit-step4">
               <div class="form-group">
                 <label for="edit-lease-term-length">Lease Term Length:</label>
-                <select id="edit-lease-years" name="edit-lease-years">
-                    <option value="0">0 Years</option>
-                    <option value="1">1 Year</option>
-                    <option value="2">2 Years</option>
-                    <option value="3">3 Years</option>
-                    <option value="4">4 Years</option>
-                    <option value="5">5 Years</option>
-                    <option value="6">6 Years</option>
-                    <option value="7">7 Years</option>
-                    <option value="8">8 Years</option>
-                    <option value="9">9 Years</option>
-                    <option value="10">10 Years</option>
-                </select>
-                <select id="edit-lease-months" name="edit-lease-months">
-                    <option value="0">0 Months</option>
-                    <option value="1">1 Month</option>
-                    <option value="2">2 Months</option>
-                    <option value="3">3 Months</option>
-                    <option value="4">4 Months</option>
-                    <option value="5">5 Months</option>
-                    <option value="6">6 Months</option>
-                    <option value="7">7 Months</option>
-                    <option value="8">8 Months</option>
-                    <option value="9">9 Months</option>
-                    <option value="10">10 Months</option>
-                    <option value="11">11 Months</option>
-                    <option value="12">12 Months</option>
-                </select>
+                <input type="text" id="edit-lease-term-length" name="edit-lease-term-length" placeholder="3 Years, 6 Months" />
               </div> 
               <div class="form-group">
                 <label for="edit-lease-referral-source">Referral Source:</label>
@@ -379,6 +350,11 @@
                 <button id="edit-upload-lease-commission-agreement" type="button"> Upload Commission Agreement </button>
                 <input id="edit-lease-commission-agreement" type="file" style="display: none" accept=".pdf" />
                 <input type="hidden" id="edit-lease-commission-agreement-file-base64" name="edit-lease-commission-agreement-file-base64" />
+              </div>
+              <div class="form-group">
+                <button id="edit-upload-lease-commission-invoice" type="button"> Upload Lease Commision Calculation Document </button>
+                <input id="edit-lease-commission-invoice" type="file" style="display: none" accept=".pdf" />
+                <input type="hidden" id="edit-lease-commission-invoice-file-base64" name="edit-lease-commission-invoice-file-base64" />
               </div>
             </div>
             <div class="modal-navigation">

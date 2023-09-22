@@ -4,9 +4,13 @@ $(document).ready(function () {
 	var editAgreementFileInput = document.getElementById("edit-lease-agreement");
 	var editUploadButtonAgreement = document.getElementById("edit-upload-lease-agreement");
 	var commissionFileInput = document.getElementById("lease-commission-agreement");
-	var uploadButtoncommission = document.getElementById("upload-lease-commission-agreement");
-	var editcommissionFileInput = document.getElementById("edit-lease-commission-agreement");
-	var editUploadButtoncommission = document.getElementById("edit-upload-lease-commission-agreement");
+	var uploadButtonCommission = document.getElementById("upload-lease-commission-agreement");
+	var editCommissionFileInput = document.getElementById("edit-lease-commission-agreement");
+	var editUploadButtonCommission = document.getElementById("edit-upload-lease-commission-agreement")
+	var commissionInvoiceFileInput = document.getElementById("lease-commission-invoice");
+	var uploadButtonCommissionInvoice = document.getElementById("upload-lease-commission-invoice");
+	var editCommissionInvoiceFileInput = document.getElementById("edit-lease-commission-invoice");
+	var editUploadButtonCommissionInvoice = document.getElementById("edit-upload-lease-commission-invoice")
 	const sqFootageInput = document.getElementById("lease-sqft");
 	const editsqFootageInput = document.getElementById("edit-lease-sqft");
 	const lessorPhoneNumberInput = document.getElementById("lease-lessor-phone");
@@ -167,29 +171,20 @@ $(document).ready(function () {
 		const getCellText = (index) => selectedRow.find(`td:nth-child(${index})`).text().trim();
 		const getEmailFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="mailto:"]`).attr("href").replace("mailto:", "").trim();
 		const getPhoneFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="tel:"]`).attr("href").replace("tel:", "").trim();
-		const getNameFromCell = (index) => getCellText(index).replace(getEmailFromCell(index), '').replace(getPhoneFromCell(index), '').trim();
+		const getNameFromCell = (index) => selectedRow.find(`td:nth-child(${index}) a[href^="mailto:"]`).text().trim();
 		const getLessorEntityFromCell = (index) => selectedRow.find(`td:nth-child(${index}) .lessor-entity`).text().trim();
 		const getLesseeEntityFromCell = (index) => selectedRow.find(`td:nth-child(${index}) .lessee-entity`).text().trim();
-		const setInputValue = (selector, value) => {
-			const element = $(selector);
-			if (element.is('select')) {
-				element.val(value).trigger('change');
-			} else {
-				element.val(value);
-			}
-		};
+		const setInputValue = (selector, value) => $(selector).val(value);
 		resetModalSteps(editModal);
 		$("body").addClass("modal-open");
 		$("#add-lease-modal").hide();
 		editModal.show();
 		editModal.find(".prev-step").addClass("hidden");
 		actionModal.hide();
-		const termLength = getCellText(3).match(/(\d+)\s*Years?,\s*(\d+)\s*Months?/i);
 		editModal.find(".modal-step-title").text("Edit Lease - " + getCellText(4));
 		setInputValue("#edit-lease-property-type", getCellText(1));
 		setInputValue("#edit-lease-sqft", getCellText(2));
-		setInputValue("#edit-lease-years", termLength[1]);
-		setInputValue("#edit-lease-months", termLength[2]);
+		setInputValue("#edit-lease-term-length", getCellText(3));
 		setInputValue("#edit-lease-street", getCellText(4));
 		setInputValue("#edit-lease-city", getCellText(5));
 		setInputValue("#edit-lease-state", getCellText(6));
@@ -245,10 +240,12 @@ $(document).ready(function () {
 			result.lease_city,
 			stateValue,
 			`<div class="contact-info">
+				<div class="lessor-entity">${result.lease_lessor_entity}</div>
 				<a href="mailto:${result.lease_lessor_email}">${result.lease_lessor_name}</a>
 				<a href="tel:${result.lease_lessor_phone}">${result.lease_lessor_phone}</a>
 			 </div>`,
 			`<div class="contact-info">
+				<div class="lessee-entity">${result.lease_lessee_entity}</div>
 				<a href="mailto:${result.lease_lessee_email}">${result.lease_lessee_name}</a>
 				<a href="tel:${result.lease_lessee_phone}">${result.lease_lessee_phone}</a>
 			 </div>`
@@ -258,6 +255,9 @@ $(document).ready(function () {
 		$row.append($("<td>").addClass("brokers").append(brokerElements));
 		$row.append($("<td>").html(result.lease_agreement_file_base64 ? `<form method="POST"><a href="/download_lease_agreement_pdf/${result._id}">Fully Executed</a></form>` : "Pending"));
 		$row.append($("<td>").html(result.lease_commission_file_base64 ? `<form method="POST"><a href="/download_lease_commission_pdf/${result._id}">Fully Executed</a></form>` : "Pending"));
+		$row.append($("<td>").html(result.lease_commission_invoice_file_base64 ? `<form method="POST"><a href="/download_lease_commission_invoice_pdf/${result._id}">Fully Executed</a></form>` : "Pending"));
+
+
 		return $row;
 	};
 
@@ -313,26 +313,30 @@ $(document).ready(function () {
 				nextStep.addClass("active-step");
 				updateUIBasedOnStep(nextStep, currentModal);
 			} else {
-				if (mode === "add"()) {
+				if (mode === "add") {
 					$("#submit-lease-form").submit();
 				} else if (mode === "edit" && $(this).text() === "Submit Lease Edits") {
 					$("#edit-lease-modal").css("display", "none");
 					var data = {
 						lease_property_type: $("#edit-lease-property-type").val(),
 						lease_sqft: $("#edit-lease-sqft").val(),
-						lease_years: $("#edit-lease-years").val(),
+						lease_term_length: $("#edit-lease-term-length").val(),
 						lease_agreement_file_base64: $("#edit-lease-agreement-file-base64").val(),
 						lease_commission_file_base64: $("#edit-lease-commission-agreement-file-base64").val(),
+						lease_commission_invoice_file_base64: $("#edit-lease-commission-invoice-file-base64").val(),
 						lease_street: $("#edit-lease-street").val(),
 						lease_city: $("#edit-lease-city").val(),
 						lease_state: $("#edit-lease-state").val(),
+						lease_lessor_entity: $("#edit-lease-lessor-entity").val(),
 						lease_lessor_name: $("#edit-lease-lessor-name").val(),
 						lease_lessor_email: $("#edit-lease-lessor-email").val(),
 						lease_lessor_phone: $("#edit-lease-lessor-phone").val(),
+						lease_lessee_entity: $("#edit-lease-lessee-entity").val(),
 						lease_lessee_name: $("#edit-lease-lessee-name").val(),
 						lease_lessee_email: $("#edit-lease-lessee-email").val(),
 						lease_lessee_phone: $("#edit-lease-lessee-phone").val()
 					};
+					console.log(data);
 					$.ajax({
 						url: "/edit_lease/" + lease_id,
 						type: "POST",
@@ -415,13 +419,23 @@ $(document).ready(function () {
 	},
 	{
 		inputElement: commissionFileInput,
-		buttonElement: uploadButtoncommission,
+		buttonElement: uploadButtonCommission,
 		resultElementId: "lease-commission-agreement-file-base64"
 	},
 	{
-		inputElement: editcommissionFileInput,
-		buttonElement: editUploadButtoncommission,
+		inputElement: editCommissionFileInput,
+		buttonElement: editUploadButtonCommission,
 		resultElementId: "edit-lease-commission-agreement-file-base64"
+	},
+	{
+		inputElement: commissionInvoiceFileInput,
+		buttonElement: uploadButtonCommissionInvoice,
+		resultElementId: "lease-commission-invoice-file-base64"
+	},
+	{
+		inputElement: editCommissionInvoiceFileInput,
+		buttonElement: editUploadButtonCommissionInvoice,
+		resultElementId: "edit-lease-commission-invoice-file-base64"
 	}
 	];
 
@@ -489,6 +503,7 @@ $(document).ready(function () {
 			var formData = new FormData(this);
 			formData.append("lease-agreement-file-base64", $("#lease-agreement-file-base64").val());
 			formData.append("lease-commission-agreement-file-base64", $("#lease-commission-agreement-file-base64").val());
+			formData.append("lease-commission-invoice-file-base64", $("#lease-commission-invoice-file-base64").val());
 			$.ajax({
 				url: "/submit_lease",
 				type: "POST",

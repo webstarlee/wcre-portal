@@ -436,6 +436,12 @@ def download_lease_agreement_pdf(lease_id):
 def download_lease_commission_pdf(lease_id):
     return send_pdf_response(leases, lease_id, "lease_commission_file_base64", "lease_commission.pdf")
 
+@app.route("/download_lease_commission_invoice_pdf/<lease_id>", methods=["GET"])
+@login_required
+def download_lease_commission_invoice_pdf(lease_id):
+    return send_pdf_response(leases, lease_id, "lease_commission_invoice_file_base64", "lease_commission_invoice.pdf")
+
+
 
 def handle_upload():
     if "file" not in request.files:
@@ -596,24 +602,21 @@ def submit_lease():
             "lease-state",
             "lease-sqft",
             "lease-property-type",
+            "lease-lessor-entity",
             "lease-lessor-name",
             "lease-lessor-email",
             "lease-lessor-phone",
+            "lease-lessee-entity",
+            "lease-lessee-name",
             "lease-lessee-name",
             "lease-lessee-email",
             "lease-lessee-phone",
         ]
         new_lease = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
-        years = request.form.get("lease-years")
-        months = request.form.get("lease-months")
-        new_lease["lease_term_length"] = f"{years} Years, {months} Months"
         new_lease["brokers"] = request.form.getlist("brokers[]")
-        new_lease["lease_agreement_file_base64"] = request.form.get(
-            "lease-agreement-file-base64"
-        )
-        new_lease["lease_commission_file_base64"] = request.form.get(
-            "lease-commission-agreement-file-base64"
-        )
+        new_lease["lease_agreement_file_base64"] = request.form.get("lease-agreement-file-base64")
+        new_lease["lease_commission_file_base64"] = request.form.get("lease-commission-agreement-file-base64")
+        new_lease["lease_commission_invoice_file_base64"] = request.form.get("lease-commission-invoice-file-base64")
         new_lease["lease_state"] = convert_state_code_to_full_name(new_lease["lease_state"])
         result = leases.insert_one(new_lease)
         if not result.inserted_id:
@@ -793,7 +796,8 @@ def edit_lease(lease_id):
     existing_lease = leases.find_one({"_id": ObjectId(lease_id)})
     base64_fields = [
         'lease_agreement_file_base64',
-        'lease_commission_file_base64'
+        'lease_commission_file_base64',
+        'lease_commission_invoice_file_base64'
     ]
     for field in base64_fields:
         if not request.json.get(field) and existing_lease.get(field):
@@ -805,14 +809,17 @@ def edit_lease(lease_id):
         "lease_city",
         "lease_sqft",
         "lease_property_type",
-        "lease_price",
         "lease_term_length",
         "lease_percentage_space"
     ] + base64_fields + [
+        "lease_lessor_entity",
         "lease_lessor_name",
         "lease_lessor_email",
+        "lease_lessor_phone",
+        "lease_lessee_entity",
         "lease_lessee_name",
-        "lease_lessee_email"
+        "lease_lessee_email",
+        "lease_lessee_phone",
     ]
     return edit_record(lease_id, leases, fields)
 
@@ -826,7 +833,7 @@ def search_in_collection(collection, fields, page, search_query, items_per_page=
     query = {"$or": [{field: regex_query} for field in fields]}
     search_results = (
         collection.find(query)
-        .sort("_id", -1)
+        .sort("_id", 1)
         .skip((page - 1) * items_per_page)
         .limit(items_per_page)
     )
@@ -902,13 +909,15 @@ def search_leases():
         "lease_sqft",
         "lease_percentage_space",
         "lease_term_length",
-        "lease_seller_name",
-        "lease_seller_email",
-        "lease_seller_phone",
+        "lease_lessor_entity",
+        "lease_lessor_name",
+        "lease_lessor_email",
+        "lease_lessor_phone",
         "brokers",
-        "lease_buyer",
-        "lease_buyer_email",
-        "lease_buyer_phone",
+        "lease_lessee_entity",
+        "lease_lessee_name",
+        "lease_lesse_email",
+        "lease_lessee_phone",
         "lease_end_date",
         "lease_type",
         "lease_price",
