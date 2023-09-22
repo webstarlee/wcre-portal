@@ -68,7 +68,6 @@
             </tr>
           </thead>
           <tbody> {% for lease in leases %} <tr data-lease-id="{{ lease._id }}">
-              <!-- <td class="d-flex justify-content-center align-items-center gap-2 w-auto"><button data-lease-id="{{ lease._id }}" class="bg-transparent border-0"><i class="fa fa-caret-right fs-6" aria-hidden="true"></i><i class="fa fa-caret-down fs-6" aria-hidden="true"></i></button> -->
               <td>{{lease.lease_property_type }}</td>
               <td>{{ lease.lease_sqft }}</td>
               <td>{{ lease.lease_term_length }}</td>
@@ -96,9 +95,10 @@
               <td>{{ lease.lease_referral_source }}</td>
               <td>{{ lease.lease_invoice_contact }}</td>
             </tr>
-            <!-- <tr class="hidden-row-headers"><td class="border-0" colspan="100"><table class="mx-auto nested-table" style="width: 99%"><tbody><tr class="child-rows"><th>Referral Source</th><th>Commission Invoice</th><th>Invoice Contact Information</th></tr><tr class="nested-table-rows"><td>{{ lease.lease_referral_source }}</td><td><form method="POST"> {% if lease.lease_commission_invoice_file_base64 %} <a href="{{ url_for('download_lease_commission_invoice_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form></td><td>{{ lease.lease_invoice_contact }}</td></tr></tbody></table></td></tr>  --> {% endfor %} </tbody>
+            {% endfor %} 
+          </tbody>
           <table>
-            {{ pagination.links }}
+          {{ pagination.links }}
       </div>
       <div id="action-modal" class="action-modal">
         <button id="delete-button">Delete Lease</button>

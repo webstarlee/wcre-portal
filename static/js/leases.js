@@ -422,7 +422,7 @@ $(document).ready(function () {
 
 	let lease_id = null;
 	var isAdmin = $("body").data("is-admin") === "True";
-	$(".centered-table tbody").on("contextmenu", function (e) {
+	$(".centered-table tbody").on("contextmenu", "tr", function (e) {
 		e.preventDefault();
 		if (isAdmin) {
 			const actionModal = $("#action-modal");
@@ -437,6 +437,7 @@ $(document).ready(function () {
 		lease_id = $(this).data("lease-id");
 		console.log("Lease ID:", lease_id);
 	});
+
 
 
 	$(document).bind("click", function (e) {
