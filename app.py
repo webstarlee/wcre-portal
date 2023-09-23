@@ -55,12 +55,12 @@ try:
     load_dotenv() 
     app.config.update(
         SECRET_KEY=os.getenv("SECRET_KEY"),
-        MAIL_SERVER="smtp.gmail.com",
-        MAIL_PORT=465,
+        MAIL_SERVER="smtp.office365.com",
+        MAIL_PORT=587,
         MAIL_USERNAME=os.getenv("EMAIL_USER"),
         MAIL_PASSWORD=os.getenv("EMAIL_PW"),
-        MAIL_USE_TLS=False,
-        MAIL_USE_SSL=True,
+        MAIL_USE_TLS=True,
+        MAIL_USE_SSL=False,
         SCHEDULER_API_ENABLED=True,
         PERMANENT_SESSION_LIFETIME=timedelta(minutes=15)
     )
@@ -71,7 +71,7 @@ try:
     login_manager = LoginManager(app)
     login_manager.login_view = "login"
 except Exception as e:
-    logger.error(f"Error Initializing Portal: {str(e)}")
+    logger.exception("Error Initializing Portal")
 else:
     try:
         client = MongoClient(
@@ -92,7 +92,7 @@ else:
         fs = GridFS(db)
         logger.info("Connected to MongoDB Successfully")
     except Exception as e:
-        logger.error(f"Error Connecting to MongoDB: {str(e)}")
+        logger.exception("Error Connecting to MongoDB")
     else:
         logger.info("Initialization Successful")
 
@@ -476,7 +476,7 @@ def submit_document():
             {"status": "success", "redirect": url_for("documents")}, 200
         )
     except Exception as e:
-        logger.error(e)
+        logger.exception("Error Occurred While Submitting The Document")
         return (
             jsonify(
                 {
@@ -527,7 +527,7 @@ def submit_listing():
             {"status": "success", "redirect": url_for("view_listings")}, 200
         )
     except Exception as e:
-        logger.error(e)
+        logger.exception("Error Occurred While Submitting The Listing")
         return (
             jsonify(
                 {
@@ -579,7 +579,7 @@ def submit_sale():
             {"status": "success", "redirect": url_for("view_sales")}, 200
         )
     except Exception as e:
-        logger.error(e)
+        logger.exception("Error Occurred While Submitting The Sale")
         return (
             jsonify(
                 {
@@ -636,7 +636,7 @@ def submit_lease():
             {"status": "success", "redirect": url_for("view_leases")}, 200
         )
     except Exception as e:
-        logger.error(e)
+        logger.exception("Error Occurred While Submitting The Lease")
         return (
             jsonify(
                 {
@@ -935,4 +935,4 @@ def search_leases():
 
 Talisman(app, content_security_policy=None)
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=6969, debug=True)
+    app.run(host="0.0.0.0", port=6969, debug=False)
