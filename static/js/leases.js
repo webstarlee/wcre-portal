@@ -232,6 +232,9 @@ $(document).ready(function () {
 		$row.append($("<td>").addClass("brokers").append(brokerElements));
 		$row.append($("<td>").html(result.lease_agreement_file_base64 ? `<form method="POST"><a href="/download_lease_agreement_pdf/${result._id}">Fully Executed</a></form>` : "Pending"));
 		$row.append($("<td>").html(result.lease_commission_file_base64 ? `<form method="POST"><a href="/download_lease_commission_pdf/${result._id}">Fully Executed</a></form>` : "Pending"));
+		$row.append($("<td>").html(result.lease_commission_invoice_file_base64 ? `<form method="POST"><a href="/download_lease_commission_invoice_pdf/${result._id}">Fully Executed</a></form>` : "Pending"));
+		result.lease_referral_source;
+		result.lease_invoice_contact;
 		return $row;
 	};
 
