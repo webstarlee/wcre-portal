@@ -52,13 +52,15 @@
   </head>
   <body>
     <div class="container">
-      <h1> New Sale Submitted By: {{ current_user.fullname }}: </h1>
+      <h1> New Sale Submitted By: {{ current_user.fullname }}</h1>
       <div class="sale-details">
-        <p><span class="sale-label">Street:</span><span class="sale-value">{{ sale.sale_street }}</span></p>
-        <p><span class="sale-label">Price:</span><span class="sale-value">{{ sale.sale_price }}</span></p>
-        <p><span class="sale-label">Closing Date:</span><span class="sale-value">{{ sale.sale_end_date }}</span></p>
-        <p><span class="sale-label">Seller:</span><span class="sale-value">{{ sale.sale_seller_name }}</span></p>
-        <p><span class="sale-label">Buyer:</span><span class="sale-value">{{ sale.sale_buyer_name }}</span></p>
+        <p><span class="sale-label">Property Address:</span> <span class="sale-value">{{ sale.sale_street }}</span></p>
+        <p><span class="sale-label">Price:</span> <span class="sale-value">{{ sale.sale_price }}</span></p>
+        <p><span class="sale-label">Closing Date:</span> <span class="sale-value">{{ sale.sale_end_date }}</span></p>
+        <p><span class="sale-label">Seller Entity:</span> <span class="sale-value">{{ sale.sale_seller_entity }}</span></p>
+        <p><span class="sale-label">Seller:</span> <span class="sale-value">{{ sale.sale_seller_name }}</span></p>
+        <p><span class="sale-label">Buyer Entity:</span> <span class="sale-value">{{ sale.sale_buyer_entity }}</span></p>
+        <p><span class="sale-label">Buyer:</span> <span class="sale-value">{{ sale.sale_buyer_name }}</span></p>
         <p>For more details, please view the sale on the Management Portal.</p>
       </div>
       <div class="footer">
