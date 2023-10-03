@@ -82,3 +82,4 @@ premailer==3.10.0
 flask-talisman==1.0.0
 sentry-sdk==1.29.2
 Flask-APScheduler==1.12.4
+boto3==1.28.58

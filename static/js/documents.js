@@ -76,6 +76,7 @@ $(document).ready(function () {
     var formData = new FormData();
     formData.append("file", file);
     uploadButton.textContent = "Uploading Document...";
+    uploadButton.disabled = true;
     $.ajax({
       url: "/upload_pdf",
       type: "POST",
@@ -86,6 +87,7 @@ $(document).ready(function () {
         if (data.success) {
           uploadButton.textContent = "Document Uploaded ✔ " + "(" + file.name + ")";
           document.getElementById("document-file-id").value = data["fileId"];
+          uploadButton.disabled = false;
           document.getElementById("submit-button").disabled = false;
         } else {
           showNotification("Error Uploading Document", "error-notification");
