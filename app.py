@@ -1,5 +1,5 @@
 import os
-from flask import Flask, jsonify, make_response, render_template, redirect, stream_with_context, url_for, request, session
+from flask import Flask, Response, jsonify, make_response, render_template, redirect, stream_with_context, url_for, request, session, abort
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from flask_apscheduler import APScheduler
 from pymongo import MongoClient
@@ -7,11 +7,8 @@ from datetime import datetime, timedelta
 from flask_bcrypt import Bcrypt
 from models import User
 from flask_paginate import Pagination, get_page_args
-from flask import redirect, url_for, abort
 from bson.objectid import ObjectId
-from gridfs import GridFS
 from dotenv import load_dotenv
-from flask import Flask, Response
 from datetime import datetime
 import boto3
 from botocore.exceptions import NoCredentialsError
@@ -27,10 +24,6 @@ import logging
 import sentry_sdk
 from flask import Flask
 from sentry_sdk.integrations.flask import FlaskIntegration
-from bson.objectid import ObjectId
-from pymongo import MongoClient
-from gridfs import GridFS
-from bson import ObjectId
 
 
 logging.basicConfig(
@@ -57,17 +50,6 @@ ALLOWED_EXTENSIONS = {"pdf"}
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# AWS S3 Configuration
-AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
-AWS_SECRET_KEY = os.getenv('AWS_SECRET_KEY')
-AWS_S3_BUCKET = 'wcre-documents'
-
-# Initialize boto3 client
-s3 = boto3.client('s3', 
-                  aws_access_key_id=AWS_ACCESS_KEY, 
-                  aws_secret_access_key=AWS_SECRET_KEY, 
-                  region_name='us-east-2')
-
 try:
     logger.info("Initializing Portal")
     app = Flask(__name__)
@@ -83,6 +65,13 @@ try:
         SCHEDULER_API_ENABLED=True,
         PERMANENT_SESSION_LIFETIME=timedelta(minutes=15)
     )
+    AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
+    AWS_SECRET_KEY = os.getenv('AWS_SECRET_KEY')
+    AWS_S3_BUCKET = 'wcre-documents'
+    s3 = boto3.client('s3', 
+                    aws_access_key_id=AWS_ACCESS_KEY, 
+                    aws_secret_access_key=AWS_SECRET_KEY, 
+                    region_name='us-east-2')
     scheduler = APScheduler()
     scheduler.init_app(app)
     mail = Mail(app)
@@ -108,7 +97,6 @@ else:
         docs = db["Documents"]
         scheduler_locks = db["SchedulerLocks"]
         scheduler.start()
-        fs = GridFS(db)
         logger.info("Connected to MongoDB Successfully")
     except Exception as e:
         logger.exception("Error Connecting to MongoDB")
@@ -945,6 +933,6 @@ def search_leases():
     return jsonify(results)
 
 
-#Talisman(app, content_security_policy=None)
+Talisman(app, content_security_policy=None)
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=6969, debug=True)
+    app.run(host="0.0.0.0", port=6969, debug=False)
