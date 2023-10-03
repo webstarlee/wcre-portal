@@ -371,7 +371,8 @@ $(document).ready(function () {
 			var file = this.files[0];
 			var formData = new FormData();
 			formData.append("file", file);
-
+			config.buttonElement.textContent = "Uploading Document...";
+			config.buttonElement.disabled = true;
 			$.ajax({
 				url: "/upload_pdf",
 				type: "POST",
@@ -380,9 +381,9 @@ $(document).ready(function () {
 				contentType: false,
 				success: function (data) {
 					if (data.success) {
-						config.buttonElement.textContent = "Document Uploaded ✔";
-						config.buttonElement.disabled = true;
-						document.getElementById(config.resultElementId).value = data["fileId"];
+						config.buttonElement.textContent = "Document Uploaded ✔ " + "(" + file.name + ")";
+						document.getElementById(config.resultElementId).value = data["file_id"];
+						config.buttonElement.disabled = false;
 					} else {
 						showNotification("Error Uploading Document", "error-notification");
 					}

@@ -1,5 +1,5 @@
 import os
-from flask import Flask, jsonify, make_response, render_template, redirect, url_for, request, session
+from flask import Flask, jsonify, make_response, render_template, redirect, stream_with_context, url_for, request, session
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from flask_apscheduler import APScheduler
 from pymongo import MongoClient
@@ -7,11 +7,16 @@ from datetime import datetime, timedelta
 from flask_bcrypt import Bcrypt
 from models import User
 from flask_paginate import Pagination, get_page_args
+from flask import redirect, url_for, abort
 from bson.objectid import ObjectId
 from gridfs import GridFS
 from dotenv import load_dotenv
 from flask import Flask, Response
 from datetime import datetime
+import boto3
+from botocore.exceptions import NoCredentialsError
+import os
+import uuid
 import pytz
 from ics import Calendar, Event
 import arrow
@@ -51,6 +56,17 @@ sentry_sdk.init(
 ALLOWED_EXTENSIONS = {"pdf"}
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# AWS S3 Configuration
+AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
+AWS_SECRET_KEY = os.getenv('AWS_SECRET_KEY')
+AWS_S3_BUCKET = 'wcre-documents'
+
+# Initialize boto3 client
+s3 = boto3.client('s3', 
+                  aws_access_key_id=AWS_ACCESS_KEY, 
+                  aws_secret_access_key=AWS_SECRET_KEY, 
+                  region_name='us-east-2')
 
 try:
     logger.info("Initializing Portal")
@@ -394,14 +410,23 @@ def documents():
     )
 
 
-@app.route("/download/<file_id>")
+@app.route("/download/<path:file_id>")
 @login_required
 def download(file_id):
-    file = fs.get(ObjectId(file_id))
+    try:
+        s3_file = s3.get_object(Bucket=AWS_S3_BUCKET, Key=file_id)
+    except Exception as e:
+        logger.error("Error Obtaining File From S3: " + str(e))
+        abort(500, description="Error Obtaining File From S3")
+    file_name = s3_file.get("Metadata", {}).get("filename", file_id)
+    content_type = s3_file.get("ContentType", "application/octet-stream")
+    headers = {
+        "Content-Disposition": f"attachment; filename={file_name}",
+        "Content-Type": content_type
+    }
     return Response(
-        file.read(),
-        mimetype=file.content_type,
-        headers={"Content-Disposition": f"attachment;filename={file.filename}"}
+        stream_with_context(s3_file['Body']),
+        headers=headers
     )
 
 
@@ -415,9 +440,20 @@ def handle_upload():
     if not allowed_file(file.filename):
         return {"success": False, "error": "Allowed File Types Are .pdf"}
     file_binary_data = file.read()
-    content_type = file.content_type  # or guess using the file extension
-    file_id = fs.put(file_binary_data, filename=file.filename, content_type=content_type)
-    return {"success": True, "fileId": str(file_id)}
+    content_type = file.content_type 
+    file_extension = file.filename.split('.')[-1] if '.' in file.filename else ''
+    file_id = f"{uuid.uuid4()}.{file_extension}"
+    try:
+        s3.put_object(Body=file_binary_data, 
+                      Bucket=AWS_S3_BUCKET, 
+                      Key=file_id, 
+                      ContentType=content_type)
+    except NoCredentialsError:
+        return {"success": False, "error": "Credentials Not Available"}
+    except Exception as e:
+        logger.error("Exception: ", str(e))
+        return {"success": False, "error": "Upload Failed"}
+    return {"success": True, "file_id": file_id}
 
 
 @app.route("/upload_pdf", methods=["POST"])
@@ -432,7 +468,6 @@ def submit_document():
     try:
         form_keys = ["document-file-id", "document-type", "document-name"]
         new_document = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
-        print(new_document)
         result = db.Documents.insert_one(new_document)
         if not result.inserted_id:
             raise Exception("Error inserting the document.")
@@ -645,8 +680,20 @@ def delete_sale(sale_id):
 @app.route("/delete_document/<document_id>", methods=["GET"])
 @login_required
 def delete_document(document_id):
-    fs.delete(ObjectId(docs.find_one({"_id": ObjectId(document_id)}).get("document_file_id")))
-    return delete_item_from_collection(document_id, docs, "Document")
+    try:
+        doc = docs.find_one({"_id": ObjectId(document_id)})
+        if doc is None:
+            raise ValueError("Document not Found")
+        file_id = doc.get("document_file_id")
+        s3.delete_object(Bucket=AWS_S3_BUCKET, Key=file_id)
+        result = delete_item_from_collection(document_id, docs, "Document")
+        if not result:
+            raise Exception("Failed to delete document from MongoDB")
+        return jsonify({"success": True, "message": "Document Deleted Successfully"})
+    except Exception as e:
+        print("Error: ", str(e))
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 
 
 @app.route("/delete_lease/<lease_id>", methods=["GET"])

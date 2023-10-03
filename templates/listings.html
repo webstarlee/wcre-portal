@@ -100,13 +100,14 @@
               endfor %} </td>
             <td>
               <form method="POST"> {% if listing.listing_agreement_file_id %} <a
-                  href="{{ url_for('download', file_id=listing.listing_agreement_file_id) }}">Fully Executed</a> {% else
+                  href="{{ url_for('download', file_id=listing.listing_agreement_file_id) }}">Fully Executed</a> {%
+                else
                 %}
                 Pending {% endif %} </form>
             </td>
             <td>
               <form method="POST"> {% if listing.listing_amendment_file_id %} <a
-                  href="{{ url_for('download', file_id=listing_amendment_file_id) }}">Fully Executed</a> {%
+                  href="{{ url_for('download', file_id=listing.listing_amendment_file_id) }}">Fully Executed</a> {%
                 else %} Pending {% endif %} </form>
             </td>
           </tr> {% endfor %} </tbody>
