@@ -55,7 +55,7 @@ $(document).ready(function () {
 
   function resetForm() {
     $("#submit-document-form")[0].reset();
-    $("#document-file-base64").val("");
+    $("#document-file-id").val("");
     $("#upload-document-file").text("Upload Document File");
     $("#upload-document-file").prop("disabled", false);
     $(".error").removeClass("error");
@@ -82,11 +82,11 @@ $(document).ready(function () {
       processData: false,
       contentType: false,
       success: function (data) {
+        console.log(data);
         if (data.success) {
           uploadButton.textContent = "Document Uploaded ✔";
           uploadButton.disabled = true;
-          document.getElementById("document-file-base64").value =
-            data.fileBase64;
+          document.getElementById("document-file-id").value = data["fileId"];
         } else {
           showNotification("Error Uploading Document", "error-notification");
         }
@@ -97,17 +97,17 @@ $(document).ready(function () {
     });
   });
 
+
   $("#submit-document-form").on("submit", function (e) {
     if ($("#document-file")[0].files.length === 0) {
       e.preventDefault();
-      showNotification("Plesae Upload a PDF File", "error-notification");
+      showNotification("Please Upload a PDF File", "error-notification");
       return;
     }
 
     e.preventDefault();
     var formData = new FormData(this);
-    var fileBase64 = $("#document-file-base64").val();
-    formData.append("fileBase64", fileBase64);
+    formData.append("document-file-id", $("#document-file-id").val());
 
     $.ajax({
       url: "/submit_document",
@@ -117,7 +117,7 @@ $(document).ready(function () {
       contentType: false,
       dataType: "json",
     })
-      .done(function (response, jqXHR) {
+      .done(function (response) {
         if (response.status === "success") {
           window.location.href = response.redirect;
         } else {
@@ -168,12 +168,12 @@ $(document).ready(function () {
       li.classList = "d-flex justify-content-between align-items-center file-item";
       li.setAttribute("data-document-id", documents[i]._id);
       li.setAttribute("data-document-type", documents[i].document_type);
-      var downloadButton = '<a class="download-button" href="data:application/pdf;base64,' + documents[i].document_file_base64 +
+      var downloadButton = '<a class="download-button" href="/download/' + documents[i].document_file_id +
         '" download="' + documents[i].document_name + '.pdf"><i class="fa fa-download"></i></a>';
       li.innerHTML = `
                 <div class="d-flex gap-2 align-items-center">
-                  <i class="far fa-file-pdf text-dark" style="color: #1c92d2; font-size:22px;"></i>
-                  <p class="mb-0">${documents[i].document_name}</p>
+                    <i class="far fa-file-pdf text-dark" style="color: #1c92d2; font-size:22px;"></i>
+                    <p class="mb-0">${documents[i].document_name}</p>
                 </div>
                 <span>${downloadButton}</span>`;
       documentList.appendChild(li);

@@ -247,7 +247,7 @@ $(document).ready(function () {
 		cells.forEach(cell => $row.append($("<td>").html(cell)));
 		const brokerElements = $.map(result.brokers, broker => $("<span>").addClass("broker-name").text(broker));
 		$row.append($("<td>").append(brokerElements));
-		$row.append($("<td>").html(result.sale_agreement_file_base64 ? `<a href="/download_sale_pdf/${result._id}">Fully Executed</a>` : "Pending"));
+		$row.append($("<td>").html(result.sale_agreement_file_id ? `<a href="/download/${result.sale_agreement_file_id}">Fully Executed</a>` : "Pending"));
 		return $row;
 	};
 
@@ -311,7 +311,7 @@ $(document).ready(function () {
 						sale_type: $("#edit-sale-type").val(),
 						sale_property_type: $("#edit-sale-property-type").val(),
 						sale_end_date: $("#edit-sale-end-date").val(),
-						sale_agreement_file_base64: $("#edit-sale-agreement-file-base64").val(),
+						sale_agreement_file_id: $("#edit-sale-agreement-file-id").val(),
 						sale_price: $("#edit-sale-price").val(),
 						sale_commission: $("#edit-sale-commission").val(),
 						sale_sqft: $("#edit-sale-sqft").val(),
@@ -382,7 +382,7 @@ $(document).ready(function () {
 					if (data.success) {
 						config.buttonElement.textContent = "Document Uploaded ✔";
 						config.buttonElement.disabled = true;
-						document.getElementById(config.resultElementId).value = data.fileBase64;
+						document.getElementById(config.resultElementId).value = data["fileId"];
 					} else {
 						showNotification("Error Uploading Document", "error-notification");
 					}
@@ -400,12 +400,12 @@ $(document).ready(function () {
 	var configurations = [{
 		inputElement: fileInput,
 		buttonElement: uploadButton,
-		resultElementId: "sale-agreement-file-base64"
+		resultElementId: "sale-agreement-file-id"
 	},
 	{
 		inputElement: editFileInput,
 		buttonElement: editUploadButton,
-		resultElementId: "edit-sale-agreement-file-base64"
+		resultElementId: "edit-sale-agreement-file-id"
 	}
 	];
 
@@ -469,9 +469,9 @@ $(document).ready(function () {
 		e.preventDefault();
 		if (validateStep() && validateBrokers()) {
 			$("#add-sale-modal").css("display", "none");
-			var formData = new FormData(this);
-			var fileBase64 = $("#sale-agreement-file-base64").val();
-			formData.append("fileBase64", fileBase64);
+			var file = this.files[0];
+			var formData = new FormData();
+			formData.append("file", file);
 			$.ajax({
 				url: "/submit_sale",
 				type: "POST",

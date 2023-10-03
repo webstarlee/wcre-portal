@@ -239,8 +239,8 @@ $(document).ready(function () {
 		cells.forEach(cell => $row.append($("<td>").html(cell)));
 		const brokerElements = $.map(result.brokers, broker => $("<span>").addClass("broker-name").text(broker));
 		$row.append($("<td>").append(brokerElements));
-		$row.append($("<td>").html(result.listing_agreement_file_base64 ? `<a href="/download_listing_pdf/${result._id}">Fully Executed</a>` : "Pending"));
-		$row.append($("<td>").html(result.listing_amendment_file_base64 ? `<a href="/download_listing_amendment_pdf/${result._id}">Fully Executed</a>` : "Pending"));
+		$row.append($("<td>").html(result.listing_agreement_file_id ? `<a href="/download/${result.listing_agreement_file_id}">Fully Executed</a>` : "Pending"));
+		$row.append($("<td>").html(result.listing_amendment_file_id ? `<a href="/download/${result.listing_amendment_file_id}">Fully Executed</a>` : "Pending"));
 		return $row;
 	};
 
@@ -311,8 +311,8 @@ $(document).ready(function () {
 						listing_owner_name: $("#edit-listing-owner-name").val(),
 						listing_owner_email: $("#edit-listing-owner-email").val(),
 						listing_owner_phone: $("#edit-listing-owner-phone").val(),
-						listing_agreement_file_base64: $("#edit-listing-agreement-file-base64").val(),
-						listing_amendment_file_base64: $("#edit-listing-amendment-file-base64").val()
+						listing_agreement_file_id: $("#edit-listing-agreement-file-id").val(),
+						listing_amendment_file_id: $("#edit-listing-amendment-file-id").val()
 					};
 					getLatLng(data.listing_street, data.listing_city, data.listing_state, function (locationData) {
 						if (locationData) {
@@ -366,7 +366,6 @@ $(document).ready(function () {
 			var file = this.files[0];
 			var formData = new FormData();
 			formData.append("file", file);
-
 			$.ajax({
 				url: "/upload_pdf",
 				type: "POST",
@@ -377,7 +376,7 @@ $(document).ready(function () {
 					if (data.success) {
 						config.buttonElement.textContent = "Document Uploaded ✔";
 						config.buttonElement.disabled = true;
-						document.getElementById(config.resultElementId).value = data.fileBase64;
+						document.getElementById(config.resultElementId).value = data["fileId"];
 					} else {
 						showNotification("Error Uploading Document", "error-notification");
 					}
@@ -395,22 +394,22 @@ $(document).ready(function () {
 	var configurations = [{
 		inputElement: agreementFileInput,
 		buttonElement: uploadButtonAgreement,
-		resultElementId: "listing-agreement-file-base64"
+		resultElementId: "listing-agreement-file-id"
 	},
 	{
 		inputElement: editAgreementFileInput,
 		buttonElement: editUploadButtonAgreement,
-		resultElementId: "edit-listing-agreement-file-base64"
+		resultElementId: "edit-listing-agreement-file-id"
 	},
 	{
 		inputElement: amendmentFileInput,
 		buttonElement: uploadButtonAmendment,
-		resultElementId: "listing-amendment-file-base64"
+		resultElementId: "listing-amendment-file-id"
 	},
 	{
 		inputElement: editAmendmentFileInput,
 		buttonElement: editUploadButtonAmendment,
-		resultElementId: "edit-listing-amendment-file-base64"
+		resultElementId: "edit-listing-amendment-file-id"
 	},
 	];
 
@@ -489,8 +488,8 @@ $(document).ready(function () {
 		if (validateStep() && validateBrokers() && validateDates()) {
 			$("#add-listing-modal").css("display", "none");
 			var formData = new FormData(this);
-			formData.append("listing-agreement-file-base64", $("#listing-agreement-file-base64").val());
-			formData.append("listing-amendment-file-base64", $("#listing-amendment-file-base64").val());
+			formData.append("listing-agreement-file-id", $("#listing-agreement-file-id").val());
+			formData.append("listing-amendment-file-id", $("#listing-amendment-file-id").val());
 			var street = $("#listing-street").val();
 			var city = $("#listing-city").val();
 			var state = $("#listing-state").val();

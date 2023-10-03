@@ -1,26 +1,28 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Admin Portal - Leases</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="/static/icons/cropped_logo.png" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/leases.css') }}" />
-    <script src="https://kit.fontawesome.com/f53ea1a836.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidebar.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/icons.css') }}" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="{{ url_for('static', filename='js/leases.js') }}"></script>
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  </head>
-  <body data-is-admin="{{ is_admin }}">
-    <div id="error-notification" class="error-notification"></div>
-    <div id="success-notification" class="success-notification"></div> {% include 'sidebar.html' %} <div class="content">
-      <div class="toolbar" style="padding: 10px 0; position: relative">
-        <form id="search-form" class="search-form" style="
+
+<head>
+  <title>Admin Portal - Leases</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/static/icons/cropped_logo.png" />
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/leases.css') }}" />
+  <script src="https://kit.fontawesome.com/f53ea1a836.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidebar.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/icons.css') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="{{ url_for('static', filename='js/leases.js') }}"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+
+<body data-is-admin="{{ is_admin }}">
+  <div id="error-notification" class="error-notification"></div>
+  <div id="success-notification" class="success-notification"></div> {% include 'sidebar.html' %} <div class="content">
+    <div class="toolbar" style="padding: 10px 0; position: relative">
+      <form id="search-form" class="search-form" style="
             text-align: start;
             display: flex;
             flex-wrap: wrap;
@@ -31,373 +33,409 @@
             width: 100%;
             float: right;
           ">
-          <div class="leases-count-div">
-            <div id="leases-count" style="position: relative; left: 0; flex-shrink: 0" class="leases-count header-btns"> Total Leases: {{ lease_count }}
-            </div>
+        <div class="leases-count-div">
+          <div id="leases-count" style="position: relative; left: 0; flex-shrink: 0" class="leases-count header-btns">
+            Total Leases: {{ lease_count }}
           </div>
-          <div style="
+        </div>
+        <div style="
               display: flex;
               flex-wrap: wrap;
               column-gap: 20px;
               row-gap: 10px;
             ">
-            <input type="text" class="leases-count-div" style="flex-shrink: 0" id="search-input" placeholder="Search Leases..." />
-            <button id="open-map-button" class="header-btns" style="flex-shrink: 0" type="button"> Open Leases Map </button>
-            <button id="add-lease-button" class="header-btns" style="flex-shrink: 0" type="button"> Add Lease </button>
+          <input type="text" class="leases-count-div" style="flex-shrink: 0" id="search-input"
+            placeholder="Search Leases..." />
+          <button id="open-map-button" class="header-btns" style="flex-shrink: 0" type="button"> Open Leases Map
+          </button>
+          <button id="add-lease-button" class="header-btns" style="flex-shrink: 0" type="button"> Add Lease </button>
+        </div>
+      </form>
+    </div>
+    <div class="table-div">
+      <table class="centered-table" style="width: 100%; margin: 0; border-radius: 6px; overflow: hidden">
+        <thead>
+          <tr>
+            <th style="border-top-left-radius: 7px">Property Type</th>
+            <th>Square FT</th>
+            <th>Term Length</th>
+            <th>Property Address</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Lessor</th>
+            <th>Lessee</th>
+            <th>Brokers</th>
+            <th>Lease Agreement</th>
+            <th>Commission Agreement</th>
+            <th>Commission Invoice</th>
+            <th>Referral Source</th>
+            <th style="border-top-right-radius: 7px">Invoice Contact</th>
+          </tr>
+        </thead>
+        <tbody> {% for lease in leases %} <tr data-lease-id="{{ lease._id }}">
+            <td>{{lease.lease_property_type }}</td>
+            <td>{{ lease.lease_sqft }}</td>
+            <td>{{ lease.lease_term_length }}</td>
+            <td>{{ lease.lease_street }}</td>
+            <td>{{ lease.lease_city }}</td>
+            <td> {% if lease.lease_state == "New Jersey" %} NJ {% elif lease.lease_state == "Pennsylvania" %} PA {% else
+              %} {{ lease.lease_state }} {% endif %} </td>
+            <td>
+              <div class="contact-info">
+                <div class="lessor-entity">{{ lease.lease_lessor_entity }}</div>
+                <a href="mailto:{{ lease.lease_lessor_email }}">{{ lease.lease_lessor_name }}</a>
+                <a href="tel:{{ lease.lease_lessor_phone }}">{{ lease.lease_lessor_phone }}</a>
+              </div>
+            </td>
+            <td>
+              <div class="contact-info">
+                <div class="lessee-entity">{{ lease.lease_lessee_entity }}</div>
+                <a href="mailto:{{ lease.lease_lessee_email }}">{{ lease.lease_lessee_name }}</a>
+                <a href="tel:{{ lease.lease_lessee_phone }}">{{ lease.lease_lessee_phone }}</a>
+              </div>
+            </td>
+            <td class="brokers"> {% for broker in lease.brokers %} <span class="broker-name">{{ broker }}</span> {%
+              endfor %} </td>
+            <td>
+              <form method="POST"> {% if lease.lease_agreement_file_id %} <a
+                  href="{{ url_for('download', file_id=lease.lease_agreement_file_id) }}">Fully Executed</a> {% else %}
+                Pending {% endif %} </form>
+            </td>
+            <td>
+              <form method="POST"> {% if lease.lease_commission_file_id %} <a
+                  href="{{ url_for('download', file_id=lease.lease_commission_file_id) }}">Fully Executed</a> {% else
+                %} Pending {% endif %} </form>
+            </td>
+            <td>
+              <form method="POST"> {% if lease.lease_commission_invoice_file_id %} <a
+                  href="{{ url_for('download', file_id=lease.lease_commission_invoice_file_id) }}">Fully
+                  Executed</a>
+                {% else %} Pending {% endif %} </form>
+            </td>
+            <td>{{ lease.lease_referral_source }}</td>
+            <td>{{ lease.lease_invoice_contact }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <table>
+          {{ pagination.links }}
+    </div>
+    <div id="action-modal" class="action-modal">
+      <button id="delete-button">Delete Lease</button>
+      <button id="edit-button">Edit Lease</button>
+    </div>
+    <div id="add-lease-modal" class="lease-modal" data-mode="add">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <form id="submit-lease-form" class="modal-form" action="{{ url_for('submit_lease') }}" method="POST">
+          <div class="modal-step active-step main-form-step" id="main-step1">
+            <h2 class="modal-step-title">New Lease - Property Information</h2>
+            <div class="form-group">
+              <label for="lease-street">Lease Street:</label>
+              <input type="text" id="lease-street" name="lease-street" placeholder="Enter Street Address:" required />
+            </div>
+            <div class="form-group">
+              <label for="lease-city">Lease City:</label>
+              <input type="text" id="lease-city" name="lease-city" placeholder="Enter Town/City:" required />
+            </div>
+            <div class="form-group">
+              <label for="lease-state">Lease State:</label>
+              <select id="lease-state" name="lease-state" required>
+                <option value="NJ">NJ</option>
+                <option value="PA">PA</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="lease-property-type">Property Type:</label>
+              <select id="lease-property-type" name="lease-property-type" required>
+                <option value="Office">Office</option>
+                <option value="Industrial">Industrial</option>
+                <option value="Flex">Flex</option>
+                <option value="Retail">Retail</option>
+                <option value="Medical">Medical</option>
+                <option value="Land">Land</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="lease-sqft">Lease Square Footage:</label>
+              <input type="text" id="lease-sqft" name="lease-sqft" placeholder="Enter Square Footage:" required />
+            </div>
+          </div>
+          <div class="modal-step main-form-step" id="main-step2">
+            <h2 class="modal-step-title">New Lease - Lessor Information</h2>
+            <div class="form-group">
+              <label for="lease-lessor-entity">Lessor Entity (DBA):</label>
+              <input type="text" id="lease-lessor-entity" name="lease-lessor-entity" placeholder="Enter Lessor Entity:"
+                required />
+            </div>
+            <div class="form-group">
+              <label for="lease-lessor-name">Lessor Contact Name:</label>
+              <input type="text" id="lease-lessor-name" name="lease-lessor-name"
+                placeholder="Enter Lessor Contact Name:" required />
+            </div>
+            <div class="form-group">
+              <label for="lease-lessor-email">Lessor Email:</label>
+              <input type="email" id="lease-lessor-email" name="lease-lessor-email" placeholder="Enter Lessor Email:"
+                required />
+            </div>
+            <div class="form-group">
+              <label for="lease-lessor-phone">Lessor Phone Number:</label>
+              <input type="tel" id="lease-lessor-phone" name="lease-lessor-phone"
+                placeholder="Enter Lessor Phone Number:" required />
+            </div>
+          </div>
+          <div class="modal-step main-form-step" id="main-step3">
+            <h2 class="modal-step-title">New Lease - Lessee Information</h2>
+            <div class="form-group">
+              <label for="lease-lessee-entity">Lessee Entity (DBA):</label>
+              <input type="text" id="lease-lessee-entity" name="lease-lessee-entity" placeholder="Enter Lessee Entity:"
+                required />
+            </div>
+            <div class="form-group">
+              <label for="lease-lessee-name">Lessee Contact Name:</label>
+              <input type="text" id="lease-lessee-name" name="lease-lessee-name"
+                placeholder="Enter Lessee Contact Name:" required />
+            </div>
+            <div class="form-group">
+              <label for="lease-lessee-email">Lessee Email:</label>
+              <input type="email" id="lease-lessee-email" name="lease-lessee-email" placeholder="Enter Lessee Email:"
+                required />
+            </div>
+            <div class="form-group">
+              <label for="lessee-lessee-phone">Lessee Phone Number:</label>
+              <input type="tel" id="lease-lessee-phone" name="lease-lessee-phone"
+                placeholder="Enter Lessee Phone Number:" required />
+            </div>
+          </div>
+          <div class="modal-step main-form-step" id="main-step4">
+            <h2 class="modal-step-title">New Lease - General Information</h2>
+            <div class="form-group">
+              <label for="lease-term-length">Lease Term Length:</label>
+              <select id="years" name="lease-years">
+                <option value="0">0 Years</option>
+                <option value="1">1 Year</option>
+                <option value="2">2 Years</option>
+                <option value="3">3 Years</option>
+                <option value="4">4 Years</option>
+                <option value="5">5 Years</option>
+                <option value="6">6 Years</option>
+                <option value="7">7 Years</option>
+                <option value="8">8 Years</option>
+                <option value="9">9 Years</option>
+                <option value="10">10 Years</option>
+                <option value="11">11 Years</option>
+                <option value="12">12 Years</option>
+                <option value="13">13 Years</option>
+                <option value="14">14 Years</option>
+                <option value="15">15 Years</option>
+                <option value="16">16 Years</option>
+                <option value="17">17 Years</option>
+                <option value="18">18 Years</option>
+                <option value="19">19 Years</option>
+                <option value="20">20 Years</option>
+              </select>
+              <select id="months" name="lease-months">
+                <option value="0">0 Months</option>
+                <option value="1">1 Month</option>
+                <option value="2">2 Months</option>
+                <option value="3">3 Months</option>
+                <option value="4">4 Months</option>
+                <option value="5">5 Months</option>
+                <option value="6">6 Months</option>
+                <option value="7">7 Months</option>
+                <option value="8">8 Months</option>
+                <option value="9">9 Months</option>
+                <option value="10">10 Months</option>
+                <option value="11">11 Months</option>
+                <option value="12">12 Months</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="lease-brokers">Brokers:</label>
+              <select id="lease-brokers" name="brokers[]" multiple>
+                <option value="Jason Wolf">Jason Wolf</option>
+                <option value="Evan Zweben">Evan Zweben</option>
+                <option value="Erin Warwick">Erin Warwick</option>
+                <option value="Todd Monahan">Todd Monahan</option>
+                <option value="John Mozzillo">John Mozzillo</option>
+                <option value="Ryan Barikian">Ryan Barikian</option>
+                <option value="Bethany Brown">Bethany Brown</option>
+                <option value="Tony Banks">Tony Banks</option>
+                <option value="Phil Costa">Phil Costa</option>
+                <option value="Eric Flocco">Eric Flocco</option>
+                <option value="John Mazurie">John Mazurie</option>
+                <option value="Brian Goren">Brian Goren</option>
+                <option value="Julia Brines">Julia Brines</option>
+                <option value="Brian Propp">Brian Propp</option>
+                <option value="Sam Newman">Sam Newman</option>
+                <option value="David Spector">David Spector</option>
+                <option value="Chemmie Sokolic">Chemmie Sokolic</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="lease-referral-source">Referral Source:</label>
+              <select id="lease-referral-source" name="lease-referral-source" required>
+                <option value="WCRE">WCRE</option>
+                <option value="CoStar">CoStar</option>
+                <option value="Loopnet">Loopnet</option>
+                <option value="Networking">Networking</option>
+                <option value="Relationship">Relationship</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group increased-line-height">
+              <label for="lease-invoice-contact">Invoice Contact Information:</label>
+              <textarea id="lease-invoice-contact" name="lease-invoice-contact"
+                placeholder="Enter Invoice Contact Information:" required></textarea>
+            </div>
+            <div class="form-group">
+              <button id="upload-lease-agreement" type="button"> Upload Lease Agreement </button>
+              <input id="lease-agreement" type="file" style="display: none" accept=".pdf" />
+              <input type="hidden" id="lease-agreement-file-id" name="lease-agreement-file-id" />
+            </div>
+            <div class="form-group">
+              <button id="upload-lease-commission-agreement" type="button"> Upload Commission Agreement </button>
+              <input id="lease-commission-agreement" type="file" style="display: none" accept=".pdf" />
+              <input type="hidden" id="lease-commission-agreement-file-id" name="lease-commission-agreement-file-id" />
+            </div>
+            <div class="form-group">
+              <button id="upload-lease-commission-invoice" type="button"> Upload Lease Commision Calculation Document
+              </button>
+              <input id="lease-commission-invoice" type="file" style="display: none" accept=".pdf" />
+              <input type="hidden" id="lease-commission-invoice-file-id" name="lease-commission-invoice-file-id" />
+            </div>
+          </div>
+          <div class="modal-navigation">
+            <button class="minimal-button prev-step" type="button"> Previous </button>
+            <button class="minimal-button next-step" type="button"> Next </button>
           </div>
         </form>
       </div>
-      <div class="table-div">
-        <table class="centered-table" style="width: 100%; margin: 0; border-radius: 6px; overflow: hidden">
-          <thead>
-            <tr>
-              <th style="border-top-left-radius: 7px">Property Type</th>
-              <th>Square FT</th>
-              <th>Term Length</th>
-              <th>Property Address</th>
-              <th>City</th>
-              <th>State</th>
-              <th>Lessor</th>
-              <th>Lessee</th>
-              <th>Brokers</th>
-              <th>Lease Agreement</th>
-              <th>Commission Agreement</th>
-              <th>Commission Invoice</th>
-              <th>Referral Source</th>
-              <th style="border-top-right-radius: 7px">Invoice Contact</th>
-            </tr>
-          </thead>
-          <tbody> {% for lease in leases %} <tr data-lease-id="{{ lease._id }}">
-              <td>{{lease.lease_property_type }}</td>
-              <td>{{ lease.lease_sqft }}</td>
-              <td>{{ lease.lease_term_length }}</td>
-              <td>{{ lease.lease_street }}</td>
-              <td>{{ lease.lease_city }}</td>
-              <td> {% if lease.lease_state == "New Jersey" %} NJ {% elif lease.lease_state == "Pennsylvania" %} PA {% else %} {{ lease.lease_state }} {% endif %} </td>
-              <td>
-                <div class="contact-info">
-                  <div class="lessor-entity">{{ lease.lease_lessor_entity }}</div>
-                  <a href="mailto:{{ lease.lease_lessor_email }}">{{ lease.lease_lessor_name }}</a>
-                  <a href="tel:{{ lease.lease_lessor_phone }}">{{ lease.lease_lessor_phone }}</a>
-                </div>
-              </td>
-              <td>
-                <div class="contact-info">
-                  <div class="lessee-entity">{{ lease.lease_lessee_entity }}</div>
-                  <a href="mailto:{{ lease.lease_lessee_email }}">{{ lease.lease_lessee_name }}</a>
-                  <a href="tel:{{ lease.lease_lessee_phone }}">{{ lease.lease_lessee_phone }}</a>
-                </div>
-              </td>
-              <td class="brokers"> {% for broker in lease.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
-              <td><form method="POST"> {% if lease.lease_agreement_file_base64 %} <a href="{{ url_for('download_lease_agreement_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form></td>
-              <td><form method="POST"> {% if lease.lease_commission_file_base64 %} <a href="{{ url_for('download_lease_commission_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form></td>
-              <td><form method="POST"> {% if lease.lease_commission_invoice_file_base64 %} <a href="{{ url_for('download_lease_commission_invoice_pdf', lease_id=lease._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form></td>
-              <td>{{ lease.lease_referral_source }}</td>
-              <td>{{ lease.lease_invoice_contact }}</td>
-            </tr>
-            {% endfor %} 
-          </tbody>
-          <table>
-          {{ pagination.links }}
-      </div>
-      <div id="action-modal" class="action-modal">
-        <button id="delete-button">Delete Lease</button>
-        <button id="edit-button">Edit Lease</button>
-      </div>
-      <div id="add-lease-modal" class="lease-modal" data-mode="add">
-        <div class="modal-content">
-          <span class="close">&times;</span>
-          <form id="submit-lease-form" class="modal-form" action="{{ url_for('submit_lease') }}" method="POST">
-            <div class="modal-step active-step main-form-step" id="main-step1">
-              <h2 class="modal-step-title">New Lease - Property Information</h2>
-              <div class="form-group">
-                <label for="lease-street">Lease Street:</label>
-                <input type="text" id="lease-street" name="lease-street" placeholder="Enter Street Address:" required />
-              </div>
-              <div class="form-group">
-                <label for="lease-city">Lease City:</label>
-                <input type="text" id="lease-city" name="lease-city" placeholder="Enter Town/City:" required />
-              </div>
-              <div class="form-group">
-                <label for="lease-state">Lease State:</label>
-                <select id="lease-state" name="lease-state" required>
-                  <option value="NJ">NJ</option>
-                  <option value="PA">PA</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="lease-property-type">Property Type:</label>
-                <select id="lease-property-type" name="lease-property-type" required>
-                  <option value="Office">Office</option>
-                  <option value="Industrial">Industrial</option>
-                  <option value="Flex">Flex</option>
-                  <option value="Retail">Retail</option>
-                  <option value="Medical">Medical</option>
-                  <option value="Land">Land</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="lease-sqft">Lease Square Footage:</label>
-                <input type="text" id="lease-sqft" name="lease-sqft" placeholder="Enter Square Footage:" required />
-              </div>
+    </div>
+    <div id="edit-lease-modal" class="lease-modal" data-mode="edit">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <form id="edit-lease-modal" class="modal-form">
+          <h2 class="modal-step-title">Edit Lease</h2>
+          <div class="modal-step active-step edit-form-step" id="edit-step1">
+            <div class="form-group">
+              <label for="edit-lease-street">Lease Street:</label>
+              <input type="text" id="edit-lease-street" name="edit-lease-street" required />
             </div>
-            <div class="modal-step main-form-step" id="main-step2">
-              <h2 class="modal-step-title">New Lease - Lessor Information</h2>
-              <div class="form-group">
-                <label for="lease-lessor-entity">Lessor Entity (DBA):</label>
-                <input type="text" id="lease-lessor-entity" name="lease-lessor-entity" placeholder="Enter Lessor Entity:" required />
-              </div>
-              <div class="form-group">
-                <label for="lease-lessor-name">Lessor Contact Name:</label>
-                <input type="text" id="lease-lessor-name" name="lease-lessor-name" placeholder="Enter Lessor Contact Name:" required />
-              </div>
-              <div class="form-group">
-                <label for="lease-lessor-email">Lessor Email:</label>
-                <input type="email" id="lease-lessor-email" name="lease-lessor-email" placeholder="Enter Lessor Email:" required />
-              </div>
-              <div class="form-group">
-                <label for="lease-lessor-phone">Lessor Phone Number:</label>
-                <input type="tel" id="lease-lessor-phone" name="lease-lessor-phone" placeholder="Enter Lessor Phone Number:" required />
-              </div>
+            <div class="form-group">
+              <label for="edit-lease-city">Lease City:</label>
+              <input type="text" id="edit-lease-city" name="edit-lease-city" required />
             </div>
-            <div class="modal-step main-form-step" id="main-step3">
-              <h2 class="modal-step-title">New Lease - Lessee Information</h2>
-              <div class="form-group">
-                <label for="lease-lessee-entity">Lessee Entity (DBA):</label>
-                <input type="text" id="lease-lessee-entity" name="lease-lessee-entity" placeholder="Enter Lessee Entity:" required />
-              </div>
-              <div class="form-group">
-                <label for="lease-lessee-name">Lessee Contact Name:</label>
-                <input type="text" id="lease-lessee-name" name="lease-lessee-name" placeholder="Enter Lessee Contact Name:" required />
-              </div>
-              <div class="form-group">
-                <label for="lease-lessee-email">Lessee Email:</label>
-                <input type="email" id="lease-lessee-email" name="lease-lessee-email" placeholder="Enter Lessee Email:" required />
-              </div>
-              <div class="form-group">
-                <label for="lessee-lessee-phone">Lessee Phone Number:</label>
-                <input type="tel" id="lease-lessee-phone" name="lease-lessee-phone" placeholder="Enter Lessee Phone Number:" required />
-              </div>
+            <div class="form-group">
+              <label for="edit-lease-state">Lease State:</label>
+              <select id="edit-lease-state" name="edit-lease-state" required>
+                <option value="NJ">NJ</option>
+                <option value="PA">PA</option>
+              </select>
             </div>
-            <div class="modal-step main-form-step" id="main-step4">
-              <h2 class="modal-step-title">New Lease - General Information</h2>
-              <div class="form-group">
-                <label for="lease-term-length">Lease Term Length:</label>
-                <select id="years" name="lease-years">
-                  <option value="0">0 Years</option>
-                  <option value="1">1 Year</option>
-                  <option value="2">2 Years</option>
-                  <option value="3">3 Years</option>
-                  <option value="4">4 Years</option>
-                  <option value="5">5 Years</option>
-                  <option value="6">6 Years</option>
-                  <option value="7">7 Years</option>
-                  <option value="8">8 Years</option>
-                  <option value="9">9 Years</option>
-                  <option value="10">10 Years</option>
-                  <option value="11">11 Years</option>
-                  <option value="12">12 Years</option>
-                  <option value="13">13 Years</option>
-                  <option value="14">14 Years</option>
-                  <option value="15">15 Years</option>
-                  <option value="16">16 Years</option>
-                  <option value="17">17 Years</option>
-                  <option value="18">18 Years</option>
-                  <option value="19">19 Years</option>
-                  <option value="20">20 Years</option>
-                </select>
-                <select id="months" name="lease-months">
-                  <option value="0">0 Months</option>
-                  <option value="1">1 Month</option>
-                  <option value="2">2 Months</option>
-                  <option value="3">3 Months</option>
-                  <option value="4">4 Months</option>
-                  <option value="5">5 Months</option>
-                  <option value="6">6 Months</option>
-                  <option value="7">7 Months</option>
-                  <option value="8">8 Months</option>
-                  <option value="9">9 Months</option>
-                  <option value="10">10 Months</option>
-                  <option value="11">11 Months</option>
-                  <option value="12">12 Months</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="lease-brokers">Brokers:</label>
-                <select id="lease-brokers" name="brokers[]" multiple>
-                  <option value="Jason Wolf">Jason Wolf</option>
-                  <option value="Evan Zweben">Evan Zweben</option>
-                  <option value="Erin Warwick">Erin Warwick</option>
-                  <option value="Todd Monahan">Todd Monahan</option>
-                  <option value="John Mozzillo">John Mozzillo</option>
-                  <option value="Ryan Barikian">Ryan Barikian</option>
-                  <option value="Bethany Brown">Bethany Brown</option>
-                  <option value="Tony Banks">Tony Banks</option>
-                  <option value="Phil Costa">Phil Costa</option>
-                  <option value="Eric Flocco">Eric Flocco</option>
-                  <option value="John Mazurie">John Mazurie</option>
-                  <option value="Brian Goren">Brian Goren</option>
-                  <option value="Julia Brines">Julia Brines</option>
-                  <option value="Brian Propp">Brian Propp</option>
-                  <option value="Sam Newman">Sam Newman</option>
-                  <option value="David Spector">David Spector</option>
-                  <option value="Chemmie Sokolic">Chemmie Sokolic</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="lease-referral-source">Referral Source:</label>
-                <select id="lease-referral-source" name="lease-referral-source" required>
-                  <option value="WCRE">WCRE</option>
-                  <option value="CoStar">CoStar</option>
-                  <option value="Loopnet">Loopnet</option>
-                  <option value="Networking">Networking</option>
-                  <option value="Relationship">Relationship</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              <div class="form-group increased-line-height">
-                <label for="lease-invoice-contact">Invoice Contact Information:</label>
-                <textarea id="lease-invoice-contact" name="lease-invoice-contact" placeholder="Enter Invoice Contact Information:" required></textarea>
-              </div>
-              <div class="form-group">
-                <button id="upload-lease-agreement" type="button"> Upload Lease Agreement </button>
-                <input id="lease-agreement" type="file" style="display: none" accept=".pdf" />
-                <input type="hidden" id="lease-agreement-file-base64" name="lease-agreement-file-base64" />
-              </div>
-              <div class="form-group">
-                <button id="upload-lease-commission-agreement" type="button"> Upload Commission Agreement </button>
-                <input id="lease-commission-agreement" type="file" style="display: none" accept=".pdf" />
-                <input type="hidden" id="lease-commission-agreement-file-base64" name="lease-commission-agreement-file-base64" />
-              </div>
-              <div class="form-group">
-                <button id="upload-lease-commission-invoice" type="button"> Upload Lease Commision Calculation Document </button>
-                <input id="lease-commission-invoice" type="file" style="display: none" accept=".pdf" />
-                <input type="hidden" id="lease-commission-invoice-file-base64" name="lease-commission-invoice-file-base64" />
-              </div>
+            <div class="form-group">
+              <label for="edit-lease-property-type">Property Type:</label>
+              <select id="edit-lease-property-type" name="edit-lease-property-type" required>
+                <option value="Office">Office</option>
+                <option value="Industrial">Industrial</option>
+                <option value="Flex">Flex</option>
+                <option value="Retail">Retail</option>
+                <option value="Medical">Medical</option>
+                <option value="Land">Land</option>
+              </select>
             </div>
-            <div class="modal-navigation">
-              <button class="minimal-button prev-step" type="button"> Previous </button>
-              <button class="minimal-button next-step" type="button"> Next </button>
+            <div class="form-group">
+              <label for="edit-lease-sqft">Lease Square Footage:</label>
+              <input type="text" id="edit-lease-sqft" name="edit-lease-sqft" required />
             </div>
-          </form>
-        </div>
-      </div>
-      <div id="edit-lease-modal" class="lease-modal" data-mode="edit">
-        <div class="modal-content">
-          <span class="close">&times;</span>
-          <form id="edit-lease-modal" class="modal-form">
-            <h2 class="modal-step-title">Edit Lease</h2>
-            <div class="modal-step active-step edit-form-step" id="edit-step1">
-              <div class="form-group">
-                <label for="edit-lease-street">Lease Street:</label>
-                <input type="text" id="edit-lease-street" name="edit-lease-street" required />
-              </div>
-              <div class="form-group">
-                <label for="edit-lease-city">Lease City:</label>
-                <input type="text" id="edit-lease-city" name="edit-lease-city" required />
-              </div>
-              <div class="form-group">
-                <label for="edit-lease-state">Lease State:</label>
-                <select id="edit-lease-state" name="edit-lease-state" required>
-                  <option value="NJ">NJ</option>
-                  <option value="PA">PA</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="edit-lease-property-type">Property Type:</label>
-                <select id="edit-lease-property-type" name="edit-lease-property-type" required>
-                  <option value="Office">Office</option>
-                  <option value="Industrial">Industrial</option>
-                  <option value="Flex">Flex</option>
-                  <option value="Retail">Retail</option>
-                  <option value="Medical">Medical</option>
-                  <option value="Land">Land</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="edit-lease-sqft">Lease Square Footage:</label>
-                <input type="text" id="edit-lease-sqft" name="edit-lease-sqft" required />
-              </div>
+          </div>
+          <div class="modal-step edit-form-step" id="edit-step2">
+            <div class="form-group">
+              <label for="edit-lease-lessor-entity">Lessor Entity (DBA):</label>
+              <input type="text" id="edit-lease-lessor-entity" name="edit-lease-lessor-entity"
+                placeholder="Enter Lessor Entity:" required />
             </div>
-            <div class="modal-step edit-form-step" id="edit-step2">
-              <div class="form-group">
-                <label for="edit-lease-lessor-entity">Lessor Entity (DBA):</label>
-                <input type="text" id="edit-lease-lessor-entity" name="edit-lease-lessor-entity" placeholder="Enter Lessor Entity:" required />
-              </div>
-              <div class="form-group">
-                <label for="edit-lease-lessor-name">Lessor Contact Name:</label>
-                <input type="text" id="edit-lease-lessor-name" name="edit-lease-lessor-name" required />
-              </div>
-              <div class="form-group">
-                <label for="edit-lease-lessor-email">Lessor Email:</label>
-                <input type="email" id="edit-lease-lessor-email" name="edit-lease-lessor-email" required />
-              </div>
-              <div class="form-group">
-                <label for="edit-lease-lessor-phone">Lessor Phone Number:</label>
-                <input type="tel" id="edit-lease-lessor-phone" name="edit-lease-lessor-phone" required />
-              </div>
+            <div class="form-group">
+              <label for="edit-lease-lessor-name">Lessor Contact Name:</label>
+              <input type="text" id="edit-lease-lessor-name" name="edit-lease-lessor-name" required />
             </div>
-            <div class="modal-step edit-form-step" id="edit-step3">
-              <div class="form-group">
-                <label for="edit-lease-lessee-entity">Lessee Entity (DBA):</label>
-                <input type="text" id="edit-lease-lessee-entity" name="edit-lease-lessee-entity" placeholder="Enter Lessee Entity:" required />
-              </div>
-              <div class="form-group">
-                <label for="edit-lease-lessee-name">Lessee Contact Name:</label>
-                <input type="text" id="edit-lease-lessee-name" name="edit-lease-lessee-name" required />
-              </div>
-              <div class="form-group">
-                <label for="edit-lease-lessee-email">Lessee Email:</label>
-                <input type="email" id="edit-lease-lessee-email" name="edit-lease-lessee-email" required />
-              </div>
-              <div class="form-group">
-                <label for="edit-lease-lessee-phone">Lessee Phone Number:</label>
-                <input type="tel" id="edit-lease-lessee-phone" name="edit-lease-lessee-phone" required />
-              </div>
+            <div class="form-group">
+              <label for="edit-lease-lessor-email">Lessor Email:</label>
+              <input type="email" id="edit-lease-lessor-email" name="edit-lease-lessor-email" required />
             </div>
-            <div class="modal-step edit-form-step" id="edit-step4">
-              <div class="form-group">
-                <label for="edit-lease-term-length">Lease Term Length:</label>
-                <input type="text" id="edit-lease-term-length" name="edit-lease-term-length" placeholder="3 Years, 6 Months" />
-              </div>
-              <div class="form-group">
-                <label for="edit-lease-referral-source">Referral Source:</label>
-                <select id="edit-lease-referral-source" name="edit-lease-referral-source" required>
-                  <option value="WCRE">WCRE</option>
-                  <option value="CoStar">CoStar</option>
-                  <option value="Loopnet">Loopnet</option>
-                  <option value="Networking">Networking</option>
-                  <option value="Relationship">Relationship</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              <div class="form-group increased-line-height">
-                <label for="edit-lease-invoice-contact">Invoice Contact Information:</label>
-                <textarea id="edit-lease-invoice-contact" name="edit-lease-invoice-contact" placeholder="Enter Invoice Contact Information:" required></textarea>
-              </div>
-              <div class="form-group">
-                <button id="edit-upload-lease-agreement" type="button"> Upload Lease Agreement </button>
-                <input id="edit-lease-agreement" type="file" style="display: none" accept=".pdf" />
-                <input type="hidden" id="edit-lease-agreement-file-base64" name="edit-lease-agreement-file-base64" />
-              </div>
-              <div class="form-group">
-                <button id="edit-upload-lease-commission-agreement" type="button"> Upload Commission Agreement </button>
-                <input id="edit-lease-commission-agreement" type="file" style="display: none" accept=".pdf" />
-                <input type="hidden" id="edit-lease-commission-agreement-file-base64" name="edit-lease-commission-agreement-file-base64" />
-              </div>
-              <div class="form-group">
-                <button id="edit-upload-lease-commission-invoice" type="button"> Upload Lease Commision Calculation Document </button>
-                <input id="edit-lease-commission-invoice" type="file" style="display: none" accept=".pdf" />
-                <input type="hidden" id="edit-lease-commission-invoice-file-base64" name="edit-lease-commission-invoice-file-base64" />
-              </div>
+            <div class="form-group">
+              <label for="edit-lease-lessor-phone">Lessor Phone Number:</label>
+              <input type="tel" id="edit-lease-lessor-phone" name="edit-lease-lessor-phone" required />
             </div>
-            <div class="modal-navigation">
-              <button class="minimal-button prev-step" type="button"> Previous </button>
-              <button class="minimal-button next-step" type="button"> Next </button>
+          </div>
+          <div class="modal-step edit-form-step" id="edit-step3">
+            <div class="form-group">
+              <label for="edit-lease-lessee-entity">Lessee Entity (DBA):</label>
+              <input type="text" id="edit-lease-lessee-entity" name="edit-lease-lessee-entity"
+                placeholder="Enter Lessee Entity:" required />
             </div>
-          </form>
-        </div>
+            <div class="form-group">
+              <label for="edit-lease-lessee-name">Lessee Contact Name:</label>
+              <input type="text" id="edit-lease-lessee-name" name="edit-lease-lessee-name" required />
+            </div>
+            <div class="form-group">
+              <label for="edit-lease-lessee-email">Lessee Email:</label>
+              <input type="email" id="edit-lease-lessee-email" name="edit-lease-lessee-email" required />
+            </div>
+            <div class="form-group">
+              <label for="edit-lease-lessee-phone">Lessee Phone Number:</label>
+              <input type="tel" id="edit-lease-lessee-phone" name="edit-lease-lessee-phone" required />
+            </div>
+          </div>
+          <div class="modal-step edit-form-step" id="edit-step4">
+            <div class="form-group">
+              <label for="edit-lease-term-length">Lease Term Length:</label>
+              <input type="text" id="edit-lease-term-length" name="edit-lease-term-length"
+                placeholder="3 Years, 6 Months" />
+            </div>
+            <div class="form-group">
+              <label for="edit-lease-referral-source">Referral Source:</label>
+              <select id="edit-lease-referral-source" name="edit-lease-referral-source" required>
+                <option value="WCRE">WCRE</option>
+                <option value="CoStar">CoStar</option>
+                <option value="Loopnet">Loopnet</option>
+                <option value="Networking">Networking</option>
+                <option value="Relationship">Relationship</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group increased-line-height">
+              <label for="edit-lease-invoice-contact">Invoice Contact Information:</label>
+              <textarea id="edit-lease-invoice-contact" name="edit-lease-invoice-contact"
+                placeholder="Enter Invoice Contact Information:" required></textarea>
+            </div>
+            <div class="form-group">
+              <button id="edit-upload-lease-agreement" type="button"> Upload Lease Agreement </button>
+              <input id="edit-lease-agreement" type="file" style="display: none" accept=".pdf" />
+              <input type="hidden" id="edit-lease-agreement-file-id" name="edit-lease-agreement-file-id" />
+            </div>
+            <div class="form-group">
+              <button id="edit-upload-lease-commission-agreement" type="button"> Upload Commission Agreement </button>
+              <input id="edit-lease-commission-agreement" type="file" style="display: none" accept=".pdf" />
+              <input type="hidden" id="edit-lease-commission-agreement-file-id"
+                name="edit-lease-commission-agreement-file-id" />
+            </div>
+            <div class="form-group">
+              <button id="edit-upload-lease-commission-invoice" type="button"> Upload Lease Commision Calculation
+                Document </button>
+              <input id="edit-lease-commission-invoice" type="file" style="display: none" accept=".pdf" />
+              <input type="hidden" id="edit-lease-commission-invoice-file-id"
+                name="edit-lease-commission-invoice-file-id" />
+            </div>
+          </div>
+          <div class="modal-navigation">
+            <button class="minimal-button prev-step" type="button"> Previous </button>
+            <button class="minimal-button next-step" type="button"> Next </button>
+          </div>
+        </form>
       </div>
     </div>
-  </body>
+  </div>
+</body>
+
 </html>

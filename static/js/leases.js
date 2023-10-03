@@ -230,9 +230,9 @@ $(document).ready(function () {
 		cells.forEach(cell => $row.append($("<td>").html(cell)));
 		const brokerElements = $.map(result.brokers, broker => $("<span>").addClass("broker-name").text(broker));
 		$row.append($("<td>").addClass("brokers").append(brokerElements));
-		$row.append($("<td>").html(result.lease_agreement_file_base64 ? `<form method="POST"><a href="/download_lease_agreement_pdf/${result._id}">Fully Executed</a></form>` : "Pending"));
-		$row.append($("<td>").html(result.lease_commission_file_base64 ? `<form method="POST"><a href="/download_lease_commission_pdf/${result._id}">Fully Executed</a></form>` : "Pending"));
-		$row.append($("<td>").html(result.lease_commission_invoice_file_base64 ? `<form method="POST"><a href="/download_lease_commission_invoice_pdf/${result._id}">Fully Executed</a></form>` : "Pending"));
+		$row.append($("<td>").html(result.lease_agreement_file_id ? `<form method="POST"><a href="/download/${result.lease_agreement_file_id}">Fully Executed</a></form>` : "Pending"));
+		$row.append($("<td>").html(result.lease_commission_file_id ? `<form method="POST"><a href="/download/${result.lease_commission_file_id}">Fully Executed</a></form>` : "Pending"));
+		$row.append($("<td>").html(result.lease_commission_invoice_file_id ? `<form method="POST"><a href="/download/${result.lease_commission_invoice_file_id}">Fully Executed</a></form>` : "Pending"));
 		$row.append($("<td>").text(result.lease_referral_source));
 		$row.append($("<td>").text(result.lease_invoice_contact));
 		return $row;
@@ -298,9 +298,9 @@ $(document).ready(function () {
 						lease_property_type: $("#edit-lease-property-type").val(),
 						lease_sqft: $("#edit-lease-sqft").val(),
 						lease_term_length: $("#edit-lease-term-length").val(),
-						lease_agreement_file_base64: $("#edit-lease-agreement-file-base64").val(),
-						lease_commission_file_base64: $("#edit-lease-commission-agreement-file-base64").val(),
-						lease_commission_invoice_file_base64: $("#edit-lease-commission-invoice-file-base64").val(),
+						lease_agreement_file_id: $("#edit-lease-agreement-file-id").val(),
+						lease_commission_file_id: $("#edit-lease-commission-agreement-file-id").val(),
+						lease_commission_invoice_file_id: $("#edit-lease-commission-invoice-file-id").val(),
 						lease_street: $("#edit-lease-street").val(),
 						lease_city: $("#edit-lease-city").val(),
 						lease_state: $("#edit-lease-state").val(),
@@ -371,7 +371,7 @@ $(document).ready(function () {
 					if (data.success) {
 						config.buttonElement.textContent = "Document Uploaded ✔";
 						config.buttonElement.disabled = true;
-						document.getElementById(config.resultElementId).value = data.fileBase64;
+						document.getElementById(config.resultElementId).value = data["fileId"];
 					} else {
 						showNotification("Error Uploading Document", "error-notification");
 					}
@@ -389,32 +389,32 @@ $(document).ready(function () {
 	var configurations = [{
 		inputElement: agreementFileInput,
 		buttonElement: uploadButtonAgreement,
-		resultElementId: "lease-agreement-file-base64"
+		resultElementId: "lease-agreement-file-id"
 	},
 	{
 		inputElement: editAgreementFileInput,
 		buttonElement: editUploadButtonAgreement,
-		resultElementId: "edit-lease-agreement-file-base64"
+		resultElementId: "edit-lease-agreement-file-id"
 	},
 	{
 		inputElement: commissionFileInput,
 		buttonElement: uploadButtonCommission,
-		resultElementId: "lease-commission-agreement-file-base64"
+		resultElementId: "lease-commission-agreement-file-id"
 	},
 	{
 		inputElement: editCommissionFileInput,
 		buttonElement: editUploadButtonCommission,
-		resultElementId: "edit-lease-commission-agreement-file-base64"
+		resultElementId: "edit-lease-commission-agreement-file-id"
 	},
 	{
 		inputElement: commissionInvoiceFileInput,
 		buttonElement: uploadButtonCommissionInvoice,
-		resultElementId: "lease-commission-invoice-file-base64"
+		resultElementId: "lease-commission-invoice-file-id"
 	},
 	{
 		inputElement: editCommissionInvoiceFileInput,
 		buttonElement: editUploadButtonCommissionInvoice,
-		resultElementId: "edit-lease-commission-invoice-file-base64"
+		resultElementId: "edit-lease-commission-invoice-file-id"
 	}
 	];
 
@@ -479,9 +479,9 @@ $(document).ready(function () {
 		if (validateStep() && validateBrokers()) {
 			$("#add-lease-modal").css("display", "none");
 			var formData = new FormData(this);
-			formData.append("lease-agreement-file-base64", $("#lease-agreement-file-base64").val());
-			formData.append("lease-commission-agreement-file-base64", $("#lease-commission-agreement-file-base64").val());
-			formData.append("lease-commission-invoice-file-base64", $("#lease-commission-invoice-file-base64").val());
+			formData.append("lease-agreement-file-id", $("#lease-agreement-file-id").val());
+			formData.append("lease-commission-agreement-file-id", $("#lease-commission-agreement-file-id").val());
+			formData.append("lease-commission-invoice-file-id", $("#lease-commission-invoice-file-id").val());
 			$.ajax({
 				url: "/submit_lease",
 				type: "POST",

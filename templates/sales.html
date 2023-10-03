@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Admin Portal - Sales</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="/static/icons/cropped_logo.png" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sales.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidebar.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/icons.css') }}" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="{{ url_for('static', filename='js/sales.js') }}"></script>
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  </head>
-  <body data-is-admin="{{ is_admin }}">
-    <div id="error-notification" class="error-notification"></div>
-    <div id="success-notification" class="success-notification"></div> {% include 'sidebar.html' %} <div class="content">
-      <div class="toolbar" style="padding: 10px 0; position: relative">
-        <form id="search-form" class="search-form" style="
+
+<head>
+  <title>Admin Portal - Sales</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/static/icons/cropped_logo.png" />
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sales.css') }}" />
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidebar.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/icons.css') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="{{ url_for('static', filename='js/sales.js') }}"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+
+<body data-is-admin="{{ is_admin }}">
+  <div id="error-notification" class="error-notification"></div>
+  <div id="success-notification" class="success-notification"></div> {% include 'sidebar.html' %} <div class="content">
+    <div class="toolbar" style="padding: 10px 0; position: relative">
+      <form id="search-form" class="search-form" style="
             text-align: start;
             display: flex;
             flex-wrap: wrap;
@@ -30,349 +32,372 @@
             width: 100%;
             float: right;
           ">
-          <div class="sales-count-div">
-            <div id="sales-count" style="position: relative; left: 0; flex-shrink: 0" class="sales-count header-btns"> Total Sales: {{ sale_count }}
-            </div>
+        <div class="sales-count-div">
+          <div id="sales-count" style="position: relative; left: 0; flex-shrink: 0" class="sales-count header-btns">
+            Total Sales: {{ sale_count }}
           </div>
-          <div style="
+        </div>
+        <div style="
               display: flex;
               flex-wrap: wrap;
               column-gap: 20px;
               row-gap: 10px;
             ">
-            <input type="text" class="sales-count-div" style="flex-shrink: 0" id="search-input" placeholder="Search Sales..." />
-            <button id="open-map-button" class="header-btns" style="flex-shrink: 0" type="button"> Open Sales Map </button>
-            <button id="add-sale-button" class="header-btns" style="flex-shrink: 0" type="button"> Add Sale </button>
-          </div>
-        </form>
-      </div>
-      <div class="table-div">
-        <table class="centered-table" style="width: 100%; margin: 0; border-radius: 6px; overflow: hidden">
-          <thead>
-            <tr>
-              <th style="border-top-left-radius: 7px">Property Type</th>
-              <th>Sale Type</th>
-              <th>Closing Date</th>
-              <th>Price</th>
-              <th>Total Commission</th>
-              <th>Square FT</th>
-              <th>Price/SF</th>
-              <th>Street</th>
-              <th>City</th>
-              <th>State</th>
-              <th>Buyer</th>
-              <th>Seller</th>
-              <th>Brokers</th>
-              <th style="border-top-right-radius: 7px">Sale Agreement</th>
-            </tr>
-          </thead>
-          <tbody> {% for sale in sales %} <tr data-sale-id="{{ sale._id }}">
-              <td>{{ sale.sale_property_type }}</td>
-              <td>{{ sale.sale_type }}</td>
-              <td>{{ sale.sale_end_date }}</td>
-              <td>{{ sale.sale_price }}</td>
-              <td>{{ sale.sale_commission }}</td>
-              <td>{{ sale.sale_sqft }}</td>
-              <td>
-                <script>
-                  var price = parseFloat('{{ sale.sale_price.replace("$", "").replace(",", "") }}');
-                  var sqft = parseFloat('{{ sale.sale_sqft.replace(",", "") }}');
-                  var pricePerSqft = price / sqft;
-                  document.write("$" + pricePerSqft.toFixed(2));
-                </script>
-              </td>
-              <td>{{ sale.sale_street }}</td>
-              <td>{{ sale.sale_city }}</td>
-              <td> {% if sale.sale_state == "New Jersey" %} NJ {% elif sale.sale_state == "Pennsylvania" %} PA {% else %} {{ sale.sale_state }} {% endif %} </td>
-              <td>
-                <div class="contact-info">
-                  <div class="buyer-entity">{{ sale.sale_buyer_entity }}</div>
-                  <a href="mailto:{{ sale.sale_buyer_email }}">{{ sale.sale_buyer_name }}</a>
-                  <a href="tel:{{ sale.sale_buyer_phone }}">{{ sale.sale_buyer_phone }}</a>
-                </div>
-              </td>
-              <td>
-                <div class="contact-info">
-                  <div class="seller-entity">{{ sale.sale_seller_entity }}</div>
-                  <a href="mailto:{{ sale.sale_seller_email }}">{{ sale.sale_seller_name }}</a>
-                  <a href="tel:{{ sale.sale_seller_phone }}">{{ sale.sale_seller_phone }}</a>
-                </div>
-              </td>
-              <td class="brokers"> {% for broker in sale.brokers %} <span class="broker-name">{{ broker }}</span> {% endfor %} </td>
-              <td>
-                <form method="POST"> {% if sale.sale_agreement_file_base64 %} <a href="{{ url_for('download_sale_pdf', sale_id=sale._id) }}">Fully Executed</a> {% else %} Pending {% endif %} </form>
-              </td>
-            </tr> {% endfor %} </tbody>
-          <table>
-            {{ pagination.links }}
-            <div>
-              <div id="action-modal" class="action-modal">
-                <button id="delete-button">Delete Sale</button>
-                <button id="edit-button">Edit Sale</button>
+          <input type="text" class="sales-count-div" style="flex-shrink: 0" id="search-input"
+            placeholder="Search Sales..." />
+          <button id="open-map-button" class="header-btns" style="flex-shrink: 0" type="button"> Open Sales Map
+          </button>
+          <button id="add-sale-button" class="header-btns" style="flex-shrink: 0" type="button"> Add Sale </button>
+        </div>
+      </form>
+    </div>
+    <div class="table-div">
+      <table class="centered-table" style="width: 100%; margin: 0; border-radius: 6px; overflow: hidden">
+        <thead>
+          <tr>
+            <th style="border-top-left-radius: 7px">Property Type</th>
+            <th>Sale Type</th>
+            <th>Closing Date</th>
+            <th>Price</th>
+            <th>Total Commission</th>
+            <th>Square FT</th>
+            <th>Price/SF</th>
+            <th>Street</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Buyer</th>
+            <th>Seller</th>
+            <th>Brokers</th>
+            <th style="border-top-right-radius: 7px">Sale Agreement</th>
+          </tr>
+        </thead>
+        <tbody> {% for sale in sales %} <tr data-sale-id="{{ sale._id }}">
+            <td>{{ sale.sale_property_type }}</td>
+            <td>{{ sale.sale_type }}</td>
+            <td>{{ sale.sale_end_date }}</td>
+            <td>{{ sale.sale_price }}</td>
+            <td>{{ sale.sale_commission }}</td>
+            <td>{{ sale.sale_sqft }}</td>
+            <td>
+              <script>
+                var price = parseFloat('{{ sale.sale_price.replace("$", "").replace(",", "") }}');
+                var sqft = parseFloat('{{ sale.sale_sqft.replace(",", "") }}');
+                var pricePerSqft = price / sqft;
+                document.write("$" + pricePerSqft.toFixed(2));
+              </script>
+            </td>
+            <td>{{ sale.sale_street }}</td>
+            <td>{{ sale.sale_city }}</td>
+            <td> {% if sale.sale_state == "New Jersey" %} NJ {% elif sale.sale_state == "Pennsylvania" %} PA {% else %}
+              {{ sale.sale_state }} {% endif %} </td>
+            <td>
+              <div class="contact-info">
+                <div class="buyer-entity">{{ sale.sale_buyer_entity }}</div>
+                <a href="mailto:{{ sale.sale_buyer_email }}">{{ sale.sale_buyer_name }}</a>
+                <a href="tel:{{ sale.sale_buyer_phone }}">{{ sale.sale_buyer_phone }}</a>
               </div>
-              <div id="add-sale-modal" class="sale-modal" data-mode="add">
-                <div class="modal-content">
-                  <span class="close">&times;</span>
-                  <form id="submit-sale-form" class="modal-form" action="{{ url_for('submit_sale') }}" method="POST">
-                    <div class="modal-step active-step main-form-step" id="main-step1">
-                      <h2 class="modal-step-title"> New Sale - Property Information </h2>
-                      <div class="form-group">
-                        <label for="sale-street">Sale Street:</label>
-                        <input type="text" id="sale-street" name="sale-street" placeholder="Enter Street Address:" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="sale-city">Sale City:</label>
-                        <input type="text" id="sale-city" name="sale-city" placeholder="Enter Town/City:" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="sale-state">Sale State:</label>
-                        <select id="sale-state" name="sale-state" required>
-                          <option value="NJ">NJ</option>
-                          <option value="PA">PA</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="sale-property-type">Property Type:</label>
-                        <select id="sale-property-type" name="sale-property-type" required>
-                          <option value="Office">Office</option>
-                          <option value="Industrial">Industrial</option>
-                          <option value="Flex">Flex</option>
-                          <option value="Retail">Retail</option>
-                          <option value="Medical">Medical</option>
-                          <option value="Land">Land</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="sale-sqft">Sale Square Footage:</label>
-                        <input type="text" id="sale-sqft" name="sale-sqft" placeholder="Enter Square Footage:" required />
-                      </div>
-                    </div>
-                    <div class="modal-step main-form-step" id="main-step2">
-                      <h2 class="modal-step-title"> New Sale - Buyer Information </h2>
-                      <div class="form-group">
-                        <label for="sale-buyer-entity">Buyer Entity (DBA):</label>
-                        <input type="text" id="sale-buyer-entity" name="sale-buyer-entity" placeholder="Enter Buyer Entity (DBA):" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="sale-buyer-name">Buyer Contact Name:</label>
-                        <input type="text" id="sale-buyer-name" name="sale-buyer-name" placeholder="Enter Buyer Contact Name:" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="sale-buyer-email">Buyer Email:</label>
-                        <input type="email" id="sale-buyer-email" name="sale-buyer-email" placeholder="Enter Buyer Email:" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="sale-buyer-phone">Buyer Phone Number:</label>
-                        <input type="tel" id="sale-buyer-phone" name="sale-buyer-phone" placeholder="Enter Buyer Phone Number:" required />
-                      </div>
-                    </div>
-                    <div class="modal-step main-form-step" id="main-step3">
-                      <h2 class="modal-step-title"> New Sale - Seller Information </h2>
-                      <div class="form-group">
-                        <label for="sale-seller-entity">Seller Entity (DBA):</label>
-                        <input type="text" id="sale-seller-entity" name="sale-seller-entity" placeholder="Enter Seller Entity (DBA):" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="sale-seller-name">Seller Name:</label>
-                        <input type="text" id="sale-seller-name" name="sale-seller-name" placeholder="Enter Seller Name:" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="sale-seller-email">Seller Email:</label>
-                        <input type="email" id="sale-seller-email" name="sale-seller-email" placeholder="Enter Seller Email:" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="sale-seller-phone">Seller Phone Number:</label>
-                        <input type="tel" id="sale-seller-phone" name="sale-seller-phone" placeholder="Enter Seller Phone Number:" required />
-                      </div>
-                    </div>
-                    <div class="modal-step main-form-step" id="main-step4">
-                      <h2 class="modal-step-title"> New Sale - General Information </h2>
-                      <div class="form-group">
-                        <label for="sale-type">Sale Type:</label>
-                        <select id="sale-type" name="sale-type" required>
-                          <option value="User">User</option>
-                          <option value="Investor">Investor</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="sale-price">Sale Price:</label>
-                        <input type="text" id="sale-price" name="sale-price" placeholder="Enter Sale Price:" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="sale-commission">Total Sale Commission:</label>
-                        <input type="text" id="sale-commission" name="sale-commission" placeholder="Enter Sale Commission:" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="sale-end-date">Sale Closing Date:</label>
-                        <input type="text" id="sale-end-date" name="sale-end-date" placeholder="Enter Sale Closing Date:" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="sale-brokers">Brokers:</label>
-                        <select id="sale-brokers" name="brokers[]" multiple>
-                          <option value="Jason Wolf">Jason Wolf</option>
-                          <option value="Evan Zweben">Evan Zweben</option>
-                          <option value="Erin Warwick">Erin Warwick</option>
-                          <option value="Todd Monahan">Todd Monahan</option>
-                          <option value="John Mozzillo">John Mozzillo</option>
-                          <option value="Ryan Barikian">Ryan Barikian</option>
-                          <option value="Bethany Brown">Bethany Brown</option>
-                          <option value="Tony Banks">Tony Banks</option>
-                          <option value="Phil Costa">Phil Costa</option>
-                          <option value="Eric Flocco">Eric Flocco</option>
-                          <option value="John Mazurie">John Mazurie</option>
-                          <option value="Brian Goren">Brian Goren</option>
-                          <option value="Julia Brines">Julia Brines</option>
-                          <option value="Brian Propp">Brian Propp</option>
-                          <option value="Sam Newman">Sam Newman</option>
-                          <option value="David Spector">David Spector</option>
-                          <option value="Chemmie Sokolic"> Chemmie Sokolic </option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="sale-referral-source">Referral Source:</label>
-                        <select id="sale-referral-source" name="sale-referral-source" required>
-                          <option value="WCRE">WCRE</option>
-                          <option value="CoStar">CoStar</option>
-                          <option value="Loopnet">Loopnet</option>
-                          <option value="Networking">Networking</option>
-                          <option value="Relationship">Relationship</option>
-                          <option value="Other">Other</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <button id="upload-sale-agreement" type="button"> Upload Settlement (HUD Statement) </button>
-                        <input id="sale-agreement" type="file" style="display: none" accept=".pdf" />
-                        <input type="hidden" id="sale-agreement-file-base64" name="sale-agreement-file-base64" />
-                      </div>
-                    </div>
-                    <div class="modal-navigation">
-                      <button class="minimal-button prev-step" type="button"> Previous </button>
-                      <button class="minimal-button next-step" type="button"> Next </button>
-                    </div>
-                  </form>
-                </div>
+            </td>
+            <td>
+              <div class="contact-info">
+                <div class="seller-entity">{{ sale.sale_seller_entity }}</div>
+                <a href="mailto:{{ sale.sale_seller_email }}">{{ sale.sale_seller_name }}</a>
+                <a href="tel:{{ sale.sale_seller_phone }}">{{ sale.sale_seller_phone }}</a>
               </div>
-              <div id="edit-sale-modal" class="sale-modal" data-mode="edit">
-                <div class="modal-content">
-                  <span class="close">&times;</span>
-                  <form id="edit-sale-modal" class="modal-form">
-                    <h2 class="modal-step-title">Edit Sale</h2>
-                    <div class="modal-step active-step edit-form-step" id="edit-step1">
-                      <div class="form-group">
-                        <label for="edit-sale-street">Sale Street:</label>
-                        <input type="text" id="edit-sale-street" name="edit-sale-street" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="sale-city">Sale City:</label>
-                        <input type="text" id="edit-sale-city" name="edit-sale-city" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-sale-state">Sale State:</label>
-                        <select id="edit-sale-state" name="edit-sale-state" required>
-                          <option value="NJ">NJ</option>
-                          <option value="PA">PA</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-sale-property-type">Property Type:</label>
-                        <select id="edit-sale-property-type" name="edit-sale-property-type" required>
-                          <option value="Office">Office</option>
-                          <option value="Industrial">Industrial</option>
-                          <option value="Flex">Flex</option>
-                          <option value="Retail">Retail</option>
-                          <option value="Medical">Medical</option>
-                          <option value="Land">Land</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-sale-sqft">Sale Square Footage:</label>
-                        <input type="text" id="edit-sale-sqft" name="edit-sale-sqft" required />
-                      </div>
+            </td>
+            <td class="brokers"> {% for broker in sale.brokers %} <span class="broker-name">{{ broker }}</span> {%
+              endfor %} </td>
+            <td>
+              <form method="POST"> {% if sale.sale_agreement_file_id %} <a
+                  href="{{ url_for('download', file_id=sale.sale_agreement_file_id) }}">Fully Executed</a> {% else %}
+                Pending {% endif %}
+              </form>
+            </td>
+          </tr> {% endfor %} </tbody>
+        <table>
+          {{ pagination.links }}
+          <div>
+            <div id="action-modal" class="action-modal">
+              <button id="delete-button">Delete Sale</button>
+              <button id="edit-button">Edit Sale</button>
+            </div>
+            <div id="add-sale-modal" class="sale-modal" data-mode="add">
+              <div class="modal-content">
+                <span class="close">&times;</span>
+                <form id="submit-sale-form" class="modal-form" action="{{ url_for('submit_sale') }}" method="POST">
+                  <div class="modal-step active-step main-form-step" id="main-step1">
+                    <h2 class="modal-step-title"> New Sale - Property Information </h2>
+                    <div class="form-group">
+                      <label for="sale-street">Sale Street:</label>
+                      <input type="text" id="sale-street" name="sale-street" placeholder="Enter Street Address:"
+                        required />
                     </div>
-                    <div class="modal-step edit-form-step" id="edit-step2">
-                      <div class="form-group">
-                        <label for="edit-sale-buyer-entity">Buyer Entity (DBA):</label>
-                        <input type="text" id="edit-sale-buyer-entity" name="edit-sale-buyer-entity" placeholder="Enter Buyer Entity (DBA):" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-sale-buyer-name">Buyer Contact Name:</label>
-                        <input type="text" id="edit-sale-buyer-name" name="edit-sale-buyer-name" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-sale-buyer-email">Buyer Email:</label>
-                        <input type="email" id="edit-sale-buyer-email" name="edit-sale-buyer-email" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-sale-buyer-phone">Buyer Phone Number:</label>
-                        <input type="tel" id="edit-sale-buyer-phone" name="edit-sale-buyer-phone" required />
-                      </div>
+                    <div class="form-group">
+                      <label for="sale-city">Sale City:</label>
+                      <input type="text" id="sale-city" name="sale-city" placeholder="Enter Town/City:" required />
                     </div>
-                    <div class="modal-step edit-form-step" id="edit-step3">
-                      <div class="form-group">
-                        <label for="edit-sale-seller-entity">Seller Entity (DBA):</label>
-                        <input type="text" id="edit-sale-seller-entity" name="edit-sale-seller-entity" placeholder="Enter Seller Entity (DBA):" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-sale-seller-name">Seller Contact Name:</label>
-                        <input type="text" id="edit-sale-seller-name" name="edit-sale-seller-name" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-sale-seller-email">Seller Email:</label>
-                        <input type="email" id="edit-sale-seller-email" name="edit-sale-seller-email" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-sale-seller-phone">Seller Phone Number:</label>
-                        <input type="tel" id="edit-sale-seller-phone" name="edit-sale-seller-phone" required />
-                      </div>
+                    <div class="form-group">
+                      <label for="sale-state">Sale State:</label>
+                      <select id="sale-state" name="sale-state" required>
+                        <option value="NJ">NJ</option>
+                        <option value="PA">PA</option>
+                      </select>
                     </div>
-                    <div class="modal-step edit-form-step" id="edit-step4">
-                      <div class="form-group">
-                        <label for="edit-sale-type">Sale Type:</label>
-                        <select id="edit-sale-type" name="sale-type" required>
-                          <option value="User">User</option>
-                          <option value="Investor">Investor</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-sale-end-date">Sale Closing Date:</label>
-                        <input type="text" id="edit-sale-end-date" name="edit-sale-end-date" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-sale-price">Sale Price:</label>
-                        <input type="text" id="edit-sale-price" name="edit-sale-price" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="sale-commission">Total Sale Commission:</label>
-                        <input type="text" id="edit-sale-commission" name="edit-sale-commission" placeholder="Enter Sale Commission:" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-sale-referral-source">Referral Source:</label>
-                        <select id="edit-sale-referral-source" name="edit-sale-referral-source" required>
-                          <option value="WCRE">WCRE</option>
-                          <option value="CoStar">CoStar</option>
-                          <option value="Loopnet">Loopnet</option>
-                          <option value="Networking">Networking</option>
-                          <option value="Relationship">Relationship</option>
-                          <option value="Other">Other</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <button id="edit-upload-sale-agreement" type="button"> Upload Sale Agreement </button>
-                        <input id="edit-sale-agreement" type="file" style="display: none" accept=".pdf" />
-                        <input type="hidden" id="edit-sale-agreement-file-base64" name="edit-sale-agreement-file-base64" />
-                      </div>
+                    <div class="form-group">
+                      <label for="sale-property-type">Property Type:</label>
+                      <select id="sale-property-type" name="sale-property-type" required>
+                        <option value="Office">Office</option>
+                        <option value="Industrial">Industrial</option>
+                        <option value="Flex">Flex</option>
+                        <option value="Retail">Retail</option>
+                        <option value="Medical">Medical</option>
+                        <option value="Land">Land</option>
+                      </select>
                     </div>
-                    <div class="modal-navigation">
-                      <button class="minimal-button prev-step" type="button"> Previous </button>
-                      <button class="minimal-button next-step" type="button"> Next </button>
+                    <div class="form-group">
+                      <label for="sale-sqft">Sale Square Footage:</label>
+                      <input type="text" id="sale-sqft" name="sale-sqft" placeholder="Enter Square Footage:" required />
                     </div>
-                  </form>
-                </div>
+                  </div>
+                  <div class="modal-step main-form-step" id="main-step2">
+                    <h2 class="modal-step-title"> New Sale - Buyer Information </h2>
+                    <div class="form-group">
+                      <label for="sale-buyer-entity">Buyer Entity (DBA):</label>
+                      <input type="text" id="sale-buyer-entity" name="sale-buyer-entity"
+                        placeholder="Enter Buyer Entity (DBA):" required />
+                    </div>
+                    <div class="form-group">
+                      <label for="sale-buyer-name">Buyer Contact Name:</label>
+                      <input type="text" id="sale-buyer-name" name="sale-buyer-name"
+                        placeholder="Enter Buyer Contact Name:" required />
+                    </div>
+                    <div class="form-group">
+                      <label for="sale-buyer-email">Buyer Email:</label>
+                      <input type="email" id="sale-buyer-email" name="sale-buyer-email" placeholder="Enter Buyer Email:"
+                        required />
+                    </div>
+                    <div class="form-group">
+                      <label for="sale-buyer-phone">Buyer Phone Number:</label>
+                      <input type="tel" id="sale-buyer-phone" name="sale-buyer-phone"
+                        placeholder="Enter Buyer Phone Number:" required />
+                    </div>
+                  </div>
+                  <div class="modal-step main-form-step" id="main-step3">
+                    <h2 class="modal-step-title"> New Sale - Seller Information </h2>
+                    <div class="form-group">
+                      <label for="sale-seller-entity">Seller Entity (DBA):</label>
+                      <input type="text" id="sale-seller-entity" name="sale-seller-entity"
+                        placeholder="Enter Seller Entity (DBA):" required />
+                    </div>
+                    <div class="form-group">
+                      <label for="sale-seller-name">Seller Name:</label>
+                      <input type="text" id="sale-seller-name" name="sale-seller-name" placeholder="Enter Seller Name:"
+                        required />
+                    </div>
+                    <div class="form-group">
+                      <label for="sale-seller-email">Seller Email:</label>
+                      <input type="email" id="sale-seller-email" name="sale-seller-email"
+                        placeholder="Enter Seller Email:" required />
+                    </div>
+                    <div class="form-group">
+                      <label for="sale-seller-phone">Seller Phone Number:</label>
+                      <input type="tel" id="sale-seller-phone" name="sale-seller-phone"
+                        placeholder="Enter Seller Phone Number:" required />
+                    </div>
+                  </div>
+                  <div class="modal-step main-form-step" id="main-step4">
+                    <h2 class="modal-step-title"> New Sale - General Information </h2>
+                    <div class="form-group">
+                      <label for="sale-type">Sale Type:</label>
+                      <select id="sale-type" name="sale-type" required>
+                        <option value="User">User</option>
+                        <option value="Investor">Investor</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="sale-price">Sale Price:</label>
+                      <input type="text" id="sale-price" name="sale-price" placeholder="Enter Sale Price:" required />
+                    </div>
+                    <div class="form-group">
+                      <label for="sale-commission">Total Sale Commission:</label>
+                      <input type="text" id="sale-commission" name="sale-commission"
+                        placeholder="Enter Sale Commission:" required />
+                    </div>
+                    <div class="form-group">
+                      <label for="sale-end-date">Sale Closing Date:</label>
+                      <input type="text" id="sale-end-date" name="sale-end-date" placeholder="Enter Sale Closing Date:"
+                        required />
+                    </div>
+                    <div class="form-group">
+                      <label for="sale-brokers">Brokers:</label>
+                      <select id="sale-brokers" name="brokers[]" multiple>
+                        <option value="Jason Wolf">Jason Wolf</option>
+                        <option value="Evan Zweben">Evan Zweben</option>
+                        <option value="Erin Warwick">Erin Warwick</option>
+                        <option value="Todd Monahan">Todd Monahan</option>
+                        <option value="John Mozzillo">John Mozzillo</option>
+                        <option value="Ryan Barikian">Ryan Barikian</option>
+                        <option value="Bethany Brown">Bethany Brown</option>
+                        <option value="Tony Banks">Tony Banks</option>
+                        <option value="Phil Costa">Phil Costa</option>
+                        <option value="Eric Flocco">Eric Flocco</option>
+                        <option value="John Mazurie">John Mazurie</option>
+                        <option value="Brian Goren">Brian Goren</option>
+                        <option value="Julia Brines">Julia Brines</option>
+                        <option value="Brian Propp">Brian Propp</option>
+                        <option value="Sam Newman">Sam Newman</option>
+                        <option value="David Spector">David Spector</option>
+                        <option value="Chemmie Sokolic"> Chemmie Sokolic </option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="sale-referral-source">Referral Source:</label>
+                      <select id="sale-referral-source" name="sale-referral-source" required>
+                        <option value="WCRE">WCRE</option>
+                        <option value="CoStar">CoStar</option>
+                        <option value="Loopnet">Loopnet</option>
+                        <option value="Networking">Networking</option>
+                        <option value="Relationship">Relationship</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <button id="upload-sale-agreement" type="button"> Upload Settlement (HUD Statement) </button>
+                      <input id="sale-agreement" type="file" style="display: none" accept=".pdf" />
+                      <input type="hidden" id="sale-agreement-file-id" name="sale-agreement-file-id" />
+                    </div>
+                  </div>
+                  <div class="modal-navigation">
+                    <button class="minimal-button prev-step" type="button"> Previous </button>
+                    <button class="minimal-button next-step" type="button"> Next </button>
+                  </div>
+                </form>
               </div>
             </div>
-          </table>
+            <div id="edit-sale-modal" class="sale-modal" data-mode="edit">
+              <div class="modal-content">
+                <span class="close">&times;</span>
+                <form id="edit-sale-modal" class="modal-form">
+                  <h2 class="modal-step-title">Edit Sale</h2>
+                  <div class="modal-step active-step edit-form-step" id="edit-step1">
+                    <div class="form-group">
+                      <label for="edit-sale-street">Sale Street:</label>
+                      <input type="text" id="edit-sale-street" name="edit-sale-street" required />
+                    </div>
+                    <div class="form-group">
+                      <label for="sale-city">Sale City:</label>
+                      <input type="text" id="edit-sale-city" name="edit-sale-city" required />
+                    </div>
+                    <div class="form-group">
+                      <label for="edit-sale-state">Sale State:</label>
+                      <select id="edit-sale-state" name="edit-sale-state" required>
+                        <option value="NJ">NJ</option>
+                        <option value="PA">PA</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="edit-sale-property-type">Property Type:</label>
+                      <select id="edit-sale-property-type" name="edit-sale-property-type" required>
+                        <option value="Office">Office</option>
+                        <option value="Industrial">Industrial</option>
+                        <option value="Flex">Flex</option>
+                        <option value="Retail">Retail</option>
+                        <option value="Medical">Medical</option>
+                        <option value="Land">Land</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="edit-sale-sqft">Sale Square Footage:</label>
+                      <input type="text" id="edit-sale-sqft" name="edit-sale-sqft" required />
+                    </div>
+                  </div>
+                  <div class="modal-step edit-form-step" id="edit-step2">
+                    <div class="form-group">
+                      <label for="edit-sale-buyer-entity">Buyer Entity (DBA):</label>
+                      <input type="text" id="edit-sale-buyer-entity" name="edit-sale-buyer-entity"
+                        placeholder="Enter Buyer Entity (DBA):" required />
+                    </div>
+                    <div class="form-group">
+                      <label for="edit-sale-buyer-name">Buyer Contact Name:</label>
+                      <input type="text" id="edit-sale-buyer-name" name="edit-sale-buyer-name" required />
+                    </div>
+                    <div class="form-group">
+                      <label for="edit-sale-buyer-email">Buyer Email:</label>
+                      <input type="email" id="edit-sale-buyer-email" name="edit-sale-buyer-email" required />
+                    </div>
+                    <div class="form-group">
+                      <label for="edit-sale-buyer-phone">Buyer Phone Number:</label>
+                      <input type="tel" id="edit-sale-buyer-phone" name="edit-sale-buyer-phone" required />
+                    </div>
+                  </div>
+                  <div class="modal-step edit-form-step" id="edit-step3">
+                    <div class="form-group">
+                      <label for="edit-sale-seller-entity">Seller Entity (DBA):</label>
+                      <input type="text" id="edit-sale-seller-entity" name="edit-sale-seller-entity"
+                        placeholder="Enter Seller Entity (DBA):" required />
+                    </div>
+                    <div class="form-group">
+                      <label for="edit-sale-seller-name">Seller Contact Name:</label>
+                      <input type="text" id="edit-sale-seller-name" name="edit-sale-seller-name" required />
+                    </div>
+                    <div class="form-group">
+                      <label for="edit-sale-seller-email">Seller Email:</label>
+                      <input type="email" id="edit-sale-seller-email" name="edit-sale-seller-email" required />
+                    </div>
+                    <div class="form-group">
+                      <label for="edit-sale-seller-phone">Seller Phone Number:</label>
+                      <input type="tel" id="edit-sale-seller-phone" name="edit-sale-seller-phone" required />
+                    </div>
+                  </div>
+                  <div class="modal-step edit-form-step" id="edit-step4">
+                    <div class="form-group">
+                      <label for="edit-sale-type">Sale Type:</label>
+                      <select id="edit-sale-type" name="sale-type" required>
+                        <option value="User">User</option>
+                        <option value="Investor">Investor</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="edit-sale-end-date">Sale Closing Date:</label>
+                      <input type="text" id="edit-sale-end-date" name="edit-sale-end-date" required />
+                    </div>
+                    <div class="form-group">
+                      <label for="edit-sale-price">Sale Price:</label>
+                      <input type="text" id="edit-sale-price" name="edit-sale-price" required />
+                    </div>
+                    <div class="form-group">
+                      <label for="sale-commission">Total Sale Commission:</label>
+                      <input type="text" id="edit-sale-commission" name="edit-sale-commission"
+                        placeholder="Enter Sale Commission:" required />
+                    </div>
+                    <div class="form-group">
+                      <label for="edit-sale-referral-source">Referral Source:</label>
+                      <select id="edit-sale-referral-source" name="edit-sale-referral-source" required>
+                        <option value="WCRE">WCRE</option>
+                        <option value="CoStar">CoStar</option>
+                        <option value="Loopnet">Loopnet</option>
+                        <option value="Networking">Networking</option>
+                        <option value="Relationship">Relationship</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <button id="edit-upload-sale-agreement" type="button"> Upload Sale Agreement </button>
+                      <input id="edit-sale-agreement" type="file" style="display: none" accept=".pdf" />
+                      <input type="hidden" id="edit-sale-agreement-file-id" name="edit-sale-agreement-file-id" />
+                    </div>
+                  </div>
+                  <div class="modal-navigation">
+                    <button class="minimal-button prev-step" type="button"> Previous </button>
+                    <button class="minimal-button next-step" type="button"> Next </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
         </table>
-      </div>
+      </table>
     </div>
-  </body>
+  </div>
+</body>
+
 </html>

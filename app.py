@@ -15,7 +15,6 @@ from datetime import datetime
 import pytz
 from ics import Calendar, Event
 import arrow
-import base64
 from flask_mail import Mail, Message
 from premailer import transform
 from flask_talisman import Talisman
@@ -24,6 +23,10 @@ import sentry_sdk
 from flask import Flask
 from sentry_sdk.integrations.flask import FlaskIntegration
 from bson.objectid import ObjectId
+from pymongo import MongoClient
+from gridfs import GridFS
+from bson import ObjectId
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -390,55 +393,15 @@ def documents():
     )
 
 
-def send_pdf_response(collection, item_id, pdf_key, default_filename):
-    item = collection.find_one({"_id": ObjectId(item_id)})
-    if not item:
-        return f"No {default_filename.split('.')[0].capitalize()} Found", 404
-    pdf_file_base64 = item.get(pdf_key)
-    if not pdf_file_base64:
-        return (
-            f"No PDF Found for This {default_filename.split('.')[0].capitalize()}",
-            404,
-        )
-    pdf_file_data = base64.b64decode(pdf_file_base64)
-    response = make_response(pdf_file_data)
-    response.headers.set("Content-Type", "application/pdf")
-    response.headers.set("Content-Disposition", "attachment", filename=default_filename)
-    return response
-
-
-@app.route("/download_listing_pdf/<listing_id>", methods=["GET"])
+@app.route("/download/<file_id>")
 @login_required
-def download_listing_pdf(listing_id):
-    return send_pdf_response(listings, listing_id, "listing_agreement_file_base64", "listing_agreement.pdf")
-
-@app.route("/download_listing_amendment_pdf/<listing_id>", methods=["GET"])
-@login_required
-def download_listing_amendment_pdf(listing_id):
-    return send_pdf_response(listings, listing_id, "listing_amendment_file_base64", "listing_amendment.pdf")
-
-
-@app.route("/download_sale_pdf/<sale_id>", methods=["GET"])
-@login_required
-def download_sale_pdf(sale_id):
-    return send_pdf_response(sales, sale_id, "sale_agreement_file_base64", "sale_agreement.pdf")
-
-
-@app.route("/download_lease_agreement_pdf/<lease_id>", methods=["GET"])
-@login_required
-def download_lease_agreement_pdf(lease_id):
-    return send_pdf_response(leases, lease_id, "lease_agreement_file_base64", "lease_agreement.pdf")
-
-
-@app.route("/download_lease_commission_pdf/<lease_id>", methods=["GET"])
-@login_required
-def download_lease_commission_pdf(lease_id):
-    return send_pdf_response(leases, lease_id, "lease_commission_file_base64", "lease_commission.pdf")
-
-@app.route("/download_lease_commission_invoice_pdf/<lease_id>", methods=["GET"])
-@login_required
-def download_lease_commission_invoice_pdf(lease_id):
-    return send_pdf_response(leases, lease_id, "lease_commission_invoice_file_base64", "lease_commission_invoice.pdf")
+def download(file_id):
+    file = fs.get(ObjectId(file_id))
+    return Response(
+        file.read(),
+        mimetype=file.content_type,
+        headers={"Content-Disposition": f"attachment;filename={file.filename}"}
+    )
 
 
 
@@ -451,8 +414,9 @@ def handle_upload():
     if not allowed_file(file.filename):
         return {"success": False, "error": "Allowed File Types Are .pdf"}
     file_binary_data = file.read()
-    file_base64_data = base64.b64encode(file_binary_data).decode()
-    return {"success": True, "fileBase64": file_base64_data}
+    content_type = file.content_type  # or guess using the file extension
+    file_id = fs.put(file_binary_data, filename=file.filename, content_type=content_type)
+    return {"success": True, "fileId": str(file_id)}
 
 
 @app.route("/upload_pdf", methods=["POST"])
@@ -465,11 +429,10 @@ def upload_pdf():
 @login_required
 def submit_document():
     try:
-        form_keys = ["document-file-base64", "document-type", "document-name"]
-        new_document = {
-            key.replace("-", "_"): request.form.get(key) for key in form_keys
-        }
-        result = docs.insert_one(new_document)
+        form_keys = ["document-file-id", "document-type", "document-name"]
+        new_document = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
+        print(new_document)
+        result = db.Documents.insert_one(new_document)
         if not result.inserted_id:
             raise Exception("Error inserting the document.")
         return make_response(
@@ -512,8 +475,8 @@ def submit_listing():
         }
         new_listing["brokers"] = request.form.getlist("brokers[]")
         new_listing["listing_state"] = convert_state_code_to_full_name(new_listing["listing_state"])
-        new_listing["listing_agreement_file_base64"] = request.form.get("listing-agreement-file-base64")
-        new_listing["listing_amendment_file_base64"] = request.form.get("listing-amendment-file-base64" )
+        new_listing["listing_agreement_file_id"] = request.form.get("listing-agreement-file-id")
+        new_listing["listing_amendment_file_id"] = request.form.get("listing-amendment-file-id" )
         result = listings.insert_one(new_listing)
         if not result.inserted_id:
             raise Exception("Error inserting the listing.")
@@ -557,7 +520,7 @@ def submit_sale():
             "sale-buyer-email",
             "sale-buyer-phone",
             "sale-end-date",
-            "sale-agreement-file-base64",
+            "sale-agreement-file-id",
             "sale-property-type",
             "sale-type",
             "sale-price",
@@ -618,9 +581,9 @@ def submit_lease():
         years = request.form.get("lease-years")
         months = request.form.get("lease-months")
         new_lease["brokers"] = request.form.getlist("brokers[]")
-        new_lease["lease_agreement_file_base64"] = request.form.get("lease-agreement-file-base64")
-        new_lease["lease_commission_file_base64"] = request.form.get("lease-commission-agreement-file-base64")
-        new_lease["lease_commission_invoice_file_base64"] = request.form.get("lease-commission-invoice-file-base64")
+        new_lease["lease_agreement_file_id"] = request.form.get("lease-agreement-file-id")
+        new_lease["lease_commission_file_id"] = request.form.get("lease-commission-agreement-file-id")
+        new_lease["lease_commission_invoice_file_id"] = request.form.get("lease-commission-invoice-file-id")
         new_lease["lease_state"] = convert_state_code_to_full_name(new_lease["lease_state"])
         new_lease["lease_term_length"] = f"{years} Years, {months} Months"
         result = leases.insert_one(new_lease)
@@ -739,11 +702,11 @@ def edit_record(record_id, collection, fields):
 @login_required
 def edit_listing(listing_id):
     existing_listing = listings.find_one({"_id": ObjectId(listing_id)})
-    base64_fields = [
-        'listing_agreement_file_base64',
-        'listing_amendment_file_base64'
+    fileId_fields = [
+        'listing_agreement_file_id',
+        'listing_amendment_file_id'
     ]
-    for field in base64_fields:
+    for field in fileId_fields:
         if not request.json.get(field) and existing_listing.get(field):
             request.json.pop(field, None)
     if request.json.get("listing_state"):
@@ -758,7 +721,7 @@ def edit_listing(listing_id):
         "listing_owner_phone",
         "listing_end_date",
         "listing_start_date"
-        ] + base64_fields + [
+        ] + fileId_fields + [
         "listing_property_type",
         "listing_price",
     ]
@@ -769,8 +732,8 @@ def edit_listing(listing_id):
 @login_required
 def edit_sale(sale_id):
     existing_sale = sales.find_one({"_id": ObjectId(sale_id)})
-    if not request.json.get('sale_agreement_file_base64') and existing_sale.get('sale_agreement_file_base64'):
-        request.json.pop('sale_agreement_file_base64', None)
+    if not request.json.get('sale_agreement_file_id') and existing_sale.get('sale_agreement_file_id'):
+        request.json.pop('sale_agreement_file_id', None)
     if request.json.get("sale_state"):
         request.json["sale_state"] = convert_state_code_to_full_name(request.json["sale_state"])
     fields = [
@@ -786,7 +749,7 @@ def edit_sale(sale_id):
         "sale_buyer_email",
         "sale_buyer_phone",
         "sale_end_date",
-        "sale_agreement_file_base64",
+        "sale_agreement_file_id",
         "sale_property_type",
         "sale_type",
         "sale_price",
@@ -799,12 +762,12 @@ def edit_sale(sale_id):
 @login_required
 def edit_lease(lease_id):
     existing_lease = leases.find_one({"_id": ObjectId(lease_id)})
-    base64_fields = [
-        'lease_agreement_file_base64',
-        'lease_commission_file_base64',
-        'lease_commission_invoice_file_base64'
+    fileId_fields = [
+        'lease_agreement_file_id',
+        'lease_commission_file_id',
+        'lease_commission_invoice_file_id'
     ]
-    for field in base64_fields:
+    for field in fileId_fields:
         if not request.json.get(field) and existing_lease.get(field):
             request.json.pop(field, None)
     if request.json.get("sale_state"):
@@ -816,7 +779,7 @@ def edit_lease(lease_id):
         "lease_property_type",
         "lease_term_length",
         "lease_percentage_space"
-    ] + base64_fields + [
+    ] + fileId_fields + [
         "lease_lessor_entity",
         "lease_lessor_name",
         "lease_lessor_email",
@@ -933,6 +896,6 @@ def search_leases():
     return jsonify(results)
 
 
-Talisman(app, content_security_policy=None)
+#Talisman(app, content_security_policy=None)
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=6969, debug=False)
+    app.run(host="0.0.0.0", port=6969, debug=True)
