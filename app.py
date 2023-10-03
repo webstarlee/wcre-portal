@@ -9,16 +9,11 @@ from models import User
 from flask_paginate import Pagination, get_page_args
 from bson.objectid import ObjectId
 from gridfs import GridFS
-from bson import ObjectId, errors
 from dotenv import load_dotenv
 from flask import Flask, Response
 from datetime import datetime
-import uuid
-from botocore.exceptions import NoCredentialsError
-import boto3
 import pytz
 from ics import Calendar, Event
-from werkzeug.utils import secure_filename
 import arrow
 from flask_mail import Mail, Message
 from premailer import transform
@@ -72,9 +67,6 @@ try:
         SCHEDULER_API_ENABLED=True,
         PERMANENT_SESSION_LIFETIME=timedelta(minutes=15)
     )
-    s3_client = boto3.client('s3', region_name='us-east-2', 
-                             aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"), 
-                             aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"))
     scheduler = APScheduler()
     scheduler.init_app(app)
     mail = Mail(app)
@@ -86,7 +78,7 @@ except Exception as e:
 else:
     try:
         client = MongoClient(
-            os.getenv("MONGODB_URI"),
+            os.environ.get("MONGODB_URI"),
             tls=True,
             tlsAllowInvalidCertificates=True,
             serverSelectionTimeoutMS=5000,
@@ -401,45 +393,31 @@ def documents():
         greeting_msg=greeting_msg,
     )
 
+
 @app.route("/download/<file_id>")
 @login_required
 def download(file_id):
-    try:
-        try:
-            document_query = {"_id": ObjectId(file_id)}
-        except errors.InvalidId:
-            document_query = {"document_file_id": file_id}
-        document = db.Documents.find_one(document_query)
-        if document is None:
-            raise Exception("Document not found")
-        filename = document.get("document_file_id")
-        if filename is None:
-            raise Exception("Filename not found in the document")
-        url = s3_client.generate_presigned_url('get_object', Params={'Bucket': "wcre-documents", 'Key': filename})
-        if url is None:
-            raise Exception("Could not generate presigned URL")
-        return redirect(url)
-    except NoCredentialsError:
-        logger.error("Credentials not available")
-        return jsonify(error="Could not access S3 bucket"), 500
-    except Exception as e:
-        logger.error(f"An Error Occured: {str(e)}")
-        return jsonify(error="Download Failed"), 500
+    file = fs.get(ObjectId(file_id))
+    return Response(
+        file.read(),
+        mimetype=file.content_type,
+        headers={"Content-Disposition": f"attachment;filename={file.filename}"}
+    )
 
 
 
 def handle_upload():
     if "file" not in request.files:
         return {"success": False, "error": "No File Part"}
-    
     file = request.files["file"]
     if file.filename == "":
         return {"success": False, "error": "No Selected File"}
     if not allowed_file(file.filename):
         return {"success": False, "error": "Allowed File Types Are .pdf"}
-    filename = secure_filename(file.filename)
-    s3_client.upload_fileobj(file, "wcre-documents", filename, ExtraArgs={'ContentType': file.content_type})
-    return {"success": True, "filename": filename}
+    file_binary_data = file.read()
+    content_type = file.content_type  # or guess using the file extension
+    file_id = fs.put(file_binary_data, filename=file.filename, content_type=content_type)
+    return {"success": True, "fileId": str(file_id)}
 
 
 @app.route("/upload_pdf", methods=["POST"])
@@ -454,7 +432,7 @@ def submit_document():
     try:
         form_keys = ["document-file-id", "document-type", "document-name"]
         new_document = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
-        logger.info(f"New Document: {new_document}")
+        print(new_document)
         result = db.Documents.insert_one(new_document)
         if not result.inserted_id:
             raise Exception("Error inserting the document.")
@@ -467,7 +445,7 @@ def submit_document():
             jsonify(
                 {
                     "status": "error",
-                    "message": "An error occurred. Please try again.",
+                    "message": "Error Occurred While Submitting The Document",
                 }
             ),
             500,
@@ -919,6 +897,6 @@ def search_leases():
     return jsonify(results)
 
 
-Talisman(app, content_security_policy=None)
+#Talisman(app, content_security_policy=None)
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=6969, debug=True)

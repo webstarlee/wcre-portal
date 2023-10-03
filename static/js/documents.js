@@ -86,7 +86,7 @@ $(document).ready(function () {
       success: function (data) {
         if (data.success) {
           uploadButton.textContent = "Document Uploaded ✔ " + "(" + file.name + ")";
-          document.getElementById("document-file-id").value = data["filename"];
+          document.getElementById("document-file-id").value = data["fileId"];
           uploadButton.disabled = false;
           document.getElementById("submit-button").disabled = false;
         } else {
