@@ -645,6 +645,7 @@ def delete_sale(sale_id):
 @app.route("/delete_document/<document_id>", methods=["GET"])
 @login_required
 def delete_document(document_id):
+    fs.delete(ObjectId(docs.find_one({"_id": ObjectId(document_id)}).get("document_file_id")))
     return delete_item_from_collection(document_id, docs, "Document")
 
 
