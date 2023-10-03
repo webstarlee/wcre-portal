@@ -371,6 +371,7 @@ def documents():
     document_types = [
         "Office Collaterals",
         "Industrial Collaterals",
+        "Landlord Collaterals",
         "Investment Collaterals",
         "Healthcare Collaterals",
         "Retail Collaterals",

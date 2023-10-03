@@ -75,6 +75,7 @@ $(document).ready(function () {
     var file = this.files[0];
     var formData = new FormData();
     formData.append("file", file);
+    uploadButton.textContent = "Uploading Document...";
     $.ajax({
       url: "/upload_pdf",
       type: "POST",
@@ -82,11 +83,10 @@ $(document).ready(function () {
       processData: false,
       contentType: false,
       success: function (data) {
-        console.log(data);
         if (data.success) {
-          uploadButton.textContent = "Document Uploaded ✔";
-          uploadButton.disabled = true;
+          uploadButton.textContent = "Document Uploaded ✔ " + "(" + file.name + ")";
           document.getElementById("document-file-id").value = data["fileId"];
+          document.getElementById("submit-button").disabled = false;
         } else {
           showNotification("Error Uploading Document", "error-notification");
         }
