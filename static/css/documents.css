@@ -279,7 +279,7 @@ body.modal-open {
 
 .error-notification {
   position: fixed;
-  top: 60px;
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #f44336;

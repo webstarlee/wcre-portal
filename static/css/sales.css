@@ -254,7 +254,7 @@ table tr:hover td a {
 .sale-modal {
   display: none;
   position: fixed;
-  z-index: 1;
+  z-index: 9999;
   left: 0;
   top: 0;
   width: 100%;
@@ -419,17 +419,10 @@ table tr:hover td a {
 
 body.modal-open {
   overflow: hidden;
-  z-index: 9999;
 }
 
-.modal-open #add-sale-modal {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.modal-open #edit-sale-modal {
+.modal-open #add-sale-modal,
+.modal-open #edit-sale-modal  {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -454,7 +447,7 @@ body.modal-open {
 
 .error-notification {
   position: fixed;
-  top: 60px;
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #f44336;
@@ -463,12 +456,12 @@ body.modal-open {
   border-radius: 4px;
   opacity: 0;
   transition: opacity 0.3s;
-  z-index: 9999;
+  z-index: 10000;
 }
 
 .success-notification {
   position: fixed;
-  top: 60px;
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #4bb543;
@@ -477,7 +470,7 @@ body.modal-open {
   border-radius: 4px;
   opacity: 0;
   transition: opacity 0.3s;
-  z-index: 9999;
+  z-index: 10000;
 }
 
 .success-notification.show,
@@ -488,7 +481,7 @@ body.modal-open {
 .action-modal {
   display: none;
   position: fixed;
-  z-index: 999;
+  z-index: 9999;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
