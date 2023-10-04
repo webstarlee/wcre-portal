@@ -449,8 +449,8 @@ $(document).ready(function () {
 		$.ajax({
 			url: "/delete_sale/" + sale_id,
 			type: "GET",
-			success: function (data) {
-				if (data.success) {
+			success: function (response) {
+				if (response.success) {
 					showNotification("Sale Deleted", "error-notification");
 					selectedRow.remove();
 					deleteModal.hide();
@@ -482,14 +482,14 @@ $(document).ready(function () {
 				dataType: "json",
 			})
 				.done(function (response) {
-					if (response.status === "success") {
+					if (response.success) {
 						window.location.href = response.redirect;
 					} else {
 						showNotification("Error Uploading Sale", "error-notification")
 					}
 				})
 				.fail(function () {
-					showNotification("Error Uploading Listing", "error-notification");
+					showNotification("Error Uploading Sale", "error-notification");
 				});
 		}
 		else {

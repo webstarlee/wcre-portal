@@ -327,11 +327,11 @@ $(document).ready(function () {
 									if (response.success) {
 										location.reload();
 									} else {
-										showNotification("Error Editing listing", "error-notification");
+										showNotification("Error Editing Listing", "error-notification");
 									}
 								},
 								error: function () {
-									showNotification("Error Editing listing", "error-notification");
+									showNotification("Error Editing Listing", "error-notification");
 								},
 							});
 						} else {
@@ -374,8 +374,8 @@ $(document).ready(function () {
 				data: formData,
 				processData: false,
 				contentType: false,
-				success: function (data) {
-					if (data.success) {
+				success: function (success) {
+					if (success.success) {
 						config.buttonElement.textContent = "Document Uploaded ✔ " + "(" + file.name + ")";
 						document.getElementById(config.resultElementId).value = data["file_id"];
 						config.buttonElement.disabled = false;
@@ -453,8 +453,8 @@ $(document).ready(function () {
 		$.ajax({
 			url: "/delete_listing/" + listing_id,
 			type: "GET",
-			success: function (data) {
-				if (data.success) {
+			success: function (response) {
+				if (response.success) {
 					showNotification("Listing Deleted", "error-notification");
 					selectedRow.remove();
 					deleteModal.hide();
@@ -508,7 +508,7 @@ $(document).ready(function () {
 						dataType: "json",
 					})
 						.done(function (response) {
-							if (response.status === "success") {
+							if (response.success) {
 								window.location.href = response.redirect;
 							} else {
 								showNotification("Error Uploading Listing", "error-notification")

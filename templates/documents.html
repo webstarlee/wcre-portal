@@ -76,7 +76,7 @@
         <div class="modal overflow-hidden" id="document-modal">
           <div class="d-flex flex-column position-relative justify-content-center align-items-center h-100">
             <div class="modal-content m-0" style="height: 640px">
-              <span class="close text-end">&times;</span>
+              <span class="close">&times;</span>
               <h3 class="modal-title fs-5"> Document Files - {{ document_type }}
               </h3>
               <div id="empty-message" class="d-none">
@@ -94,10 +94,11 @@
   </div>
   <div id="action-modal" class="action-modal">
     <button id="delete-button">Delete Document</button>
+    <button id="edit-button">Edit Document</button>
   </div>
   <div id="upload-document-modal" class="modal">
     <div class="modal-content">
-      <span class="close text-end">&times;</span>
+      <span class="close">&times;</span>
       <form id="submit-document-form" class="modal-form" action="{{ url_for('submit_document') }}" method="POST">
         <div class="modal-step active-step">
           <h2 class="modal-step-title">Upload New Document</h2>
@@ -129,6 +130,29 @@
             <button id="submit-button" disabled class="minimal-button submit-step upload-modal-btn-style" type="submit">
               Upload
               Document</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="edit-document-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <form id="edit-document-form" class="modal-form">
+        <div class="modal-step active-step">
+          <h2 class="modal-step-title">Edit Document - <span id="edit-document-title"></span></h2>
+          <div class="form-group">
+            <label for="edit-document-name">Document Name:</label>
+            <input type="text" id="edit-document-name" name="edit-document-name" placeholder="File Name: " required />
+          </div>
+          <div class="form-group">
+            <button id="edit-upload-document-file" type="button"> Upload Document File </button>
+            <input id="edit-document-file" type="file" style="display: none" accept=".pdf" />
+            <input type="hidden" id="edit-document-file-id" name="edit-document-file-id" />
+          </div>
+          <div class="modal-navigation">
+            <button id="submit-button" class="minimal-button submit-step upload-modal-btn-style" type="submit">
+              Submit Document Edits</button>
           </div>
         </div>
       </form>

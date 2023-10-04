@@ -1,6 +1,8 @@
 $(document).ready(function () {
   var fileInput = document.getElementById("document-file");
   var uploadButton = document.getElementById("upload-document-file");
+  var editFileInput = document.getElementById("edit-document-file");
+  var edituploadButton = document.getElementById("edit-upload-document-file");
   const documentList = document.getElementById("documentList");
   const emptyMessage = document.getElementById("empty-message");
   const pagination = document.getElementById("pagination");
@@ -18,7 +20,6 @@ $(document).ready(function () {
   function toggleModalDisplay(modalId) {
     const modal = $(modalId);
     const isHidden = modal.css("display") === "none";
-
     if (isHidden) {
       $("body").addClass("modal-open");
       modal.css("display", "flex");
@@ -37,14 +38,36 @@ $(document).ready(function () {
 
   $(".close").click(function (e) {
     e.stopPropagation();
-    $(this).parents(".modal").hide();
-    resetForm();
+    const modal = $(this).parents(".modal");
+    modal.hide();
+    resetForm(modal);
   });
 
-  $(".modal").click(function () {
+  $(".document-modal").click(function () {
     $(this).css("display", "none");
-    resetForm();
+    resetForm($(this));
   });
+
+  function resetForm(modal) {
+    if (modal.attr('id') === 'upload-document-modal') {
+      modal.find("#submit-document-form")[0].reset();
+      modal.find("#document-file-id").val("");
+      modal.find("#upload-document-file").text("Upload Document File");
+      modal.find("#upload-document-file").prop("disabled", false);
+      modal.find(".error").removeClass("error");
+      modal.find(".modal-step").removeClass("active-step");
+      modal.find(".modal-step:first").addClass("active-step");
+    }
+    else if (modal.attr('id') === 'edit-document-modal') {
+      modal.find("#edit-document-form")[0].reset();
+      modal.find("#edit-document-file-id").val("");
+      modal.find("#edit-upload-document-file").text("Upload Document File");
+      modal.find("#edit-upload-document-file").prop("disabled", false);
+      modal.find(".error").removeClass("error");
+      modal.find(".modal-step").removeClass("active-step");
+      modal.find(".modal-step:first").addClass("active-step");
+    }
+  }
 
   $(document).bind("click", function (e) {
     const actionModal = $("#action-modal");
@@ -53,94 +76,67 @@ $(document).ready(function () {
     }
   });
 
-  function resetForm() {
-    $("#submit-document-form")[0].reset();
-    $("#document-file-id").val("");
-    $("#upload-document-file").text("Upload Document File");
-    $("#upload-document-file").prop("disabled", false);
-    $(".error").removeClass("error");
-    $(".modal-step").removeClass("active-step");
-    $(".modal-step:first").addClass("active-step");
-  }
-
-  uploadButton.addEventListener("click", function (e) {
-    fileInput.click();
-  });
-
   $(".modal-content").click(function (event) {
     event.stopPropagation();
   });
 
-  fileInput.addEventListener("change", function (e) {
-    var file = this.files[0];
-    var formData = new FormData();
-    formData.append("file", file);
-    uploadButton.textContent = "Uploading Document...";
-    uploadButton.disabled = true;
-    $.ajax({
-      url: "/upload_pdf",
-      type: "POST",
-      data: formData,
-      processData: false,
-      contentType: false,
-      success: function (data) {
-        if (data.success) {
-          uploadButton.textContent = "Document Uploaded ✔ " + "(" + file.name + ")";
-          document.getElementById("document-file-id").value = data["file_id"];
-          uploadButton.disabled = false;
-          document.getElementById("submit-button").disabled = false;
-        } else {
+  function handleFileUpload(config) {
+    config.inputElement.addEventListener("change", function (e) {
+      var file = this.files[0];
+      var formData = new FormData();
+      formData.append("file", file);
+      config.buttonElement.textContent = "Uploading Document...";
+      config.buttonElement.disabled = true;
+      $.ajax({
+        url: "/upload_pdf",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          if (response.success) {
+            config.buttonElement.textContent = "Document Uploaded ✔ " + "(" + file.name + ")";
+            document.getElementById(config.resultElementId).value = response["file_id"];
+            config.buttonElement.disabled = false;
+            document.getElementById("submit-button").disabled = false;
+          } else {
+            showNotification("Error Uploading Document", "error-notification");
+          }
+        },
+        error: function () {
           showNotification("Error Uploading Document", "error-notification");
-        }
-      },
-      error: function () {
-        showNotification("Error Uploading Document", "error-notification");
-      },
-    });
-  });
-
-
-  $("#submit-document-form").on("submit", function (e) {
-    if ($("#document-file")[0].files.length === 0) {
-      e.preventDefault();
-      showNotification("Please Upload a PDF File", "error-notification");
-      return;
-    }
-
-    e.preventDefault();
-    var formData = new FormData(this);
-    formData.append("document-file-id", $("#document-file-id").val());
-
-    $.ajax({
-      url: "/submit_document",
-      type: "POST",
-      data: formData,
-      processData: false,
-      contentType: false,
-      dataType: "json",
-    })
-      .done(function (response) {
-        if (response.status === "success") {
-          window.location.href = response.redirect;
-        } else {
-          showNotification("Error Uploading Document", "error-notification");
-        }
-      })
-      .fail(function (textStatus, errorThrown) {
-        showNotification("Error Uploading Document", "error-notification");
-        console.log("Error Uploading Document: ", textStatus, errorThrown);
+        },
       });
+    });
+    config.buttonElement.addEventListener("click", function (e) {
+      config.inputElement.click();
+    });
+  }
+
+  var configurations = [{
+    inputElement: fileInput,
+    buttonElement: uploadButton,
+    resultElementId: "document-file-id"
+  },
+  {
+    inputElement: editFileInput,
+    buttonElement: edituploadButton,
+    resultElementId: "edit-document-file-id"
+  },
+  ];
+
+  configurations.forEach(function (config) {
+    handleFileUpload(config);
   });
 
   let document_id = null;
+  let document_name = null;
   $(document).ready(function () {
     var isAdmin = $("body").data("is-admin") === "True";
     $("#documentList").on("contextmenu", ".file-item", function (e) {
       e.preventDefault();
       document_id = $(this).data("document-id");
-      console.log("Document ID:", document_id);
-
-      console.log(isAdmin);
+      document_name = $(this).find("p").text();
       if (isAdmin) {
         const actionModal = $("#action-modal");
         actionModal
@@ -151,6 +147,8 @@ $(document).ready(function () {
           .show();
         $(this).focus();
       }
+      console.log("Document ID:", document_id);
+      console.log("Document Name:", document_name);
     });
   });
 
@@ -210,7 +208,6 @@ $(document).ready(function () {
       emptyMessage.classList = "d-none";
       const totalPages = Math.ceil(documents.length / itemsPerPage);
       displayDocuments(documents, 1);
-
       function createPaginationButtons(totalPages, currentPage) {
         pagination.innerHTML = "";
         if (totalPages <= 7) {
@@ -238,7 +235,6 @@ $(document).ready(function () {
         }
       }
       createPaginationButtons(totalPages, 1);
-
       function createPaginationButton(pageNumber, currentPage) {
         const button = document.createElement("button");
         button.textContent = pageNumber;
@@ -255,12 +251,75 @@ $(document).ready(function () {
     }
   });
 
+  $("#edit-button").click(function () {
+    $("#action-modal").hide();
+    $("#upload-document-modal").hide();
+    $("#document-modal").hide();
+    $("#edit-document-modal #edit-document-name").val(document_name);
+    $("#edit-document-title").text(document_name);
+    toggleModalDisplay("#edit-document-modal");
+  });
+
+  $("#edit-document-form").on("submit", function (e) {
+    var data = {
+      document_name: $("#edit-document-name").val(),
+      document_file_id: $("#edit-document-file-id").val(),
+    };
+    $.ajax({
+      url: "/edit_document/" + document_id,
+      type: "POST",
+      contentType: "application/json",
+      data: JSON.stringify(data),
+      success: function (response) {
+        if (response.success) {
+          location.reload();
+        } else {
+          console.log(data.success)
+          showNotification("Error Editing Document", "error-notification");
+        }
+      },
+      error: function () {
+        showNotification("Error Editing Document", "error-notification");
+      },
+    });
+  });
+
+  $("#submit-document-form").on("submit", function (e) {
+    if ($("#document-file")[0].files.length === 0) {
+      e.preventDefault();
+      showNotification("Please Upload a PDF File", "error-notification");
+      return;
+    }
+    e.preventDefault();
+    var formData = new FormData(this);
+    formData.append("document-file-id", $("#document-file-id").val());
+    $.ajax({
+      url: "/submit_document",
+      type: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: "json",
+      success: function (response) {
+        if (response.success) {
+          location.reload();
+        } else {
+          showNotification("Error Uploading Document", "error-notification");
+        }
+      },
+      error: function () {
+        showNotification("Error Uploading Document", "error-notification");
+      },
+    });
+  });
+
+
   $("#delete-button").click(function () {
     $.ajax({
       url: "/delete_document/" + document_id,
       type: "GET",
-      success: function (data) {
-        if (data.success) {
+      success: function (response) {
+        if (response.success) {
           location.reload();
         } else {
           showNotification("Error Deleting Document", "error-notification");

@@ -283,7 +283,6 @@ $(document).ready(function () {
 		var currentStep = currentModal.find(".active-step");
 		var nextStep = currentStep.next(".modal-step");
 		var isValid = mode === "edit" || validateStep();
-
 		if (isValid) {
 			if (nextStep.length) {
 				currentStep.removeClass("active-step");
@@ -492,7 +491,7 @@ $(document).ready(function () {
 				dataType: "json",
 			})
 				.done(function (response) {
-					if (response.status === "success") {
+					if (response.success) {
 						window.location.href = response.redirect;
 					} else {
 						showNotification("Error Uploading Lease", "error-notification");

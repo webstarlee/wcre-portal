@@ -169,7 +169,8 @@ input[type="file"] {
   border: 1px solid #555;
 }
 
-#upload-document-file {
+#upload-document-file,
+#edit-upload-document-file{
   margin-top: 1px;
   background-color: #f0f0f0;
   border: none;
@@ -180,7 +181,8 @@ input[type="file"] {
   cursor: pointer;
 }
 
-#upload-document-file:hover {
+#upload-document-file:hover
+#edit-upload-document-file:hover {
   background-color: #ddd;
 }
 
@@ -238,6 +240,7 @@ body.modal-open {
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 10px;
+  text-align: center;  
 }
 
 .document-list {
@@ -356,30 +359,36 @@ body.modal-open {
 .action-modal {
   display: none;
   position: fixed;
+  z-index: 9999;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #9da1a1;
-  border-radius: 10px;
-  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1);
-  padding: 5px;
-  width: 150px;
+  background-color: #ffffff;
+  border: 2px solid #dcdcdc;
+  border-radius: 3px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  padding: 2px 0px 4px 8px;
+  width: 200px;
   text-align: center;
-  z-index: 9999;
+  font-size: 1.0em;
 }
 
 .action-modal button {
   display: block;
   border: none;
-  color: #fff;
-  padding: 5px 5px;
-  margin-top: 5px;
+  background-color: transparent;
+  color: #000000;
+  padding: 0px 4px 0px 10px;
+  font-weight: bold;
+  margin-top: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  border-radius: 3px;
-  width: 100%;
+  transition: color 0.3s ease, opacity 0.3s ease;
   text-align: center;
   line-height: 1.5;
+}
+
+.action-modal button:hover {
+  color: #7a7a7acb;
 }
 
 #empty-message {
@@ -399,13 +408,6 @@ body.modal-open {
   margin-top: 10px;
 }
 
-#delete-button {
-  background-color: #f44336;
-}
-
-#delete-button:hover {
-  background-color: #e33f2e;
-}
 
 @media only screen and (min-width: 320px) {
   .root-div {

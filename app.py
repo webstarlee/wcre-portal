@@ -421,12 +421,12 @@ def download(file_id):
 
 def handle_upload():
     if "file" not in request.files:
-        return {"success": False, "error": "No File Part"}
+        return jsonify({"success": False, "error": "No File Part"})
     file = request.files["file"]
     if file.filename == "":
-        return {"success": False, "error": "No Selected File"}
+        return jsonify({"success": False, "error": "No Selected File"})
     if not allowed_file(file.filename):
-        return {"success": False, "error": "Allowed File Types Are .pdf"}
+        return jsonify({"success": False, "error": "Allowed File Types Are .pdf"})
     file_binary_data = file.read()
     content_type = file.content_type 
     file_extension = file.filename.split('.')[-1] if '.' in file.filename else ''
@@ -437,11 +437,11 @@ def handle_upload():
                       Key=file_id, 
                       ContentType=content_type)
     except NoCredentialsError:
-        return {"success": False, "error": "Credentials Not Available"}
+        return jsonify({"success": False, "error": "Credentials Not Available"})
     except Exception as e:
         logger.error("Exception: ", str(e))
-        return {"success": False, "error": "Upload Failed"}
-    return {"success": True, "file_id": file_id}
+        return jsonify({"success": False, "error": "Upload Failed"})
+    return jsonify({"success": True, "file_id": file_id})
 
 
 @app.route("/upload_pdf", methods=["POST"])
@@ -459,20 +459,11 @@ def submit_document():
         result = db.Documents.insert_one(new_document)
         if not result.inserted_id:
             raise Exception("Error inserting the document.")
-        return make_response(
-            {"status": "success", "redirect": url_for("documents")}, 200
-        )
+        return jsonify({"success": True, "redirect": url_for("documents")})
     except Exception as e:
         logger.exception("Error Occurred While Submitting The Document")
-        return (
-            jsonify(
-                {
-                    "status": "error",
-                    "message": "Error Occurred While Submitting The Document",
-                }
-            ),
-            500,
-        )
+        return ({"success": False, "message": "Error Occurred While Submitting The Document"})
+
 
 
 @app.route("/submit_listing", methods=["POST"])
@@ -510,20 +501,10 @@ def submit_listing():
                     send_email("New Listing Notification", 'email_templates/email_new_listing.html', {"listing": new_listing}, conn)
         except Exception as e:
             logger.error("Error Sending Email: ", e)
-        return make_response(
-            {"status": "success", "redirect": url_for("view_listings")}, 200
-        )
+        return jsonify({"success": True, "redirect": url_for("view_listings")})
     except Exception as e:
         logger.exception("Error Occurred While Submitting The Listing")
-        return (
-            jsonify(
-                {
-                    "status": "error",
-                    "message": "Error Occurred While Submitting The Listing",
-                }
-            ),
-            500,
-        )
+        return ({"success": False, "message": "Error Occurred While Submitting The Listing"})
 
 
 @app.route("/submit_sale", methods=["POST"])
@@ -562,20 +543,10 @@ def submit_sale():
                     send_email("New Sale Notification", 'email_templates/email_new_sale.html', {"sale": new_sale}, conn)
         except Exception as e:
             logger.error("Error Sending Email: ", e)
-        return make_response(
-            {"status": "success", "redirect": url_for("view_sales")}, 200
-        )
+        return jsonify({"success": True, "redirect": url_for("view_sales")})
     except Exception as e:
         logger.exception("Error Occurred While Submitting The Sale")
-        return (
-            jsonify(
-                {
-                    "status": "error",
-                    "message": "Error Occurred While Submitting The Sale",
-                }
-            ),
-            500,
-        )
+        return ({"success": False, "message": "Error Occurred While Submitting The Sale"})
 
 
 @app.route("/submit_lease", methods=["POST"])
@@ -619,38 +590,22 @@ def submit_lease():
                     send_email("New Lease Notification", 'email_templates/email_new_lease.html', {"lease": new_lease}, conn)
         except Exception as e:
             logger.error("Error Sending Email: ", e)
-        return make_response(
-            {"status": "success", "redirect": url_for("view_leases")}, 200
-        )
+        return jsonify({"success": True, "redirect": url_for("view_leases")})
     except Exception as e:
         logger.exception("Error Occurred While Submitting The Lease")
-        return (
-            jsonify(
-                {
-                    "status": "error",
-                    "message": "Error Occurred While Submitting The Lease",
-                }
-            ),
-            500,
-        )
+        return jsonify({"success": False, "message": "Error Occurred While Submitting The Lease",})
 
 
 def delete_item_from_collection(item_id, collection, item_type):
     try:
         result = collection.delete_one({"_id": ObjectId(item_id)})
     except:
-        return {
-            "success": False,
-            "message": f"{item_type} Not Found or Couldn't Be Deleted",
-        }, 404
+        return jsonify({"success": False, "message": f"{item_type} Not Found or Couldn't Be Deleted"})
     else:
         if result.deleted_count > 0:
-            return {"success": True}, 200
+            return ({"success": True})
         else:
-            return {
-                "success": False,
-                "message": f"{item_type} Not Found or Couldn't Be Deleted",
-            }, 404
+            return ({"success": False, "message": f"{item_type} Not Found or Couldn't Be Deleted"})
 
 
 @app.route("/delete_listing/<listing_id>", methods=["GET"])
@@ -679,8 +634,8 @@ def delete_document(document_id):
             raise Exception("Failed to delete document from MongoDB")
         return jsonify({"success": True, "message": "Document Deleted Successfully"})
     except Exception as e:
-        print("Error: ", str(e))
-        return jsonify({"status": "error", "message": str(e)}), 500
+        logger.error("Error: ", str(e))
+        return jsonify({"success": False, "message": str(e)})
 
 
 
@@ -693,7 +648,7 @@ def delete_lease(lease_id):
 def create_ics_event(item_id, collection, item_type, street_key, date_key):
     item = collection.find_one({"_id": ObjectId(item_id)})
     if not item:
-        return {"success": False, "message": f"{item_type} not found"}, 404
+        return jsonify({"success": False, "message": f"{item_type} not found"})
     c = Calendar()
     e = Event()
     e.name = f"{item_type} Closing Date: {item[street_key]}"
@@ -729,10 +684,10 @@ def edit_record(record_id, collection, fields):
     data = request.get_json()
     record = collection.find_one({"_id": ObjectId(record_id)})
     if not record:
-        return {"success": False, "error": f"{collection.name.capitalize()} not found"}
+        return jsonify({"success": False, "error": f"{collection.name.capitalize()} not found"})
     update_data = {field: data[field] for field in fields if field in data}
     collection.update_one({"_id": ObjectId(record_id)}, {"$set": update_data})
-    return {"success": True}
+    return jsonify({"success": True})
 
 
 @app.route("/edit_listing/<listing_id>", methods=["POST"])
@@ -830,6 +785,20 @@ def edit_lease(lease_id):
     ]
     return edit_record(lease_id, leases, fields)
 
+@app.route("/edit_document/<document_id>", methods=["POST"])
+def edit_document(document_id):
+    existing_document = docs.find_one({"_id": ObjectId(document_id)})
+    fileId_fields = [
+        'document_file_id',
+    ]
+    for field in fileId_fields:
+        if not request.json.get(field) and existing_document.get(field):
+            request.json.pop(field, None)
+    fields = [
+        "document_name"
+    ] + fileId_fields + [
+    ]
+    return edit_record(document_id, docs, fields)
 
 
 def search_in_collection(collection, fields, page, search_query, items_per_page=12):
