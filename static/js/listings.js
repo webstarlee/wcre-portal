@@ -185,6 +185,7 @@ $(document).ready(function () {
 		setInputValue("#edit-listing-owner-name", getNameFromCell(9));
 		setInputValue("#edit-listing-owner-email", getEmailFromCell(9));
 		setInputValue("#edit-listing-owner-phone", getPhoneFromCell(9));
+		setInputValue("#edit-listing-notes", getCellText(13));
 	});
 
 
@@ -241,6 +242,7 @@ $(document).ready(function () {
 		$row.append($("<td>").append(brokerElements));
 		$row.append($("<td>").html(result.listing_agreement_file_id ? `<a href="/download/${result.listing_agreement_file_id}">Fully Executed</a>` : "Pending"));
 		$row.append($("<td>").html(result.listing_amendment_file_id ? `<a href="/download/${result.listing_amendment_file_id}">Fully Executed</a>` : "Pending"));
+		$row.append($("<td>").text(result.listing_notes));
 		return $row;
 	};
 
@@ -311,6 +313,7 @@ $(document).ready(function () {
 						listing_owner_name: $("#edit-listing-owner-name").val(),
 						listing_owner_email: $("#edit-listing-owner-email").val(),
 						listing_owner_phone: $("#edit-listing-owner-phone").val(),
+						listing_notes: $("#edit-listing-notes").val(),
 						listing_agreement_file_id: $("#edit-listing-agreement-file-id").val(),
 						listing_amendment_file_id: $("#edit-listing-amendment-file-id").val()
 					};

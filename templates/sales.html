@@ -68,7 +68,8 @@
             <th>Buyer</th>
             <th>Seller</th>
             <th>Brokers</th>
-            <th style="border-top-right-radius: 7px">Sale Agreement</th>
+            <th>Sale Agreement</th>
+            <th style="border-top-right-radius: 7px">Notes</th>
           </tr>
         </thead>
         <tbody> {% for sale in sales %} <tr data-sale-id="{{ sale._id }}">
@@ -112,6 +113,7 @@
                 Pending {% endif %}
               </form>
             </td>
+            <td>{{ sale.sale_notes }}</td>
           </tr> {% endfor %} </tbody>
         <table>
           {{ pagination.links }}
@@ -249,6 +251,10 @@
                         <option value="Chemmie Sokolic"> Chemmie Sokolic </option>
                       </select>
                     </div>
+                    <div class="form-group increased-line-height">
+                      <label for="sale-notes">Notes:</label>
+                      <textarea id="sale-notes" name="sale-notes" placeholder="Enter Notes:" required></textarea>
+                    </div>
                     <div class="form-group">
                       <button id="upload-sale-agreement" type="button"> Upload Settlement (HUD Statement) </button>
                       <input id="sale-agreement" type="file" style="display: none" accept=".pdf" />
@@ -357,6 +363,11 @@
                       <label for="sale-commission">Total Sale Commission:</label>
                       <input type="text" id="edit-sale-commission" name="edit-sale-commission"
                         placeholder="Enter Sale Commission:" required />
+                    </div>
+                    <div class="form-group increased-line-height">
+                      <label for="edit-sale-notes">Notes:</label>
+                      <textarea id="edit-sale-notes" name="edit-sale-notes" placeholder="Enter Notes:"
+                        required></textarea>
                     </div>
                     <div class="form-group">
                       <button id="edit-upload-sale-agreement" type="button"> Upload Sale Agreement </button>

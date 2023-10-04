@@ -300,6 +300,24 @@ table tr:hover td a {
   width: 100%;
 }
 
+.increased-line-height {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.increased-line-height textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+  color: #333;
+  font-size: 14px;
+  line-height: 1.5em;
+  resize: vertical;
+}
+
 .form-group input,
 .form-group select {
   box-sizing: border-box;

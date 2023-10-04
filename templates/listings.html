@@ -75,7 +75,8 @@
             <th>Primary Contact</th>
             <th>Brokers</th>
             <th>Listing Agreement</th>
-            <th style="border-top-right-radius: 7px">Listing Amendment</th>
+            <th>Listing Amendment</th>
+            <th style="border-top-right-radius: 7px">Notes</th>
           </tr>
         </thead>
         <tbody> {% for listing in listings %} <tr data-listing-id="{{ listing._id }}">
@@ -110,6 +111,7 @@
                   href="{{ url_for('download', file_id=listing.listing_amendment_file_id) }}">Fully Executed</a> {%
                 else %} Pending {% endif %} </form>
             </td>
+            <td>{{ listing.listing_notes }}</td>
           </tr> {% endfor %} </tbody>
         <table>
           {{ pagination.links }}
@@ -217,6 +219,10 @@
                         <option value="Chemmie Sokolic"> Chemmie Sokolic </option>
                       </select>
                     </div>
+                    <div class="form-group increased-line-height">
+                      <label for="listing-notes">Notes:</label>
+                      <textarea id="listing-notes" name="listing-notes" placeholder="Enter Notes:" required></textarea>
+                    </div>
                     <div class="form-group">
                       <button id="upload-listing-agreement" type="button"> Upload Listing Agreement </button>
                       <input id="listing-agreement" type="file" style="display: none" accept=".pdf" />
@@ -299,6 +305,11 @@
                     <div class="form-group">
                       <label for="edit-listing-end-date">Listing End Date:</label>
                       <input type="text" id="edit-listing-end-date" name="edit-listing-end-date" required />
+                    </div>
+                    <div class="form-group increased-line-height">
+                      <label for="edit-listing-notes">Notes:</label>
+                      <textarea id="edit-listing-notes" name="edit-listing-notes" placeholder="Enter Notes:"
+                        required></textarea>
                     </div>
                     <div class="form-group">
                       <button id="edit-upload-listing-agreement" type="button"> Upload Listing Agreement </button>

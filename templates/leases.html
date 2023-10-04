@@ -69,7 +69,8 @@
             <th>Commission Agreement</th>
             <th>Commission Invoice</th>
             <th>Referral Source</th>
-            <th style="border-top-right-radius: 7px">Invoice Contact</th>
+            <th>Invoice Contact</th>
+            <th style="border-top-right-radius: 7px">Notes</th>
           </tr>
         </thead>
         <tbody> {% for lease in leases %} <tr data-lease-id="{{ lease._id }}">
@@ -114,6 +115,7 @@
             </td>
             <td>{{ lease.lease_referral_source }}</td>
             <td>{{ lease.lease_invoice_contact }}</td>
+            <td>{{ lease.lease_notes }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -288,6 +290,10 @@
               <textarea id="lease-invoice-contact" name="lease-invoice-contact"
                 placeholder="Enter Invoice Contact Information:" required></textarea>
             </div>
+            <div class="form-group increased-line-height">
+              <label for="lease-notes">Notes:</label>
+              <textarea id="lease-notes" name="lease-notes" placeholder="Enter Notes:" required></textarea>
+            </div>
             <div class="form-group">
               <button id="upload-lease-agreement" type="button"> Upload Lease Agreement </button>
               <input id="lease-agreement" type="file" style="display: none" accept=".pdf" />
@@ -408,6 +414,10 @@
               <label for="edit-lease-invoice-contact">Invoice Contact Information:</label>
               <textarea id="edit-lease-invoice-contact" name="edit-lease-invoice-contact"
                 placeholder="Enter Invoice Contact Information:" required></textarea>
+            </div>
+            <div class="form-group increased-line-height">
+              <label for="edit-lease-notes">Notes:</label>
+              <textarea id="edit-lease-notes" name="edit-lease-notes" placeholder="Enter Notes:" required></textarea>
             </div>
             <div class="form-group">
               <button id="edit-upload-lease-agreement" type="button"> Upload Lease Agreement </button>

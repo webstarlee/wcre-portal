@@ -483,7 +483,8 @@ def submit_listing():
             "listing-property-type",
             "listing-price",
             "listing-lat",
-            "listing-long"
+            "listing-long",
+            "listing-notes",
         ]
         new_listing = {
             key.replace("-", "_"): request.form.get(key) for key in form_keys
@@ -529,7 +530,8 @@ def submit_sale():
             "sale-property-type",
             "sale-type",
             "sale-price",
-            "sale-commission"
+            "sale-commission",
+            "sale-notes"
         ]
         new_sale = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
         new_sale["brokers"] = request.form.getlist("brokers[]")
@@ -570,7 +572,8 @@ def submit_lease():
             "lease-lessee-email",
             "lease-lessee-phone",
             "lease-referral-source",
-            "lease-invoice-contact"
+            "lease-invoice-contact",
+            "lease-notes"
         ]
         new_lease = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
         years = request.form.get("lease-years")
@@ -716,6 +719,7 @@ def edit_listing(listing_id):
         ] + fileId_fields + [
         "listing_property_type",
         "listing_price",
+        "listing_notes"
     ]
     return edit_record(listing_id, listings, fields)
 
@@ -746,6 +750,7 @@ def edit_sale(sale_id):
         "sale_type",
         "sale_price",
         "sale_commission",
+        "sale_notes"
     ]
     return edit_record(sale_id, sales, fields)
 
@@ -781,7 +786,8 @@ def edit_lease(lease_id):
         "lease_lessee_email",
         "lease_lessee_phone",
         "lease_referral_source",
-        "lease_invoice_contact"
+        "lease_invoice_contact",
+        "lease_notes"
     ]
     return edit_record(lease_id, leases, fields)
 
@@ -839,6 +845,7 @@ def search_listings():
         "listing_start_date",
         "listing_property_type",
         "listing_price",
+        "listing_notes"
     ]
     results = search_in_collection(listings, fields, page, search_query)
     return jsonify(results)
@@ -868,6 +875,7 @@ def search_sales():
         "sale_type",
         "sale_price",
         "sale_commission",
+        "sale_notes"
     ]
     results = search_in_collection(sales, fields, page, search_query)
     return jsonify(results)
@@ -897,6 +905,7 @@ def search_leases():
         "lease_end_date",
         "lease_type",
         "lease_price",
+        "lease_notes"
     ]
     results = search_in_collection(leases, fields, page, search_query)
     return jsonify(results)

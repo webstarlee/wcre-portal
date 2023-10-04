@@ -173,6 +173,7 @@ $(document).ready(function () {
 		setInputValue("#edit-lease-lessee-phone", getPhoneFromCell(8));
 		setInputValue("#edit-lease-referral-source", getCellText(13));
 		setInputValue("#edit-lease-invoice-contact", getCellText(14));
+		setInputValue("#edit-lease-notes", getCellText(15));
 	});
 
 
@@ -235,6 +236,7 @@ $(document).ready(function () {
 		$row.append($("<td>").html(result.lease_commission_invoice_file_id ? `<form method="POST"><a href="/download/${result.lease_commission_invoice_file_id}">Fully Executed</a></form>` : "Pending"));
 		$row.append($("<td>").text(result.lease_referral_source));
 		$row.append($("<td>").text(result.lease_invoice_contact));
+		$row.append($("<td>").text(result.lease_notes));
 		return $row;
 	};
 
@@ -312,7 +314,8 @@ $(document).ready(function () {
 						lease_lessee_email: $("#edit-lease-lessee-email").val(),
 						lease_lessee_phone: $("#edit-lease-lessee-phone").val(),
 						lease_referral_source: $("#edit-lease-referral-source").val(),
-						lease_invoice_contact: $("#edit-lease-invoice-contact").val()
+						lease_invoice_contact: $("#edit-lease-invoice-contact").val(),
+						lease_notes: $("#edit-lease-notes").val()
 					};
 					console.log(data);
 					$.ajax({

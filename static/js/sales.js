@@ -187,6 +187,7 @@ $(document).ready(function () {
 		setInputValue("#edit-sale-seller-name", getNameFromCell(12));
 		setInputValue("#edit-sale-seller-email", getEmailFromCell(12));
 		setInputValue("#edit-sale-seller-phone", getPhoneFromCell(12));
+		setInputValue("#edit-sale-notes", getCellText(15));
 	});
 
 	$(".sale-modal .close").click(function () {
@@ -248,6 +249,7 @@ $(document).ready(function () {
 		const brokerElements = $.map(result.brokers, broker => $("<span>").addClass("broker-name").text(broker));
 		$row.append($("<td>").append(brokerElements));
 		$row.append($("<td>").html(result.sale_agreement_file_id ? `<a href="/download/${result.sale_agreement_file_id}">Fully Executed</a>` : "Pending"));
+		$row.append($("<td>").text(result.sale_notes));
 		return $row;
 	};
 
@@ -325,7 +327,8 @@ $(document).ready(function () {
 						sale_seller_entity: $("#edit-sale-seller-entity").val(),
 						sale_seller_name: $("#edit-sale-seller-name").val(),
 						sale_seller_email: $("#edit-sale-seller-email").val(),
-						sale_seller_phone: $("#edit-sale-seller-phone").val()
+						sale_seller_phone: $("#edit-sale-seller-phone").val(),
+						sale_notes: $("#edit-sale-notes").val()
 					};
 					$.ajax({
 						url: "/edit_sale/" + sale_id,
