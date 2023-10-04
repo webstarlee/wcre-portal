@@ -934,13 +934,10 @@ def search_leases():
 
 TALISMAN_ENABLED = os.getenv("TALISMAN_ENABLED", "False").lower() == "true"
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
-
 logger.info("Debug Enabled: " + str(DEBUG))
 logger.info("Talisman Enabled: " + str(TALISMAN_ENABLED))
 
 if TALISMAN_ENABLED:
     Talisman(app, content_security_policy=None)
-
-
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=6969, debug=DEBUG)
