@@ -74,9 +74,9 @@ body {
 }
 
 #add-lease-button {
-    background-color: #f0f0f0;
+    background-color: #0056b3;
     border: none;
-    color: #333;
+    color: white;
     padding: 10px 20px;
     border-radius: 4px;
     font-size: 14px;
@@ -84,7 +84,7 @@ body {
 }
 
 #add-lease-button:hover {
-    background-color: #ddd;
+    background-color: #1669c2;
 }
 
 #upload-lease-agreement {

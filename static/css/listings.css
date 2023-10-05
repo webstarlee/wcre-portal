@@ -74,9 +74,9 @@ body {
 }
 
 #add-listing-button {
-  background-color: #f0f0f0;
+  background-color: #0056b3;
   border: none;
-  color: #333;
+  color: white;
   padding: 10px 20px;
   border-radius: 4px;
   font-size: 14px;
@@ -84,26 +84,11 @@ body {
 }
 
 #add-listing-button:hover {
-  background-color: #ddd;
+  background-color: #1669c2;
 }
 
 #upload-listing-agreement,
-#upload-listing-amendment {
-  margin-top: 1px;
-  background-color: #f0f0f0;
-  border: none;
-  color: #333;
-  padding: 10px 20px;
-  border-radius: 4px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-#upload-listing-agreement:hover,
-#upload-listing-amendment:hover {
-  background-color: #ddd;
-}
-
+#upload-listing-amendment,
 #edit-upload-listing-agreement,
 #edit-upload-listing-amendment {
   margin-top: 1px;
@@ -116,11 +101,12 @@ body {
   cursor: pointer;
 }
 
+#upload-listing-agreement:hover,
+#upload-listing-amendment:hover,
 #edit-upload-listing-agreement:hover,
 #edit-upload-listing-amendment:hover {
   background-color: #ddd;
 }
-
 
 /* table */
 .centered-table {
