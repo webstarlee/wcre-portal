@@ -113,7 +113,6 @@ def refresh_session():
     session.modified = True
 
 @app.route('/api/logins')
-@login_required
 def api_logins():
     logins = list(db.Logins.find({}).sort('login_time', pymongo.DESCENDING))
     
@@ -129,7 +128,6 @@ def api_logins():
     return jsonify(logins_processed)
 
 @app.route('/logins')
-@login_required
 def logins():
     logins = list(db.Logins.find({}))
     for login in logins:
