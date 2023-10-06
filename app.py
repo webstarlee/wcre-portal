@@ -133,7 +133,7 @@ def api_logins():
 def logins():
     logins = list(db.Logins.find({}))
     for login in logins:
-        login['login_time'] = datetime.strptime(login['login_time'], "%Y-%m-%d %I:%M:%S %p %Z")
+        login['login_time'] = datetime.strptime(login['login_time'][:-4], "%Y-%m-%d %I:%M:%S %p")
         login['_id'] = str(login['_id'])
     return render_template('api/logins.html', logins=logins)
 
