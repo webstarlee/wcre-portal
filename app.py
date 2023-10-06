@@ -1,6 +1,7 @@
 import os
 from flask import Flask, Response, jsonify, make_response, render_template, redirect, stream_with_context, url_for, request, session, abort
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
+import pymongo
 from flask_apscheduler import APScheduler
 from pymongo import MongoClient
 from datetime import datetime, timedelta
@@ -9,7 +10,6 @@ from models import User
 from flask_paginate import Pagination, get_page_args
 from bson.objectid import ObjectId
 from dotenv import load_dotenv
-from datetime import datetime
 import boto3
 from botocore.exceptions import NoCredentialsError
 import os
@@ -112,6 +112,32 @@ def not_found(e):
 def refresh_session():
     session.modified = True
 
+@app.route('/api/logins')
+@login_required
+def api_logins():
+    logins = list(db.Logins.find({}).sort('login_time', pymongo.DESCENDING))
+    
+    logins_processed = []
+    for login in logins:
+        login_data = {
+            "_id": str(login['_id']),
+            "username": login['username'],
+            "login_time": login['login_time'],
+            "ip_address": login['ip_address']
+        }
+        logins_processed.append(login_data)
+    return jsonify(logins_processed)
+
+@app.route('/logins')
+@login_required
+def logins():
+    logins = list(db.Logins.find({}))
+    for login in logins:
+        login['login_time'] = datetime.strptime(login['login_time'], "%Y-%m-%d %I:%M:%S %p %Z")
+        login['_id'] = str(login['_id'])
+    return render_template('api/logins.html', logins=logins)
+
+
 def send_email(subject, template, data, conn):
     try:
         msg = Message(
@@ -193,7 +219,7 @@ def login():
                 "login_time": formatted_est,
                 "ip_address": request.remote_addr,
             }
-            logins.insert_one(log_entry)
+            db.Logins.insert_one(log_entry)
             return redirect(url_for("dashboard"))
         else:
             return render_template("login.html", error="Invalid Username or Password")
