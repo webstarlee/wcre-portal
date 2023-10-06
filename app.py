@@ -135,7 +135,7 @@ def logins():
     for login in logins:
         login['login_time'] = datetime.strptime(login['login_time'][:-4], "%Y-%m-%d %I:%M:%S %p")
         login['_id'] = str(login['_id'])
-    return render_template('api/logins.html', logins=logins)
+    return render_template('API/logins.html', logins=logins)
 
 
 def send_email(subject, template, data, conn):
