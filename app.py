@@ -126,7 +126,7 @@ def after_request(response):
             'method': request.method,
             'ip': request.remote_addr,       
         }
-        logs.append(0, log)
+        logs.insert(0, log)
     return response
 
 logs = []
