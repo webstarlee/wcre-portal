@@ -95,6 +95,7 @@ else:
         sales = db["Sales"]
         leases = db["Leases"]
         docs = db["Documents"]
+        logs = []
         scheduler_locks = db["SchedulerLocks"]
         scheduler.start()
         logger.info("Connected to MongoDB Successfully")
@@ -124,12 +125,11 @@ def after_request(response):
             'message': response.status,
             'status': response.status_code,
             'method': request.method,
-            'ip': request.remote_addr,       
         }
         logs.insert(0, log)
     return response
 
-logs = []
+
 @app.route('/api/logs')
 @login_required
 def handle_logs():
