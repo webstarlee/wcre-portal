@@ -115,7 +115,7 @@ def refresh_session():
 def after_request(response):
     LOCAL_TIMEZONE = pytz.timezone("US/Eastern")
     formatted_est = datetime.now(LOCAL_TIMEZONE).strftime("%Y-%m-%d %I:%M:%S %p %Z")
-    excluded_paths = {"/static/", "/cart.json", "/api/logs"}
+    excluded_paths = {"/static/", "/cart.json", "/api/logs", "/get_documents"}
     if not any(path in request.path for path in excluded_paths):
         log = {
             'user': current_user.username if current_user.is_authenticated else None,
