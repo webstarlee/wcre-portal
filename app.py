@@ -95,8 +95,6 @@ else:
         sales = db["Sales"]
         leases = db["Leases"]
         docs = db["Documents"]
-        logs = []
-        scheduler_locks = db["SchedulerLocks"]
         scheduler.start()
         logger.info("Connected to MongoDB Successfully")
     except Exception as e:
@@ -111,29 +109,30 @@ def not_found(e):
 @app.before_request
 def refresh_session():
     session.modified = True
-    
-@app.after_request
-def after_request(response):
-    LOCAL_TIMEZONE = pytz.timezone("US/Eastern")
-    formatted_est = datetime.now(LOCAL_TIMEZONE).strftime("%Y-%m-%d %I:%M:%S %p %Z")
-    excluded_paths = {"/static/", "/cart.json", "/api/logs", "/get_documents"}
-    if not any(path in request.path for path in excluded_paths):
-        log = {
-            'user': current_user.username if current_user.is_authenticated else None,
-            'time': formatted_est,
-            'path': request.path,
-            'message': response.status,
-            'status': response.status_code,
-            'method': request.method,
-        }
-        logs.insert(0, log)
-    return response
+
+# logs = []
+# @app.after_request
+# def after_request(response):
+#     LOCAL_TIMEZONE = pytz.timezone("US/Eastern")
+#     formatted_est = datetime.now(LOCAL_TIMEZONE).strftime("%Y-%m-%d %I:%M:%S %p %Z")
+#     excluded_paths = {"/static/", "/cart.json", "/api/logs", "/get_documents"}
+#     if not any(path in request.path for path in excluded_paths):
+#         log = {
+#             'user': current_user.username if current_user.is_authenticated else None,
+#             'time': formatted_est,
+#             'path': request.path,
+#             'message': response.status,
+#             'status': response.status_code,
+#             'method': request.method,
+#         }
+#         logs.insert(0, log)
+#     return response
 
 
-@app.route('/api/logs')
-@login_required
-def handle_logs():
-    return jsonify(logs)
+# @app.route('/api/logs')
+# @login_required
+# def handle_logs():
+#     return jsonify(logs)
 
 @app.route('/api/logins')
 @login_required
