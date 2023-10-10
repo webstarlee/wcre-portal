@@ -110,30 +110,6 @@ def not_found(e):
 def refresh_session():
     session.modified = True
 
-# logs = []
-# @app.after_request
-# def after_request(response):
-#     LOCAL_TIMEZONE = pytz.timezone("US/Eastern")
-#     formatted_est = datetime.now(LOCAL_TIMEZONE).strftime("%Y-%m-%d %I:%M:%S %p %Z")
-#     excluded_paths = {"/static/", "/cart.json", "/api/logs", "/get_documents"}
-#     if not any(path in request.path for path in excluded_paths):
-#         log = {
-#             'user': current_user.username if current_user.is_authenticated else None,
-#             'time': formatted_est,
-#             'path': request.path,
-#             'message': response.status,
-#             'status': response.status_code,
-#             'method': request.method,
-#         }
-#         logs.insert(0, log)
-#     return response
-
-
-# @app.route('/api/logs')
-# @login_required
-# def handle_logs():
-#     return jsonify(logs)
-
 @app.route('/api/logins')
 @login_required
 def api_logins():
@@ -155,7 +131,7 @@ def send_email(subject, template, data, conn):
         msg = Message(
             subject,
             sender="portal@wolfcre.com",
-            recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com"],
+            recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com", "ezweben@wolfcre.com", "ewarwick@wolfcre.com"],
         )
         email_content = render_template(template, **data)
         msg.html = transform(email_content)
@@ -414,7 +390,7 @@ def get_documents():
 
 @app.route("/documents")
 @login_required
-def documents():
+def view_documents():
     is_admin = current_user.role == "Admin"
     greeting_msg = f"Marketing Dashboard - Document View"
     document_types = [
@@ -503,8 +479,14 @@ def submit_document():
         new_document = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
         result = db.Documents.insert_one(new_document)
         if not result.inserted_id:
-            raise Exception("Error inserting the document.")
-        return jsonify({"success": True, "redirect": url_for("documents")})
+            raise Exception("Error Inserting the Document")
+        try:
+            with app.app_context():
+                with mail.connect() as conn:
+                    send_email("New Document Notification", 'email_templates/email_new_document.html', {"document": new_document}, conn)
+        except Exception as e:
+            logger.error("Error Sending Email: ", e)
+        return jsonify({"success": True, "redirect": url_for("view_documents")})
     except Exception as e:
         logger.exception("Error Occurred While Submitting The Document")
         return ({"success": False, "message": "Error Occurred While Submitting The Document"})

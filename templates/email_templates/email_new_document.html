@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>New Documnt Notification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        p {
+            color: #555;
+            margin-top: 10px;
+        }
+
+        .document-details {
+            margin-top: 20px;
+        }
+
+        .document-label {
+            font-weight: bold;
+        }
+
+        .document-value {
+            margin-left: 10px;
+        }
+
+        .document-label,
+        .document-value {
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        .footer {
+            padding: 10px;
+            background-color: #E9E9E9;
+            border-top: 1px solid #CCC;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>New Document Submitted By: {{ current_user.fullname }}</h1>
+        <div class="document-details">
+            <p><span class="document-label">Document Name:</span> <spanclass="document-value">{{
+                    document.document_name}}</span></p>
+            <p><span class="document-label">Document Type:</span> <span class="document-value">{{
+                    document.document_type}}</span>
+            </p>
+            <p>For more details, please view the Document on the Management Portal.</p>
+        </div>
+        <div class="footer">
+            This email was automatically sent by the WCRE Management Portal. For any inquiries, please contact the
+            Development Team.
+        </div>
+    </div>
+</body>
+
+</html>
