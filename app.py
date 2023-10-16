@@ -256,9 +256,14 @@ def greeting(current_time):
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    total_listings = listings.count_documents({"brokers": {"$in": [current_user.fullname]}})
-    total_sales = sales.count_documents({"brokers": {"$in": [current_user.fullname]}})
-    total_leases = leases.count_documents({"brokers": {"$in": [current_user.fullname]}})
+    if current_user.role == "Admin":
+        total_listings = listings.count_documents({})
+        total_sales = sales.count_documents({})
+        total_leases = leases.count_documents({})
+    else:
+        total_listings = listings.count_documents({"brokers": {"$in": [current_user.fullname]}})
+        total_sales = sales.count_documents({"brokers": {"$in": [current_user.fullname]}})
+        total_leases = leases.count_documents({"brokers": {"$in": [current_user.fullname]}})
     total_documents = docs.count_documents({})
     current_time = arrow.now("EST")
     greeting_msg = f"{greeting(current_time)}, {current_user.fullname.split()[0]}!"
