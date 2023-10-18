@@ -1,4 +1,5 @@
 import os
+from urllib.parse import urlparse
 from flask import Flask, Response, jsonify, make_response, render_template, redirect, stream_with_context, url_for, request, session, abort
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 import pymongo
@@ -193,6 +194,8 @@ def login_page():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for("dashboard"))
     if request.method == "POST":
         user = load_user(request.form["username"])
         if user and bcrypt.check_password_hash(user.password, request.form["password"]):
@@ -206,25 +209,32 @@ def login():
                 "ip_address": request.remote_addr,
             }
             db.Logins.insert_one(log_entry)
-            return redirect(url_for("dashboard"))
+            next_page = request.form.get("next") or url_for("dashboard")
+            return redirect(next_page)
         else:
             return render_template("login.html", error="Invalid Username or Password")
     return render_template("login.html")
 
+
 @app.route('/logins')
 @login_required
 def logins():
-    logins = list(db.Logins.find({}))
-    for login in logins:
-        login['login_time'] = datetime.strptime(login['login_time'][:-4], "%Y-%m-%d %I:%M:%S %p")
-        login['_id'] = str(login['_id'])
-    return render_template('API/logins.html', logins=logins)
+    is_admin = current_user.role == "Admin"
+    if not is_admin:
+        return redirect(url_for("dashboard"))
+    else:
+        logins = list(db.Logins.find({}))
+        for login in logins:
+            login['login_time'] = datetime.strptime(login['login_time'][:-4], "%Y-%m-%d %I:%M:%S %p")
+            login['_id'] = str(login['_id'])
+        return render_template('API/logins.html', logins=logins)
 
 
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()
+    
     return redirect(url_for("login"))
 
 
