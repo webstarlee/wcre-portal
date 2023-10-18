@@ -114,7 +114,7 @@ def refresh_session():
 @app.route('/api/logins')
 @login_required
 def api_logins():
-    logins = list(db.Logins.find({}).sort('login_time', pymongo.DESCENDING))
+    logins = list(db.Logins.find({"username": {"$ne": "nwolf"}}).sort('login_time', pymongo.DESCENDING))
     logins_processed = []
     for login in logins:
         login_data = {
