@@ -377,8 +377,8 @@ $(document).ready(function () {
 				data: formData,
 				processData: false,
 				contentType: false,
-				success: function (success) {
-					if (success.success) {
+				success: function (data) {
+					if (data.success) {
 						config.buttonElement.textContent = "Document Uploaded ✔ " + "(" + file.name + ")";
 						document.getElementById(config.resultElementId).value = data["file_id"];
 						config.buttonElement.disabled = false;
@@ -495,6 +495,8 @@ $(document).ready(function () {
 			var formData = new FormData(this);
 			formData.append("listing-agreement-file-id", $("#listing-agreement-file-id").val());
 			formData.append("listing-amendment-file-id", $("#listing-amendment-file-id").val());
+			console.log($("#listing-agreement-file-id").val());
+			console.log(formData);
 			var street = $("#listing-street").val();
 			var city = $("#listing-city").val();
 			var state = $("#listing-state").val();
