@@ -190,6 +190,7 @@ def add_notification(notification_type, address=None, document_name=None):
         "document": "#4AC9DF"
     }
     notification = {
+        "user": current_user.fullname,
         "timestamp": datetime.now(),
         "type": notification_type,
         "icon": icon_map.get(notification_type, "fa-bell"),
@@ -197,9 +198,11 @@ def add_notification(notification_type, address=None, document_name=None):
     }
 
     if notification_type in ["listing", "lease", "sale"] and address:
-        notification["text"] = f"New {notification_type.capitalize()} Added: {address}"
+        notification["title"] = f"New {notification_type.capitalize()} Added By {current_user.fullname} - "
+        notification["text"] = f"{address}"
     elif notification_type == "document" and document_name:
-        notification["text"] = f"New Document Added: {document_name}"
+        notification["title"] = f"New {notification_type.capitalize()} Added By {current_user.fullname} - "
+        notification["text"] = f"{document_name}"
     else:
         return False
     try:
