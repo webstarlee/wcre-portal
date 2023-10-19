@@ -157,14 +157,15 @@ def send_email(subject, template, data, conn):
                 misfire_grace_time=900, 
                 next_run_time=datetime.now())
 def alert_for_expiring_listings():
-    upcoming_expiration_date = datetime.now() + timedelta(days=7)
+    now = datetime.now()
+    upcoming_expiration_date = now + timedelta(days=7)
     all_listings = list(listings.find({}))
     expiring_listings = [listing for listing in all_listings 
-                         if datetime.strptime(listing['listing_end_date'], '%m/%d/%Y') <= upcoming_expiration_date]
+                         if now < datetime.strptime(listing['listing_end_date'], '%m/%d/%Y') <= upcoming_expiration_date]
     if len(expiring_listings) > 0:
         for listing in expiring_listings:
             listing_expiry_date = datetime.strptime(listing['listing_end_date'], '%m/%d/%Y')
-            days_left = (listing_expiry_date - datetime.now()).days + 1
+            days_left = (listing_expiry_date - now).days + 1
             subject = f"ACTION NEEDED - A LISTING IS EXPIRING IN {days_left} DAYS"
             with app.app_context():
                 with mail.connect() as conn:
@@ -172,8 +173,10 @@ def alert_for_expiring_listings():
             logger.info(f"Alert Sent for Listing: {listing['_id']}")
     else:
         logger.info("No Upcoming Expiring Listings")
-    next_run_time = datetime.now() + timedelta(seconds=43200)
+    
+    next_run_time = now + timedelta(seconds=43200)
     logger.info(f"Next Check for Expiring Listings Will Be At: {next_run_time.strftime('%Y-%m-%d %H:%M:%S')}")
+
 
 
 def add_notification(notification_type, address=None, document_name=None):
