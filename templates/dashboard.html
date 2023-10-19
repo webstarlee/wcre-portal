@@ -17,6 +17,7 @@
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <script src="https://kit.fontawesome.com/f53ea1a836.js" crossorigin="anonymous"></script>
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
@@ -98,19 +99,17 @@
           <div class="col-12 col-lg-12 col-xl-8 d-flex">
             <div class="card flex-fill">
               <div class="card-body">
-                <h5 class="card-title">Sales Overview</h5>
-                <div class="w-full">
-                  <canvas id="salesChart" style="height: 380px"></canvas>
-                </div>
+                <h5 class="card-title mb-3">Notifications Overview</h5>
+                <ul class="list-group list-group-flush"></ul>
               </div>
             </div>
           </div>
           <div class="col-12 col-lg-12 col-xl-4 d-flex">
             <div class="card flex-fill">
               <div class="card-body">
-                <h5 class="card-title">Listings Overview</h5>
-                <div style="height: 380px">
-                  <canvas id="listingChart"></canvas>
+                <h5 class="card-title">Property Overview</h5>
+                <div class="w-full">
+                  <canvas id="salesChart" style="height: 380px"></canvas>
                 </div>
               </div>
             </div>
@@ -124,7 +123,6 @@
 </html>
 <script>
   const ctx = document.getElementById("salesChart").getContext("2d");
-  const ctx2 = document.getElementById("listingChart").getContext("2d");
   var gradient = ctx.createLinearGradient(0, 0, 0, 400);
   gradient.addColorStop(0, "rgb(68, 166, 218,0.9)");
   gradient.addColorStop(0.7, "rgb(255, 255, 255,0.1)");
@@ -144,46 +142,6 @@
       },],
     },
     options: {
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          beginAtZero: true,
-        },
-        x: {
-          grid: {
-            display: false,
-          },
-        },
-      },
-      plugins: {
-        legend: {
-          display: false,
-        },
-      },
-    },
-  });
-  var chartEl = document.getElementById("listingChart");
-  chartEl.height = "300px";
-  new Chart(ctx2, {
-    type: "bar",
-    data: {
-      labels: ["Jan", "Feb", "March", "April", "May"],
-      datasets: [{
-        data: [2.4, 5, 6, 7.2, 6.7],
-        backgroundColor: "#FF2E93",
-        barThickness: 8,
-        maxBarThickness: 8,
-        minBarLength: 2,
-        tension: 0.5,
-      }, {
-        data: [1, 2, 4, 9.6, 8.5],
-        backgroundColor: "#232BCD",
-        barThickness: 8,
-        tension: 0.5,
-      },],
-    },
-    options: {
-      responsive: true,
       maintainAspectRatio: false,
       scales: {
         y: {

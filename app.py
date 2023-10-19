@@ -26,6 +26,17 @@ import sentry_sdk
 from flask import Flask
 from sentry_sdk.integrations.flask import FlaskIntegration
 
+def process_mongo_data(data):
+    if isinstance(data, ObjectId):
+        return str(data)
+    if isinstance(data, datetime):
+        return data.isoformat()
+    if isinstance(data, list):
+        return [process_mongo_data(item) for item in data]
+    if isinstance(data, dict):
+        return {key: process_mongo_data(value) for key, value in data.items()}
+    return data
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -165,6 +176,50 @@ def alert_for_expiring_listings():
     logger.info(f"Next Check for Expiring Listings Will Be At: {next_run_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
 
+def add_notification(notification_type, address=None, document_name=None):
+    icon_map = {
+        "listing": "fa-home",
+        "lease": "fa-file-signature",
+        "sale": "fa-handshake",
+        "document": "fa-upload"
+    }
+    color_map = {
+        "listing": "#FF2E93",
+        "lease": "#FFC107",
+        "sale": "#232BCD",
+        "document": "#4AC9DF"
+    }
+    notification = {
+        "timestamp": datetime.now(),
+        "type": notification_type,
+        "icon": icon_map.get(notification_type, "fa-bell"),
+        "color": color_map.get(notification_type, "#FFC107")
+    }
+
+    if notification_type in ["listing", "lease", "sale"] and address:
+        notification["text"] = f"New {notification_type.capitalize()} Added: {address}"
+    elif notification_type == "document" and document_name:
+        notification["text"] = f"New Document Added: {document_name}"
+    else:
+        return False
+    try:
+        db.Notifications.insert_one(notification)
+        return True
+    except:
+        logger.error("Error Adding Notification")
+        return False
+    
+@app.route("/api/get_notifications", methods=["GET"])
+@login_required
+def get_notifications():
+    try:
+        latest_notifications = list(db.Notifications.find().sort("timestamp", -1).limit(10))
+        processed_data = process_mongo_data(latest_notifications)
+        return jsonify({"success": True, "notifications": processed_data})
+    except Exception as e:
+        logger.error("Error Fetching the Notifications")
+        return jsonify({"success": False, "message": "Error Fetching Notifications"})
+
 
 def convert_state_code_to_full_name(state_code):
     state_mapping = {
@@ -234,7 +289,6 @@ def logins():
 @login_required
 def logout():
     logout_user()
-    
     return redirect(url_for("login"))
 
 
@@ -290,6 +344,19 @@ def dashboard():
 @app.route("/listings")
 @login_required
 def view_listings():
+    if 'send_notification_for' in session:
+        listing_id = session.get('send_notification_for')
+        listing = listings.find_one({"_id": ObjectId(listing_id)})
+        if listing:
+            try:
+                with app.app_context():
+                    with mail.connect() as conn:
+                        send_email("New Listing Notification", 'email_templates/email_new_listing.html', {"listing": listing}, conn)
+                    if not add_notification("listing", address=f"{listing['listing_street']}"):
+                        logger.error("Error Adding Listing Notification")
+            except Exception as e:
+                logger.error("Error Sending Email: ", e)
+        del session['send_notification_for']
     is_admin = current_user.role == "Admin"
     if current_user.is_authenticated:
         page, per_page, _ = get_page_args(
@@ -328,6 +395,19 @@ def view_listings():
 @app.route("/sales")
 @login_required
 def view_sales():
+    if 'send_notification_for' in session:
+        sale_id = session.get('send_notification_for')
+        sale = sales.find_one({"_id": ObjectId(sale_id)})
+        if sale:
+            try:
+                with app.app_context():
+                    with mail.connect() as conn:
+                        send_email("New Sale Notification", 'email_templates/email_new_sale.html', {"sale": sale}, conn)
+                    if not add_notification("sale", address=f"{sale['sale_street']}"):
+                        logger.error("Error Adding Sale Notification")
+            except Exception as e:
+                logger.error("Error Sending Email: ", e)
+        del session['send_notification_for']
     is_admin = current_user.role == "Admin"
     if current_user.is_authenticated:
         page, per_page, _ = get_page_args(
@@ -363,6 +443,19 @@ def view_sales():
 @app.route("/leases")
 @login_required
 def view_leases():
+    if 'send_notification_for' in session:
+        lease_id = session.get('send_notification_for')
+        lease = leases.find_one({"_id": ObjectId(lease_id)})
+        if lease:
+            try:
+                with app.app_context():
+                    with mail.connect() as conn:
+                        send_email("New Lease Notification", 'email_templates/email_new_lease.html', {"lease": lease}, conn)
+                    if not add_notification("lease", address=f"{lease['lease_street']}"):
+                        logger.error("Error Adding Lease Notification")
+            except Exception as e:
+                logger.error("Error Sending Email: ", e)
+        del session['send_notification_for']
     is_admin = current_user.role == "Admin"
     if current_user.is_authenticated:
         page, per_page, _ = get_page_args(
@@ -406,6 +499,19 @@ def get_documents():
 @app.route("/documents")
 @login_required
 def view_documents():
+    if 'send_notification_for' in session:
+        document_id = session.get('send_notification_for')
+        document = docs.find_one({"_id": ObjectId(document_id)})
+        if document:
+            try:
+                with app.app_context():
+                    with mail.connect() as conn:
+                        send_email("New Document Notification", 'email_templates/email_new_document.html', {"document": document}, conn)
+                    if not add_notification("document", document_name=f"{document['document_name']}"):
+                        logger.error("Error Adding Document Notification")
+            except Exception as e:
+                logger.error("Error Sending Email: ", e)
+        del session['send_notification_for']
     is_admin = current_user.role == "Admin"
     greeting_msg = f"Marketing Dashboard - Document View"
     document_types = [
@@ -495,12 +601,7 @@ def submit_document():
         result = db.Documents.insert_one(new_document)
         if not result.inserted_id:
             raise Exception("Error Inserting the Document")
-        try:
-            with app.app_context():
-                with mail.connect() as conn:
-                    send_email("New Document Notification", 'email_templates/email_new_document.html', {"document": new_document}, conn)
-        except Exception as e:
-            logger.error("Error Sending Email: ", e)
+        session['send_notification_for'] = str(result.inserted_id)
         return jsonify({"success": True, "redirect": url_for("view_documents")})
     except Exception as e:
         logger.exception("Error Occurred While Submitting The Document")
@@ -538,12 +639,7 @@ def submit_listing():
         result = listings.insert_one(new_listing)
         if not result.inserted_id:
             raise Exception("Error inserting the listing.")
-        try:
-            with app.app_context():
-                with mail.connect() as conn:
-                    send_email("New Listing Notification", 'email_templates/email_new_listing.html', {"listing": new_listing}, conn)
-        except Exception as e:
-            logger.error("Error Sending Email: ", e)
+        session['send_notification_for'] = str(result.inserted_id)
         return jsonify({"success": True, "redirect": url_for("view_listings")})
     except Exception as e:
         logger.exception("Error Occurred While Submitting The Listing")
@@ -581,12 +677,7 @@ def submit_sale():
         result = sales.insert_one(new_sale)
         if not result.inserted_id:
             raise Exception("Error Inserting the Sale")
-        try:
-            with app.app_context():
-                with mail.connect() as conn:
-                    send_email("New Sale Notification", 'email_templates/email_new_sale.html', {"sale": new_sale}, conn)
-        except Exception as e:
-            logger.error("Error Sending Email: ", e)
+        session['send_notification_for'] = str(result.inserted_id)
         return jsonify({"success": True, "redirect": url_for("view_sales")})
     except Exception as e:
         logger.exception("Error Occurred While Submitting The Sale")
@@ -627,14 +718,7 @@ def submit_lease():
         new_lease["lease_state"] = convert_state_code_to_full_name(new_lease["lease_state"])
         new_lease["lease_term_length"] = f"{years} Years, {months} Months"
         result = leases.insert_one(new_lease)
-        if not result.inserted_id:
-            raise Exception("Error Inserting the Lease")
-        try:
-            with app.app_context():
-                with mail.connect() as conn:
-                    send_email("New Lease Notification", 'email_templates/email_new_lease.html', {"lease": new_lease}, conn)
-        except Exception as e:
-            logger.error("Error Sending Email: ", e)
+        session['send_notification_for'] = str(result.inserted_id)
         return jsonify({"success": True, "redirect": url_for("view_leases")})
     except Exception as e:
         logger.exception("Error Occurred While Submitting The Lease")

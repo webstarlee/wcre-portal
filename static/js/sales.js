@@ -473,9 +473,8 @@ $(document).ready(function () {
 		e.preventDefault();
 		if (validateStep() && validateBrokers()) {
 			$("#add-sale-modal").css("display", "none");
-			var file = this.files[0];
-			var formData = new FormData();
-			formData.append("file", file);
+			var formData = new FormData(this);
+			formData.append("sale-agreement-file-id", $("#sale-agreement-file-id").val());
 			$.ajax({
 				url: "/submit_sale",
 				type: "POST",
