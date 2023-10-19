@@ -187,8 +187,27 @@ $(document).ready(function () {
 		setInputValue("#edit-sale-seller-name", getNameFromCell(12));
 		setInputValue("#edit-sale-seller-email", getEmailFromCell(12));
 		setInputValue("#edit-sale-seller-phone", getPhoneFromCell(12));
-		setInputValue("#edit-sale-notes", getCellText(15));
+		const notesContent = getCellText(15);
+		if (notesContent && notesContent !== "No Notes") {
+			setInputValue("#edit-notes-option", "enter-notes");
+			$("#edit-sale-notes").show().val(notesContent);
+		} else {
+			setInputValue("#edit-notes-option", "no-notes");
+			$("#edit-sale-notes").hide().val('');
+		}
 	});
+
+	window.toggleNotesField = function (dropdownId, textareaId) {
+		var notesOption = document.getElementById(dropdownId).value;
+		var notesField = document.getElementById(textareaId);
+		if (notesOption === 'enter-notes') {
+			notesField.style.display = 'block';
+		} else {
+			notesField.style.display = 'none';
+			notesField.value = 'No Notes';
+		}
+	};
+
 
 	$(".sale-modal .close").click(function () {
 		$("body").removeClass("modal-open");

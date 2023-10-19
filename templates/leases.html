@@ -291,8 +291,13 @@
                 placeholder="Enter Invoice Contact Information:" required></textarea>
             </div>
             <div class="form-group increased-line-height">
-              <label for="lease-notes">Notes:</label>
-              <textarea id="lease-notes" name="lease-notes" placeholder="Enter Notes:" required></textarea>
+              <label for="notes-option">Notes:</label>
+              <select id="notes-option" name="notes-option" onchange="toggleNotesField('notes-option', 'lease-notes')">
+                <option value="no-notes">No Notes</option>
+                <option value="enter-notes">Enter Notes</option>
+              </select>
+              <textarea id="lease-notes" name="lease-notes" placeholder="Enter Notes:" style="display: none;"
+                required></textarea>
             </div>
             <div class="form-group">
               <button id="upload-lease-agreement" type="button"> Upload Lease Agreement </button>
@@ -416,8 +421,14 @@
                 placeholder="Enter Invoice Contact Information:" required></textarea>
             </div>
             <div class="form-group increased-line-height">
-              <label for="edit-lease-notes">Notes:</label>
-              <textarea id="edit-lease-notes" name="edit-lease-notes" placeholder="Enter Notes:" required></textarea>
+              <label for="edit-notes-option">Notes:</label>
+              <select id="edit-notes-option" name="edit-notes-option"
+                onchange="toggleNotesField('edit-notes-option', 'edit-lease-notes')">
+                <option value="no-notes">No Notes</option>
+                <option value="enter-notes">Enter Notes</option>
+              </select>
+              <textarea id="edit-lease-notes" name="edit-leas-notes" placeholder="Enter Notes:" style="display: none;"
+                required></textarea>
             </div>
             <div class="form-group">
               <button id="edit-upload-lease-agreement" type="button"> Upload Lease Agreement </button>

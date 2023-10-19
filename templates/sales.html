@@ -252,8 +252,14 @@
                       </select>
                     </div>
                     <div class="form-group increased-line-height">
-                      <label for="sale-notes">Notes:</label>
-                      <textarea id="sale-notes" name="sale-notes" placeholder="Enter Notes:" required></textarea>
+                      <label for="notes-option">Notes:</label>
+                      <select id="notes-option" name="notes-option"
+                        onchange="toggleNotesField('notes-option', 'sale-notes')">
+                        <option value="no-notes">No Notes</option>
+                        <option value="enter-notes">Enter Notes</option>
+                      </select>
+                      <textarea id="sale-notes" name="sale-notes" placeholder="Enter Notes:" style="display: none;"
+                        required></textarea>
                     </div>
                     <div class="form-group">
                       <button id="upload-sale-agreement" type="button"> Upload Settlement (HUD Statement) </button>
@@ -365,9 +371,14 @@
                         placeholder="Enter Sale Commission:" required />
                     </div>
                     <div class="form-group increased-line-height">
-                      <label for="edit-sale-notes">Notes:</label>
+                      <label for="edit-notes-option">Notes:</label>
+                      <select id="edit-notes-option" name="edit-notes-option"
+                        onchange="toggleNotesField('edit-notes-option', 'edit-sale-notes')">
+                        <option value="no-notes">No Notes</option>
+                        <option value="enter-notes">Enter Notes</option>
+                      </select>
                       <textarea id="edit-sale-notes" name="edit-sale-notes" placeholder="Enter Notes:"
-                        required></textarea>
+                        style="display: none;" required></textarea>
                     </div>
                     <div class="form-group">
                       <button id="edit-upload-sale-agreement" type="button"> Upload Sale Agreement </button>

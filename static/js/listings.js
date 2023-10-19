@@ -185,9 +185,26 @@ $(document).ready(function () {
 		setInputValue("#edit-listing-owner-name", getNameFromCell(9));
 		setInputValue("#edit-listing-owner-email", getEmailFromCell(9));
 		setInputValue("#edit-listing-owner-phone", getPhoneFromCell(9));
-		setInputValue("#edit-listing-notes", getCellText(13));
+		const notesContent = getCellText(13);
+		if (notesContent && notesContent !== "No Notes") {
+			setInputValue("#edit-notes-option", "enter-notes");
+			$("#edit-listing-notes").show().val(notesContent);
+		} else {
+			setInputValue("#edit-notes-option", "no-notes");
+			$("#edit-listing-notes").hide().val('');
+		}
 	});
 
+	window.toggleNotesField = function (dropdownId, textareaId) {
+		var notesOption = document.getElementById(dropdownId).value;
+		var notesField = document.getElementById(textareaId);
+		if (notesOption === 'enter-notes') {
+			notesField.style.display = 'block';
+		} else {
+			notesField.style.display = 'none';
+			notesField.value = 'No Notes';
+		}
+	};
 
 	$(".listing-modal .close").click(function () {
 		$("body").removeClass("modal-open");

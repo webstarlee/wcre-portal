@@ -173,8 +173,26 @@ $(document).ready(function () {
 		setInputValue("#edit-lease-lessee-phone", getPhoneFromCell(8));
 		setInputValue("#edit-lease-referral-source", getCellText(13));
 		setInputValue("#edit-lease-invoice-contact", getCellText(14));
-		setInputValue("#edit-lease-notes", getCellText(15));
+		const notesContent = getCellText(15);
+		if (notesContent && notesContent !== "No Notes") {
+			setInputValue("#edit-notes-option", "enter-notes");
+			$("#edit-lease-notes").show().val(notesContent);
+		} else {
+			setInputValue("#edit-notes-option", "no-notes");
+			$("#edit-lease-notes").hide().val('');
+		}
 	});
+
+	window.toggleNotesField = function (dropdownId, textareaId) {
+		var notesOption = document.getElementById(dropdownId).value;
+		var notesField = document.getElementById(textareaId);
+		if (notesOption === 'enter-notes') {
+			notesField.style.display = 'block';
+		} else {
+			notesField.style.display = 'none';
+			notesField.value = 'No Notes';
+		}
+	};
 
 
 	$(".lease-modal .close").click(function () {

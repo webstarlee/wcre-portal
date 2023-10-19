@@ -220,8 +220,14 @@
                       </select>
                     </div>
                     <div class="form-group increased-line-height">
-                      <label for="listing-notes">Notes:</label>
-                      <textarea id="listing-notes" name="listing-notes" placeholder="Enter Notes:" required></textarea>
+                      <label for="notes-option">Notes:</label>
+                      <select id="notes-option" name="notes-option"
+                        onchange="toggleNotesField('notes-option', 'listing-notes')">
+                        <option value="no-notes">No Notes</option>
+                        <option value="enter-notes">Enter Notes</option>
+                      </select>
+                      <textarea id="listing-notes" name="listing-notes" placeholder="Enter Notes:"
+                        style="display: none;" required></textarea>
                     </div>
                     <div class="form-group">
                       <button id="upload-listing-agreement" type="button"> Upload Listing Agreement </button>
@@ -307,9 +313,15 @@
                       <input type="text" id="edit-listing-end-date" name="edit-listing-end-date" required />
                     </div>
                     <div class="form-group increased-line-height">
-                      <label for="edit-listing-notes">Notes:</label>
+                      <label for="edit-notes-option">Notes:</label>
+                      <select id="edit-notes-option" name="edit-notes-option"
+                        onchange="toggleNotesField('edit-notes-option', 'edit-listing-notes')">
+
+                        <option value="no-notes">No Notes</option>
+                        <option value="enter-notes">Enter Notes</option>
+                      </select>
                       <textarea id="edit-listing-notes" name="edit-listing-notes" placeholder="Enter Notes:"
-                        required></textarea>
+                        style="display: none;" required></textarea>
                     </div>
                     <div class="form-group">
                       <button id="edit-upload-listing-agreement" type="button"> Upload Listing Agreement </button>

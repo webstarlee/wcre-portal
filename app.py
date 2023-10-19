@@ -634,9 +634,9 @@ def submit_listing():
             "listing-long",
             "listing-notes",
         ]
-        new_listing = {
-            key.replace("-", "_"): request.form.get(key) for key in form_keys
-        }
+        new_listing = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
+        if request.form.get("notes-option") == "no-notes":
+            new_listing["listing_notes"] = "No Notes"
         new_listing["brokers"] = request.form.getlist("brokers[]")
         new_listing["listing_state"] = convert_state_code_to_full_name(new_listing["listing_state"])
         new_listing["listing_agreement_file_id"] = request.form.get("listing-agreement-file-id")
@@ -677,6 +677,8 @@ def submit_sale():
             "sale-notes"
         ]
         new_sale = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
+        if request.form.get("notes-option") == "no-notes":
+            new_sale["listing_notes"] = "No Notes"
         new_sale["brokers"] = request.form.getlist("brokers[]")
         new_sale["sale_state"] = convert_state_code_to_full_name(new_sale["sale_state"])
         result = sales.insert_one(new_sale)
