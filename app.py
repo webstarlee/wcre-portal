@@ -173,7 +173,6 @@ def alert_for_expiring_listings():
             logger.info(f"Alert Sent for Listing: {listing['_id']}")
     else:
         logger.info("No Upcoming Expiring Listings")
-    
     next_run_time = now + timedelta(seconds=43200)
     logger.info(f"Next Check for Expiring Listings Will Be At: {next_run_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
