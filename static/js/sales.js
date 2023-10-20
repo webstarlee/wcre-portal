@@ -438,19 +438,16 @@ $(document).ready(function () {
 
 
 	let sale_id = null;
-	var isAdmin = $("body").data("is-admin") === "True";
 	$(".centered-table tbody").on("contextmenu", "tr", function (e) {
 		e.preventDefault();
-		if (isAdmin) {
-			const actionModal = $("#action-modal");
-			actionModal
-				.css({
-					top: e.pageY + "px",
-					left: e.pageX + "px",
-				})
-				.show();
-			$(this).focus();
-		}
+		const actionModal = $("#action-modal");
+		actionModal
+			.css({
+				top: e.pageY + "px",
+				left: e.pageX + "px",
+			})
+			.show();
+		$(this).focus();
 		sale_id = $(this).data("sale-id");
 		console.log("Sale ID:", sale_id);
 	});

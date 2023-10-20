@@ -440,19 +440,16 @@ $(document).ready(function () {
 	});
 
 	let listing_id = null;
-	var isAdmin = $("body").data("is-admin") === "True";
 	$(".centered-table tbody").on("contextmenu", "tr", function (e) {
 		e.preventDefault();
-		if (isAdmin) {
-			const actionModal = $("#action-modal");
-			actionModal
-				.css({
-					top: e.pageY + "px",
-					left: e.pageX + "px",
-				})
-				.show();
-			$(this).focus();
-		}
+		const actionModal = $("#action-modal");
+		actionModal
+			.css({
+				top: e.pageY + "px",
+				left: e.pageX + "px",
+			})
+			.show();
+		$(this).focus();
 		listing_id = $(this).data("listing-id");
 		console.log("Listing ID:", listing_id);
 	});
