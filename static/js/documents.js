@@ -159,26 +159,39 @@ $(document).ready(function () {
     }
   });
 
+  function getFileDetails(extensionType) {
+    switch (extensionType) {
+      case "pdf":
+        return { iconClass: "far fa-file-pdf", extension: ".pdf" };
+      case "doc":
+        return { iconClass: "far fa-file-word", extension: ".doc" };
+      default:
+        return { iconClass: "far fa-file-alt", extension: ".txt" };
+    }
+  }
+
   function displayDocuments(documents, pageNumber) {
     documentList.innerHTML = "";
     const startIndex = (pageNumber - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     for (let i = startIndex; i < endIndex && i < documents.length; i++) {
+      const fileDetails = getFileDetails(documents[i].document_file_id.split(".").pop());
       const li = document.createElement("li");
       li.classList = "d-flex justify-content-between align-items-center file-item";
       li.setAttribute("data-document-id", documents[i]._id);
       li.setAttribute("data-document-type", documents[i].document_type);
-      var downloadButton = '<a class="download-button" href="/download/' + documents[i].document_file_id +
-        '" download="' + documents[i].document_name + '.pdf"><i class="fa fa-download"></i></a>';
+      const downloadButton = `<a class="download-button" href="/download/${documents[i].document_file_id}
+      "download="${documents[i].document_name}${fileDetails.extension}"><i class="fa fa-download"></i></a>`;
       li.innerHTML = `
-                <div class="d-flex gap-2 align-items-center">
-                    <i class="far fa-file-pdf text-dark" style="color: #1c92d2; font-size:22px;"></i>
-                    <p class="mb-0">${documents[i].document_name}</p>
-                </div>
-                <span>${downloadButton}</span>`;
+        <div class="d-flex gap-2 align-items-center">
+            <i class="${fileDetails.iconClass}" style="color: #1c92d2; font-size:22px;"></i>
+            <p class="mb-0">${documents[i].document_name}</p>
+        </div>
+        <span>${downloadButton}</span>`;
       documentList.appendChild(li);
     }
   }
+
 
   let allDocuments = [];
   let documentsPromise = $.ajax({

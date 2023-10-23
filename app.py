@@ -58,7 +58,7 @@ sentry_sdk.init(
     traces_sample_rate=1.0,
 )
 
-ALLOWED_EXTENSIONS = {"pdf"}
+ALLOWED_EXTENSIONS = {"pdf", "doc"}
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -143,7 +143,7 @@ def send_email(subject, template, data, conn):
         msg = Message(
             subject,
             sender="portal@wolfcre.com",
-            recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com", "evan.zweben@wolfcre.com", "erin.warwick@wolfcre.com", "gab.leonetti@wolfcre.com"],
+            recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com", "erin.warwick@wolfcre.com", "gab.leonetti@wolfcre.com"],
         )
         email_content = render_template(template, **data)
         msg.html = transform(email_content)
@@ -193,12 +193,12 @@ def add_notification(notification_type, address=None, document_name=None):
     }
     notification = {
         "user": current_user.fullname,
-        "timestamp": datetime.now(),
         "type": notification_type,
         "icon": icon_map.get(notification_type, "fa-bell"),
         "color": color_map.get(notification_type, "#FFC107")
     }
-
+    timezone = pytz.timezone('US/Eastern')
+    notification["timestamp"] = datetime.now(timezone)
     if notification_type in ["listing", "lease", "sale"] and address:
         notification["title"] = f"New {notification_type.capitalize()} Added By {current_user.fullname} - "
         notification["text"] = f"{address}"
@@ -574,7 +574,7 @@ def handle_upload():
     if file.filename == "":
         return jsonify({"success": False, "error": "No Selected File"})
     if not allowed_file(file.filename):
-        return jsonify({"success": False, "error": "Allowed File Types Are .pdf"})
+        return jsonify({"success": False, "error": "Allowed File Types Are .pdf and .doc"})
     file_binary_data = file.read()
     content_type = file.content_type 
     file_extension = file.filename.split('.')[-1] if '.' in file.filename else ''
