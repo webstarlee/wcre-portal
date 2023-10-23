@@ -529,6 +529,7 @@ def view_documents():
         "BOV Reports",
         "Quarterly Reports",
         "Key Marketing Pieces",
+        "Tenant/Buyer Rep Collaterals",
         "Other Documents"
     ]
     document_counts = {}
