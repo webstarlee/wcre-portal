@@ -679,7 +679,7 @@ def submit_sale():
         ]
         new_sale = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
         if request.form.get("notes-option") == "no-notes":
-            new_sale["listing_notes"] = "No Notes"
+            new_sale["sale_notes"] = "No Notes"
         new_sale["brokers"] = request.form.getlist("brokers[]")
         new_sale["sale_state"] = convert_state_code_to_full_name(new_sale["sale_state"])
         result = sales.insert_one(new_sale)
@@ -717,6 +717,8 @@ def submit_lease():
             "lease-notes"
         ]
         new_lease = {key.replace("-", "_"): request.form.get(key) for key in form_keys}
+        if request.form.get("notes-option") == "no-notes":
+            new_lease["lease_notes"] = "No Notes"
         years = request.form.get("lease-years")
         months = request.form.get("lease-months")
         new_lease["brokers"] = request.form.getlist("brokers[]")
@@ -840,6 +842,8 @@ def edit_listing(listing_id):
             request.json.pop(field, None)
     if request.json.get("listing_state"):
         request.json["listing_state"] = convert_state_code_to_full_name(request.json["listing_state"])
+    if request.json.get("listing_notes") == "":
+        request.json["listing_notes"] = "No Notes"
     fields = [
         "listing_street",
         "listing_city",
@@ -866,6 +870,8 @@ def edit_sale(sale_id):
         request.json.pop('sale_agreement_file_id', None)
     if request.json.get("sale_state"):
         request.json["sale_state"] = convert_state_code_to_full_name(request.json["sale_state"])
+    if request.json.get("sale_notes") == "":
+        request.json["sale_notes"] = "No Notes"
     fields = [
         "sale_street",
         "sale_city",
@@ -903,6 +909,8 @@ def edit_lease(lease_id):
             request.json.pop(field, None)
     if request.json.get("sale_state"):
         request.json["lease_state"] = convert_state_code_to_full_name(request.json["lease_state"])
+    if request.json.get("lease_notes") == "":
+        request.json["lease_notes"] = "No Notes"
     fields = [
         "lease_street",
         "lease_city",
