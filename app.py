@@ -45,13 +45,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-class IgnoreStaticLogFilter(logging.Filter):
-    def filter(self, record):
-        if "/static/" in record.getMessage():
-            return 0
-        return 1
-logger.addFilter(IgnoreStaticLogFilter())
-
 sentry_sdk.init(
     dsn="https://903f368e70906f512655f4f4555be8c6@o4505664587694081.ingest.sentry.io/4505664611155968",
     integrations=[FlaskIntegration()],
