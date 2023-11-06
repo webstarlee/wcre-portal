@@ -142,7 +142,7 @@ def send_email(subject, template, data, conn):
     try:
         msg = Message(
             subject,
-            sender="portal@wolfcre.com",
+            sender=("WCRE Portal", "portal@wolfcre.com"),
             recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com", "erin.warwick@wolfcre.com", "gab.leonetti@wolfcre.com"],
         )
         email_content = render_template(template, **data)
