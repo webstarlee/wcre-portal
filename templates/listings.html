@@ -79,7 +79,8 @@
             <th style="border-top-right-radius: 7px">Notes</th>
           </tr>
         </thead>
-        <tbody> {% for listing in listings %} <tr data-listing-id="{{ listing._id }}">
+        <tbody> {% for listing in listings %}
+          <tr data-listing-id="{{ listing._id }}" class="listing-row">
             <td>{{ listing.listing_property_type }}</td>
             <td>{{ listing.listing_start_date }}</td>
             <td>
@@ -111,8 +112,11 @@
                   href="{{ url_for('download', file_id=listing.listing_amendment_file_id) }}">Fully Executed</a> {%
                 else %} Pending {% endif %} </form>
             </td>
-            <td>{{ listing.listing_notes }}</td>
-          </tr> {% endfor %} </tbody>
+            <td class="notes-cell" data-full-notes="{{ listing.listing_notes | replace(" \n", "<br>" ) | safe }}">{{
+              listing.listing_notes | truncate(50) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
         <table>
           {{ pagination.links }}
           <div>

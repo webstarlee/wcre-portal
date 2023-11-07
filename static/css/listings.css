@@ -276,6 +276,13 @@ table tr:hover td a {
   resize: vertical;
 }
 
+.notes-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
 .modal-step-title {
   text-align: center;
   color: #333;

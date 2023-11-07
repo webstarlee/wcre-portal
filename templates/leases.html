@@ -115,7 +115,8 @@
             </td>
             <td>{{ lease.lease_referral_source }}</td>
             <td>{{ lease.lease_invoice_contact }}</td>
-            <td>{{ lease.lease_notes }}</td>
+            <td class="notes-cell" data-full-notes="{{ lease.lease_notes | replace(" \n", "<br>" ) | safe }}">{{
+              lease.lease_notes | truncate(50) }}</td>
           </tr>
           {% endfor %}
         </tbody>

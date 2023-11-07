@@ -183,6 +183,18 @@ $(document).ready(function () {
 		}
 	});
 
+	$('tr[data-lease-id]').click(function () {
+		$(this).toggleClass('expanded');
+		var notesCell = $(this).find('td.notes-cell');
+		if ($(this).hasClass('expanded')) {
+			var fullNotes = notesCell.data('full-notes');
+			notesCell.html(fullNotes.replace(/\n/g, "<br>"));
+		} else {
+			var truncated = notesCell.data('full-notes').substring(0, 38) + '...';
+			notesCell.text(truncated);
+		}
+	});
+
 	window.toggleNotesField = function (dropdownId, textareaId) {
 		var notesOption = document.getElementById(dropdownId).value;
 		var notesField = document.getElementById(textareaId);
