@@ -195,6 +195,7 @@ $(document).ready(function () {
 		}
 	});
 
+
 	window.toggleNotesField = function (dropdownId, textareaId) {
 		var notesOption = document.getElementById(dropdownId).value;
 		var notesField = document.getElementById(textareaId);
