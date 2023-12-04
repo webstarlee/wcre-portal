@@ -184,7 +184,6 @@ body {
   padding-bottom: 3px;
 }
 
-/* pagination */
 .pagination {
   display: flex;
   column-gap: 10px;
