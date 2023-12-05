@@ -114,7 +114,9 @@
                 {% else %} Pending {% endif %} </form>
             </td>
             <td>{{ lease.lease_referral_source }}</td>
-            <td>{{ lease.lease_invoice_contact }}</td>
+            <td class="invoice-contact-cell" data-full-invoice-contact="{{ lease.lease_invoice_contact | replace("
+              \n", "<br>" ) | safe }}">{{
+              lease.lease_invoice_contact | truncate(50) }}</td>
             <td class="notes-cell" data-full-notes="{{ lease.lease_notes | replace(" \n", "<br>" ) | safe }}">{{
               lease.lease_notes | truncate(50) }}</td>
           </tr>

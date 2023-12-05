@@ -207,6 +207,18 @@ $(document).ready(function () {
 		}
 	};
 
+	$('tr[data-lease-id]').click(function () {
+		$(this).toggleClass('expanded');
+		var invoiceContactCell = $(this).find('td.invoice-contact-cell');
+		if ($(this).hasClass('expanded')) {
+			var fullInvoiceContact = notesCell.data('full-invoice-contact');
+			invoiceContactCell.html(fullInvoiceContact.replace(/\n/g, "<br>"));
+		} else {
+			var truncated = invoiceContactCell.data('full-invoice-contact').substring(0, 38) + '...';
+			invoiceContactCell.text(truncated);
+		}
+	});
+
 
 	$(".lease-modal .close").click(function () {
 		$("body").removeClass("modal-open");
