@@ -69,6 +69,53 @@ body {
   opacity: 1;
 }
 
+.card {
+  border-radius: 20px !important;
+  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease 0s;
+}
+
+.card-wrapper {
+  width: 80%;
+}
+
+.logs-list {
+  height: 400px; /* Fixed height for the log list */
+  overflow-y: auto; /* Enable scrolling within the log list */
+  margin-top: 15px;
+  padding-right: 10px; /* Add padding for scrollbar */
+}
+
+.log-item {
+  background-color: #f8f9fa;
+  border: 1px solid #e1e4e8;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  font-size: 0.9em;
+}
+
+.brokers-list {
+  height: 400px; /* Fixed height for the log list */
+  overflow-y: auto; /* Enable scrolling within the log list */
+  margin-top: 15px;
+  padding-right: 10px; /* Add padding for scrollbar */
+}
+
+.broker-item {
+  background-color: #f8f9fa;
+  border: 1px solid #e1e4e8;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  font-size: 0.9em;
+}
+
+/* Add broker item hover effect if needed */
+.broker-item:hover {
+  background-color: #e8f0fe;
+}
+
 
 @media only screen and (min-width: 320px) {
   .root-div {
