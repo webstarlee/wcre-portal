@@ -1,3 +1,4 @@
+import json
 import os
 from urllib.parse import urlparse
 from flask import Flask, Response, jsonify, make_response, render_template, redirect, stream_with_context, url_for, request, session, abort
@@ -43,7 +44,25 @@ logging.basicConfig(
     format="%(asctime)s %(levelname)s: %(message)s",
     datefmt="%d/%b/%Y %H:%M:%S",
 )
+formatter = logging.Formatter("%(asctime)s %(levelname)s: %(message)s", datefmt="%d/%b/%Y %H:%M:%S")
+file_handler = logging.FileHandler('app.log')
+file_handler.setFormatter(formatter)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
 logger = logging.getLogger(__name__)
+logger.addHandler(file_handler)
+logger.addHandler(stream_handler)
+logger.setLevel(logging.INFO)
+expected_messages = ["Logged In", "Logged Out", 
+                      "Submitted By", "Deleted By", "Edited By"]
+class IncludeExpectedMessagesFilter(logging.Filter):
+    def filter(self, record):
+        for message in expected_messages:
+            if message in record.msg:
+                return True 
+        return False 
+file_handler.addFilter(IncludeExpectedMessagesFilter())
 
 sentry_sdk.init(
     dsn="https://903f368e70906f512655f4f4555be8c6@o4505664587694081.ingest.sentry.io/4505664611155968",
@@ -84,7 +103,7 @@ try:
     login_manager = LoginManager(app)
     login_manager.login_view = "login"
 except Exception as e:
-    logger.exception("Error Initializing Portal")
+    logger.error("Error Initializing Portal")
 else:
     try:
         client = MongoClient(
@@ -103,7 +122,7 @@ else:
         scheduler.start()
         logger.info("Connected to MongoDB Successfully")
     except Exception as e:
-        logger.exception("Error Connecting to MongoDB")
+        logger.error("Error Connecting to MongoDB")
     else:
         logger.info("Initialization Successful")
 
@@ -217,6 +236,25 @@ def get_notifications():
     except Exception as e:
         logger.error("Error Fetching the Notifications")
         return jsonify({"success": False, "message": "Error Fetching Notifications"})
+    
+@app.route('/api/fetch_logs', methods=['GET'])
+def get_app_log():
+    log_file_path = 'app.log'
+    if not os.path.exists(log_file_path):
+        return jsonify({'error': 'Log file not found'}), 404
+    try:
+        with open(log_file_path, 'r') as log_file:
+            log_content = log_file.read()
+            log_entries = log_content.strip().split('\n')
+            log_list = []
+            for entry in reversed(log_entries):
+                log_list.append({'log_entry': entry})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    return Response(
+        json.dumps({'log_entries': log_list}),
+        mimetype='application/json'
+    )
 
 
 def convert_state_code_to_full_name(state_code):
@@ -262,6 +300,7 @@ def login():
                 "ip_address": request.remote_addr,
             }
             db.Logins.insert_one(log_entry)
+            logger.info(f"User {request.form['username']} Logged In")
             next_page = request.form.get("next") or url_for("dashboard")
             return redirect(next_page)
         else:
@@ -286,6 +325,7 @@ def logins():
 @app.route("/logout")
 @login_required
 def logout():
+    logger.info(f"User {current_user.fullname} Logged Out")
     logout_user()
     return redirect(url_for("login"))
 
@@ -601,9 +641,10 @@ def submit_document():
         if not result.inserted_id:
             raise Exception("Error Inserting the Document")
         session['send_notification_for'] = str(result.inserted_id)
+        logger.info("New Document Submitted By " + current_user.fullname)
         return jsonify({"success": True, "redirect": url_for("view_documents")})
     except Exception as e:
-        logger.exception("Error Occurred While Submitting The Document")
+        logger.error("Error Occurred While Submitting The Document")
         return ({"success": False, "message": "Error Occurred While Submitting The Document"})
 
 
@@ -639,9 +680,10 @@ def submit_listing():
         if not result.inserted_id:
             raise Exception("Error inserting the listing.")
         session['send_notification_for'] = str(result.inserted_id)
+        logger.info("New Listing Submitted By " + current_user.fullname)
         return jsonify({"success": True, "redirect": url_for("view_listings")})
     except Exception as e:
-        logger.exception("Error Occurred While Submitting The Listing")
+        logger.error("Error Occurred While Submitting The Listing")
         return ({"success": False, "message": "Error Occurred While Submitting The Listing"})
 
 
@@ -679,9 +721,10 @@ def submit_sale():
         if not result.inserted_id:
             raise Exception("Error Inserting the Sale")
         session['send_notification_for'] = str(result.inserted_id)
+        logger.info("New Sale Submitted By " + current_user.fullname)
         return jsonify({"success": True, "redirect": url_for("view_sales")})
     except Exception as e:
-        logger.exception("Error Occurred While Submitting The Sale")
+        logger.error("Error Occurred While Submitting The Sale")
         return ({"success": False, "message": "Error Occurred While Submitting The Sale"})
 
 
@@ -722,9 +765,10 @@ def submit_lease():
         new_lease["lease_term_length"] = f"{years} Years, {months} Months"
         result = leases.insert_one(new_lease)
         session['send_notification_for'] = str(result.inserted_id)
+        logger.info("New Lease Submitted By " + current_user.fullname)
         return jsonify({"success": True, "redirect": url_for("view_leases")})
     except Exception as e:
-        logger.exception("Error Occurred While Submitting The Lease")
+        logger.error("Error Occurred While Submitting The Lease")
         return jsonify({"success": False, "message": "Error Occurred While Submitting The Lease",})
 
 
@@ -743,12 +787,14 @@ def delete_item_from_collection(item_id, collection, item_type):
 @app.route("/delete_listing/<listing_id>", methods=["GET"])
 @login_required
 def delete_listing(listing_id):
+    logger.info("Listing Deleted By " + current_user.fullname)
     return delete_item_from_collection(listing_id, listings, "Listing")
 
 
 @app.route("/delete_sale/<sale_id>", methods=["GET"])
 @login_required
 def delete_sale(sale_id):
+    logger.info("Sale Deleted By " + current_user.fullname)
     return delete_item_from_collection(sale_id, sales, "Sale")
 
 
@@ -764,6 +810,7 @@ def delete_document(document_id):
         result = delete_item_from_collection(document_id, docs, "Document")
         if not result:
             raise Exception("Failed to delete document from MongoDB")
+        logger.info("Document Deleted By " + current_user.fullname)
         return jsonify({"success": True, "message": "Document Deleted Successfully"})
     except Exception as e:
         logger.error("Error: ", str(e))
@@ -774,6 +821,7 @@ def delete_document(document_id):
 @app.route("/delete_lease/<lease_id>", methods=["GET"])
 @login_required
 def delete_lease(lease_id):
+    logger.info("Lease Deleted By " + current_user.fullname)
     return delete_item_from_collection(lease_id, leases, "Lease")
 
 
@@ -852,6 +900,7 @@ def edit_listing(listing_id):
         "listing_price",
         "listing_notes"
     ]
+    logger.info("Listing Edited By " + current_user.fullname)
     return edit_record(listing_id, listings, fields)
 
 
@@ -885,6 +934,7 @@ def edit_sale(sale_id):
         "sale_commission",
         "sale_notes"
     ]
+    logger.info("Sale Edited By " + current_user.fullname)
     return edit_record(sale_id, sales, fields)
 
 
@@ -924,6 +974,7 @@ def edit_lease(lease_id):
         "lease_invoice_contact",
         "lease_notes"
     ]
+    logger.info("Lease Edited By " + current_user.fullname)
     return edit_record(lease_id, leases, fields)
 
 @app.route("/edit_document/<document_id>", methods=["POST"])
@@ -939,6 +990,7 @@ def edit_document(document_id):
         "document_name"
     ] + fileId_fields + [
     ]
+    logger.info("Document Edited By " + current_user.fullname)
     return edit_record(document_id, docs, fields)
 
 
