@@ -53,6 +53,14 @@
           <span id="sidebar-items" class="sidebar-items">DOCUMENTS</span>
         </a>
       </li>
+      {% if is_admin %}
+      <li>
+        <a href="{{ url_for('view_settings') }}">
+          <span class="custom-icon-settings"></span>
+          <span id="sidebar-items" class="sidebar-items">SETTINGS</span>
+        </a>
+      </li>
+      {% endif %}
     </ul>
     <div class="user-info">
       <div class="flex-wrap flex-md-nowrap gap-2" style="display: flex; padding: 8px">

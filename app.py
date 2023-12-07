@@ -358,6 +358,7 @@ def greeting(current_time):
 @app.route("/dashboard")
 @login_required
 def dashboard():
+    is_admin = current_user.role == "Admin"
     if current_user.role == "Admin":
         total_listings = listings.count_documents({})
         total_sales = sales.count_documents({})
@@ -376,6 +377,7 @@ def dashboard():
         total_documents=total_documents,
         total_leases=total_leases,
         greeting_msg=greeting_msg,
+        is_admin=is_admin
     )
 
 
@@ -574,6 +576,19 @@ def view_documents():
         "documents.html",
         document_types=document_types,
         document_counts=document_counts,
+        is_admin=is_admin,
+        greeting_msg=greeting_msg,
+    )
+
+@app.route("/settings")
+@login_required
+def view_settings():
+    is_admin = current_user.role == "Admin"
+    if not is_admin:
+        abort(403)
+    greeting_msg = f"Admin Settings"
+    return render_template(
+        "settings.html",
         is_admin=is_admin,
         greeting_msg=greeting_msg,
     )
