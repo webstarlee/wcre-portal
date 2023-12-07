@@ -300,7 +300,7 @@ def login():
                 "ip_address": request.remote_addr,
             }
             db.Logins.insert_one(log_entry)
-            logger.info(f"User {request.form['username']} Logged In")
+            logger.info(f"User {current_user.fullname} Logged In")
             next_page = request.form.get("next") or url_for("dashboard")
             return redirect(next_page)
         else:
