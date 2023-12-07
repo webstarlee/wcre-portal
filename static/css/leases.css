@@ -347,17 +347,16 @@ body {
 
 .pagination {
     display: flex;
-    column-gap: 10px;
     padding-left: 10px;
-}
-
-.pagination a {
+  }
+  
+  .pagination a {
     margin: 0 10px;
     text-decoration: none;
     color: #0056b3;
-}
-
-.page-item {
+  }
+  
+  .page-item {
     display: flex;
     padding: 0 !important;
     margin-top: 15px;
@@ -365,20 +364,20 @@ body {
     align-items: center;
     transition: background-color 0.3s ease;
     color: #0056b3;
-}
-
-.page-item a {
+  }
+  
+  .page-item a {
     padding: 10px;
     font-size: 14px;
     font-weight: bolder;
-}
-
-.page-item a:hover {
+  }
+  
+  .page-item a:hover {
     color: #fff !important;
     padding: 10px;
     border-radius: 5px;
     background-color: #0056b3;
-}
+  }
 
 table tr:hover td a {
     color: #fff;
