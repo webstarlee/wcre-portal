@@ -230,13 +230,22 @@ def add_notification(notification_type, address=None, document_name=None):
 @login_required
 def get_notifications():
     try:
-        latest_notifications = list(db.Notifications.find().sort("timestamp", -1).limit(10))
+        user_role = current_user.role
+        query = {}
+        if user_role == 'Admin':
+            pass
+        elif user_role == 'Broker':
+            query = {"user": current_user.fullname}
+        else:
+            return jsonify({"success": False, "message": "Invalid User Role"})
+        latest_notifications = list(db.Notifications.find(query).sort("timestamp", -1).limit(10))
         processed_data = process_mongo_data(latest_notifications)
         return jsonify({"success": True, "notifications": processed_data})
     except Exception as e:
-        logger.error("Error Fetching the Notifications")
+        logger.error(f"Error Fetching the Notifications: {e}")
         return jsonify({"success": False, "message": "Error Fetching Notifications"})
     
+
 @app.route('/api/fetch_logs', methods=['GET'])
 def get_app_log():
     log_file_path = 'app.log'
