@@ -247,6 +247,7 @@ def get_notifications():
     
 
 @app.route('/api/fetch_logs', methods=['GET'])
+@app.route('/api/fetch_logs', methods=['GET'])
 def get_app_log():
     log_file_path = 'app.log'
     if not os.path.exists(log_file_path):
@@ -255,11 +256,11 @@ def get_app_log():
         with open(log_file_path, 'r') as log_file:
             log_content = log_file.read()
             log_entries = log_content.strip().split('\n')
-            log_list = []
-            for entry in reversed(log_entries):
-                log_list.append({'log_entry': entry})
+            log_entries = [entry for entry in log_entries if entry.strip() != '']
+            log_list = [{"log_entry": entry} for entry in reversed(log_entries)]
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
     return Response(
         json.dumps({'log_entries': log_list}),
         mimetype='application/json'
@@ -598,11 +599,22 @@ def view_settings():
     greeting_msg = f"Admin Settings"
     recentLogins = db.Logins.count_documents({"_id": {"$gte": ObjectId.from_datetime(datetime.now() - timedelta(hours=12))}})
     totalUsers = db.Users.count_documents({})
+    users = db.Users.find({
+        "$and": [
+            {"fullname": {"$ne": "Nathan Wolf"}},  # Excludes Nathan Wolf
+            {"$or": [
+                {"role": "Admin"}, 
+                {"role": "Broker"}  
+            ]}
+        ]
+    })
+    user_names = [user['fullname'] for user in users]
     return render_template(
         "settings.html",
         is_admin=is_admin,
         recentLogins=recentLogins,
         totalUsers=totalUsers,
+        user_names = user_names,
         greeting_msg=greeting_msg,
     )
 
