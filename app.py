@@ -596,9 +596,13 @@ def view_settings():
     if not is_admin:
         abort(403)
     greeting_msg = f"Admin Settings"
+    recentLogins = db.Logins.count_documents({"_id": {"$gte": ObjectId.from_datetime(datetime.now() - timedelta(hours=12))}})
+    totalUsers = db.Users.count_documents({})
     return render_template(
         "settings.html",
         is_admin=is_admin,
+        recentLogins=recentLogins,
+        totalUsers=totalUsers,
         greeting_msg=greeting_msg,
     )
 

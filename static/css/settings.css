@@ -80,10 +80,22 @@ body {
 }
 
 .logs-list {
-  height: 400px; /* Fixed height for the log list */
-  overflow-y: auto; /* Enable scrolling within the log list */
+  height: 400px;
+  overflow-y: auto;
   margin-top: 15px;
-  padding-right: 10px; /* Add padding for scrollbar */
+  padding-right: 10px;
+  position: relative; /* Position relative for absolute positioning of child elements */
+}
+
+.no-logs-message {
+  position: absolute; /* Absolute positioning to center it inside the parent */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #6c757d; /* A neutral color */
+  font-style: italic;
+  display: none; /* Hidden by default */
 }
 
 .log-item {

@@ -33,7 +33,7 @@
                                 <div>
                                     <h5 class="card-title text-secondary fs-6"> Total Users </h5>
                                     <p class="card-text fs-5 fw-bold">
-                                        <span class="card-number">{{ 20 }}</span> Users
+                                        <span class="card-number">{{ totalUsers }}</span> Users
                                     </p>
                                 </div>
                             </div>
@@ -45,7 +45,7 @@
                                 <div>
                                     <h5 class="card-title text-secondary fs-6">Recent Logins (Past 12 Hours)</h5>
                                     <p class="card-text fs-5 fw-bold">
-                                        <span class="card-number">{{ 24 }}</span> Logins
+                                        <span class="card-number">{{ recentLogins }}</span> Logins
                                     </p>
                                 </div>
                             </div>
@@ -82,6 +82,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">Logs Overview</h5>
                                 <div class="logs-list">
+                                    <div class="no-logs-message">No Recent Logs to Display</div>
                                 </div>
                             </div>
                         </div>
@@ -124,17 +125,23 @@
     $(document).ready(function () {
         function populateLogs(logData) {
             var logsList = $('.logs-list');
+            var noLogsMessage = $('.no-logs-message');
             var recentLogs = logData.log_entries.slice(0, 10);
-            $.each(recentLogs, function (index, logEntry) {
-                var logItem = $('<div class="log-item"></div>');
-                var logParts = logEntry.log_entry.split(' ', 4);
-                if (logParts.length >= 4) {
-                    var timestamp = logParts[0] + ' ' + logParts[1] + ' ';
-                    var statusAndMessage = logEntry.log_entry.substr(logParts[0].length + logParts[1].length + logParts[2].length + 3);
-                    logItem.text(timestamp + ' - ' + statusAndMessage);
-                    logsList.append(logItem);
-                }
-            });
+            if (recentLogs.length === 1) {
+                noLogsMessage.show();
+            } else {
+                noLogsMessage.hide();
+                $.each(recentLogs, function (index, logEntry) {
+                    var logItem = $('<div class="log-item"></div>');
+                    var logParts = logEntry.log_entry.split(' ', 4);
+                    if (logParts.length >= 4) {
+                        var timestamp = logParts[0] + ' ' + logParts[1] + ' ';
+                        var statusAndMessage = logEntry.log_entry.substr(logParts[0].length + logParts[1].length + logParts[2].length + 3);
+                        logItem.text(timestamp + ' - ' + statusAndMessage);
+                        logsList.append(logItem);
+                    }
+                });
+            }
         }
         $.ajax({
             url: '/api/fetch_logs',
