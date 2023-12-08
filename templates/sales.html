@@ -116,8 +116,8 @@
             <td class="notes-cell" data-full-notes="{{ sale.sale_notes | replace(" \n", "<br>" ) | safe }}">{{
               sale.sale_notes | truncate(50) }}</td>
           </tr> {% endfor %} </tbody>
-      </table>
-      {{ pagination.links }}
+        <table>
+          {{ pagination.links }}
     </div>
     <div id="action-modal" class="action-modal">
       <button id="delete-button">Delete Sale</button>
