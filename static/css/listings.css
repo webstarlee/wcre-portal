@@ -178,10 +178,25 @@ body {
   max-width: 150px;
 }
 
+.contact-info {
+  margin-bottom: 5px;
+}
+
+.listing-entity {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
 .contact-info a:first-child {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 15px;
   padding-bottom: 3px;
+}
+
+.contact-info :nth-child(2) {
+  display: block;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .pagination {

@@ -257,7 +257,7 @@ body {
     width: auto;
     border-collapse: collapse;
     margin-bottom: 10px;
-}
+  }
 
 .centered-table tr {
     cursor: pointer;
@@ -323,16 +323,6 @@ body {
     margin-bottom: 5px;
 }
 
-.lessor-entity {
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-
-.lessee-entity {
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-
 .contact-info a:first-child {
     display: block;
     margin-bottom: 15px;
@@ -341,6 +331,16 @@ body {
 
 .contact-info :nth-child(2) {
     display: block;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.lessor-entity {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.lessee-entity {
     margin-top: 5px;
     margin-bottom: 5px;
 }
