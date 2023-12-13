@@ -120,7 +120,9 @@
           {{ pagination.links }}
     </div>
     <div id="action-modal" class="action-modal">
+      {% if is_admin %}
       <button id="delete-button">Delete Sale</button>
+      {% endif %}
       <button id="edit-button">Edit Sale</button>
     </div>
     <div id="add-sale-modal" class="sale-modal" data-mode="add">
