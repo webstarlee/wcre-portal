@@ -57,7 +57,8 @@
       <table class="centered-table" style="width: 100%; margin: 0; border-radius: 6px; overflow: hidden">
         <thead>
           <tr>
-            <th style="border-top-left-radius: 7px">Property Type</th>
+            <th style="border-top-left-radius: 7px">Date Entered</th>
+            <th>Property Type</th>
             <th>Square FT</th>
             <th>Term Length</th>
             <th>Property Address</th>
@@ -75,6 +76,7 @@
           </tr>
         </thead>
         <tbody> {% for lease in leases %} <tr data-lease-id="{{ lease._id }}">
+            <td>{{lease.lease_entered_date }}</td>
             <td>{{lease.lease_property_type }}</td>
             <td>{{ lease.lease_sqft }}</td>
             <td>{{ lease.lease_term_length }}</td>
@@ -338,6 +340,11 @@
         <form id="edit-lease-modal" class="modal-form">
           <h2 class="modal-step-title">Edit Lease</h2>
           <div class="modal-step active-step edit-form-step" id="edit-step1">
+            <div class="form-group">
+              <label for="edit-lease-entered-date">Lease Entered Date:</label>
+              <input type="text" id="edit-lease-entered-date" name="edit-lease-entered-date"
+                placeholder="Enter Lease Entered Date:" required />
+            </div>
             <div class="form-group">
               <label for="edit-lease-street">Lease Street:</label>
               <input type="text" id="edit-lease-street" name="edit-lease-street" required />

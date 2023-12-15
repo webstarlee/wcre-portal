@@ -716,6 +716,7 @@ def submit_listing():
         new_listing["listing_state"] = convert_state_code_to_full_name(new_listing["listing_state"])
         new_listing["listing_agreement_file_id"] = request.form.get("listing-agreement-file-id")
         new_listing["listing_amendment_file_id"] = request.form.get("listing-amendment-file-id" )
+        new_listing["listing_entered_date"] = datetime.now().strftime("%m/%d/%Y")
         result = listings.insert_one(new_listing)
         if not result.inserted_id:
             raise Exception("Error inserting the listing.")
@@ -757,6 +758,7 @@ def submit_sale():
             new_sale["sale_notes"] = "No Notes"
         new_sale["brokers"] = request.form.getlist("brokers[]")
         new_sale["sale_state"] = convert_state_code_to_full_name(new_sale["sale_state"])
+        new_sale["sale_entered_date"] = datetime.now().strftime("%m/%d/%Y")
         result = sales.insert_one(new_sale)
         if not result.inserted_id:
             raise Exception("Error Inserting the Sale")
@@ -803,6 +805,7 @@ def submit_lease():
         new_lease["lease_commission_invoice_file_id"] = request.form.get("lease-commission-invoice-file-id")
         new_lease["lease_state"] = convert_state_code_to_full_name(new_lease["lease_state"])
         new_lease["lease_term_length"] = f"{years} Years, {months} Months"
+        new_lease["lease_entered_date"] = datetime.now().strftime("%m/%d/%Y")
         result = leases.insert_one(new_lease)
         session['send_notification_for'] = str(result.inserted_id)
         logger.info("New Lease Submitted By " + current_user.fullname)
@@ -926,6 +929,7 @@ def edit_listing(listing_id):
     if request.json.get("listing_notes") == "":
         request.json["listing_notes"] = "No Notes"
     fields = [
+        "listing_entered_date",
         "listing_street",
         "listing_city",
         "listing_state",
@@ -940,6 +944,7 @@ def edit_listing(listing_id):
         "listing_price",
         "listing_notes"
     ]
+    print(fields)
     logger.info("Listing Edited By " + current_user.fullname)
     return edit_record(listing_id, listings, fields)
 
@@ -955,6 +960,7 @@ def edit_sale(sale_id):
     if request.json.get("sale_notes") == "":
         request.json["sale_notes"] = "No Notes"
     fields = [
+        "sale_entered_date",
         "sale_street",
         "sale_city",
         "sale_sqft",
@@ -995,6 +1001,7 @@ def edit_lease(lease_id):
     if request.json.get("lease_notes") == "":
         request.json["lease_notes"] = "No Notes"
     fields = [
+        "lease_entered_date",
         "lease_street",
         "lease_city",
         "lease_sqft",
@@ -1060,6 +1067,7 @@ def search_listings():
     page = int(request.get_json().get("page", 1))
     search_query = request.get_json().get("query")
     fields = [
+        "listing_entered_date"
         "listing_street",
         "listing_city",
         "listing_state",
@@ -1084,6 +1092,7 @@ def search_sales():
     page = int(request.get_json().get("page", 1))
     search_query = request.get_json().get("query")
     fields = [
+        "sale_entered_date",
         "sale_street",
         "sale_city",
         "sale_state",
@@ -1113,6 +1122,7 @@ def search_leases():
     page = int(request.get_json().get("page", 1))
     search_query = request.get_json().get("query")
     fields = [
+        "lease_entered_date",
         "lease_street",
         "lease_city",
         "lease_state",

@@ -136,6 +136,7 @@ $(document).ready(function () {
 	$(function () {
 		$("#sale-end-date").datepicker();
 		$("#edit-sale-end-date").datepicker();
+		$("#edit-sale-entered-date").datepicker();
 	});
 	$("#add-sale-button").click(function () {
 		resetModalSteps($("#add-sale-modal"));
@@ -169,24 +170,25 @@ $(document).ready(function () {
 		editModal.show();
 		editModal.find(".prev-step").addClass("hidden");
 		actionModal.hide();
-		editModal.find(".modal-step-title").text("Edit Sale - " + getCellText(8));
-		setInputValue("#edit-sale-property-type", getCellText(1));
-		setInputValue("#edit-sale-type", getCellText(2));
-		setInputValue("#edit-sale-end-date", getCellText(3));
-		setInputValue("#edit-sale-price", getCellText(4));
-		setInputValue("#edit-sale-commission", getCellText(5));
-		setInputValue("#edit-sale-sqft", getCellText(6));
-		setInputValue("#edit-sale-street", getCellText(8));
-		setInputValue("#edit-sale-city", getCellText(9));
-		setInputValue("#edit-sale-state", getCellText(10));
-		setInputValue("#edit-sale-buyer-entity", getBuyerEntityFromCell(11));
-		setInputValue("#edit-sale-buyer-name", getNameFromCell(11));
-		setInputValue("#edit-sale-buyer-email", getEmailFromCell(11));
-		setInputValue("#edit-sale-buyer-phone", getPhoneFromCell(11));
-		setInputValue("#edit-sale-seller-entity", getSellerEntityFromCell(12));
-		setInputValue("#edit-sale-seller-name", getNameFromCell(12));
-		setInputValue("#edit-sale-seller-email", getEmailFromCell(12));
-		setInputValue("#edit-sale-seller-phone", getPhoneFromCell(12));
+		editModal.find(".modal-step-title").text("Edit Sale - " + getCellText(9));
+		setInputValue("#edit-sale-entered-date", getCellText(1));
+		setInputValue("#edit-sale-property-type", getCellText(2));
+		setInputValue("#edit-sale-type", getCellText(3));
+		setInputValue("#edit-sale-end-date", getCellText(4));
+		setInputValue("#edit-sale-price", getCellText(5));
+		setInputValue("#edit-sale-commission", getCellText(6));
+		setInputValue("#edit-sale-sqft", getCellText(7));
+		setInputValue("#edit-sale-street", getCellText(9));
+		setInputValue("#edit-sale-city", getCellText(10));
+		setInputValue("#edit-sale-state", getCellText(11));
+		setInputValue("#edit-sale-buyer-entity", getBuyerEntityFromCell(12));
+		setInputValue("#edit-sale-buyer-name", getNameFromCell(12));
+		setInputValue("#edit-sale-buyer-email", getEmailFromCell(12));
+		setInputValue("#edit-sale-buyer-phone", getPhoneFromCell(12));
+		setInputValue("#edit-sale-seller-entity", getSellerEntityFromCell(13));
+		setInputValue("#edit-sale-seller-name", getNameFromCell(13));
+		setInputValue("#edit-sale-seller-email", getEmailFromCell(13));
+		setInputValue("#edit-sale-seller-phone", getPhoneFromCell(13));
 		const notesContent = getCellText(15);
 		if (notesContent && notesContent !== "No Notes") {
 			setInputValue("#edit-notes-option", "enter-notes");
@@ -255,6 +257,7 @@ $(document).ready(function () {
 		};
 		let stateValue = stateMapping[result.sale_state] || result.sale_state;
 		const cells = [
+			result.sale_entered_date,
 			result.sale_property_type,
 			result.sale_type,
 			result.sale_end_date,
@@ -341,6 +344,7 @@ $(document).ready(function () {
 				} else if (mode === "edit" && $(this).text() === "Submit Sale Edits") {
 					$("#edit-sale-modal").css("display", "none");
 					var data = {
+						sale_entered_date: $("#edit-sale-entered-date").val(),
 						sale_type: $("#edit-sale-type").val(),
 						sale_property_type: $("#edit-sale-property-type").val(),
 						sale_end_date: $("#edit-sale-end-date").val(),

@@ -92,6 +92,10 @@ $(document).ready(function () {
 		}
 	}
 
+	$(function () {
+		$("#edit-lease-entered-date").datepicker();
+	});
+
 	document.addEventListener('DOMContentLoaded', function () {
 		document.getElementById('submit-button').addEventListener('click', function () {
 			var years = document.getElementById('years').value;
@@ -156,23 +160,24 @@ $(document).ready(function () {
 		editModal.show();
 		editModal.find(".prev-step").addClass("hidden");
 		actionModal.hide();
-		editModal.find(".modal-step-title").text("Edit Lease - " + getCellText(4));
-		setInputValue("#edit-lease-property-type", getCellText(1));
-		setInputValue("#edit-lease-sqft", getCellText(2));
-		setInputValue("#edit-lease-term-length", getCellText(3));
-		setInputValue("#edit-lease-street", getCellText(4));
-		setInputValue("#edit-lease-city", getCellText(5));
-		setInputValue("#edit-lease-state", getCellText(6));
-		setInputValue("#edit-lease-lessor-entity", getLessorEntityFromCell(7));
-		setInputValue("#edit-lease-lessor-name", getNameFromCell(7));
-		setInputValue("#edit-lease-lessor-email", getEmailFromCell(7));
-		setInputValue("#edit-lease-lessor-phone", getPhoneFromCell(7));
-		setInputValue("#edit-lease-lessee-entity", getLesseeEntityFromCell(8));
-		setInputValue("#edit-lease-lessee-name", getNameFromCell(8));
-		setInputValue("#edit-lease-lessee-email", getEmailFromCell(8));
-		setInputValue("#edit-lease-lessee-phone", getPhoneFromCell(8));
-		setInputValue("#edit-lease-referral-source", getCellText(13));
-		setInputValue("#edit-lease-invoice-contact", getCellText(14));
+		editModal.find(".modal-step-title").text("Edit Lease - " + getCellText(5));
+		setInputValue("#edit-lease-entered-date", getCellText(1));
+		setInputValue("#edit-lease-property-type", getCellText(2));
+		setInputValue("#edit-lease-sqft", getCellText(3));
+		setInputValue("#edit-lease-term-length", getCellText(4));
+		setInputValue("#edit-lease-street", getCellText(5));
+		setInputValue("#edit-lease-city", getCellText(6));
+		setInputValue("#edit-lease-state", getCellText(7));
+		setInputValue("#edit-lease-lessor-entity", getLessorEntityFromCell(8));
+		setInputValue("#edit-lease-lessor-name", getNameFromCell(8));
+		setInputValue("#edit-lease-lessor-email", getEmailFromCell(8));
+		setInputValue("#edit-lease-lessor-phone", getPhoneFromCell(8));
+		setInputValue("#edit-lease-lessee-entity", getLesseeEntityFromCell(9));
+		setInputValue("#edit-lease-lessee-name", getNameFromCell(9));
+		setInputValue("#edit-lease-lessee-email", getEmailFromCell(9));
+		setInputValue("#edit-lease-lessee-phone", getPhoneFromCell(9));
+		setInputValue("#edit-lease-referral-source", getCellText(14));
+		setInputValue("#edit-lease-invoice-contact", getCellText(15));
 		const notesContent = getCellText(15);
 		if (notesContent && notesContent !== "No Notes") {
 			setInputValue("#edit-notes-option", "enter-notes");
@@ -254,6 +259,7 @@ $(document).ready(function () {
 		};
 		let stateValue = stateMapping[result.lease_state] || result.lease_state;
 		const cells = [
+			result.lease_entered_date,
 			result.lease_property_type,
 			result.lease_sqft,
 			result.lease_term_length,
@@ -339,6 +345,7 @@ $(document).ready(function () {
 				} else if (mode === "edit" && $(this).text() === "Submit Lease Edits") {
 					$("#edit-lease-modal").css("display", "none");
 					var data = {
+						lease_entered_date: $("#edit-lease-entered-date").val(),
 						lease_property_type: $("#edit-lease-property-type").val(),
 						lease_sqft: $("#edit-lease-sqft").val(),
 						lease_term_length: $("#edit-lease-term-length").val(),

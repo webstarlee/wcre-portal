@@ -66,7 +66,8 @@
       <table class="centered-table" style="width: 100%; margin: 0; border-radius: 6px; overflow: hidden">
         <thead>
           <tr>
-            <th style="border-top-left-radius: 7px">Property Type</th>
+            <th style="border-top-left-radius: 7px">Date Entered</th>
+            <th>Property Type</th>
             <th>Starting Date</th>
             <th>Expiration Date</th>
             <th>Price</th>
@@ -83,6 +84,7 @@
         </thead>
         <tbody> {% for listing in listings %}
           <tr data-listing-id="{{ listing._id }}" class="listing-row">
+            <td>{{ listing.listing_entered_date }}</td>
             <td>{{ listing.listing_property_type }}</td>
             <td>{{ listing.listing_start_date }}</td>
             <td>
@@ -261,6 +263,11 @@
         <form id="edit-listing-modal" class="modal-form">
           <h2 class="modal-step-title">Edit Listing</h2>
           <div class="modal-step active-step edit-form-step" id="edit-step1">
+            <div class="form-group">
+              <label for="edit-listing-entered-date">Listing Entered Date:</label>
+              <input type="text" id="edit-listing-entered-date" name="edit-listing-entered-date"
+                placeholder="Enter Listing Entered Date:" required />
+            </div>
             <div class="form-group">
               <label for="edit-listing-street">Listing Street:</label>
               <input type="text" id="edit-listing-street" name="edit-listing-street" required />

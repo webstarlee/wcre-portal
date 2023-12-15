@@ -76,6 +76,8 @@ $(document).ready(function () {
 		return isValid;
 	}
 
+
+
 	function showNotification(message, elementId) {
 		var notification = $("#" + elementId);
 		notification.text(message);
@@ -131,6 +133,7 @@ $(document).ready(function () {
 		$("#listing-end-date").datepicker();
 		$("#edit-listing-start-date").datepicker();
 		$("#edit-listing-end-date").datepicker();
+		$("#edit-listing-entered-date").datepicker();
 	});
 
 	$("#add-listing-button").click(function () {
@@ -173,18 +176,19 @@ $(document).ready(function () {
 		editModal.show();
 		editModal.find(".prev-step").addClass("hidden");
 		actionModal.hide();
-		editModal.find(".modal-step-title").text("Edit Listing - " + getCellText(5));
-		setInputValue("#edit-listing-property-type", getCellText(1));
-		setInputValue("#edit-listing-start-date", getCellText(2));
-		setInputValue("#edit-listing-end-date", getCellText(3));
-		setInputValue("#edit-listing-price", getCellText(4));
-		setInputValue("#edit-listing-street", getCellText(5));
-		setInputValue("#edit-listing-city", getCellText(6));
-		setInputValue("#edit-listing-state", getCellText(7));
-		setInputValue("#edit-listing-owner-entity", getCellText(8));
-		setInputValue("#edit-listing-owner-name", getNameFromCell(9));
-		setInputValue("#edit-listing-owner-email", getEmailFromCell(9));
-		setInputValue("#edit-listing-owner-phone", getPhoneFromCell(9));
+		editModal.find(".modal-step-title").text("Edit Listing - " + getCellText(6));
+		setInputValue("#edit-listing-entered-date", getCellText(1));
+		setInputValue("#edit-listing-property-type", getCellText(2));
+		setInputValue("#edit-listing-start-date", getCellText(3));
+		setInputValue("#edit-listing-end-date", getCellText(4));
+		setInputValue("#edit-listing-price", getCellText(5));
+		setInputValue("#edit-listing-street", getCellText(6));
+		setInputValue("#edit-listing-city", getCellText(7));
+		setInputValue("#edit-listing-state", getCellText(8));
+		setInputValue("#edit-listing-owner-entity", getCellText(9));
+		setInputValue("#edit-listing-owner-name", getNameFromCell(10));
+		setInputValue("#edit-listing-owner-email", getEmailFromCell(10));
+		setInputValue("#edit-listing-owner-phone", getPhoneFromCell(10));
 		const notesContent = getCellText(13);
 		if (notesContent && notesContent !== "No Notes") {
 			setInputValue("#edit-notes-option", "enter-notes");
@@ -254,6 +258,7 @@ $(document).ready(function () {
 		};
 		let stateValue = stateMapping[result.listing_state] || result.listing_state;
 		const cells = [
+			result.listing_entered_date,
 			result.listing_property_type,
 			result.listing_start_date,
 			`<a href="/create_ics_listing/${result._id}">${result.listing_end_date}</a>`,
@@ -332,6 +337,7 @@ $(document).ready(function () {
 				} else if (mode === "edit" && $(this).text() === "Submit Listing Edits") {
 					$("#edit-listing-modal").css("display", "none");
 					var data = {
+						listing_entered_date: $("#edit-listing-entered-date").val(),
 						listing_property_type: $("#edit-listing-property-type").val(),
 						listing_price: $("#edit-listing-price").val(),
 						listing_start_date: $("#edit-listing-start-date").val(),
