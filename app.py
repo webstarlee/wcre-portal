@@ -407,24 +407,27 @@ def view_listings():
             except Exception as e:
                 logger.error("Error Sending Email: ", e)
         del session['send_notification_for']
+
     is_admin = current_user.role == "Admin"
     if current_user.is_authenticated:
         page, per_page, _ = get_page_args(
             page_parameter="page", per_page_parameter="per_page"
         )
         per_page = 12
+        sort_order = [("listing_entered_date", -1)]  # -1 for descending order
         total, listings_data = (
             (
                 listings.count_documents({}),
                 listings.find()
-                .sort("_id", -1)
+                .sort(sort_order)  
                 .skip((page - 1) * per_page)
                 .limit(per_page),
             )
-            if current_user.role == "Admin"
+            if is_admin
             else (
                 listings.count_documents({"brokers": {"$in": [current_user.fullname]}}),
                 listings.find({"brokers": {"$in": [current_user.fullname]}})
+                .sort(sort_order) 
                 .skip((page - 1) * per_page)
                 .limit(per_page),
             )
@@ -440,6 +443,7 @@ def view_listings():
             listing_count=total,
         )
     return redirect(url_for("login"))
+
 
 
 @app.route("/sales")
@@ -464,15 +468,20 @@ def view_sales():
             page_parameter="page", per_page_parameter="per_page"
         )
         per_page = 12
+        sort_order = [("sale_entered_date", -1)]
         total, sales_data = (
             (
                 sales.count_documents({}),
-                sales.find().skip((page - 1) * per_page).limit(per_page),
+                sales.find()
+                .sort(sort_order)
+                .skip((page - 1) * per_page)
+                .limit(per_page),
             )
-            if current_user.role == "Admin"
+            if is_admin
             else (
                 sales.count_documents({"brokers": {"$in": [current_user.fullname]}}),
                 sales.find({"brokers": {"$in": [current_user.fullname]}})
+                .sort(sort_order)
                 .skip((page - 1) * per_page)
                 .limit(per_page),
             )
@@ -512,15 +521,20 @@ def view_leases():
             page_parameter="page", per_page_parameter="per_page"
         )
         per_page = 12
+        sort_order = [("lease_entered_date", -1)]
         total, leases_data = (
             (
                 leases.count_documents({}),
-                leases.find().skip((page - 1) * per_page).limit(per_page),
+                leases.find()
+                .sort(sort_order)
+                .skip((page - 1) * per_page)
+                .limit(per_page),
             )
-            if current_user.role == "Admin"
+            if is_admin
             else (
                 leases.count_documents({"brokers": {"$in": [current_user.fullname]}}),
                 leases.find({"brokers": {"$in": [current_user.fullname]}})
+                .sort(sort_order)
                 .skip((page - 1) * per_page)
                 .limit(per_page),
             )
