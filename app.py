@@ -1081,7 +1081,7 @@ def search_listings():
     page = int(request.get_json().get("page", 1))
     search_query = request.get_json().get("query")
     fields = [
-        "listing_entered_date"
+        "listing_entered_date",
         "listing_street",
         "listing_city",
         "listing_state",
