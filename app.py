@@ -48,11 +48,11 @@ formatter = logging.Formatter("%(asctime)s %(levelname)s: %(message)s", datefmt=
 file_handler = logging.FileHandler('app.log')
 file_handler.setFormatter(formatter)
 
-stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(formatter)
+
+#stream_handler = logging.StreamHandler()
+#stream_handler.setFormatter(formatter)
 logger = logging.getLogger(__name__)
 logger.addHandler(file_handler)
-logger.addHandler(stream_handler)
 logger.setLevel(logging.INFO)
 expected_messages = ["Logged In", "Logged Out", 
                       "Submitted By", "Deleted By", "Edited By"]
@@ -1165,12 +1165,12 @@ def search_leases():
     results = search_in_collection(leases, fields, page, search_query)
     return jsonify(results)
 
-# TALISMAN_ENABLED = os.getenv("TALISMAN_ENABLED", "False").lower() == "true"
-# DEBUG = os.getenv("DEBUG", "False").lower() == "true"
-# logger.info("Debug Enabled: " + str(DEBUG))
-# logger.info("Talisman Enabled: " + str(TALISMAN_ENABLED))
+TALISMAN_ENABLED = os.getenv("TALISMAN_ENABLED", "False").lower() == "true"
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+logger.info("Debug Enabled: " + str(DEBUG))
+logger.info("Talisman Enabled: " + str(TALISMAN_ENABLED))
 
-# if TALISMAN_ENABLED:
-#     Talisman(app, content_security_policy=None)
+if TALISMAN_ENABLED:
+    Talisman(app, content_security_policy=None)
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=6969, debug=False)
+    app.run(host="0.0.0.0", port=6969, debug=DEBUG)
