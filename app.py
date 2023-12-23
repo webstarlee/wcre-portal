@@ -1165,12 +1165,12 @@ def search_leases():
     results = search_in_collection(leases, fields, page, search_query)
     return jsonify(results)
 
-TALISMAN_ENABLED = os.getenv("TALISMAN_ENABLED", "False").lower() == "true"
-DEBUG = os.getenv("DEBUG", "False").lower() == "true"
-logger.info("Debug Enabled: " + str(DEBUG))
-logger.info("Talisman Enabled: " + str(TALISMAN_ENABLED))
+# TALISMAN_ENABLED = os.getenv("TALISMAN_ENABLED", "False").lower() == "true"
+# DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+# logger.info("Debug Enabled: " + str(DEBUG))
+# logger.info("Talisman Enabled: " + str(TALISMAN_ENABLED))
 
-if TALISMAN_ENABLED:
-    Talisman(app, content_security_policy=None)
+# if TALISMAN_ENABLED:
+#     Talisman(app, content_security_policy=None)
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=6969, debug=DEBUG)
+    app.run(host="0.0.0.0", port=6969, debug=False)
