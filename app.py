@@ -189,7 +189,7 @@ if os.environ.get('SCHEDULER_DYNO') == 'true':
         logger.info(f"Next Check for Expiring Listings Will Be At: {next_run_time.strftime('%Y-%m-%d %H:%M:%S')}")
     scheduler.start()
 else:
-    logging.info("This dyno is not designated for running scheduler tasks.")
+    logger.info("This dyno is not designated for running scheduler tasks.")
 
 
 def add_notification(notification_type, address=None, document_name=None):
