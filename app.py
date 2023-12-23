@@ -162,7 +162,9 @@ def send_email(subject, template, data, conn):
         conn.send(msg)
     except Exception as e:
         logger.error("Error Sending Email: ", e)
-if os.environ.get('SCHEDULER_DYNO') == 'true':
+SCHEDULER_LOCK = os.getenv("SCHEDULER_DYNO", "False").lower() == "true"
+logger.log(logging.INFO, f"SCHEDULER_LOCK: {SCHEDULER_LOCK}")
+if os.environ.get('SCHEDULER_DYNO') == True:
     @scheduler.task('interval', 
                     id='do_alert_for_expiring_listings', 
                     seconds=43200, 
