@@ -155,7 +155,7 @@ def send_email(subject, template, data, conn):
         msg = Message(
             subject,
             sender=("WCRE Portal", "portal@wolfcre.com"),
-            recipients=["nathanwolf100@gmail.com"] #"jason.wolf@wolfcre.com", "erin.warwick@wolfcre.com", "gab.leonetti@wolfcre.com"],
+            recipients=["nathanwolf100@gmail.com", "jason.wolf@wolfcre.com", "erin.warwick@wolfcre.com", "gab.leonetti@wolfcre.com"],
         )
         email_content = render_template(template, **data)
         msg.html = transform(email_content)
