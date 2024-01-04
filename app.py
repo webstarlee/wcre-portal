@@ -798,6 +798,7 @@ def submit_lease():
             "lease-state",
             "lease-sqft",
             "lease-term-length",
+            "lease-expiration-reminder",
             "lease-property-type",
             "lease-lessor-entity",
             "lease-lessor-name",
@@ -821,6 +822,7 @@ def submit_lease():
         new_lease["lease_agreement_file_id"] = request.form.get("lease-agreement-file-id")
         new_lease["lease_commission_file_id"] = request.form.get("lease-commission-agreement-file-id")
         new_lease["lease_commission_invoice_file_id"] = request.form.get("lease-commission-invoice-file-id")
+        new_lease["lease_renewal_amendment_file_id"] = request.form.get("lease-renewal-amendment-file-id")
         new_lease["lease_state"] = convert_state_code_to_full_name(new_lease["lease_state"])
         new_lease["lease_term_length"] = f"{years} Years, {months} Months"
         new_lease["lease_entered_date"] = datetime.now().strftime("%m/%d/%Y")
@@ -918,7 +920,7 @@ def create_ics_sale(sale_id):
 @app.route("/create_ics_lease/<lease_id>")
 @login_required
 def create_ics_lease(lease_id):
-    return create_ics_event(lease_id, leases, "Lease", "lease_street", "lease_end_date")
+    return create_ics_event(lease_id, leases, "Lease", "lease_street", "lease_expiration_reminder")
 
 
 def edit_record(record_id, collection, fields):
@@ -1009,7 +1011,8 @@ def edit_lease(lease_id):
     fileId_fields = [
         'lease_agreement_file_id',
         'lease_commission_file_id',
-        'lease_commission_invoice_file_id'
+        'lease_commission_invoice_file_id',
+        'lease_renewal_amendment_file_id'
     ]
     for field in fileId_fields:
         if not request.json.get(field) and existing_lease.get(field):
@@ -1024,6 +1027,7 @@ def edit_lease(lease_id):
         "lease_city",
         "lease_sqft",
         "lease_property_type",
+        "lease_expiration_reminder",
         "lease_term_length",
         "lease_percentage_space"
     ] + fileId_fields + [
@@ -1145,6 +1149,7 @@ def search_leases():
         "lease_city",
         "lease_state",
         "lease_property_type",
+        "lease_expiration_reminder",
         "lease_sqft",
         "lease_percentage_space",
         "lease_term_length",

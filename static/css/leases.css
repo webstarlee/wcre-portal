@@ -138,6 +138,21 @@ body {
     background-color: #ddd;
 }
 
+#upload-lease-renewal-amendment {
+    margin-top: 1px;
+    background-color: #f0f0f0;
+    border: none;
+    color: #333;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#upload-lease-renewal-amendment:hover {
+    background-color: #ddd;
+}
+
 #edit-upload-lease-agreement {
     margin-top: 1px;
     background-color: #f0f0f0;
@@ -180,6 +195,21 @@ body {
 }
 
 #edit-upload-lease-commission-invoice:hover {
+    background-color: #ddd;
+}
+
+#edit-upload-lease-renewal-amendment {
+    margin-top: 1px;
+    background-color: #f0f0f0;
+    border: none;
+    color: #333;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#edit-upload-lease-renewal-amendment:hover {
     background-color: #ddd;
 }
 

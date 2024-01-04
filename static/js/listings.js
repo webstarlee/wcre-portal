@@ -76,8 +76,6 @@ $(document).ready(function () {
 		return isValid;
 	}
 
-
-
 	function showNotification(message, elementId) {
 		var notification = $("#" + elementId);
 		notification.text(message);
