@@ -418,7 +418,7 @@ def view_listings():
             page_parameter="page", per_page_parameter="per_page"
         )
         per_page = 12
-        sort_order = [("listing_entered_date", -1)]  # -1 for descending order
+        sort_order = [("listing_entered_date", 1)]  
         total, listings_data = (
             (
                 listings.count_documents({}),
@@ -472,7 +472,7 @@ def view_sales():
             page_parameter="page", per_page_parameter="per_page"
         )
         per_page = 12
-        sort_order = [("sale_entered_date", -1)]
+        sort_order = [("sale_entered_date", 1)]
         total, sales_data = (
             (
                 sales.count_documents({}),
@@ -525,7 +525,7 @@ def view_leases():
             page_parameter="page", per_page_parameter="per_page"
         )
         per_page = 12
-        sort_order = [("lease_entered_date", -1)]
+        sort_order = [("lease_entered_date", 1)]
         total, leases_data = (
             (
                 leases.count_documents({}),
