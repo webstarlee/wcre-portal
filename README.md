@@ -1,13 +1,25 @@
-python -m venv venv
+#### 1. create virtual env for python
+`python -m venv venv`
 
-\venv\Scripts\activate
+#### 2. activate virtuall env
 
-pip install -r requirements.txt
+`\venv\Scripts\activate`
 
+#### 3. installl python packages
+
+`pip install -r requirements.txt`
+
+#### 4. move to frontend folder
 `cd client`
 
+#### 5. install frontend node module packages
 `npm install`
 
+#### 6. build frontend app
 `npm run build`
 
-python main.py
+#### 7. move to backend main folder
+`cd..`
+
+#### 8. Run python development server
+`python main.py`
