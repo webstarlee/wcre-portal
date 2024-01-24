@@ -1,0 +1,64 @@
+@font-face {
+  font-family: 'SatoshiBlack';
+  font-style: normal;
+  font-weight: normal;
+  src: local('SatoshiBlack'), url('/fonts/Satoshi-Black.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'SatoshiBold';
+  font-style: normal;
+  font-weight: normal;
+  src: local('SatoshiBold'), url('/fonts/Satoshi-Bold.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'SatoshiLight';
+  font-style: normal;
+  font-weight: normal;
+  src: local('SatoshiLight'), url('/fonts/Satoshi-Light.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'SatoshiMedium';
+  font-style: normal;
+  font-weight: normal;
+  src: local('SatoshiMedium'), url('/fonts/Satoshi-Medium.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'SatoshiRegular';
+  font-style: normal;
+  font-weight: normal;
+  src: local('SatoshiRegular'), url('/fonts/Satoshi-Regular.woff') format('woff');
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background-color: #EBEEF7;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #b8b8b8; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #686868; 
+}
