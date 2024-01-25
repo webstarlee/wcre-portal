@@ -62,7 +62,7 @@ const Home: React.FC = () => {
             </Grid>
             <Grid item xs={12} lg={3}>
               <StatisticsCard
-                value={dashboard ? dashboard.totalLeases : "0"}
+                value={dashboard ? dashboard.totalDocuments : "0"}
                 title="Total Documents"
                 bgColor="#01cdfb"
                 bgImg={DocumentImg}
