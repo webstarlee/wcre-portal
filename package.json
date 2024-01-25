@@ -1,14 +1,17 @@
 {
-    "name": "wcre-portal",
-    "description": "a really cool app",
-    "version": "2.0.0",
-    "engines": {
-        "node": "20.x"
-    },
-    "cacheDirectories": [
-      "client/node_modules"
-    ],
-    "scripts": {
-      "heroku-postbuild": "cd client && npm install && npm run build"
-    }
+  "name": "wcre-portal",
+  "description": "a really cool app",
+  "version": "2.0.0",
+  "engines": {
+      "node": "20.x"
+  },
+  "cacheDirectories": [
+    "client/node_modules"
+  ],
+  "scripts": {
+    "heroku-postbuild": "npm install && cd client && npm install && npm run build"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2"
   }
+}
