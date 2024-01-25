@@ -1,4 +1,10 @@
 {
+    "name": "wcre-portal",
+    "description": "a really cool app",
+    "version": "2.0.0",
+    "engines": {
+        "node": "20.x"
+    },
     "cacheDirectories": [
       "client/node_modules"
     ],
