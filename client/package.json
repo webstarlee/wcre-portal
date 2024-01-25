@@ -22,7 +22,11 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.1",
     "typescript": "^5.2.2",
-    "vite": "^5.0.8"
+    "vite": "^5.0.8",
+    "@tanstack/react-query": "^5.17.9",
+    "@types/react": "^18.2.43",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "@types/react-dom": "^18.2.17"
   },
   "devDependencies": {
     "@tanstack/react-query": "^5.17.9",
