@@ -63,7 +63,7 @@ const AuthLayout: React.FC = () => {
                     textAlign: "center",
                   }}
                 >
-                  Please Enter Your Credentials to Log in the WCRE Portak
+                  Please Enter Your Credentials to Log in the WCRE Portal
                 </Typography>
               </Box>
             </FormLeftBox>
