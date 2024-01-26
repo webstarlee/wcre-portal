@@ -5,6 +5,7 @@ import AuthLayout from "@/layouts/AuthLayout";
 import { NotFound } from "@/pages/Errors";
 
 const Home = lazy(() => import("@/pages/Home"));
+const Listing = lazy(() => import("@/pages/Listing"));
 const Login = lazy(() => import("@/pages/Auth/Login"));
 const Register = lazy(() => import("@/pages/Auth/Register"));
 
@@ -30,6 +31,22 @@ const routes: RouteObject[] = [
                 element: (
                     <Suspense fallback={<>...</>}>
                         <Home />
+                    </Suspense>
+                ),
+            },
+            {
+                path: "/listings",
+                element: (
+                    <Suspense fallback={<>...</>}>
+                        <Listing />
+                    </Suspense>
+                ),
+            },
+            {
+                path: "/404",
+                element: (
+                    <Suspense fallback={<>...</>}>
+                        <NotFound />
                     </Suspense>
                 ),
             },
@@ -64,14 +81,6 @@ const routes: RouteObject[] = [
                 ),
             },
         ]
-    },
-    {
-        path: "/404",
-        element: (
-            <Suspense fallback={<>...</>}>
-                <NotFound />
-            </Suspense>
-        ),
     },
 ];
 

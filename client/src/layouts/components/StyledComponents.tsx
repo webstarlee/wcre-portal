@@ -56,12 +56,15 @@ export const FormRightBox = styled(Box)(({ theme }) => ({
 // Dashboard components
 
 export const Main = styled("main")(() => ({
+    position: "relative",
     flexGrow: 1,
     height: '100vh',
-    padding: "10px 24px 24px 20px",
-    overflowY: 'auto',
+    padding: 0,
+    overflow: 'hidden',
     backgroundColor: "#EBEEF7",
     color: "#000",
+    display: "flex",
+    flexDirection: "column",
 }));
 
 export const DesktopDrawer = styled(Drawer)(({ theme }) => ({
@@ -126,6 +129,7 @@ export const ListItemButtonCustom = styled(ListItemButton)(() => ({
     padding: "10px 12px",
     color: "#272B30",
     fontFamily: "SatoshiRegular",
+    marginTop: "5px",
     "&.Mui-selected": {
         backgroundColor: "#0156FB",
         "& svg path": {
@@ -138,6 +142,9 @@ export const ListItemButtonCustom = styled(ListItemButton)(() => ({
         "& svg circle": {
             fill: "#fff",
         },
+        "&:hover": {
+            backgroundColor: "#0156FB",
+        }
     },
     "&:hover": {
         backgroundColor: "#0156FB",

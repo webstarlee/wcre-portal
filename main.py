@@ -69,6 +69,7 @@ else:
 api.add_resource(resources.SignIn, '/api/signin')
 api.add_resource(resources.GetLoginsList, '/api/logins')
 api.add_resource(resources.GetInitialData, '/api/dashboard')
+api.add_resource(resources.GetListings, '/api/listings/<page>')
 api.add_resource(resources.Info, '/api/info')
 
 @app.route('/', defaults={'path': ''})

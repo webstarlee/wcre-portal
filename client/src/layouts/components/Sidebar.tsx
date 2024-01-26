@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   DesktopDrawer,
   MobileDrawer,
@@ -25,6 +25,7 @@ const Sidebar: React.FC<SidebarProps> = ({ window }) => {
   const { sideOpenM, toggleSideOpenM } = useRoot();
   const { user, logout, authLoading } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isActivateMenu = (paths: string[]) => {
     let is_include = false;
@@ -37,6 +38,11 @@ const Sidebar: React.FC<SidebarProps> = ({ window }) => {
     return is_include;
   };
 
+  const handleListItemClick = (path: string) => {
+    navigate(path);
+    toggleSideOpenM();
+  };
+
   const drawer = (
     <>
       <DrawerHeader>
@@ -47,7 +53,10 @@ const Sidebar: React.FC<SidebarProps> = ({ window }) => {
         component="nav"
         aria-labelledby="nested-list-subheader"
       >
-        <ListItemButtonCustom selected={isActivateMenu(["/dashboard"])}>
+        <ListItemButtonCustom
+          onClick={() => handleListItemClick("/dashboard")}
+          selected={isActivateMenu(["/dashboard"])}
+        >
           <ListItemIcon sx={{ minWidth: "40px" }}>
             <svg
               width="20"
@@ -65,7 +74,10 @@ const Sidebar: React.FC<SidebarProps> = ({ window }) => {
           </ListItemIcon>
           <ListItemTextCustom primary={"Dashboard"} />
         </ListItemButtonCustom>
-        <ListItemButtonCustom>
+        <ListItemButtonCustom
+          onClick={() => handleListItemClick("/listings")}
+          selected={isActivateMenu(["/listings"])}
+        >
           <ListItemIcon sx={{ minWidth: "40px" }}>
             <svg
               width="22"
@@ -221,7 +233,12 @@ const Sidebar: React.FC<SidebarProps> = ({ window }) => {
                 user && !authLoading ? (
                   user.role
                 ) : (
-                  <Skeleton variant="rectangular" width={60} height={13} sx={{marginTop: "2px"}} />
+                  <Skeleton
+                    variant="rectangular"
+                    width={60}
+                    height={13}
+                    sx={{ marginTop: "2px" }}
+                  />
                 )
               }
             />

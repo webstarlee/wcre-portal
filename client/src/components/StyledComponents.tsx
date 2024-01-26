@@ -1,6 +1,6 @@
 import {
   styled,
-  Box,
+  Box
 } from "@mui/material";
 
 export const LoadingContainer = styled(Box)(() => ({
@@ -13,11 +13,37 @@ export const LoadingContainer = styled(Box)(() => ({
 
 export const PageHeader = styled(Box)(() => ({
   width: "100%",
-  height: "50px",
+  height: "70px",
   display: "flex",
-  marginBottom: "10px",
-  flexDirection: "column",
-  justifyContent: "center"
+  paddingLeft: "24px",
+  paddingRight: "24px",
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
+}));
+
+export const PageFooter = styled(Box)(() => ({
+  width: "100%",
+  height: "66px",
+  display: "flex",
+  paddingLeft: "24px",
+  paddingRight: "24px",
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
+}));
+
+export const PageBody = styled(Box)(() => ({
+  flex: 1,
+  width: "100%",
+  height: "calc(100vh - 136px)",
+  overflowY: "auto",
+  display: "flex",
+  paddingLeft: "24px",
+  paddingRight: "24px",
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
 }));
 
 export const Card = styled(Box)(() => ({

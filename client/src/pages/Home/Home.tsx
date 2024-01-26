@@ -1,5 +1,5 @@
 import { Typography, Grid, Box } from "@mui/material";
-import { PageHeader } from "@/components/StyledComponents";
+import { PageHeader, PageBody } from "@/components/StyledComponents";
 import { useMain } from "@/hooks/MainContext";
 import {
   MainContainer,
@@ -35,58 +35,62 @@ const Home: React.FC = () => {
               {dashboard ? dashboard.greetingMsg : ""}
             </Typography>
           </PageHeader>
-          <Grid container spacing={2}>
-            <Grid item xs={12} lg={3}>
-              <StatisticsCard
-                value={dashboard ? dashboard.totalListings : "0"}
-                title="Active Listings"
-                bgColor="#0156FB"
-                bgImg={ListingImg}
-              />
-            </Grid>
-            <Grid item xs={12} lg={3}>
-              <StatisticsCard
-                value={dashboard ? dashboard.totalSales : "0"}
-                title="Total Sales"
-                bgColor="#FB0179"
-                bgImg={SalesImg}
-              />
-            </Grid>
-            <Grid item xs={12} lg={3}>
-              <StatisticsCard
-                value={dashboard ? dashboard.totalLeases : "0"}
-                title="Active Leases"
-                bgColor="#FB7901"
-                bgImg={LeasesImg}
-              />
-            </Grid>
-            <Grid item xs={12} lg={3}>
-              <StatisticsCard
-                value={dashboard ? dashboard.totalDocuments : "0"}
-                title="Total Documents"
-                bgColor="#01cdfb"
-                bgImg={DocumentImg}
-              />
-            </Grid>
-          </Grid>
-          <MainContainer sx={{ marginTop: "15px" }}>
-            <MainBox>
-              <Box>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} lg={7}>
-                    <PropertyOverviewCard />
-                  </Grid>
-                  <Grid item xs={12} lg={5}>
-                    <PieChartCard />
-                  </Grid>
+          <PageBody>
+            <Box sx={{width: "100%", height: "100%"}}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} lg={3}>
+                  <StatisticsCard
+                    value={dashboard ? dashboard.totalListings : "0"}
+                    title="Active Listings"
+                    bgColor="#0156FB"
+                    bgImg={ListingImg}
+                  />
                 </Grid>
-              </Box>
-              <RecentUnitsCard />
-            </MainBox>
-            <NotificationBox>
-              <NotificationCard />
-            </NotificationBox>
-          </MainContainer>
+                <Grid item xs={12} lg={3}>
+                  <StatisticsCard
+                    value={dashboard ? dashboard.totalSales : "0"}
+                    title="Total Sales"
+                    bgColor="#FB0179"
+                    bgImg={SalesImg}
+                  />
+                </Grid>
+                <Grid item xs={12} lg={3}>
+                  <StatisticsCard
+                    value={dashboard ? dashboard.totalLeases : "0"}
+                    title="Active Leases"
+                    bgColor="#FB7901"
+                    bgImg={LeasesImg}
+                  />
+                </Grid>
+                <Grid item xs={12} lg={3}>
+                  <StatisticsCard
+                    value={dashboard ? dashboard.totalDocuments : "0"}
+                    title="Total Documents"
+                    bgColor="#01cdfb"
+                    bgImg={DocumentImg}
+                  />
+                </Grid>
+              </Grid>
+              <MainContainer sx={{ marginTop: "15px", paddingBottom: "24px" }}>
+                <MainBox>
+                  <Box>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} lg={7}>
+                        <PropertyOverviewCard />
+                      </Grid>
+                      <Grid item xs={12} lg={5}>
+                        <PieChartCard />
+                      </Grid>
+                    </Grid>
+                  </Box>
+                  <RecentUnitsCard />
+                </MainBox>
+                <NotificationBox>
+                  <NotificationCard />
+                </NotificationBox>
+              </MainContainer>
+            </Box>
+          </PageBody>
         </>
       )}
     </>
