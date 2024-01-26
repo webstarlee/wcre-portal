@@ -27,6 +27,8 @@ import { convertApiUrl } from "@/utils/urls";
 import { makePageNavigation } from "@/utils/format";
 import { useAuth } from "@/hooks/AuthContext";
 
+import UploadListing from "./components/UploadListing";
+
 import LoadingImg from "@/assets/images/loading.svg";
 
 const Listing: React.FC = (): JSX.Element => {
@@ -36,6 +38,8 @@ const Listing: React.FC = (): JSX.Element => {
   const [pageLoading, setPageLoading] = React.useState<boolean>(false);
   const [page, setPage] = React.useState<number>(1);
   const [count, setCount] = React.useState<number>(0);
+
+  const [uploadListingOpen, setUploadListingOpen] = React.useState<boolean>(false)
 
   const fetchListings = async (page: number) => {
     try {
@@ -78,6 +82,10 @@ const Listing: React.FC = (): JSX.Element => {
       handlePageNavigation(page + 1);
     }
   };
+
+  const uploadListingModalClose = () => {
+    setUploadListingOpen(false)
+  }
 
   return (
     <>
@@ -127,6 +135,7 @@ const Listing: React.FC = (): JSX.Element => {
                 sx={{ backgroundColor: "#0156FB" }}
                 variant="contained"
                 color="primary"
+                onClick={() => setUploadListingOpen(true)}
               >
                 <UploadIcon />
                 <Typography>Upload Listing</Typography>
@@ -230,6 +239,8 @@ const Listing: React.FC = (): JSX.Element => {
               </ListingFooter>
             </PageFooter>
           )}
+
+          <UploadListing open={uploadListingOpen} onClose={uploadListingModalClose} />
         </>
       )}
     </>

@@ -3,11 +3,21 @@ import { createBrowserRouter, Navigate, RouteObject } from "react-router-dom";
 import MainLayout from "@/layouts/MainLayout";
 import AuthLayout from "@/layouts/AuthLayout";
 import { NotFound } from "@/pages/Errors";
+import { LoadingContainer } from "@/components/StyledComponents";
+import LoadingImg from "@/assets/images/loading.svg";
 
 const Home = lazy(() => import("@/pages/Home"));
 const Listing = lazy(() => import("@/pages/Listing"));
 const Login = lazy(() => import("@/pages/Auth/Login"));
 const Register = lazy(() => import("@/pages/Auth/Register"));
+
+const LoadingView: React.FC = () => {
+    return (
+        <LoadingContainer sx={{ height: "100%" }}>
+        <img style={{ width: "40px" }} src={LoadingImg} />
+      </LoadingContainer>
+    );
+  };
 
 const routes: RouteObject[] = [
     {
@@ -17,7 +27,7 @@ const routes: RouteObject[] = [
             {
                 path: "*",
                 element: (
-                    <Suspense fallback={<>...</>}>
+                    <Suspense fallback={<LoadingView />}>
                         <Navigate to="/404" />
                     </Suspense>
                 ),
@@ -29,7 +39,7 @@ const routes: RouteObject[] = [
             {
                 path: "/dashboard",
                 element: (
-                    <Suspense fallback={<>...</>}>
+                    <Suspense fallback={<LoadingView />}>
                         <Home />
                     </Suspense>
                 ),
@@ -37,16 +47,8 @@ const routes: RouteObject[] = [
             {
                 path: "/listings",
                 element: (
-                    <Suspense fallback={<>...</>}>
+                    <Suspense fallback={<LoadingView />}>
                         <Listing />
-                    </Suspense>
-                ),
-            },
-            {
-                path: "/404",
-                element: (
-                    <Suspense fallback={<>...</>}>
-                        <NotFound />
                     </Suspense>
                 ),
             },
@@ -57,17 +59,9 @@ const routes: RouteObject[] = [
         element: <AuthLayout />,
         children: [
             {
-                path: "/*",
-                element: (
-                    <Suspense fallback={<>...</>}>
-                        <Navigate to="/404" />
-                    </Suspense>
-                ),
-            },
-            {
                 path: "/login",
                 element: (
-                    <Suspense fallback={<>...</>}>
+                    <Suspense fallback={<LoadingView />}>
                         <Login />
                     </Suspense>
                 ),
@@ -75,12 +69,20 @@ const routes: RouteObject[] = [
             {
                 path: "/register",
                 element: (
-                    <Suspense fallback={<>...</>}>
+                    <Suspense fallback={<LoadingView />}>
                         <Register />
                     </Suspense>
                 ),
             },
         ]
+    },
+    {
+        path: "/404",
+        element: (
+            <Suspense fallback={<LoadingView />}>
+                <NotFound />
+            </Suspense>
+        ),
     },
 ];
 
