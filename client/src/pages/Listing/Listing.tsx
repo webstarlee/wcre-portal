@@ -21,7 +21,7 @@ import UploadIcon from "@mui/icons-material/Upload";
 import PinDropIcon from "@mui/icons-material/PinDrop";
 import SortIcon from "@mui/icons-material/Sort";
 import { LoadingContainer } from "@/components/StyledComponents";
-import { ListingProps } from "@/utils/interfaces";
+import { ListingProps, UserProps } from "@/utils/interfaces";
 import { useEffectOnce } from "@/hooks/useEffectOnce";
 import { convertApiUrl } from "@/utils/urls";
 import { makePageNavigation } from "@/utils/format";
@@ -34,6 +34,7 @@ import LoadingImg from "@/assets/images/loading.svg";
 const Listing: React.FC = (): JSX.Element => {
   const { authToken } = useAuth();
   const [listings, setListings] = React.useState<ListingProps[] | []>([]);
+  const [brokers, setBrokers] = React.useState<UserProps[] | []>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [pageLoading, setPageLoading] = React.useState<boolean>(false);
   const [page, setPage] = React.useState<number>(1);
@@ -48,8 +49,10 @@ const Listing: React.FC = (): JSX.Element => {
       });
       setLoading(false);
       setPageLoading(false);
-      const result: { listings: ListingProps[]; total: number } = response.data;
+
+      const result: { listings: ListingProps[]; total: number, brokers: UserProps[] } = response.data;
       setListings(result.listings);
+      setBrokers(result.brokers);
       setCount(result.total);
     } catch (error) {
       setLoading(false);
@@ -57,6 +60,13 @@ const Listing: React.FC = (): JSX.Element => {
       console.log(error);
     }
   };
+
+  const reloadListing = () => {
+    setPageLoading(true);
+    fetchListings(1);
+  }
+
+  console.log(brokers)
 
   const handlePageNavigation = (_page: number) => {
     if (page !== _page) {
@@ -132,7 +142,6 @@ const Listing: React.FC = (): JSX.Element => {
                 />
               </SearchBox>
               <HeaderCustomButton
-                sx={{ backgroundColor: "#0156FB" }}
                 variant="contained"
                 color="primary"
                 onClick={() => setUploadListingOpen(true)}
@@ -141,16 +150,14 @@ const Listing: React.FC = (): JSX.Element => {
                 <Typography>Upload Listing</Typography>
               </HeaderCustomButton>
               <HeaderCustomButton
-                sx={{ backgroundColor: "#FB0179" }}
                 variant="contained"
-                color="error"
+                color="secondary"
               >
                 <PinDropIcon />
                 <Typography>Listings Map</Typography>
               </HeaderCustomButton>
             </SearchBoxContainer>
             <HeaderCustomButton
-              sx={{ backgroundColor: "#FB7901" }}
               variant="contained"
               color="warning"
             >
@@ -240,7 +247,7 @@ const Listing: React.FC = (): JSX.Element => {
             </PageFooter>
           )}
 
-          <UploadListing open={uploadListingOpen} onClose={uploadListingModalClose} />
+          <UploadListing open={uploadListingOpen} onClose={uploadListingModalClose} allBrokers={brokers} reload={reloadListing} />
         </>
       )}
     </>

@@ -1,6 +1,16 @@
+export interface UserProps {
+    id: string;
+    fullname: string;
+    profile_picture_url: string;
+    role: string;
+    username: string;
+}
+
 export interface ListingProps {
     brokers: string[] | [];
+    broker_users: UserProps[] | [];
     id: string;
+    listing_cover: string;
     listing_agreement_file_id: string;
     listing_amendment_file_id: string;
     listing_city: string;

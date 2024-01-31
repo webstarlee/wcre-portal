@@ -1,4 +1,11 @@
-import { styled, Box, Button, IconButton } from "@mui/material";
+import {
+  styled,
+  Box,
+  Button,
+  IconButton,
+  Typography,
+  TextField,
+} from "@mui/material";
 
 export const SearchBoxContainer = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -32,7 +39,7 @@ export const SearchBox = styled(Box)(({ theme }) => ({
 }));
 
 export const HeaderCustomButton = styled(Button)(({ theme }) => ({
-  borderRadius: "10px",
+  borderRadius: "25px",
   fontFamily: "SatoshiBold",
   fontSize: "16px",
   textTransform: "none",
@@ -47,7 +54,7 @@ export const HeaderCustomButton = styled(Button)(({ theme }) => ({
     },
     minWidth: "unset",
     width: "45px",
-    height: "45px"
+    height: "45px",
   },
 }));
 
@@ -79,7 +86,7 @@ export const ListingFooter = styled(Box)(() => ({
   alignItems: "center",
 }));
 
-export const ListingImg = styled("img")(({theme}) => ({
+export const ListingImg = styled("img")(({ theme }) => ({
   width: "100%",
   height: "140px",
   objectFit: "cover",
@@ -102,4 +109,33 @@ export const NavigationBtn = styled(IconButton)(() => ({
       color: "#000",
     },
   },
+}));
+
+export const UploadFormLabel = styled(Typography)(() => ({
+  marginBottom: "3px",
+  fontFamily: "SatoshiMedium",
+  color: "#B9BABB",
+  fontSize: "14px",
+}));
+
+export const UploadFormInput = styled(TextField)(() => ({
+  "& .MuiInputBase-root": {
+    borderRadius: "4px",
+    backgroundColor: "#EBEEF7",
+    fontfamily: "SatoshiMedium",
+    fontSize: "16px",
+    "& input": {
+      padding: "13px 14px",
+    },
+    "&.MuiInputBase-multiline": {
+      padding: "13px 14px",
+    }
+  },
+  width: "100%",
+}));
+
+export const CoverImg = styled("img")(() => ({
+  width: "100%",
+  borderRadius: "5px",
+  objectFit: "cover"
 }));

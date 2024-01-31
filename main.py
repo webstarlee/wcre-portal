@@ -7,7 +7,7 @@ from flask_cors import CORS
 from flask_restful import Api
 from datetime import timedelta
 from flask_bcrypt import Bcrypt
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, send_from_directory, session
 from flask_jwt_extended import JWTManager
 from flask_apscheduler import APScheduler
 from sentry_sdk.integrations.flask import FlaskIntegration
@@ -37,7 +37,7 @@ try:
     
     app.config.update(
         CORS_HEADERS="Content-Type",
-        JWT_ACCESS_TOKEN_EXPIRES=timedelta(hours=1),
+        JWT_ACCESS_TOKEN_EXPIRES=timedelta(hours=10),
         JWT_SECRET_KEY=JWT_SECRET_KEY,
         SECRET_KEY=SECRET_KEY,
         MAIL_SERVER="smtp.office365.com",
@@ -47,14 +47,9 @@ try:
         MAIL_USE_TLS=True,
         MAIL_USE_SSL=False,
         SCHEDULER_API_ENABLED=True,
-        PERMANENT_SESSION_LIFETIME=timedelta(minutes=15)
+        PERMANENT_SESSION_LIFETIME=timedelta(minutes=15),
+        STATIC_URL_PATH="/static"
     )
-    
-    AWS_S3_BUCKET = 'wcre-documents'
-    s3 = boto3.client('s3', 
-        aws_access_key_id=AWS_ACCESS_KEY, 
-        aws_secret_access_key=AWS_SECRET_KEY, 
-        region_name='us-east-2')
     scheduler = APScheduler()
     scheduler.init_app(app)
     mail = Mail(app)
@@ -66,11 +61,19 @@ except Exception as e:
 else:
     logger.info("Initialization Successful")
 
+@app.before_request
+def refresh_session():
+    session.modified = True
+
+api.add_resource(resources.Info, '/api/info')
 api.add_resource(resources.SignIn, '/api/signin')
 api.add_resource(resources.GetLoginsList, '/api/logins')
 api.add_resource(resources.GetInitialData, '/api/dashboard')
 api.add_resource(resources.GetListings, '/api/listings/<page>')
-api.add_resource(resources.Info, '/api/info')
+api.add_resource(resources.ResetListings, '/api/listing/reset')
+api.add_resource(resources.CheckListings, '/api/listing/check')
+api.add_resource(resources.SaveListing, '/api/listing/upload')
+api.add_resource(resources.UploadFile, '/api/upload')
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

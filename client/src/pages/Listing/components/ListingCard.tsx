@@ -7,12 +7,20 @@ import ListingImgUrl from "@/assets/images/temp/listing.png";
 import RetailSvg from "@/assets/images/retail.svg";
 import { ListingProps } from "@/utils/interfaces";
 import { stateName } from "@/utils/format";
+import { HttpRequest } from "@aws-sdk/protocol-http";
+import { S3RequestPresigner } from "@aws-sdk/s3-request-presigner";
+import { parseUrl } from "@aws-sdk/url-parser";
+import {Sha256} from "@aws-crypto/sha256-browser";
+import { formatUrl } from "@aws-sdk/util-format-url";
 
 interface CardProps {
   listing: ListingProps;
 }
 
 const ListingCard: React.FC<CardProps> = ({ listing }): JSX.Element => {
+
+  const [listingCover, setListingCover] = React.useState<string | undefined>(undefined);
+
   const handleClickMain = () => {
     console.log("Main button clicked");
   };
@@ -22,10 +30,42 @@ const ListingCard: React.FC<CardProps> = ({ listing }): JSX.Element => {
     console.log("Inside button clicked");
   };
 
-  console.log(listing);
+  const getBucketImage = async (key: string) => {
+    try {
+      const s3ObjectUrl = parseUrl(`https://wcre-documents.s3.us-east-2.amazonaws.com/${key}`);
+      const presigner = new S3RequestPresigner({
+          "region": "us-east-2",
+          credentials: {
+              accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
+              secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY,
+          },
+          sha256: Sha256
+      });
+      // Create a GET request from S3 url.
+      const url = await presigner.presign(new HttpRequest(s3ObjectUrl));
+      if (url) {
+        setListingCover(formatUrl(url))
+      } else {
+        setListingCover(ListingImgUrl)
+      }
+    } catch (error) {
+      setListingCover(ListingImgUrl)
+    }
+  }
+
+  React.useEffect(() => {
+    if (listing.listing_cover !== "") {
+      getBucketImage(listing.listing_cover);
+    } else {
+      setListingCover(ListingImgUrl)
+    }
+  }, [listing])
+
   return (
     <ListingContainer onClick={handleClickMain}>
-      <ListingImg src={ListingImgUrl} />
+      <ListingImg
+        src={listingCover}
+      />
       <Typography
         sx={{
           marginTop: "5px",
@@ -39,9 +79,9 @@ const ListingCard: React.FC<CardProps> = ({ listing }): JSX.Element => {
           textOverflow: "ellipsis",
         }}
       >
-        {listing.brokers.map((broker, index) => (
+        {listing.broker_users.map((broker, index) => (
           <span key={index}>
-            {broker}
+            {broker.fullname}
             {index < listing.brokers.length - 1 && ", "}
           </span>
         ))}
@@ -59,7 +99,7 @@ const ListingCard: React.FC<CardProps> = ({ listing }): JSX.Element => {
             fontFamily: "SatoshiBold",
             fontSize: "16px",
             color: "#000",
-            lineHeight: "16px",
+            lineHeight: "20px",
             width: "calc(100% - 90px)",
             whiteSpace: "nowrap",
             overflow: "hidden",

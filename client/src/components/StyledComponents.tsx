@@ -1,6 +1,7 @@
 import {
   styled,
-  Box
+  Box,
+  Button
 } from "@mui/material";
 
 export const LoadingContainer = styled(Box)(() => ({
@@ -56,4 +57,19 @@ export const Card = styled(Box)(() => ({
   borderRadius: "20px",
   position: "relative",
   boxShadow: "1px 1px 5px 0px rgba(0,0,0,0.2)"
+}));
+
+export const ImageUploadButton = styled(Button)(() => ({
+  width: "100%",
+  height: "200px",
+  border: "dashed 2px #B9BABB",
+  borderRadius: "10px",
+  display: 'flex',
+  flexDirection: "column",
+  textTransform: "unset",
+  backgroundColor: "#EDEEEE"
+}));
+
+export const ImageUploadButtonImg = styled("img")(() => ({
+  width: "100px",
 }));

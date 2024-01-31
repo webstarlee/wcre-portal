@@ -61,7 +61,7 @@ const routes: RouteObject[] = [
             {
                 path: "/login",
                 element: (
-                    <Suspense fallback={<LoadingView />}>
+                    <Suspense fallback={<>...</>}>
                         <Login />
                     </Suspense>
                 ),
@@ -69,7 +69,7 @@ const routes: RouteObject[] = [
             {
                 path: "/register",
                 element: (
-                    <Suspense fallback={<LoadingView />}>
+                    <Suspense fallback={<>...</>}>
                         <Register />
                     </Suspense>
                 ),

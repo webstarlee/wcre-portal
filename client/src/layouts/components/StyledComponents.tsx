@@ -71,17 +71,11 @@ export const DesktopDrawer = styled(Drawer)(({ theme }) => ({
     width: 250,
     flexShrink: 0,
     display: "block",
-    [theme.breakpoints.up("xl")]: {
-        width: 320,
-    },
     [theme.breakpoints.down("md")]: {
         display: "none",
     },
     "& .MuiDrawer-paper": {
         width: 250,
-        [theme.breakpoints.up("xl")]: {
-            width: 320,
-        },
         boxSizing: "border-box",
         backgroundColor: "#F7F8FA",
         borderRight: "0px",
