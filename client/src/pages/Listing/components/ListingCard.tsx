@@ -15,14 +15,16 @@ import { formatUrl } from "@aws-sdk/util-format-url";
 
 interface CardProps {
   listing: ListingProps;
+  openDetail: (_listing: ListingProps) => void;
 }
 
-const ListingCard: React.FC<CardProps> = ({ listing }): JSX.Element => {
+const ListingCard: React.FC<CardProps> = ({ listing, openDetail }): JSX.Element => {
 
   const [listingCover, setListingCover] = React.useState<string | undefined>(undefined);
 
   const handleClickMain = () => {
     console.log("Main button clicked");
+    openDetail(listing);
   };
 
   const handleClickInside = (e: React.MouseEvent) => {
@@ -59,7 +61,12 @@ const ListingCard: React.FC<CardProps> = ({ listing }): JSX.Element => {
     } else {
       setListingCover(ListingImgUrl)
     }
-  }, [listing])
+  }, [listing]);
+
+  const removeSymbol = (price: string) => {
+    const newPrice = price.replace("$", "");
+    return newPrice;
+  }
 
   return (
     <ListingContainer onClick={handleClickMain}>
@@ -116,7 +123,7 @@ const ListingCard: React.FC<CardProps> = ({ listing }): JSX.Element => {
             lineHeight: "16px",
           }}
         >
-          {listing.listing_price}
+          ${removeSymbol(listing.listing_price)}
         </Typography>
       </Box>
       <Box

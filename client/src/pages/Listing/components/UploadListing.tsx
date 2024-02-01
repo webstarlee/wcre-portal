@@ -15,6 +15,7 @@ import {
   Checkbox,
   ListItemText,
   IconButton,
+  InputAdornment
 } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
@@ -275,11 +276,10 @@ const UploadListing: React.FC<UploadListingProps> = ({
       formData.append("amendment", amendment);
     }
 
+    setLoading(true);
     const address = `${listingStreet}, ${listingCity}, ${listingState}`;
-
     const location = await getLatLng(address);
     if (location) {
-      setLoading(true);
       axios
         .post(convertApiUrl("upload"), formData, {
           headers: {
@@ -333,6 +333,11 @@ const UploadListing: React.FC<UploadListingProps> = ({
           setLoading(false);
           console.log(errors);
         });
+    } else {
+      setLoading(false);
+      setErrMessage(`Please input correct address`);
+      setErrorOpen(true);
+      return false;
     }
   };
 
@@ -344,7 +349,29 @@ const UploadListing: React.FC<UploadListingProps> = ({
   const handlePriceInput = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setListingPrice(e.target.value);
+    let inputText = e.target.value.trim();
+    if (isNaN(Number(inputText.replace(/[,.$]/g, "")))) {
+      setListingPrice(inputText);
+			return;
+		}
+    let numericValue = inputText.replace(/[^0-9.,]/g, "");
+		numericValue = numericValue.replace(/\.+/g, ".").replace(/,+/g, ",");
+		const parts = numericValue.split(".");
+		if (parts.length > 1) {
+			parts[1] = parts[1].substring(0, 2);
+			numericValue = parts.join(".");
+		}
+
+    let cents = "";
+		if (numericValue.includes(".")) {
+			[numericValue, cents] = numericValue.split(".");
+			cents = "." + cents;
+		}
+    numericValue = numericValue.replace(/,/g, "");
+		const numberValue = isNaN(parseFloat(numericValue)) ? 0 : parseFloat(numericValue);
+		const formattedNumber = new Intl.NumberFormat("en-US").format(numberValue);
+		const formattedPrice = numberValue ? `${formattedNumber}${cents}` : "";
+    setListingPrice(formattedPrice);
   };
 
   return (
@@ -497,7 +524,13 @@ const UploadListing: React.FC<UploadListingProps> = ({
                   <UploadFormInput
                     value={listingPrice}
                     onChange={(e) => handlePriceInput(e)}
-                    placeholder="$4,000"
+                    placeholder="4,000"
+                    InputProps={{
+                      sx: {
+                        "& input": {paddingLeft: "0px!important"}
+                      },
+                      startAdornment: <InputAdornment sx={{marginRight: "2px"}} position="start">$</InputAdornment>,
+                    }}
                   />
                 </Box>
               </Box>
@@ -662,7 +695,7 @@ const UploadListing: React.FC<UploadListingProps> = ({
                   sx={{
                     width: "100%",
                     backgroundColor: "#EBEEF7",
-                    height: "48px",
+                    height: "41px",
                     border: "solid 1px #b5b7be",
                     borderRadius: "5px",
                     display: "flex",
@@ -697,7 +730,7 @@ const UploadListing: React.FC<UploadListingProps> = ({
                   sx={{
                     width: "100%",
                     backgroundColor: "#EBEEF7",
-                    height: "48px",
+                    height: "41px",
                     border: "solid 1px #b5b7be",
                     borderRadius: "5px",
                     display: "flex",

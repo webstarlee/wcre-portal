@@ -84,6 +84,10 @@ export const StatisticsValueTitle = styled(Typography)(({ theme }) => ({
     fontSize: "70px",
     lineHeight: "80px",
   },
+  [theme.breakpoints.down("lg")]: {
+    fontSize: "40px",
+    lineHeight: "50px",
+  },
 }));
 
 export const StatisticsBackImg = styled("img")(({ theme }) => ({

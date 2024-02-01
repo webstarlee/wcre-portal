@@ -90,6 +90,7 @@ export const ListingImg = styled("img")(({ theme }) => ({
   width: "100%",
   height: "140px",
   objectFit: "cover",
+  borderRadius: "5px",
   [theme.breakpoints.down("xl")]: {
     height: "102px",
   },
@@ -125,17 +126,50 @@ export const UploadFormInput = styled(TextField)(() => ({
     fontfamily: "SatoshiMedium",
     fontSize: "16px",
     "& input": {
-      padding: "13px 14px",
+      padding: "9px 14px",
     },
     "&.MuiInputBase-multiline": {
-      padding: "13px 14px",
-    }
+      padding: "9px 14px",
+    },
   },
   width: "100%",
 }));
 
-export const CoverImg = styled("img")(() => ({
+export const CoverImg = styled("img")(({ theme }) => ({
   width: "100%",
   borderRadius: "5px",
-  objectFit: "cover"
+  objectFit: "cover",
+  maxHeight: "200px",
+  [theme.breakpoints.down("xl")]: {
+    maxHeight: "170px",
+  },
+}));
+
+export const DetailContainer = styled(Box)(({theme}) => ({
+  width: "100%",
+  display: 'flex',
+  flexDirection: "row",
+  [theme.breakpoints.down("md")]: {
+    flexDirection: "column",
+  },
+}));
+
+export const DetailHalfBox = styled(Box)(({theme}) => ({
+  flex: 1,
+  paddingLeft: "15px",
+  paddingRight: "15px",
+  [theme.breakpoints.down("md")]: {
+    width: "100%",
+  },
+}));
+
+export const ListingDetailImg = styled("img")(() => ({
+  width: "100%",
+  maxHeight: "220px",
+  objectFit: "cover",
+  borderRadius: "5px",
+  position: "absolute",
+  top: "0px",
+  left: "0px",
+  zIndex: 1
 }));

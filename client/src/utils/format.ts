@@ -22,3 +22,12 @@ export function makePageNavigation(currentPage: number, totalItems: number) {
     }
     return pageNavigation;
 }
+
+export const formatShortDocumentName = (document: string): string => {
+    const prefix = document.substring(0, 4);
+    const suffix = document.slice(-9);
+    const middle = '...';
+    const formattedName = `${prefix}${middle}${suffix}`;
+    
+    return formattedName;
+  }

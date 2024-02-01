@@ -59,7 +59,7 @@ export const Card = styled(Box)(() => ({
   boxShadow: "1px 1px 5px 0px rgba(0,0,0,0.2)"
 }));
 
-export const ImageUploadButton = styled(Button)(() => ({
+export const ImageUploadButton = styled(Button)(({theme}) => ({
   width: "100%",
   height: "200px",
   border: "dashed 2px #B9BABB",
@@ -67,9 +67,15 @@ export const ImageUploadButton = styled(Button)(() => ({
   display: 'flex',
   flexDirection: "column",
   textTransform: "unset",
-  backgroundColor: "#EDEEEE"
+  backgroundColor: "#EDEEEE",
+  [theme.breakpoints.down("xl")]: {
+    height: "170px",
+  },
 }));
 
-export const ImageUploadButtonImg = styled("img")(() => ({
+export const ImageUploadButtonImg = styled("img")(({theme}) => ({
   width: "100px",
+  [theme.breakpoints.down("xl")]: {
+    width: "80px",
+  },
 }));

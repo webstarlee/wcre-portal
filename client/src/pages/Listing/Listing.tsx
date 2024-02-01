@@ -26,9 +26,8 @@ import { useEffectOnce } from "@/hooks/useEffectOnce";
 import { convertApiUrl } from "@/utils/urls";
 import { makePageNavigation } from "@/utils/format";
 import { useAuth } from "@/hooks/AuthContext";
-
 import UploadListing from "./components/UploadListing";
-
+import ListingDetail from "./components/ListingDetail";
 import LoadingImg from "@/assets/images/loading.svg";
 
 const Listing: React.FC = (): JSX.Element => {
@@ -39,8 +38,9 @@ const Listing: React.FC = (): JSX.Element => {
   const [pageLoading, setPageLoading] = React.useState<boolean>(false);
   const [page, setPage] = React.useState<number>(1);
   const [count, setCount] = React.useState<number>(0);
-
   const [uploadListingOpen, setUploadListingOpen] = React.useState<boolean>(false)
+  const [listingDetailOpen, setListingDetailOpen] = React.useState<boolean>(false);
+  const [listingData, setListingData] = React.useState<ListingProps | null>(null);
 
   const fetchListings = async (page: number) => {
     try {
@@ -65,8 +65,6 @@ const Listing: React.FC = (): JSX.Element => {
     setPageLoading(true);
     fetchListings(1);
   }
-
-  console.log(brokers)
 
   const handlePageNavigation = (_page: number) => {
     if (page !== _page) {
@@ -95,6 +93,16 @@ const Listing: React.FC = (): JSX.Element => {
 
   const uploadListingModalClose = () => {
     setUploadListingOpen(false)
+  }
+
+  const handleListingDetail = (_listing: ListingProps) => {
+    setListingData(_listing);
+    setListingDetailOpen(true);
+  }
+
+  const handleDetailClose = () => {
+    setListingData(null);
+    setListingDetailOpen(false);
   }
 
   return (
@@ -187,7 +195,7 @@ const Listing: React.FC = (): JSX.Element => {
                   >
                     {listings.map((listing, index) => (
                       <Grid key={index} item xs={12} sm={6} md={4} lg={2.4}>
-                        <ListingCard listing={listing} />
+                        <ListingCard openDetail={handleListingDetail} listing={listing} />
                       </Grid>
                     ))}
                   </Grid>
@@ -247,7 +255,8 @@ const Listing: React.FC = (): JSX.Element => {
             </PageFooter>
           )}
 
-          <UploadListing open={uploadListingOpen} onClose={uploadListingModalClose} allBrokers={brokers} reload={reloadListing} />
+          {uploadListingOpen && <UploadListing open={uploadListingOpen} onClose={uploadListingModalClose} allBrokers={brokers} reload={reloadListing} />}
+          {listingDetailOpen && listingData && <ListingDetail listing={listingData} open={listingDetailOpen} onCloseDetail={handleDetailClose} />}
         </>
       )}
     </>

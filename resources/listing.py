@@ -228,24 +228,15 @@ class ResetListings(Resource):
 
     def get(self):
         listings = db.Listing.find({})
-        users = list(db.User.find({"role": "Broker"}))
-        # parsed_users = parse_json(users)
-
         for listing in listings:
             broker_ids = []
-            user_inde_one = random.randint(0, 12)
-            user_inde_two = random.randint(0, 12)
-            broker_ids.append(str(users[user_inde_one]['_id']))
-            broker_ids.append(str(users[user_inde_two]['_id']))
+            if len(listing['brokers']) > 0:
+                for broker_fullname in listing['brokers']:
+                    user = db.User.find_one({"fullname": broker_fullname})
+                    if user:
+                        print(user["_id"])
+                        broker_ids.append(str(user['_id']))
             print(broker_ids)
-            # if len(listing['brokers']) > 0:
-                
-                # for broker_id in listing['brokers']:
-                #     user = db.User.find_one({"_id": broker_id})
-                #     if user:
-                #         print(user["_id"])
-                #         broker_ids.append(user['_id'])
-                
             db.Listing.update_one({"_id": listing['_id']}, {"$set": {"brokers": broker_ids}})
         
         return jsonify(
