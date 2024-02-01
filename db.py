@@ -10,7 +10,7 @@ try:
         serverSelectionTimeoutMS=5000,
     ) # your connection string
 
-    db = client["wcre_panel"]
+    db = client["wcre_dev"]
 
     User = db["Users"]
     Login = db["Logins"]
