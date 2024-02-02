@@ -48,6 +48,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = () => {
     setIsAuthenticated(false);
+    setUser(undefined);
+    setAuthToken("");
     document.cookie =
       "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     sessionStorage.removeItem("accessToken");
