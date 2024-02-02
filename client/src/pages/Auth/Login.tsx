@@ -24,13 +24,13 @@ const Login: React.FC = () => {
 
   const handleLogin = async () => {
     if (username === "") {
-      setErrMessage(`Username is required`);
+      setErrMessage(`Username is Required`);
       setErrorOpen(true);
       return false;
     }
 
     if (password === "") {
-      setErrMessage(`Password is required`);
+      setErrMessage(`Password is Required`);
       setErrorOpen(true);
       return false;
     }
@@ -101,7 +101,7 @@ const Login: React.FC = () => {
         onClick={handleLogin}
         fullWidth
         variant="contained"
-        sx={{ mt: 3, mb: 2, height: "40px"}}
+        sx={{ mt: 3, mb: 2, height: "40px" }}
       >
         {isLoading ? <img src={LoadingImg} /> : "Sign In"}
       </Button>
