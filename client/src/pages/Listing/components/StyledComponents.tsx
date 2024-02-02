@@ -173,3 +173,11 @@ export const ListingDetailImg = styled("img")(() => ({
   left: "0px",
   zIndex: 1
 }));
+
+
+export const ImageUploadCoverImg = styled("img")(() => ({
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+  borderRadius: "5px"
+}));

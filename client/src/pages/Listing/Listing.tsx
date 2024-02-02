@@ -28,6 +28,8 @@ import { makePageNavigation } from "@/utils/format";
 import { useAuth } from "@/hooks/AuthContext";
 import UploadListing from "./components/UploadListing";
 import ListingDetail from "./components/ListingDetail";
+import EditListing from "./components/EditListing";
+import DeleteListing from "./components/DeleteListing";
 import LoadingImg from "@/assets/images/loading.svg";
 
 const Listing: React.FC = (): JSX.Element => {
@@ -41,6 +43,11 @@ const Listing: React.FC = (): JSX.Element => {
   const [uploadListingOpen, setUploadListingOpen] = React.useState<boolean>(false)
   const [listingDetailOpen, setListingDetailOpen] = React.useState<boolean>(false);
   const [listingData, setListingData] = React.useState<ListingProps | null>(null);
+  const [listingEditOpen, setListingEditOpen] = React.useState<boolean>(false);
+  const [listingEditData, setListingEditData] = React.useState<ListingProps | null>(null);
+
+  const [listingDeleteOpen, setListingDeleteOpen] = React.useState<boolean>(false);
+  const [listingDeleteData, setListingDeleteData] = React.useState<ListingProps | null>(null);
 
   const fetchListings = async (page: number) => {
     try {
@@ -95,6 +102,11 @@ const Listing: React.FC = (): JSX.Element => {
     setUploadListingOpen(false)
   }
 
+  const editListingModalClose = () => {
+    setListingEditOpen(false);
+    setListingEditData(null);
+  }
+
   const handleListingDetail = (_listing: ListingProps) => {
     setListingData(_listing);
     setListingDetailOpen(true);
@@ -103,6 +115,21 @@ const Listing: React.FC = (): JSX.Element => {
   const handleDetailClose = () => {
     setListingData(null);
     setListingDetailOpen(false);
+  }
+
+  const handleSetEditListing = (_listing: ListingProps) => {
+    setListingEditData(_listing);
+    setListingEditOpen(true)
+  }
+
+  const handleDeleteClose = () => {
+    setListingDeleteData(null);
+    setListingDeleteOpen(false);
+  }
+
+  const handleSetDeleteListing = (_listing: ListingProps) => {
+    setListingDeleteData(_listing);
+    setListingDeleteOpen(true)
   }
 
   return (
@@ -195,7 +222,7 @@ const Listing: React.FC = (): JSX.Element => {
                   >
                     {listings.map((listing, index) => (
                       <Grid key={index} item xs={12} sm={6} md={4} lg={2.4}>
-                        <ListingCard openDetail={handleListingDetail} listing={listing} />
+                        <ListingCard listing={listing} openDetail={handleListingDetail} openEdit={handleSetEditListing} openDelete={handleSetDeleteListing} />
                       </Grid>
                     ))}
                   </Grid>
@@ -256,7 +283,9 @@ const Listing: React.FC = (): JSX.Element => {
           )}
 
           {uploadListingOpen && <UploadListing open={uploadListingOpen} onClose={uploadListingModalClose} allBrokers={brokers} reload={reloadListing} />}
+          {listingDeleteOpen && listingDeleteData && <DeleteListing listing={listingDeleteData} open={listingDeleteOpen} onClose={handleDeleteClose} reload={reloadListing} />}
           {listingDetailOpen && listingData && <ListingDetail listing={listingData} open={listingDetailOpen} onCloseDetail={handleDetailClose} />}
+          {listingEditOpen && listingEditData && <EditListing listing={listingEditData} open={listingEditOpen} onClose={editListingModalClose} allBrokers={brokers} reload={reloadListing} />}
         </>
       )}
     </>

@@ -7,6 +7,7 @@ from flask_paginate import Pagination, get_page_args
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from util.logz import create_logger
 from util.parse_json import parse_json
+from bson.objectid import ObjectId  
 
 class GetListings(Resource):
     def __init__(self):
@@ -43,7 +44,7 @@ class GetListings(Resource):
                                 "as": "brokerObjects"
                             }
                     },
-                    {"$sort": {"listing_entered_date": 1}},
+                    {"$sort": {"listing_entered_date": -1}},
                     {"$skip": (int(page) - 1) * per_page},
                     {"$limit": per_page}
                 ])
@@ -79,7 +80,7 @@ class GetListings(Resource):
                                 "as": "brokerObjects"
                             }
                     },
-                    {"$sort": {"listing_entered_date": 1}},
+                    {"$sort": {"listing_entered_date": -1}},
                     {"$skip": (int(page) - 1) * per_page},
                     {"$limit": per_page}
                 ])
@@ -127,7 +128,7 @@ class GetListings(Resource):
             
             final_listings.append(single_listing)
         
-        broker_users = db.User.find({"role": "Broker"})
+        broker_users = db.User.find({})
         final_brokers = []
         for broker_user in broker_users:
             single_broker = {
@@ -210,7 +211,7 @@ class SaveListing(Resource):
             "listing_agreement_file_id": agreement,
             "listing_amendment_file_id": amendment,
             "listing_notes": note,
-            "listing_entered_date": datetime.now().strftime("%m/%d/%Y")
+            "listing_entered_date": datetime.utcnow()
         }
 
         print(new_listing)
@@ -221,7 +222,101 @@ class SaveListing(Resource):
         
         session['send_notification_for'] = str(result.inserted_id)
         return jsonify(result=True)
+
+class UpdateListing(Resource):
+    def __init__(self):
+        self.logger = create_logger()
     
+    parser = reqparse.RequestParser()
+    parser.add_argument('listing_id', type=str, required=True, help='This field cannot be left blank')
+    parser.add_argument('listing_street', type=str, required=True, help='This field cannot be left blank')
+    parser.add_argument('listing_city', type=str, required=True, help='This field cannot be left blank')
+    parser.add_argument('listing_price', type=str, required=True, help='This field cannot be left blank')
+    parser.add_argument('owner_entity', type=str, required=True, help='This field cannot be left blank')
+    parser.add_argument('listing_start', type=str, required=True, help='This field cannot be left blank')
+    parser.add_argument('listing_end', type=str, required=True, help='This field cannot be left blank')
+    parser.add_argument('primary_contact', type=str, required=True, help='This field cannot be left blank')
+    parser.add_argument('owner_email', type=str, required=True, help='This field cannot be left blank')
+    parser.add_argument('owner_phone', type=str, required=True, help='This field cannot be left blank')
+    parser.add_argument('broker_ids', action="append", required=True, help='This field cannot be left blank')
+    parser.add_argument('property_type', type=str, required=True, help='This field cannot be left blank')
+    parser.add_argument('listing_state', type=str, required=True, help='This field cannot be left blank')
+    parser.add_argument('cover', type=str, required=True, help='This field cannot be left blank')
+    parser.add_argument('agreement', type=str, help='This field cannot be left blank')
+    parser.add_argument('amendment', type=str, help='This field cannot be left blank')
+    parser.add_argument('note', type=str, required=True, help='This field cannot be left blank')
+    parser.add_argument('listing_lat', type=int, required=True, help='This field cannot be left blank')
+    parser.add_argument('listing_lng', type=int, required=True, help='This field cannot be left blank')
+
+    @jwt_required()  # Requires dat token
+    def post(self):
+        data = UpdateListing.parser.parse_args()
+        listing_id=data['listing_id']
+        listing_street=data['listing_street']
+        listing_city=data['listing_city']
+        listing_price=data['listing_price']
+        owner_entity=data['owner_entity']
+        listing_start=data['listing_start']
+        listing_end=data['listing_end']
+        primary_contact=data['primary_contact']
+        owner_email=data['owner_email']
+        owner_phone=data['owner_phone']
+        broker_ids=data['broker_ids']
+        property_type=data['property_type']
+        listing_state=data['listing_state']
+        cover=data['cover']
+        agreement=data['agreement']
+        amendment=data['amendment']
+        note=data['note']
+        listing_lat=data['listing_lat']
+        listing_lng=data['listing_lng']
+
+        edit_listing = {
+            "listing_street": listing_street,
+            "listing_city": listing_city,
+            "listing_state": listing_state,
+            "listing_owner_name": primary_contact,
+            "listing_owner_email": owner_email,
+            "listing_owner_phone": owner_phone,
+            "listing_start_date": listing_start,
+            "listing_end_date": listing_end,
+            "listing_property_type": property_type,
+            "listing_price": listing_price,
+            "listing_lat": listing_lat,
+            "listing_long": listing_lng,
+            "brokers": broker_ids,
+            "listing_owner_entity": owner_entity,
+            "listing_notes": note,
+            "listing_entered_date": datetime.utcnow()
+        }
+
+        db.Listing.update_one({"_id": ObjectId(listing_id)}, {"$set": edit_listing})
+        if cover != "":
+            db.Listing.update_one({"_id": ObjectId(listing_id)}, {"$set": {"listing_cover": cover}})
+        if agreement != "":
+            db.Listing.update_one({"_id": ObjectId(listing_id)}, {"$set": {"listing_agreement_file_id": agreement}})
+        if amendment != "":
+            db.Listing.update_one({"_id": ObjectId(listing_id)}, {"$set": {"listing_amendment_file_id": amendment}})
+
+        return jsonify(result=True)
+    
+class DeleteListings(Resource):
+    def __init__(self):
+        self.logger = create_logger()
+    
+    parser = reqparse.RequestParser()
+    parser.add_argument('listing_id', type=str, required=True, help='This field cannot be left blank')
+
+    def post(self):
+        data = DeleteListings.parser.parse_args()
+        listing_id=data['listing_id']
+        listing = db.Listing.find_one({"_id": ObjectId(listing_id)})
+        if listing:
+            db.Listing.delete_one({"_id": ObjectId(listing_id)})
+            return jsonify(result=True)
+        
+        return jsonify(result=False)
+
 class ResetListings(Resource):
     def __init__(self):
         self.logger = create_logger()
@@ -237,12 +332,15 @@ class ResetListings(Resource):
                         print(user["_id"])
                         broker_ids.append(str(user['_id']))
             print(broker_ids)
-            db.Listing.update_one({"_id": listing['_id']}, {"$set": {"brokers": broker_ids}})
+            datetime_object = datetime.strptime(listing['listing_entered_date'], '%m/%d/%Y')
+            # utc_datetime = datetime_object.astimezone(datetime.timezone.utc)
+            db.Listing.update_one({"_id": listing['_id']}, {"$set": {"listing_entered_date": datetime_object, "brokers": broker_ids}})
+            print(datetime_object)
+
         
         return jsonify(
             total="asdfasdf"
         )
-
 
 class CheckListings(Resource):
     def __init__(self):

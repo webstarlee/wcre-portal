@@ -27,18 +27,22 @@ class UploadFile(Resource):
             region_name='us-east-2')
         
         data = UploadFile.parser.parse_args()
-        cover_file = data['cover']
-        cover_binary_data = cover_file.read()
-        cover_content_type = cover_file.content_type
-        cover_extension = cover_file.filename.split('.')[-1] if '.' in cover_file.filename else ''
-        cover_object_name = f"{uuid.uuid4()}.{cover_extension}"
-        try:
-            s3.put_object(Body=cover_binary_data, Bucket=AWS_S3_BUCKET, Key=cover_object_name, ContentType=cover_content_type)
-        except NoCredentialsError:
-            return jsonify({"success": False, "error": "Credentials Not Available"})
         
+        cover_object_name=""
         amendment_object_name=""
         agreement_object_name=""
+
+        if data['cover']:
+            cover_file = data['cover']
+            cover_binary_data = cover_file.read()
+            cover_content_type = cover_file.content_type
+            cover_extension = cover_file.filename.split('.')[-1] if '.' in cover_file.filename else ''
+            cover_object_name = f"{uuid.uuid4()}.{cover_extension}"
+            try:
+                s3.put_object(Body=cover_binary_data, Bucket=AWS_S3_BUCKET, Key=cover_object_name, ContentType=cover_content_type)
+            except NoCredentialsError:
+                return jsonify({"success": False, "error": "Credentials Not Available"})
+            
         if data['agreement']:
             agreement_file = data['agreement']
             agreement_binary_data = agreement_file.read()

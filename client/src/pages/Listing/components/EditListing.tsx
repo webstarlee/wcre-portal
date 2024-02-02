@@ -15,7 +15,7 @@ import {
   Checkbox,
   ListItemText,
   IconButton,
-  InputAdornment
+  InputAdornment,
 } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
@@ -28,13 +28,25 @@ import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
 import UploadIcon from "@mui/icons-material/Upload";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { UploadFormLabel, UploadFormInput, CoverImg } from "./StyledComponents";
+import {
+  UploadFormLabel,
+  UploadFormInput,
+  CoverImg,
+  ImageUploadCoverImg,
+} from "./StyledComponents";
 import UploadImg from "@/assets/images/upload.svg";
-import { UserProps } from "@/utils/interfaces";
+import { UserProps, ListingProps } from "@/utils/interfaces";
 import { convertApiUrl } from "@/utils/urls";
 import { useAuth } from "@/hooks/AuthContext";
 import { getLatLng } from "@/utils/urls";
 import LoadingImg from "@/assets/images/loading.svg";
+import ListingImgUrl from "@/assets/images/temp/listing.png";
+import { HttpRequest } from "@aws-sdk/protocol-http";
+import { S3RequestPresigner } from "@aws-sdk/s3-request-presigner";
+import { parseUrl } from "@aws-sdk/url-parser";
+import { Sha256 } from "@aws-crypto/sha256-browser";
+import { formatUrl } from "@aws-sdk/util-format-url";
+import { formatShortDocumentName } from "@/utils/format";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -54,14 +66,16 @@ const MenuProps = {
   },
 };
 
-interface UploadListingProps {
+interface EditListingProps {
+  listing: ListingProps;
   open: boolean;
   onClose: () => void;
   reload: () => void;
   allBrokers: UserProps[] | [];
 }
 
-const UploadListing: React.FC<UploadListingProps> = ({
+const EditListing: React.FC<EditListingProps> = ({
+  listing,
   open,
   onClose,
   reload,
@@ -101,31 +115,88 @@ const UploadListing: React.FC<UploadListingProps> = ({
   const [note, setNote] = React.useState<string>("");
   const [loading, setLoading] = React.useState<boolean>(false);
 
+  const [listingCover, setListingCover] = React.useState<string | undefined>(
+    undefined
+  );
+
+  const removeSymbol = (price: string) => {
+    const newPrice = price.replace("$", "");
+    return newPrice;
+  };
+
+  const getBucketImage = async (key: string) => {
+    try {
+      const s3ObjectUrl = parseUrl(
+        `https://wcre-documents.s3.us-east-2.amazonaws.com/${key}`
+      );
+      const presigner = new S3RequestPresigner({
+        region: "us-east-2",
+        credentials: {
+          accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
+          secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY,
+        },
+        sha256: Sha256,
+      });
+      // Create a GET request from S3 url.
+      const url = await presigner.presign(new HttpRequest(s3ObjectUrl));
+      if (url) {
+        setListingCover(formatUrl(url));
+      } else {
+        setListingCover(ListingImgUrl);
+      }
+    } catch (error) {
+      setListingCover(ListingImgUrl);
+    }
+  };
+
+  const getCorrectStateName = (_state: string) => {
+    if (_state === "NJ" || _state === "PA") {
+      return _state;
+    } else if (_state.trim() === "New Jersey") {
+      return "NJ";
+    } else if (_state.trim() === "Pennsylvania") {
+      return "PA";
+    }
+
+    return _state;
+  };
+
   const resetForm = () => {
     setStep(1);
     setCover(null);
     setCoverUrl("");
-    setListingStreet("");
-    setListingCity("");
-    setListingPrice("");
-    setOwnerEntity("");
-    setListingStart(dayjs("2024-01-01"));
-    setListingEnd(dayjs("2024-01-01"));
-    setPrimaryContact("");
-    setOwnerEmail("");
-    setOwnerPhone("");
-    setBrokerIds([]);
-    setBrokers([]);
-    setPropertyType("Office");
-    setListingState("NJ");
+    setListingStreet(listing.listing_street);
+    setListingCity(listing.listing_city);
+    setListingPrice(removeSymbol(listing.listing_price));
+    setOwnerEntity(listing.listing_owner_entity);
+    setListingStart(dayjs(listing.listing_start_date));
+    setListingEnd(dayjs(listing.listing_end_date));
+    setPrimaryContact(listing.listing_owner_name);
+    setOwnerEmail(listing.listing_owner_email);
+    setOwnerPhone(listing.listing_owner_phone);
+    setBrokerIds(listing.brokers);
+    setBrokers(listing.broker_users);
+    setPropertyType(listing.listing_property_type);
+    setListingState(getCorrectStateName(listing.listing_state));
     setAgreement(null);
     setAmendment(null);
-    setNote("");
-  }
+    setNote(listing.listing_notes);
+  };
+
+  React.useEffect(() => {
+    if (listing) {
+      resetForm();
+      if (listing.listing_cover !== "") {
+        getBucketImage(listing.listing_cover);
+      } else {
+        setListingCover(ListingImgUrl);
+      }
+    }
+  }, [listing]);
 
   const handleNextStep = () => {
-    if (!cover) {
-      setErrMessage(`Listing image is required`);
+    if (listing.listing_cover === "" && cover === null) {
+      setErrMessage(`Cover Image is required`);
       setErrorOpen(true);
       return false;
     }
@@ -241,7 +312,7 @@ const UploadListing: React.FC<UploadListingProps> = ({
     }
   };
 
-  const handleUploadListing = async () => {
+  const handleUpdateListing = async () => {
     if (!primaryContact) {
       setErrMessage(`Primary Contact is required`);
       setErrorOpen(true);
@@ -280,59 +351,102 @@ const UploadListing: React.FC<UploadListingProps> = ({
     const address = `${listingStreet}, ${listingCity}, ${listingState}`;
     const location = await getLatLng(address);
     if (location) {
-      axios
-        .post(convertApiUrl("upload"), formData, {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then(async (response) => {
-          const listingData = {
-            listing_street: listingStreet,
-            listing_city: listingCity,
-            listing_price: listingPrice,
-            owner_entity: ownerEntity,
-            listing_start: listingStart?.format("MM/DD/YYYY"),
-            listing_end: listingEnd?.format("MM/DD/YYYY"),
-            primary_contact: primaryContact,
-            owner_email: ownerEmail,
-            owner_phone: ownerPhone,
-            broker_ids: brokerIds,
-            property_type: propertyType,
-            listing_state: listingState,
-            cover: response.data.cover,
-            agreement: response.data.agreement,
-            amendment: response.data.amendment,
-            note: note,
-            listing_lat: location.lat,
-            listing_lng: location.lng,
-          };
+      if (cover || agreement || amendment) {
+        axios
+          .post(convertApiUrl("upload"), formData, {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then(async (response) => {
+            const listingData = {
+              listing_id: listing.id,
+              listing_street: listingStreet,
+              listing_city: listingCity,
+              listing_price: listingPrice,
+              owner_entity: ownerEntity,
+              listing_start: listingStart?.format("MM/DD/YYYY"),
+              listing_end: listingEnd?.format("MM/DD/YYYY"),
+              primary_contact: primaryContact,
+              owner_email: ownerEmail,
+              owner_phone: ownerPhone,
+              broker_ids: brokerIds,
+              property_type: propertyType,
+              listing_state: listingState,
+              cover: response.data.cover,
+              agreement: response.data.agreement,
+              amendment: response.data.amendment,
+              note: note,
+              listing_lat: location.lat,
+              listing_lng: location.lng,
+            };
 
-          console.log(listingData);
-          const result = await axios.post(
-            convertApiUrl("listing/upload"),
-            listingData,
-            {
-              headers: {
-                Authorization: `Bearer ${authToken}`,
-              },
+            console.log(listingData);
+            const result = await axios.post(
+              convertApiUrl("listing/update"),
+              listingData,
+              {
+                headers: {
+                  Authorization: `Bearer ${authToken}`,
+                },
+              }
+            );
+            setLoading(false);
+
+            if (result.status === 200) {
+              resetForm();
+              onClose();
+              reload();
             }
-          );
-          setLoading(false);
+          })
+          .catch((errors) => {
+            setLoading(false);
+            console.log(errors);
+          });
+      } else {
+        const listingData = {
+          listing_id: listing.id,
+          listing_street: listingStreet,
+          listing_city: listingCity,
+          listing_price: listingPrice,
+          owner_entity: ownerEntity,
+          listing_start: listingStart?.format("MM/DD/YYYY"),
+          listing_end: listingEnd?.format("MM/DD/YYYY"),
+          primary_contact: primaryContact,
+          owner_email: ownerEmail,
+          owner_phone: ownerPhone,
+          broker_ids: brokerIds,
+          property_type: propertyType,
+          listing_state: listingState,
+          cover: "",
+          agreement: "",
+          amendment: "",
+          note: note,
+          listing_lat: location.lat,
+          listing_lng: location.lng,
+        };
 
-          if (result.status === 200) {
-            resetForm();
-            onClose();
-            reload();
-          }
+        axios
+          .post(convertApiUrl("listing/update"), listingData, {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          })
+          .then((result) => {
+            setLoading(false);
 
-          console.log(result)
-        })
-        .catch((errors) => {
-          setLoading(false);
-          console.log(errors);
-        });
+            if (result.status === 200) {
+              resetForm();
+              onClose();
+              reload();
+            }
+          })
+          .catch((errors) => {
+            setLoading(false);
+            console.log(errors);
+          });
+      }
     } else {
       setLoading(false);
       setErrMessage(`Please input correct address`);
@@ -352,25 +466,27 @@ const UploadListing: React.FC<UploadListingProps> = ({
     let inputText = e.target.value.trim();
     if (isNaN(Number(inputText.replace(/[,.$]/g, "")))) {
       setListingPrice(inputText);
-			return;
-		}
+      return;
+    }
     let numericValue = inputText.replace(/[^0-9.,]/g, "");
-		numericValue = numericValue.replace(/\.+/g, ".").replace(/,+/g, ",");
-		const parts = numericValue.split(".");
-		if (parts.length > 1) {
-			parts[1] = parts[1].substring(0, 2);
-			numericValue = parts.join(".");
-		}
+    numericValue = numericValue.replace(/\.+/g, ".").replace(/,+/g, ",");
+    const parts = numericValue.split(".");
+    if (parts.length > 1) {
+      parts[1] = parts[1].substring(0, 2);
+      numericValue = parts.join(".");
+    }
 
     let cents = "";
-		if (numericValue.includes(".")) {
-			[numericValue, cents] = numericValue.split(".");
-			cents = "." + cents;
-		}
+    if (numericValue.includes(".")) {
+      [numericValue, cents] = numericValue.split(".");
+      cents = "." + cents;
+    }
     numericValue = numericValue.replace(/,/g, "");
-		const numberValue = isNaN(parseFloat(numericValue)) ? 0 : parseFloat(numericValue);
-		const formattedNumber = new Intl.NumberFormat("en-US").format(numberValue);
-		const formattedPrice = numberValue ? `${formattedNumber}${cents}` : "";
+    const numberValue = isNaN(parseFloat(numericValue))
+      ? 0
+      : parseFloat(numericValue);
+    const formattedNumber = new Intl.NumberFormat("en-US").format(numberValue);
+    const formattedPrice = numberValue ? `${formattedNumber}${cents}` : "";
     setListingPrice(formattedPrice);
   };
 
@@ -392,7 +508,7 @@ const UploadListing: React.FC<UploadListingProps> = ({
             textAlign: "center",
           }}
         >
-          Upload Listing
+          Update Listing
         </DialogTitle>
         <DialogContent
           sx={{
@@ -407,18 +523,33 @@ const UploadListing: React.FC<UploadListingProps> = ({
           {step === 1 && (
             <Box>
               {!cover && !coverUrl && (
-                <ImageUploadButton onClick={triggerCoverInput}>
-                  <ImageUploadButtonImg src={UploadImg} alt="upload" />
-                  <Typography
-                    sx={{
-                      color: "#B9BABB",
-                      fontFamily: "SatoshiBold",
-                      fontSize: "20px",
-                      marginTop: "10px",
-                    }}
-                  >
-                    Upload Property Image
-                  </Typography>
+                <ImageUploadButton
+                  sx={{
+                    padding: listing.listing_cover !== "" ? "0px" : "6px 8px",
+                    border:
+                      listing.listing_cover !== ""
+                        ? "0px"
+                        : "dashed 2px #B9BABB",
+                  }}
+                  onClick={triggerCoverInput}
+                >
+                  {listing.listing_cover !== "" ? (
+                    <ImageUploadCoverImg src={listingCover} alt="upload" />
+                  ) : (
+                    <>
+                      <ImageUploadButtonImg src={UploadImg} alt="upload" />
+                      <Typography
+                        sx={{
+                          color: "#B9BABB",
+                          fontFamily: "SatoshiBold",
+                          fontSize: "20px",
+                          marginTop: "10px",
+                        }}
+                      >
+                        Upload Property Image
+                      </Typography>
+                    </>
+                  )}
                   <input
                     ref={coverRef}
                     type="file"
@@ -527,9 +658,16 @@ const UploadListing: React.FC<UploadListingProps> = ({
                     placeholder="4,000"
                     InputProps={{
                       sx: {
-                        "& input": {paddingLeft: "0px!important"}
+                        "& input": { paddingLeft: "0px!important" },
                       },
-                      startAdornment: <InputAdornment sx={{marginRight: "2px"}} position="start">$</InputAdornment>,
+                      startAdornment: (
+                        <InputAdornment
+                          sx={{ marginRight: "2px" }}
+                          position="start"
+                        >
+                          $
+                        </InputAdornment>
+                      ),
                     }}
                   />
                 </Box>
@@ -651,14 +789,17 @@ const UploadListing: React.FC<UploadListingProps> = ({
                         >
                           {selected.map((id, index) => {
                             const _single_broker = allBrokers.filter(
-                              (allbroker) => allbroker.id === id
+                              (allbroker) =>
+                                allbroker.id.toLowerCase() === id.toLowerCase()
                             )[0];
-                            return (
-                              <Chip
-                                key={index}
-                                label={_single_broker.fullname}
-                              />
-                            );
+                            if (_single_broker) {
+                              return (
+                                <Chip
+                                  key={index}
+                                  label={_single_broker.fullname}
+                                />
+                              );
+                            }
                           })}
                         </Box>
                       );
@@ -712,7 +853,17 @@ const UploadListing: React.FC<UploadListingProps> = ({
                     style={{ display: "none" }}
                   />
                   <Typography sx={{ flex: 1, color: "#95979d" }}>
-                    {agreement ? agreement.name : "No File Selected"}
+                    {agreement ? (
+                      agreement.name
+                    ) : (
+                      <>
+                        {listing.listing_agreement_file_id
+                          ? formatShortDocumentName(
+                              listing.listing_agreement_file_id
+                            )
+                          : "No File Selected"}
+                      </>
+                    )}
                   </Typography>
                   <IconButton onClick={triggerAgreementInput}>
                     <UploadIcon />
@@ -747,7 +898,17 @@ const UploadListing: React.FC<UploadListingProps> = ({
                     style={{ display: "none" }}
                   />
                   <Typography sx={{ flex: 1, color: "#95979d" }}>
-                    {amendment ? amendment.name : "No File Selected"}
+                    {amendment ? (
+                      amendment.name
+                    ) : (
+                      <>
+                        {listing.listing_amendment_file_id
+                          ? formatShortDocumentName(
+                              listing.listing_amendment_file_id
+                            )
+                          : "No File Selected"}
+                      </>
+                    )}
                   </Typography>
                   <IconButton onClick={triggerAmendmentInput}>
                     <UploadIcon />
@@ -841,9 +1002,9 @@ const UploadListing: React.FC<UploadListingProps> = ({
                 variant="contained"
                 size="large"
                 color="success"
-                onClick={handleUploadListing}
+                onClick={handleUpdateListing}
               >
-                {loading ? <img src={LoadingImg} /> : "Upload"}
+                {loading ? <img src={LoadingImg} /> : "Update"}
               </Button>
             </Box>
           )}
@@ -867,4 +1028,4 @@ const UploadListing: React.FC<UploadListingProps> = ({
   );
 };
 
-export default UploadListing;
+export default EditListing;

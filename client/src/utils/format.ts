@@ -1,7 +1,13 @@
 export function stateName(state_name: string) {
-    const stateNames = state_name.split(" ");
-    const newStateNames = stateNames.map((state) => state.charAt(0).toUpperCase())
-    return newStateNames;
+    if (state_name === "NJ" || state_name === "PA") {
+        return state_name;
+    } else if (state_name.trim() === "New Jersey") {
+        return "NJ";
+    } else if (state_name.trim() === "Pennsylvania") {
+        return "PA";
+    }
+
+    return state_name;
 }
 
 export function makePageNavigation(currentPage: number, totalItems: number) {

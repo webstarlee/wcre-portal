@@ -10,69 +10,84 @@ import { stateName } from "@/utils/format";
 import { HttpRequest } from "@aws-sdk/protocol-http";
 import { S3RequestPresigner } from "@aws-sdk/s3-request-presigner";
 import { parseUrl } from "@aws-sdk/url-parser";
-import {Sha256} from "@aws-crypto/sha256-browser";
+import { Sha256 } from "@aws-crypto/sha256-browser";
 import { formatUrl } from "@aws-sdk/util-format-url";
+import { useAuth } from "@/hooks/AuthContext";
 
 interface CardProps {
   listing: ListingProps;
   openDetail: (_listing: ListingProps) => void;
+  openEdit: (_listing: ListingProps) => void;
+  openDelete: (_listing: ListingProps) => void;
 }
 
-const ListingCard: React.FC<CardProps> = ({ listing, openDetail }): JSX.Element => {
-
-  const [listingCover, setListingCover] = React.useState<string | undefined>(undefined);
+const ListingCard: React.FC<CardProps> = ({
+  listing,
+  openDetail,
+  openEdit,
+  openDelete
+}): JSX.Element => {
+  const { user } = useAuth();
+  const [listingCover, setListingCover] = React.useState<string | undefined>(
+    undefined
+  );
 
   const handleClickMain = () => {
     console.log("Main button clicked");
     openDetail(listing);
   };
 
-  const handleClickInside = (e: React.MouseEvent) => {
+  const handleEditButton = (e: React.MouseEvent) => {
     e.stopPropagation();
-    console.log("Inside button clicked");
+    openEdit(listing);
+  };
+
+  const handleDeleteButton = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    openDelete(listing);
   };
 
   const getBucketImage = async (key: string) => {
     try {
-      const s3ObjectUrl = parseUrl(`https://wcre-documents.s3.us-east-2.amazonaws.com/${key}`);
+      const s3ObjectUrl = parseUrl(
+        `https://wcre-documents.s3.us-east-2.amazonaws.com/${key}`
+      );
       const presigner = new S3RequestPresigner({
-          "region": "us-east-2",
-          credentials: {
-              accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
-              secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY,
-          },
-          sha256: Sha256
+        region: "us-east-2",
+        credentials: {
+          accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
+          secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY,
+        },
+        sha256: Sha256,
       });
       // Create a GET request from S3 url.
       const url = await presigner.presign(new HttpRequest(s3ObjectUrl));
       if (url) {
-        setListingCover(formatUrl(url))
+        setListingCover(formatUrl(url));
       } else {
-        setListingCover(ListingImgUrl)
+        setListingCover(ListingImgUrl);
       }
     } catch (error) {
-      setListingCover(ListingImgUrl)
+      setListingCover(ListingImgUrl);
     }
-  }
+  };
 
   React.useEffect(() => {
     if (listing.listing_cover !== "") {
       getBucketImage(listing.listing_cover);
     } else {
-      setListingCover(ListingImgUrl)
+      setListingCover(ListingImgUrl);
     }
   }, [listing]);
 
   const removeSymbol = (price: string) => {
     const newPrice = price.replace("$", "");
     return newPrice;
-  }
+  };
 
   return (
     <ListingContainer onClick={handleClickMain}>
-      <ListingImg
-        src={listingCover}
-      />
+      <ListingImg src={listingCover} />
       <Typography
         sx={{
           marginTop: "5px",
@@ -196,17 +211,19 @@ const ListingCard: React.FC<CardProps> = ({ listing, openDetail }): JSX.Element 
         )}
         <Box sx={{ display: "flex", flexDirection: "row" }}>
           <IconButton
-            onClick={handleClickInside}
+            onClick={handleEditButton}
             sx={{ width: "25px", height: "25px" }}
           >
-            <EditIcon sx={{ width: "15px" }} />
+            <EditIcon color="success" sx={{ width: "15px" }} />
           </IconButton>
-          <IconButton
-            onClick={handleClickInside}
-            sx={{ width: "25px", height: "25px" }}
-          >
-            <DeleteIcon sx={{ width: "15px" }} />
-          </IconButton>
+          {user?.role === "Admin" && (
+            <IconButton
+              onClick={handleDeleteButton}
+              sx={{ width: "25px", height: "25px" }}
+            >
+              <DeleteIcon color="secondary" sx={{ width: "15px" }} />
+            </IconButton>
+          )}
         </Box>
       </Box>
     </ListingContainer>
