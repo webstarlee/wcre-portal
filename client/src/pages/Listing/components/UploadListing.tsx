@@ -352,25 +352,25 @@ const UploadListing: React.FC<UploadListingProps> = ({
     let inputText = e.target.value.trim();
     if (isNaN(Number(inputText.replace(/[,.$]/g, "")))) {
       setListingPrice(inputText);
-			return;
-		}
+      return;
+    }
     let numericValue = inputText.replace(/[^0-9.,]/g, "");
-		numericValue = numericValue.replace(/\.+/g, ".").replace(/,+/g, ",");
-		const parts = numericValue.split(".");
-		if (parts.length > 1) {
-			parts[1] = parts[1].substring(0, 2);
-			numericValue = parts.join(".");
-		}
+    numericValue = numericValue.replace(/\.+/g, ".").replace(/,+/g, ",");
+    const parts = numericValue.split(".");
+    if (parts.length > 1) {
+      parts[1] = parts[1].substring(0, 2);
+      numericValue = parts.join(".");
+    }
 
     let cents = "";
-		if (numericValue.includes(".")) {
-			[numericValue, cents] = numericValue.split(".");
-			cents = "." + cents;
-		}
+    if (numericValue.includes(".")) {
+      [numericValue, cents] = numericValue.split(".");
+      cents = "." + cents;
+    }
     numericValue = numericValue.replace(/,/g, "");
-		const numberValue = isNaN(parseFloat(numericValue)) ? 0 : parseFloat(numericValue);
-		const formattedNumber = new Intl.NumberFormat("en-US").format(numberValue);
-		const formattedPrice = numberValue ? `${formattedNumber}${cents}` : "";
+    const numberValue = isNaN(parseFloat(numericValue)) ? 0 : parseFloat(numericValue);
+    const formattedNumber = new Intl.NumberFormat("en-US").format(numberValue);
+    const formattedPrice = numberValue ? `${formattedNumber}${cents}` : "";
     setListingPrice(formattedPrice);
   };
 
@@ -527,9 +527,9 @@ const UploadListing: React.FC<UploadListingProps> = ({
                     placeholder="4,000"
                     InputProps={{
                       sx: {
-                        "& input": {paddingLeft: "0px!important"}
+                        "& input": { paddingLeft: "0px!important" }
                       },
-                      startAdornment: <InputAdornment sx={{marginRight: "2px"}} position="start">$</InputAdornment>,
+                      startAdornment: <InputAdornment sx={{ marginRight: "2px" }} position="start">$</InputAdornment>,
                     }}
                   />
                 </Box>
@@ -540,11 +540,11 @@ const UploadListing: React.FC<UploadListingProps> = ({
                   marginTop: "10px",
                 }}
               >
-                <UploadFormLabel>Owner Entity(DBA)*</UploadFormLabel>
+                <UploadFormLabel>Owner Entity (DBA)*</UploadFormLabel>
                 <UploadFormInput
                   value={ownerEntity}
                   onChange={(e) => setOwnerEntity(e.target.value)}
-                  placeholder="Owner Entity(DBA)"
+                  placeholder="Owner Entity (DBA)"
                 />
               </Box>
               <Box

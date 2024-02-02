@@ -130,7 +130,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
         }}
       >
         <DetailContainer>
-          <DetailHalfBox sx={{ paddingLeft: {md: "0px"} }}>
+          <DetailHalfBox sx={{ paddingLeft: { md: "0px" } }}>
             <Box sx={{ width: "100%", height: "220px", position: "relative" }}>
               <Skeleton
                 animation="wave"
@@ -247,7 +247,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
               </Box>
             </Box>
           </DetailHalfBox>
-          <DetailHalfBox sx={{ paddingRight: {md: "0px"}, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+          <DetailHalfBox sx={{ paddingRight: { md: "0px" }, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
             <Box
               sx={{
                 flex: 1,
@@ -266,7 +266,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                 }}
               >
                 <Box sx={{ flex: 1 }}>
-                  <UploadFormLabel>Owner Entity(DBA)</UploadFormLabel>
+                  <UploadFormLabel>Owner Entity (DBA)</UploadFormLabel>
                   <UploadFormInput
                     InputProps={{
                       readOnly: true,
@@ -358,8 +358,8 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                     <Typography sx={{ flex: 1, color: "#95979d" }}>
                       {listing.listing_agreement_file_id
                         ? formatShortDocumentName(
-                            listing.listing_agreement_file_id
-                          )
+                          listing.listing_agreement_file_id
+                        )
                         : "File not uploaded"}
                     </Typography>
                     {listing.listing_agreement_file_id && (
@@ -387,8 +387,8 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                     <Typography sx={{ flex: 1, color: "#95979d" }}>
                       {listing.listing_amendment_file_id
                         ? formatShortDocumentName(
-                            listing.listing_amendment_file_id
-                          )
+                          listing.listing_amendment_file_id
+                        )
                         : "File not uploaded"}
                     </Typography>
                     {listing.listing_amendment_file_id && (
@@ -431,7 +431,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                 sx={{
                   borderRadius: "25px",
                   fontFamily: "SatoshiBold",
-                  width: {md: "50%", sm: "100%", xs: "100%"},
+                  width: { md: "50%", sm: "100%", xs: "100%" },
                 }}
                 variant="contained"
                 size="large"
