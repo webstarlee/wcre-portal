@@ -195,12 +195,6 @@ const EditListing: React.FC<EditListingProps> = ({
   }, [listing]);
 
   const handleNextStep = () => {
-    if (listing.listing_cover === "" && cover === null) {
-      setErrMessage(`Cover Image is required`);
-      setErrorOpen(true);
-      return false;
-    }
-
     if (!listingStreet) {
       setErrMessage(`Listing Street is required`);
       setErrorOpen(true);

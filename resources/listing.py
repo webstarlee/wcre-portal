@@ -17,6 +17,7 @@ class GetListings(Resource):
     def get(self, page=1):
         current_user = get_jwt_identity()
         is_admin = current_user['role'] == "Admin"
+        current_user_id = current_user['_id']['$oid']
         per_page = 15
         total, listings_data = (
             (
@@ -51,11 +52,11 @@ class GetListings(Resource):
             )
             if is_admin
             else (
-                db.Listing.count_documents({"brokers": {"$in": [current_user['fullname']]}}),
+                db.Listing.count_documents({"brokers": {"$in": [str(current_user_id)]}}),
                 db.Listing.aggregate([
                     {
                         "$match": {
-                            {"brokers": {"$in": [current_user['fullname']]}}
+                            "brokers": {"$in": [str(current_user_id)]}
                         },
                     },
                     {
