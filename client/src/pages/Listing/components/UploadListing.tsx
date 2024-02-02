@@ -125,29 +125,29 @@ const UploadListing: React.FC<UploadListingProps> = ({
 
   const handleNextStep = () => {
     if (!cover) {
-      setErrMessage(`Listing image is required`);
+      setErrMessage(`Listing image is Required`);
       setErrorOpen(true);
       return false;
     }
 
     if (!listingStreet) {
-      setErrMessage(`Listing Street is required`);
+      setErrMessage(`Listing Street is Required`);
       setErrorOpen(true);
       return false;
     }
 
     if (!listingCity) {
-      setErrMessage(`Listing City is required`);
+      setErrMessage(`Listing City is Required`);
       setErrorOpen(true);
       return false;
     }
     if (!listingPrice) {
-      setErrMessage(`Listing Price is required`);
+      setErrMessage(`Listing Price is Required`);
       setErrorOpen(true);
       return false;
     }
     if (!ownerEntity) {
-      setErrMessage(`Owner Entity is required`);
+      setErrMessage(`Owner Entity is Required`);
       setErrorOpen(true);
       return false;
     }
@@ -243,19 +243,19 @@ const UploadListing: React.FC<UploadListingProps> = ({
 
   const handleUploadListing = async () => {
     if (!primaryContact) {
-      setErrMessage(`Primary Contact is required`);
+      setErrMessage(`Primary Contact is Required`);
       setErrorOpen(true);
       return false;
     }
 
     if (!ownerEmail) {
-      setErrMessage(`Owner Email is required`);
+      setErrMessage(`Owner Email is Required`);
       setErrorOpen(true);
       return false;
     }
 
     if (!ownerPhone) {
-      setErrMessage(`Owner Phone is required`);
+      setErrMessage(`Owner Phone is Required`);
       setErrorOpen(true);
       return false;
     }
