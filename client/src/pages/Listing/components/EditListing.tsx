@@ -672,11 +672,11 @@ const EditListing: React.FC<EditListingProps> = ({
                   marginTop: "10px",
                 }}
               >
-                <UploadFormLabel>Owner Entity(DBA)*</UploadFormLabel>
+                <UploadFormLabel>Owner Entity (DBA)*</UploadFormLabel>
                 <UploadFormInput
                   value={ownerEntity}
                   onChange={(e) => setOwnerEntity(e.target.value)}
-                  placeholder="Owner Entity(DBA)"
+                  placeholder="Owner Entity (DBA)"
                 />
               </Box>
               <Box
@@ -853,8 +853,8 @@ const EditListing: React.FC<EditListingProps> = ({
                       <>
                         {listing.listing_agreement_file_id
                           ? formatShortDocumentName(
-                              listing.listing_agreement_file_id
-                            )
+                            listing.listing_agreement_file_id
+                          )
                           : "No File Selected"}
                       </>
                     )}
@@ -898,8 +898,8 @@ const EditListing: React.FC<EditListingProps> = ({
                       <>
                         {listing.listing_amendment_file_id
                           ? formatShortDocumentName(
-                              listing.listing_amendment_file_id
-                            )
+                            listing.listing_amendment_file_id
+                          )
                           : "No File Selected"}
                       </>
                     )}
