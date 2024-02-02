@@ -19,7 +19,7 @@ class GetInitialData(Resource):
         current_time = arrow.now("EST")
         greeting_msg = f"{greeting(current_time)}, {current_user['fullname'].split()[0]}!"
         if not is_admin:
-            total_listings = db.Listing.count_documents({"brokers": {"$in": [current_user['fullname']]}})
+            total_listings = db.Listing.count_documents({"brokers": {"$in": [current_user['_id']['$oid']]}})
             total_sales = db.Sale.count_documents({"brokers": {"$in": [current_user['fullname']]}})
             total_leases = db.Lease.count_documents({"brokers": {"$in": [current_user['fullname']]}})
             latest_notifications = list(db.Notification.find({"user": current_user['fullname']}).sort("timestamp", -1).limit(8))

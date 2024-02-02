@@ -341,7 +341,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                 }}
               >
                 <Box sx={{ flex: 1 }}>
-                  <UploadFormLabel>Owner Email</UploadFormLabel>
+                  <UploadFormLabel>Listing Agreement</UploadFormLabel>
                   <Box
                     sx={{
                       width: "100%",
@@ -370,7 +370,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                   </Box>
                 </Box>
                 <Box sx={{ flex: 1 }}>
-                  <UploadFormLabel>Owner Phone Number</UploadFormLabel>
+                  <UploadFormLabel>Listing Amendment</UploadFormLabel>
                   <Box
                     sx={{
                       width: "100%",

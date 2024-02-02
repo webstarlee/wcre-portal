@@ -39,8 +39,12 @@ export const MainProvider: React.FC<MainProviderProps> = ({ children }) => {
   const [dashboard, setDashboard] = useState<DashboardProps | undefined>(undefined);
 
   useEffect(() => {
-    if (isAuthenticated && !dashboard && authToken !== "") {
-      fetchInitialDashboard();
+    if (isAuthenticated) {
+      if (!dashboard && authToken !== "") {
+        fetchInitialDashboard();
+      }
+    } else {
+      setDashboard(undefined)
     }
   }, [isAuthenticated, dashboard, authToken])
 
