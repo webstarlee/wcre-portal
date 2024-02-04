@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, IconButton, Link } from "@mui/material";
+import { Box, Typography, IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ListingContainer, ListingImg } from "./StyledComponents";
@@ -80,10 +80,6 @@ const ListingCard: React.FC<CardProps> = ({
     }
   }, [listing]);
 
-  const removeSymbol = (price: string) => {
-    const newPrice = price.replace("$", "");
-    return newPrice;
-  };
 
   return (
     <ListingContainer onClick={handleClickMain}>
