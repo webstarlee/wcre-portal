@@ -151,7 +151,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
               }}
             >
               <Box sx={{ flex: 1 }}>
-                <UploadFormLabel>Property Type*</UploadFormLabel>
+                <UploadFormLabel>Property Type</UploadFormLabel>
                 <UploadFormInput
                   InputProps={{
                     readOnly: true,
@@ -161,7 +161,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                 />
               </Box>
               <Box sx={{ flex: 1 }}>
-                <UploadFormLabel>Price*</UploadFormLabel>
+                <UploadFormLabel>Price</UploadFormLabel>
                 <UploadFormInput
                   InputProps={{
                     readOnly: true,
@@ -360,7 +360,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                         ? formatShortDocumentName(
                           listing.listing_agreement_file_id
                         )
-                        : "File not uploaded"}
+                        : "File Not Uploaded"}
                     </Typography>
                     {listing.listing_agreement_file_id && (
                       <IconButton>
@@ -389,7 +389,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                         ? formatShortDocumentName(
                           listing.listing_amendment_file_id
                         )
-                        : "File not uploaded"}
+                        : "File Not Uploaded"}
                     </Typography>
                     {listing.listing_amendment_file_id && (
                       <IconButton>

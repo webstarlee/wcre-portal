@@ -198,14 +198,14 @@ const ListingCard: React.FC<CardProps> = ({
             onClick={handleEditButton}
             sx={{ width: "25px", height: "25px" }}
           >
-            <EditIcon color="success" sx={{ width: "15px" }} />
+            <EditIcon sx={{ width: "15px", color: "#000" }} />
           </IconButton>
           {user?.role === "Admin" && (
             <IconButton
               onClick={handleDeleteButton}
               sx={{ width: "25px", height: "25px" }}
             >
-              <DeleteIcon color="secondary" sx={{ width: "15px" }} />
+              <DeleteIcon sx={{ width: "15px", color: "#000" }} />
             </IconButton>
           )}
         </Box>
