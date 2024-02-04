@@ -57,7 +57,7 @@ const DeleteListing: React.FC<DeleteListingProps> = ({
           textAlign: "center",
         }}
       >
-        Delete Listing?
+        Delete Listing? ({listing.listing_street})
       </DialogTitle>
       <DialogActions sx={{ padding: "20px", paddingTop: "0px" }}>
         <Button
