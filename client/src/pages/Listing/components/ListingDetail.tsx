@@ -413,7 +413,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                   InputProps={{
                     readOnly: true,
                   }}
-                  placeholder="Pending"
+                  placeholder="Enter Notes:"
                 />
               </Box>
             </Box>

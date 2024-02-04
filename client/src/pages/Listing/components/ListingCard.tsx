@@ -122,23 +122,12 @@ const ListingCard: React.FC<CardProps> = ({
             fontSize: "16px",
             color: "#000",
             lineHeight: "20px",
-            width: "calc(100% - 90px)",
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
           }}
         >
-          {listing.listing_owner_entity}
-        </Typography>
-        <Typography
-          sx={{
-            fontFamily: "SatoshiBold",
-            fontSize: "16px",
-            color: "#0156FB",
-            lineHeight: "16px",
-          }}
-        >
-          ${removeSymbol(listing.listing_price)}
+          {listing.listing_street}
         </Typography>
       </Box>
       <Box
@@ -188,16 +177,15 @@ const ListingCard: React.FC<CardProps> = ({
         }}
       >
         {listing.listing_agreement_file_id ? (
-          <Link
+          <Typography
             sx={{
               fontFamily: "SatoshiMedium",
               fontSize: "14px",
               color: "#01d6fb",
             }}
-            href={`./download/${listing.listing_agreement_file_id}`}
           >
             Fully Executed
-          </Link>
+          </Typography>
         ) : (
           <Typography
             sx={{
@@ -206,7 +194,7 @@ const ListingCard: React.FC<CardProps> = ({
               color: "#FB7901",
             }}
           >
-            Pending
+            Listing Pending
           </Typography>
         )}
         <Box sx={{ display: "flex", flexDirection: "row" }}>

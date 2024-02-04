@@ -574,7 +574,7 @@ const EditListing: React.FC<EditListingProps> = ({
                 <UploadFormInput
                   value={listingStreet}
                   onChange={(e) => setListingStreet(e.target.value)}
-                  placeholder="Listing Street"
+                  placeholder="Enter Listing Street:"
                 />
               </Box>
               <Box
@@ -591,7 +591,7 @@ const EditListing: React.FC<EditListingProps> = ({
                   <UploadFormInput
                     value={listingCity}
                     onChange={(e) => setListingCity(e.target.value)}
-                    placeholder="Listing City"
+                    placeholder="Enter Listing Town/City:"
                   />
                 </Box>
                 <Box sx={{ flex: 1 }}>
@@ -773,7 +773,7 @@ const EditListing: React.FC<EditListingProps> = ({
                       if (selected.length === 0) {
                         return (
                           <Typography sx={{ color: "#95979d" }}>
-                            Jhon Mozzillo
+                            Select Brokers
                           </Typography>
                         );
                       }
@@ -921,7 +921,7 @@ const EditListing: React.FC<EditListingProps> = ({
                   onChange={(e) => setNote(e.target.value)}
                   multiline
                   rows={4}
-                  placeholder="Pending"
+                  placeholder="Enter Notes:"
                 />
               </Box>
             </Box>

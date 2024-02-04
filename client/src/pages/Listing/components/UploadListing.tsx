@@ -449,7 +449,7 @@ const UploadListing: React.FC<UploadListingProps> = ({
                 <UploadFormInput
                   value={listingStreet}
                   onChange={(e) => setListingStreet(e.target.value)}
-                  placeholder="Listing Street"
+                  placeholder="Enter Street Address:"
                 />
               </Box>
               <Box
@@ -466,7 +466,7 @@ const UploadListing: React.FC<UploadListingProps> = ({
                   <UploadFormInput
                     value={listingCity}
                     onChange={(e) => setListingCity(e.target.value)}
-                    placeholder="Listing City"
+                    placeholder="Enter Town/City:"
                   />
                 </Box>
                 <Box sx={{ flex: 1 }}>
@@ -544,7 +544,7 @@ const UploadListing: React.FC<UploadListingProps> = ({
                 <UploadFormInput
                   value={ownerEntity}
                   onChange={(e) => setOwnerEntity(e.target.value)}
-                  placeholder="Owner Entity (DBA)"
+                  placeholder="Enter Owner Entity (DBA):"
                 />
               </Box>
               <Box
@@ -593,7 +593,7 @@ const UploadListing: React.FC<UploadListingProps> = ({
                 <UploadFormInput
                   value={primaryContact}
                   onChange={(e) => setPrimaryContact(e.target.value)}
-                  placeholder="KG Patel"
+                  placeholder="Enter Owner Name:"
                 />
               </Box>
               <Box
@@ -611,7 +611,7 @@ const UploadListing: React.FC<UploadListingProps> = ({
                     value={ownerEmail}
                     type="email"
                     onChange={(e) => setOwnerEmail(e.target.value)}
-                    placeholder="who@mail.com"
+                    placeholder="Enter Owner Email:"
                   />
                 </Box>
                 <Box>
@@ -619,7 +619,7 @@ const UploadListing: React.FC<UploadListingProps> = ({
                   <UploadFormInput
                     value={ownerPhone}
                     onChange={(e) => setOwnerPhone(e.target.value)}
-                    placeholder="4794488795"
+                    placeholder="Enter Owner Phone:"
                   />
                 </Box>
               </Box>
@@ -641,7 +641,7 @@ const UploadListing: React.FC<UploadListingProps> = ({
                       if (selected.length === 0) {
                         return (
                           <Typography sx={{ color: "#95979d" }}>
-                            Jhon Mozzillo
+                            Select Brokers
                           </Typography>
                         );
                       }
@@ -766,7 +766,7 @@ const UploadListing: React.FC<UploadListingProps> = ({
                   onChange={(e) => setNote(e.target.value)}
                   multiline
                   rows={4}
-                  placeholder="Pending"
+                  placeholder="Enter Notes:"
                 />
               </Box>
             </Box>
@@ -848,7 +848,7 @@ const UploadListing: React.FC<UploadListingProps> = ({
             </Box>
           )}
         </DialogActions>
-      </Dialog>
+      </Dialog >
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
         open={errorOpen}
