@@ -14,7 +14,7 @@ import ListingIcon from "@/assets/images/listing.svg";
 import { useMain } from "@/hooks/MainContext";
 
 const NotificationCard: React.FC = (): JSX.Element => {
-  const {dashboard} = useMain();
+  const { dashboard } = useMain();
 
   return (
     <Card sx={{ padding: 0, overflow: "hidden" }}>
@@ -28,7 +28,7 @@ const NotificationCard: React.FC = (): JSX.Element => {
         <Typography
           sx={{ fontFamily: "SatoshiBold", fontSize: "18px", color: "#000" }}
         >
-          Notifications
+          Recent Notifications
         </Typography>
       </Box>
       <Box sx={{ display: "flex", flexDirection: "row", padding: "7px 15px" }}>

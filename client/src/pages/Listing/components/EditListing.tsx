@@ -502,7 +502,7 @@ const EditListing: React.FC<EditListingProps> = ({
             textAlign: "center",
           }}
         >
-          Update Listing
+          Edit Listing - {listing.listing_street}
         </DialogTitle>
         <DialogContent
           sx={{

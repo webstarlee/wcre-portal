@@ -37,9 +37,9 @@ const RecentUnitsCard: React.FC = (): JSX.Element => {
       <Typography
         sx={{ fontFamily: "SatoshiBold", fontSize: "18px", color: "#000" }}
       >
-        Recent Units
+        Recent Properties
       </Typography>
-      <Box sx={{display: 'flex', flexDirection: 'row', gap: "15px", width: "100%", overflowX: "auto"}}>
+      <Box sx={{ display: 'flex', flexDirection: 'row', gap: "15px", width: "100%", overflowX: "auto" }}>
         {units.map(unit => <UnitCard key={unit.title} {...unit} />)}
       </Box>
     </Card>

@@ -36,12 +36,12 @@ const Home: React.FC = () => {
             </Typography>
           </PageHeader>
           <PageBody>
-            <Box sx={{width: "100%", height: "100%"}}>
+            <Box sx={{ width: "100%", height: "100%" }}>
               <Grid container spacing={2}>
                 <Grid item xs={12} lg={3}>
                   <StatisticsCard
                     value={dashboard ? dashboard.totalListings : "0"}
-                    title="Active Listings"
+                    title="Total Listings"
                     bgColor="#0156FB"
                     bgImg={ListingImg}
                   />
@@ -57,7 +57,7 @@ const Home: React.FC = () => {
                 <Grid item xs={12} lg={3}>
                   <StatisticsCard
                     value={dashboard ? dashboard.totalLeases : "0"}
-                    title="Active Leases"
+                    title="Total Leases"
                     bgColor="#FB7901"
                     bgImg={LeasesImg}
                   />
