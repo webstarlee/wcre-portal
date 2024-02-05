@@ -226,7 +226,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
               }}
             >
               <Box sx={{ flex: 1 }}>
-                <UploadFormLabel>Listing start</UploadFormLabel>
+                <UploadFormLabel>Listing Start Date</UploadFormLabel>
                 <UploadFormInput
                   InputProps={{
                     readOnly: true,
@@ -236,7 +236,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                 />
               </Box>
               <Box sx={{ flex: 1 }}>
-                <UploadFormLabel>Listing End</UploadFormLabel>
+                <UploadFormLabel>Listing End Date</UploadFormLabel>
                 <UploadFormInput
                   InputProps={{
                     readOnly: true,
