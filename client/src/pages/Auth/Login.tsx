@@ -77,9 +77,9 @@ const Login: React.FC = () => {
         margin="normal"
         required
         fullWidth
-        label="Username"
         autoFocus
         autoComplete="off"
+        placeholder="Username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
         onKeyDown={(event) => handleLoginKeyboard(event)}
@@ -88,9 +88,9 @@ const Login: React.FC = () => {
         margin="normal"
         required
         fullWidth
-        label="Password"
         type="password"
         id="password"
+        placeholder="Password"
         autoComplete="off"
         value={password}
         onChange={(e) => setPassword(e.target.value)}

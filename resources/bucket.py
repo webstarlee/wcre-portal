@@ -3,7 +3,7 @@ import uuid
 import os
 from botocore.exceptions import NoCredentialsError
 from flask_restful import Resource, reqparse
-from flask import jsonify
+from flask import jsonify, Response, stream_with_context
 from flask_jwt_extended import jwt_required
 from config import AWS_ACCESS_KEY, AWS_SECRET_KEY
 from util.logz import create_logger
@@ -71,4 +71,3 @@ class UploadFile(Resource):
             agreement=agreement_object_name,
             amendment=amendment_object_name,
         )
-        

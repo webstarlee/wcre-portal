@@ -47,6 +47,33 @@ const ListingCard: React.FC<CardProps> = ({
     openDelete(listing);
   };
 
+  const handleDownloadButton = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const s3ObjectUrl = parseUrl(
+        `https://wcre-documents.s3.us-east-2.amazonaws.com/${listing.listing_agreement_file_id}`
+      );
+      const presigner = new S3RequestPresigner({
+        region: "us-east-2",
+        credentials: {
+          accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
+          secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY,
+        },
+        sha256: Sha256,
+      });
+      // Create a GET request from S3 url.
+      const url = await presigner.presign(new HttpRequest(s3ObjectUrl));
+      if (url) {
+        console.log(formatUrl(url))
+        window.open(formatUrl(url), '_blank')
+      } else {
+        console.log("Something Wrong")
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const getBucketImage = async (key: string) => {
     try {
       const s3ObjectUrl = parseUrl(
@@ -179,6 +206,7 @@ const ListingCard: React.FC<CardProps> = ({
               fontSize: "14px",
               color: "#01d6fb",
             }}
+            onClick={handleDownloadButton}
           >
             Fully Executed
           </Typography>

@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import {
-  Box,
-  Typography
-} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import {
   AuthContainer,
   FormContainer,
@@ -14,6 +11,7 @@ import {
 import LoadingView from "@/components/LoadingView";
 import { useAuth } from "@/hooks/AuthContext";
 import LogoImg from "@/assets/images/logo.png";
+import AuthVideo from "@/assets/video/background.mp4";
 
 const AuthLayout: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -34,6 +32,21 @@ const AuthLayout: React.FC = () => {
         <LoadingView />
       ) : (
         <AuthContainer sx={{ flexGrow: 1 }}>
+          <video
+            style={{
+              objectFit: "cover",
+              width: "100vw",
+              height: "100vh",
+              position: "fixed",
+              top: "0px",
+              left: "0px",
+            }}
+            autoPlay
+            loop
+            muted
+          >
+            <source src={AuthVideo} type="video/mp4" />
+          </video>
           <FormContainer>
             <FormLeftBox>
               <AuthLogoImg src={LogoImg} alt="logo" />

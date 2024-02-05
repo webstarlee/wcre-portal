@@ -34,6 +34,7 @@ import {
   CoverImg,
   ImageUploadCoverImg,
 } from "./StyledComponents";
+import CloseIcon from '@mui/icons-material/Close';
 import UploadImg from "@/assets/images/upload.svg";
 import { UserProps, ListingProps } from "@/utils/interfaces";
 import { convertApiUrl } from "@/utils/urls";
@@ -70,7 +71,7 @@ interface EditListingProps {
   listing: ListingProps;
   open: boolean;
   onClose: () => void;
-  reload: () => void;
+  update: (_listing: ListingProps) => void;
   allBrokers: UserProps[] | [];
 }
 
@@ -78,7 +79,7 @@ const EditListing: React.FC<EditListingProps> = ({
   listing,
   open,
   onClose,
-  reload,
+  update,
   allBrokers,
 }) => {
   const { authToken } = useAuth();
@@ -391,7 +392,7 @@ const EditListing: React.FC<EditListingProps> = ({
             if (result.status === 200) {
               resetForm();
               onClose();
-              reload();
+              update(result.data.listing);
             }
           })
           .catch((errors) => {
@@ -433,7 +434,7 @@ const EditListing: React.FC<EditListingProps> = ({
             if (result.status === 200) {
               resetForm();
               onClose();
-              reload();
+              update(result.data.listing);
             }
           })
           .catch((errors) => {
@@ -504,6 +505,18 @@ const EditListing: React.FC<EditListingProps> = ({
         >
           Edit Listing - {listing.listing_street}
         </DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
         <DialogContent
           sx={{
             padding: "20px",
@@ -603,7 +616,7 @@ const EditListing: React.FC<EditListingProps> = ({
                       inputProps={{
                         sx: {
                           backgroundColor: "#EBEEF7",
-                          padding: "12.5px 14px",
+                          padding: "9px 14px",
                         },
                       }}
                     >
@@ -631,7 +644,7 @@ const EditListing: React.FC<EditListingProps> = ({
                       inputProps={{
                         sx: {
                           backgroundColor: "#EBEEF7",
-                          padding: "12.5px 14px",
+                          padding: "9px 14px",
                         },
                       }}
                     >
@@ -802,7 +815,7 @@ const EditListing: React.FC<EditListingProps> = ({
                       "aria-label": "Without label",
                       sx: {
                         backgroundColor: "#EBEEF7",
-                        padding: "11.5px 14px",
+                        padding: "9px 14px",
                       },
                     }}
                     MenuProps={MenuProps}

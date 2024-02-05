@@ -40,14 +40,21 @@ const Listing: React.FC = (): JSX.Element => {
   const [pageLoading, setPageLoading] = React.useState<boolean>(false);
   const [page, setPage] = React.useState<number>(1);
   const [count, setCount] = React.useState<number>(0);
-  const [uploadListingOpen, setUploadListingOpen] = React.useState<boolean>(false)
-  const [listingDetailOpen, setListingDetailOpen] = React.useState<boolean>(false);
-  const [listingData, setListingData] = React.useState<ListingProps | null>(null);
+  const [uploadListingOpen, setUploadListingOpen] =
+    React.useState<boolean>(false);
+  const [listingDetailOpen, setListingDetailOpen] =
+    React.useState<boolean>(false);
+  const [listingData, setListingData] = React.useState<ListingProps | null>(
+    null
+  );
   const [listingEditOpen, setListingEditOpen] = React.useState<boolean>(false);
-  const [listingEditData, setListingEditData] = React.useState<ListingProps | null>(null);
+  const [listingEditData, setListingEditData] =
+    React.useState<ListingProps | null>(null);
 
-  const [listingDeleteOpen, setListingDeleteOpen] = React.useState<boolean>(false);
-  const [listingDeleteData, setListingDeleteData] = React.useState<ListingProps | null>(null);
+  const [listingDeleteOpen, setListingDeleteOpen] =
+    React.useState<boolean>(false);
+  const [listingDeleteData, setListingDeleteData] =
+    React.useState<ListingProps | null>(null);
 
   const fetchListings = async (page: number) => {
     try {
@@ -57,7 +64,11 @@ const Listing: React.FC = (): JSX.Element => {
       setLoading(false);
       setPageLoading(false);
 
-      const result: { listings: ListingProps[]; total: number, brokers: UserProps[] } = response.data;
+      const result: {
+        listings: ListingProps[];
+        total: number;
+        brokers: UserProps[];
+      } = response.data;
       setListings(result.listings);
       setBrokers(result.brokers);
       setCount(result.total);
@@ -71,7 +82,7 @@ const Listing: React.FC = (): JSX.Element => {
   const reloadListing = () => {
     setPageLoading(true);
     fetchListings(1);
-  }
+  };
 
   const handlePageNavigation = (_page: number) => {
     if (page !== _page) {
@@ -99,38 +110,46 @@ const Listing: React.FC = (): JSX.Element => {
   };
 
   const uploadListingModalClose = () => {
-    setUploadListingOpen(false)
-  }
+    setUploadListingOpen(false);
+  };
 
   const editListingModalClose = () => {
     setListingEditOpen(false);
     setListingEditData(null);
-  }
+  };
 
   const handleListingDetail = (_listing: ListingProps) => {
     setListingData(_listing);
     setListingDetailOpen(true);
-  }
+  };
 
   const handleDetailClose = () => {
     setListingData(null);
     setListingDetailOpen(false);
-  }
+  };
 
   const handleSetEditListing = (_listing: ListingProps) => {
     setListingEditData(_listing);
-    setListingEditOpen(true)
-  }
+    setListingEditOpen(true);
+  };
 
   const handleDeleteClose = () => {
     setListingDeleteData(null);
     setListingDeleteOpen(false);
-  }
+  };
 
   const handleSetDeleteListing = (_listing: ListingProps) => {
     setListingDeleteData(_listing);
-    setListingDeleteOpen(true)
-  }
+    setListingDeleteOpen(true);
+  };
+
+  const updateListingData = (_listing: ListingProps) => {
+    setListings((prevListings) => {
+      return prevListings.map((listing) =>
+        listing.id === _listing.id ? _listing : listing
+      );
+    });
+  };
 
   return (
     <>
@@ -184,18 +203,12 @@ const Listing: React.FC = (): JSX.Element => {
                 <UploadIcon />
                 <Typography>Upload Listing</Typography>
               </HeaderCustomButton>
-              <HeaderCustomButton
-                variant="contained"
-                color="secondary"
-              >
+              <HeaderCustomButton variant="contained" color="secondary">
                 <PinDropIcon />
                 <Typography>Listings Map</Typography>
               </HeaderCustomButton>
             </SearchBoxContainer>
-            <HeaderCustomButton
-              variant="contained"
-              color="warning"
-            >
+            <HeaderCustomButton variant="contained" color="warning">
               <SortIcon />
               <Typography>Sort</Typography>
             </HeaderCustomButton>
@@ -222,7 +235,12 @@ const Listing: React.FC = (): JSX.Element => {
                   >
                     {listings.map((listing, index) => (
                       <Grid key={index} item xs={12} sm={6} md={4} lg={2.4}>
-                        <ListingCard listing={listing} openDetail={handleListingDetail} openEdit={handleSetEditListing} openDelete={handleSetDeleteListing} />
+                        <ListingCard
+                          listing={listing}
+                          openDetail={handleListingDetail}
+                          openEdit={handleSetEditListing}
+                          openDelete={handleSetDeleteListing}
+                        />
                       </Grid>
                     ))}
                   </Grid>
@@ -282,10 +300,38 @@ const Listing: React.FC = (): JSX.Element => {
             </PageFooter>
           )}
 
-          {uploadListingOpen && <UploadListing open={uploadListingOpen} onClose={uploadListingModalClose} allBrokers={brokers} reload={reloadListing} />}
-          {listingDeleteOpen && listingDeleteData && <DeleteListing listing={listingDeleteData} open={listingDeleteOpen} onClose={handleDeleteClose} reload={reloadListing} />}
-          {listingDetailOpen && listingData && <ListingDetail listing={listingData} open={listingDetailOpen} onCloseDetail={handleDetailClose} />}
-          {listingEditOpen && listingEditData && <EditListing listing={listingEditData} open={listingEditOpen} onClose={editListingModalClose} allBrokers={brokers} reload={reloadListing} />}
+          {uploadListingOpen && (
+            <UploadListing
+              open={uploadListingOpen}
+              onClose={uploadListingModalClose}
+              allBrokers={brokers}
+              reload={reloadListing}
+            />
+          )}
+          {listingDeleteOpen && listingDeleteData && (
+            <DeleteListing
+              listing={listingDeleteData}
+              open={listingDeleteOpen}
+              onClose={handleDeleteClose}
+              reload={reloadListing}
+            />
+          )}
+          {listingDetailOpen && listingData && (
+            <ListingDetail
+              listing={listingData}
+              open={listingDetailOpen}
+              onCloseDetail={handleDetailClose}
+            />
+          )}
+          {listingEditOpen && listingEditData && (
+            <EditListing
+              listing={listingEditData}
+              open={listingEditOpen}
+              onClose={editListingModalClose}
+              allBrokers={brokers}
+              update={updateListingData}
+            />
+          )}
         </>
       )}
     </>

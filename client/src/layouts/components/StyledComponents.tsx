@@ -28,6 +28,8 @@ export const FormContainer = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down("sm")]: {
     flexDirection: "column",
   },
+  zIndex: 1,
+  boxShadow: "0 0 30px 0px rgb(9 164 237 / 72%)"
 }));
 
 export const FormLeftBox = styled(Box)(({ theme }) => ({

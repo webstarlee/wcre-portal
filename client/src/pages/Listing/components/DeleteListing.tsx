@@ -45,7 +45,7 @@ const DeleteListing: React.FC<DeleteListingProps> = ({
       fullWidth={true}
       maxWidth="xs"
       open={open}
-      disableEscapeKeyDown={true}
+      onClose={onClose}
       sx={{ "& .MuiDialog-paper": { borderRadius: "15px" } }}
     >
       <DialogTitle
@@ -59,7 +59,7 @@ const DeleteListing: React.FC<DeleteListingProps> = ({
       >
         Delete Listing? ({listing.listing_street})
       </DialogTitle>
-      <DialogActions sx={{ padding: "20px", paddingTop: "0px" }}>
+      <DialogActions sx={{ padding: "20px", paddingTop: "20px" }}>
         <Button
           sx={{
             flex: 1,

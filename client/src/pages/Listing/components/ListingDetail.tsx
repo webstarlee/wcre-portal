@@ -17,6 +17,7 @@ import {
   UploadFormLabel,
   UploadFormInput,
 } from "./StyledComponents";
+import CloseIcon from "@mui/icons-material/Close";
 import DownloadIcon from "@mui/icons-material/Download";
 import ListingImgUrl from "@/assets/images/temp/listing.png";
 import { HttpRequest } from "@aws-sdk/protocol-http";
@@ -119,6 +120,18 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
       >
         Listing Overview - {listing.listing_street}
       </DialogTitle>
+      <IconButton
+        aria-label="close"
+        onClick={onCloseDetail}
+        sx={{
+          position: "absolute",
+          right: 8,
+          top: 8,
+          color: (theme) => theme.palette.grey[500],
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
       <DialogContent
         sx={{
           padding: "20px",
@@ -247,13 +260,20 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
               </Box>
             </Box>
           </DetailHalfBox>
-          <DetailHalfBox sx={{ paddingRight: { md: "0px" }, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+          <DetailHalfBox
+            sx={{
+              paddingRight: { md: "0px" },
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
             <Box
               sx={{
                 flex: 1,
                 width: "100%",
                 display: "flex",
-                flexDirection: 'column',
+                flexDirection: "column",
               }}
             >
               <Box
@@ -358,8 +378,8 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                     <Typography sx={{ flex: 1, color: "#95979d" }}>
                       {listing.listing_agreement_file_id
                         ? formatShortDocumentName(
-                          listing.listing_agreement_file_id
-                        )
+                            listing.listing_agreement_file_id
+                          )
                         : "File Not Uploaded"}
                     </Typography>
                     {listing.listing_agreement_file_id && (
@@ -387,8 +407,8 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                     <Typography sx={{ flex: 1, color: "#95979d" }}>
                       {listing.listing_amendment_file_id
                         ? formatShortDocumentName(
-                          listing.listing_amendment_file_id
-                        )
+                            listing.listing_amendment_file_id
+                          )
                         : "File Not Uploaded"}
                     </Typography>
                     {listing.listing_amendment_file_id && (

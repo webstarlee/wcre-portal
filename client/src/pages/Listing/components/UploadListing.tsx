@@ -28,6 +28,7 @@ import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
 import UploadIcon from "@mui/icons-material/Upload";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import CloseIcon from '@mui/icons-material/Close';
 import { UploadFormLabel, UploadFormInput, CoverImg } from "./StyledComponents";
 import UploadImg from "@/assets/images/upload.svg";
 import { UserProps } from "@/utils/interfaces";
@@ -309,7 +310,6 @@ const UploadListing: React.FC<UploadListingProps> = ({
             listing_lng: location.lng,
           };
 
-          console.log(listingData);
           const result = await axios.post(
             convertApiUrl("listing/upload"),
             listingData,
@@ -394,6 +394,18 @@ const UploadListing: React.FC<UploadListingProps> = ({
         >
           Upload Listing
         </DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
         <DialogContent
           sx={{
             padding: "20px",
@@ -478,7 +490,7 @@ const UploadListing: React.FC<UploadListingProps> = ({
                       inputProps={{
                         sx: {
                           backgroundColor: "#EBEEF7",
-                          padding: "12.5px 14px",
+                          padding: "9px 14px",
                         },
                       }}
                     >
@@ -506,7 +518,7 @@ const UploadListing: React.FC<UploadListingProps> = ({
                       inputProps={{
                         sx: {
                           backgroundColor: "#EBEEF7",
-                          padding: "12.5px 14px",
+                          padding: "9px 14px",
                         },
                       }}
                     >
@@ -667,7 +679,7 @@ const UploadListing: React.FC<UploadListingProps> = ({
                       "aria-label": "Without label",
                       sx: {
                         backgroundColor: "#EBEEF7",
-                        padding: "11.5px 14px",
+                        padding: "9px 14px",
                       },
                     }}
                     MenuProps={MenuProps}

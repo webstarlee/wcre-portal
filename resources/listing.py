@@ -215,8 +215,6 @@ class SaveListing(Resource):
             "listing_entered_date": datetime.utcnow()
         }
 
-        print(new_listing)
-
         result = db.Listing.insert_one(new_listing)
         if not result.inserted_id:
             return jsonify(result=False, message="something went wrong")
@@ -288,7 +286,6 @@ class UpdateListing(Resource):
             "brokers": broker_ids,
             "listing_owner_entity": owner_entity,
             "listing_notes": note,
-            "listing_entered_date": datetime.utcnow()
         }
 
         db.Listing.update_one({"_id": ObjectId(listing_id)}, {"$set": edit_listing})
@@ -298,8 +295,36 @@ class UpdateListing(Resource):
             db.Listing.update_one({"_id": ObjectId(listing_id)}, {"$set": {"listing_agreement_file_id": agreement}})
         if amendment != "":
             db.Listing.update_one({"_id": ObjectId(listing_id)}, {"$set": {"listing_amendment_file_id": amendment}})
+        
+        single_listing = db.Listing.find_one({"_id": ObjectId(listing_id)})
+        if not single_listing:
+            return jsonify(result=False, message="something went wrong")
+        
+        broker_object_ids = []
+        for single_broker_id in broker_ids:
+            broker_object_ids.append(ObjectId(single_broker_id))
+        
+        listing_brokers = db.User.find({"_id": {"$in": broker_object_ids}})
+        # print(listing_brokers)
+        single_brokers = []
+        for listing_broker in listing_brokers:
+            single_broker = {
+                "id": str(listing_broker['_id']),
+                "fullname": listing_broker['fullname'],
+                "profile_picture_url": listing_broker['profile_picture_url'],
+                "role": listing_broker['role'],
+                "username": listing_broker['username']
+            }
 
-        return jsonify(result=True)
+            single_brokers.append(single_broker)
+        
+        edit_listing['id'] = listing_id
+        edit_listing['broker_users'] = single_brokers
+        edit_listing['listing_cover'] = single_listing['listing_cover']
+        edit_listing['listing_agreement_file_id'] = single_listing['listing_agreement_file_id']
+        edit_listing['listing_amendment_file_id'] = single_listing['listing_amendment_file_id']
+
+        return jsonify(result=True, listing=edit_listing)
     
 class DeleteListings(Resource):
     def __init__(self):
