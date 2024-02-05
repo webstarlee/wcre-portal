@@ -569,7 +569,7 @@ const UploadListing: React.FC<UploadListingProps> = ({
                 }}
               >
                 <Box sx={{ flex: 1 }}>
-                  <UploadFormLabel>Listing Start*</UploadFormLabel>
+                  <UploadFormLabel>Listing Start Date*</UploadFormLabel>
                   <MobileDatePicker
                     sx={{
                       backgroundColor: "#EBEEF7",
@@ -580,7 +580,7 @@ const UploadListing: React.FC<UploadListingProps> = ({
                   />
                 </Box>
                 <Box sx={{ flex: 1 }}>
-                  <UploadFormLabel>Listing End*</UploadFormLabel>
+                  <UploadFormLabel>Listing End Date*</UploadFormLabel>
                   <MobileDatePicker
                     sx={{
                       backgroundColor: "#EBEEF7",
