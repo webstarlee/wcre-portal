@@ -135,6 +135,30 @@ export const UploadFormInput = styled(TextField)(() => ({
   width: "100%",
 }));
 
+export const UploadFormReadInput = styled(TextField)(() => ({
+  "& .MuiInputBase-root": {
+    borderRadius: "4px",
+    backgroundColor: "#EBEEF7",
+    fontfamily: "SatoshiMedium",
+    fontSize: "16px",
+    "& input": {
+      padding: "9px 14px",
+    },
+    "&.MuiInputBase-multiline": {
+      padding: "9px 14px",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "rgba(0, 0, 0, 0.23)",
+      borderWidth: "1px"
+    },
+    "&:hover fieldset": {
+      borderColor: "rgba(0, 0, 0, 0.23)",
+      borderWidth: "1px"
+    }
+  },
+  width: "100%",
+}));
+
 export const CoverImg = styled("img")(({ theme }) => ({
   width: "100%",
   borderRadius: "5px",
@@ -165,7 +189,7 @@ export const DetailHalfBox = styled(Box)(({theme}) => ({
 
 export const ListingDetailImg = styled("img")(() => ({
   width: "100%",
-  maxHeight: "220px",
+  height: "220px",
   objectFit: "cover",
   borderRadius: "5px",
   position: "absolute",

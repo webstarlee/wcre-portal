@@ -1,4 +1,5 @@
 import React from "react";
+import { API_URL } from "@/utils/urls";
 import {
   Dialog,
   DialogTitle,
@@ -15,7 +16,7 @@ import {
   DetailHalfBox,
   ListingDetailImg,
   UploadFormLabel,
-  UploadFormInput,
+  UploadFormReadInput,
 } from "./StyledComponents";
 import CloseIcon from "@mui/icons-material/Close";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -101,6 +102,15 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
     return fullnames;
   };
 
+  const handleDownloadButton = async (e: React.MouseEvent, fileName: string) => {
+    e.stopPropagation();
+    try {
+      window.location.href = `${API_URL}/download/${fileName}`;
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <Dialog
       fullWidth={true}
@@ -165,7 +175,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
             >
               <Box sx={{ flex: 1 }}>
                 <UploadFormLabel>Property Type</UploadFormLabel>
-                <UploadFormInput
+                <UploadFormReadInput
                   InputProps={{
                     readOnly: true,
                   }}
@@ -175,7 +185,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
               </Box>
               <Box sx={{ flex: 1 }}>
                 <UploadFormLabel>Price</UploadFormLabel>
-                <UploadFormInput
+                <UploadFormReadInput
                   InputProps={{
                     readOnly: true,
                   }}
@@ -191,7 +201,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
               }}
             >
               <UploadFormLabel>Listing Street</UploadFormLabel>
-              <UploadFormInput
+              <UploadFormReadInput
                 InputProps={{
                   readOnly: true,
                 }}
@@ -210,7 +220,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
             >
               <Box sx={{ flex: 1 }}>
                 <UploadFormLabel>Listing City</UploadFormLabel>
-                <UploadFormInput
+                <UploadFormReadInput
                   InputProps={{
                     readOnly: true,
                   }}
@@ -220,7 +230,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
               </Box>
               <Box sx={{ flex: 1 }}>
                 <UploadFormLabel>Listing State</UploadFormLabel>
-                <UploadFormInput
+                <UploadFormReadInput
                   InputProps={{
                     readOnly: true,
                   }}
@@ -240,7 +250,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
             >
               <Box sx={{ flex: 1 }}>
                 <UploadFormLabel>Listing Start Date</UploadFormLabel>
-                <UploadFormInput
+                <UploadFormReadInput
                   InputProps={{
                     readOnly: true,
                   }}
@@ -250,7 +260,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
               </Box>
               <Box sx={{ flex: 1 }}>
                 <UploadFormLabel>Listing End Date</UploadFormLabel>
-                <UploadFormInput
+                <UploadFormReadInput
                   InputProps={{
                     readOnly: true,
                   }}
@@ -287,7 +297,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
               >
                 <Box sx={{ flex: 1 }}>
                   <UploadFormLabel>Owner Entity (DBA)</UploadFormLabel>
-                  <UploadFormInput
+                  <UploadFormReadInput
                     InputProps={{
                       readOnly: true,
                     }}
@@ -297,7 +307,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                 </Box>
                 <Box sx={{ flex: 1 }}>
                   <UploadFormLabel>Primary Contact Name</UploadFormLabel>
-                  <UploadFormInput
+                  <UploadFormReadInput
                     InputProps={{
                       readOnly: true,
                     }}
@@ -317,7 +327,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
               >
                 <Box sx={{ flex: 1 }}>
                   <UploadFormLabel>Owner Email</UploadFormLabel>
-                  <UploadFormInput
+                  <UploadFormReadInput
                     InputProps={{
                       readOnly: true,
                     }}
@@ -327,7 +337,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                 </Box>
                 <Box sx={{ flex: 1 }}>
                   <UploadFormLabel>Owner Phone Number</UploadFormLabel>
-                  <UploadFormInput
+                  <UploadFormReadInput
                     InputProps={{
                       readOnly: true,
                     }}
@@ -343,7 +353,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                 }}
               >
                 <UploadFormLabel>Brokers</UploadFormLabel>
-                <UploadFormInput
+                <UploadFormReadInput
                   InputProps={{
                     readOnly: true,
                   }}
@@ -383,7 +393,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                         : "File Not Uploaded"}
                     </Typography>
                     {listing.listing_agreement_file_id && (
-                      <IconButton>
+                      <IconButton onClick={(e: React.MouseEvent) => handleDownloadButton(e, listing.listing_agreement_file_id)}>
                         <DownloadIcon />
                       </IconButton>
                     )}
@@ -412,7 +422,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                         : "File Not Uploaded"}
                     </Typography>
                     {listing.listing_amendment_file_id && (
-                      <IconButton>
+                      <IconButton onClick={(e: React.MouseEvent) => handleDownloadButton(e, listing.listing_amendment_file_id)}>
                         <DownloadIcon />
                       </IconButton>
                     )}
@@ -426,7 +436,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                 }}
               >
                 <UploadFormLabel>Notes</UploadFormLabel>
-                <UploadFormInput
+                <UploadFormReadInput
                   value={listing.listing_notes}
                   multiline
                   rows={3}

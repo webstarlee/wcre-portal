@@ -76,6 +76,7 @@ api.add_resource(resources.SaveListing, '/api/listing/upload')
 api.add_resource(resources.UpdateListing, '/api/listing/update')
 api.add_resource(resources.DeleteListings, '/api/listing/delete')
 api.add_resource(resources.UploadFile, '/api/upload')
+api.add_resource(resources.DownloadFile, '/api/download/<file_id>')
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

@@ -3,7 +3,7 @@ import uuid
 import os
 from botocore.exceptions import NoCredentialsError
 from flask_restful import Resource, reqparse
-from flask import jsonify, Response, stream_with_context
+from flask import jsonify, Response, stream_with_context, send_file
 from flask_jwt_extended import jwt_required
 from config import AWS_ACCESS_KEY, AWS_SECRET_KEY
 from util.logz import create_logger
@@ -71,3 +71,21 @@ class UploadFile(Resource):
             agreement=agreement_object_name,
             amendment=amendment_object_name,
         )
+
+class DownloadFile(Resource):
+    def __init__(self):
+        self.logger = create_logger()
+
+    def get(self, file_id):
+        AWS_S3_BUCKET = 'wcre-documents'
+        s3 = boto3.client('s3', 
+            aws_access_key_id=AWS_ACCESS_KEY, 
+            aws_secret_access_key=AWS_SECRET_KEY, 
+            region_name='us-east-2')
+        
+        try:
+            file_obj = s3.get_object(Bucket=AWS_S3_BUCKET, Key=file_id)
+        except NoCredentialsError:
+            return jsonify({"success": False, "error": "Credentials Not Available"})
+        
+        return send_file(file_obj['Body'], as_attachment=True, download_name=file_id)
