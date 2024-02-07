@@ -1,13 +1,15 @@
 import db
 import random
 from flask_restful import Resource, reqparse
-from flask import jsonify, session
+from flask import jsonify, session, Response
 from datetime import datetime
 from flask_paginate import Pagination, get_page_args
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from util.logz import create_logger
 from util.parse_json import parse_json
-from bson.objectid import ObjectId  
+from bson.objectid import ObjectId
+from ics import Calendar, Event
+import arrow
 
 class GetListings(Resource):
     def __init__(self):
@@ -342,6 +344,25 @@ class DeleteListings(Resource):
             return jsonify(result=True)
         
         return jsonify(result=False)
+
+class DownloadListingLCS(Resource):
+    def __init__(self):
+        self.logger = create_logger()
+
+    def get(self, listing_id):
+        listing = db.Listing.find_one({"_id": ObjectId(listing_id)})
+        if not listing:
+            return jsonify({"success": False, "message": "listing not found"})
+        
+        c = Calendar()
+        e = Event()
+        e.name = f"Listing Closing Date: {listing['listing_street']}"
+        e.begin = arrow.get(listing['listing_end_date'], "MM/DD/YYYY").format("YYYY-MM-DD")
+        e.make_all_day()
+        c.events.add(e)
+        response = Response(c.serialize(), mimetype="text/calendar")
+        response.headers["Content-Disposition"] = f"attachment; filename=listing_{listing['listing_street']}.ics"
+        return response
 
 class ResetListings(Resource):
     def __init__(self):

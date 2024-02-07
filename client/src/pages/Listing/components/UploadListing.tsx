@@ -866,6 +866,7 @@ const UploadListing: React.FC<UploadListingProps> = ({
         open={errorOpen}
         onClose={handleErrorClose}
         message={errMessage}
+        autoHideDuration={2000}
       >
         <Alert
           onClose={handleErrorClose}

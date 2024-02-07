@@ -79,3 +79,54 @@ export const ImageUploadButtonImg = styled("img")(({theme}) => ({
     width: "80px",
   },
 }));
+
+export const SearchBoxContainer = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  gap: "20px",
+  [theme.breakpoints.down("lg")]: {
+    gap: "10px",
+  },
+}));
+
+export const SearchBox = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  width: "500px",
+  height: "45px",
+  backgroundColor: "#fff",
+  alignItems: "center",
+  borderRadius: "10px",
+  padding: "7px 10px",
+  border: "1px solid rgba(0, 0, 0, 0.1)",
+  boxShadow: "0px 1px 4px 0px rgba(0, 0, 0, 0.2)",
+  "&:hover": {
+    boxShadow: "0px 1px 8px 0px rgba(0, 0, 0, 0.2)",
+  },
+  [theme.breakpoints.down("xl")]: {
+    width: "300px",
+  },
+  [theme.breakpoints.down("md")]: {
+    display: "none",
+  },
+}));
+
+export const HeaderCustomButton = styled(Button)(({ theme }) => ({
+  borderRadius: "25px",
+  fontFamily: "SatoshiBold",
+  fontSize: "16px",
+  textTransform: "none",
+  height: "45px",
+  "& p, & span": {
+    fontFamily: "SatoshiBold",
+    marginLeft: "5px",
+  },
+  [theme.breakpoints.down("lg")]: {
+    "& p, & span": {
+      display: "none",
+    },
+    minWidth: "unset",
+    width: "45px",
+    height: "45px",
+  },
+}));

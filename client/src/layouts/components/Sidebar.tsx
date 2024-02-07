@@ -96,7 +96,10 @@ const Sidebar: React.FC<SidebarProps> = ({ window }) => {
           <ListItemTextCustom primary={"Listings"} />
         </ListItemButtonCustom>
 
-        <ListItemButtonCustom>
+        <ListItemButtonCustom
+          onClick={() => handleListItemClick("/sales")}
+          selected={isActivateMenu(["/sales"])}
+        >
           <ListItemIcon sx={{ minWidth: "40px" }}>
             <svg
               width="20"

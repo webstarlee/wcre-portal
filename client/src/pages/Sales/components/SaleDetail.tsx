@@ -10,7 +10,7 @@ import {
   Button,
   Skeleton,
 } from "@mui/material";
-import { ListingProps, UserProps } from "@/utils/interfaces";
+import { SaleProps, UserProps } from "@/utils/interfaces";
 import {
   DetailContainer,
   DetailHalfBox,
@@ -29,12 +29,12 @@ import { formatUrl } from "@aws-sdk/util-format-url";
 import { formatShortDocumentName } from "@/utils/format";
 
 interface ListingDetailProps {
-  listing: ListingProps;
+  sale: SaleProps;
   open: boolean;
   onCloseDetail: () => void;
 }
-const ListingDetail: React.FC<ListingDetailProps> = ({
-  listing,
+const SaleDetail: React.FC<ListingDetailProps> = ({
+  sale,
   open,
   onCloseDetail,
 }) => {
@@ -77,12 +77,12 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
   };
 
   React.useEffect(() => {
-    if (listing.listing_cover !== "") {
-      getBucketImage(listing.listing_cover);
+    if (sale.sale_cover !== "") {
+      getBucketImage(sale.sale_cover);
     } else {
       setListingCover(ListingImgUrl);
     }
-  }, [listing]);
+  }, [sale]);
 
   const removeSymbol = (price: string) => {
     const newPrice = price.replace("$", "");
@@ -114,10 +114,10 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
     }
   };
 
-  const handleDownloadLCS = async (listing_id: string) => {
-    console.log(listing_id)
+  const handleDownloadLCS = async (sale_id: string) => {
+    console.log(sale_id)
     try {
-      window.location.href = `${API_URL}/download/listing/lcs/${listing_id}`;
+      window.location.href = `${API_URL}/download/sale/lcs/${sale_id}`;
     } catch (err) {
       console.error(err);
     }
@@ -140,7 +140,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
           textAlign: "left",
         }}
       >
-        Listing Overview - {listing.listing_street}
+        Sales Overview - {sale.sale_street}
       </DialogTitle>
       <IconButton
         aria-label="close"
@@ -191,17 +191,17 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                   InputProps={{
                     readOnly: true,
                   }}
-                  value={listing.listing_property_type}
+                  value={sale.sale_property_type}
                   placeholder="Listing Property Type"
                 />
               </Box>
               <Box sx={{ flex: 1 }}>
-                <UploadFormLabel>Price</UploadFormLabel>
+                <UploadFormLabel>Total Commission</UploadFormLabel>
                 <UploadFormReadInput
                   InputProps={{
                     readOnly: true,
                   }}
-                  value={`$ ${removeSymbol(listing.listing_price)}`}
+                  value={`$ ${removeSymbol(sale.sale_commission)}`}
                   placeholder="Listing Street"
                 />
               </Box>
@@ -212,12 +212,12 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                 marginTop: "5px",
               }}
             >
-              <UploadFormLabel>Listing Street</UploadFormLabel>
+              <UploadFormLabel>Sales Street</UploadFormLabel>
               <UploadFormReadInput
                 InputProps={{
                   readOnly: true,
                 }}
-                value={listing.listing_street}
+                value={sale.sale_street}
                 placeholder="Listing Street"
               />
             </Box>
@@ -231,22 +231,22 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
               }}
             >
               <Box sx={{ flex: 1 }}>
-                <UploadFormLabel>Listing City</UploadFormLabel>
+                <UploadFormLabel>Sales City</UploadFormLabel>
                 <UploadFormReadInput
                   InputProps={{
                     readOnly: true,
                   }}
-                  value={listing.listing_city}
+                  value={sale.sale_city}
                   placeholder="Listing City"
                 />
               </Box>
               <Box sx={{ flex: 1 }}>
-                <UploadFormLabel>Listing State</UploadFormLabel>
+                <UploadFormLabel>Sales State</UploadFormLabel>
                 <UploadFormReadInput
                   InputProps={{
                     readOnly: true,
                   }}
-                  value={getStateFullname(listing.listing_state)}
+                  value={getStateFullname(sale.sale_state)}
                   placeholder="Listing Street"
                 />
               </Box>
@@ -261,17 +261,68 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
               }}
             >
               <Box sx={{ flex: 1 }}>
-                <UploadFormLabel>Listing Start Date</UploadFormLabel>
+                <UploadFormLabel>Square FT</UploadFormLabel>
                 <UploadFormReadInput
                   InputProps={{
                     readOnly: true,
                   }}
-                  value={listing.listing_start_date}
-                  placeholder="Listing City"
+                  value={sale.sale_sqft}
+                  placeholder="Square FT"
                 />
               </Box>
               <Box sx={{ flex: 1 }}>
-                <UploadFormLabel>Listing End Date</UploadFormLabel>
+                <UploadFormLabel>Price</UploadFormLabel>
+                <UploadFormReadInput
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  value={`$ ${removeSymbol(sale.sale_price)}`}
+                  placeholder="Listing Street"
+                />
+              </Box>
+            </Box>
+            <Box
+              sx={{
+                width: "100%",
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row", xl: "row" },
+                gap: "10px",
+                marginTop: "5px",
+              }}
+            >
+              <Box sx={{ flex: 1 }}>
+                <UploadFormLabel>Listing Agreement</UploadFormLabel>
+                <Box
+                  sx={{
+                    width: "100%",
+                    backgroundColor: "#EBEEF7",
+                    height: "41px",
+                    border: "solid 1px #b5b7be",
+                    borderRadius: "5px",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    paddingLeft: "15px",
+                  }}
+                >
+                  <Typography sx={{ flex: 1, color: "#95979d" }}>
+                    {sale.sale_agreement_file_id
+                      ? formatShortDocumentName(sale.sale_agreement_file_id)
+                      : "File Not Uploaded"}
+                  </Typography>
+                  {sale.sale_agreement_file_id && (
+                    <IconButton
+                      onClick={(e: React.MouseEvent) =>
+                        handleDownloadButton(e, sale.sale_agreement_file_id)
+                      }
+                    >
+                      <DownloadIcon />
+                    </IconButton>
+                  )}
+                </Box>
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <UploadFormLabel>Closing Date</UploadFormLabel>
                 <Box
                   sx={{
                     width: "100%",
@@ -286,9 +337,9 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                   }}
                 >
                   <Typography sx={{ flex: 1, color: "#000" }}>
-                    {listing.listing_end_date}
+                    {sale.sale_end_date}
                   </Typography>
-                  <IconButton onClick={() => handleDownloadLCS(listing.id)}>
+                  <IconButton onClick={() => handleDownloadLCS(sale.id)}>
                     <DownloadIcon />
                   </IconButton>
                 </Box>
@@ -321,22 +372,22 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                 }}
               >
                 <Box sx={{ flex: 1 }}>
-                  <UploadFormLabel>Owner Entity (DBA)</UploadFormLabel>
+                  <UploadFormLabel>Buyer Entity (DBA)</UploadFormLabel>
                   <UploadFormReadInput
                     InputProps={{
                       readOnly: true,
                     }}
-                    value={listing.listing_owner_entity}
+                    value={sale.sale_buyer_entity}
                     placeholder="Listing Street"
                   />
                 </Box>
                 <Box sx={{ flex: 1 }}>
-                  <UploadFormLabel>Primary Contact Name</UploadFormLabel>
+                  <UploadFormLabel>Buyer Name</UploadFormLabel>
                   <UploadFormReadInput
                     InputProps={{
                       readOnly: true,
                     }}
-                    value={listing.listing_owner_name}
+                    value={sale.sale_buyer_name}
                     placeholder="Listing City"
                   />
                 </Box>
@@ -351,26 +402,88 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                 }}
               >
                 <Box sx={{ flex: 1 }}>
-                  <UploadFormLabel>Owner Email</UploadFormLabel>
+                  <UploadFormLabel>Buyer Email</UploadFormLabel>
                   <UploadFormReadInput
                     InputProps={{
                       readOnly: true,
                     }}
-                    value={listing.listing_owner_email}
+                    value={sale.sale_buyer_email}
                     placeholder="Listing Street"
                   />
                 </Box>
                 <Box sx={{ flex: 1 }}>
-                  <UploadFormLabel>Owner Phone Number</UploadFormLabel>
+                  <UploadFormLabel>Buyer Phone Number</UploadFormLabel>
                   <UploadFormReadInput
                     InputProps={{
                       readOnly: true,
                     }}
-                    value={listing.listing_owner_phone}
+                    value={sale.sale_buyer_phone}
                     placeholder="Listing City"
                   />
                 </Box>
               </Box>
+
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: { xs: "column", sm: "row", xl: "row" },
+                  gap: "10px",
+                  marginTop: "5px",
+                }}
+              >
+                <Box sx={{ flex: 1 }}>
+                  <UploadFormLabel>Seller Entity (DBA)</UploadFormLabel>
+                  <UploadFormReadInput
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    value={sale.sale_seller_entity}
+                    placeholder="Listing Street"
+                  />
+                </Box>
+                <Box sx={{ flex: 1 }}>
+                  <UploadFormLabel>Seller Name</UploadFormLabel>
+                  <UploadFormReadInput
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    value={sale.sale_seller_name}
+                    placeholder="Listing City"
+                  />
+                </Box>
+              </Box>
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: { xs: "column", sm: "row", xl: "row" },
+                  gap: "10px",
+                  marginTop: "5px",
+                }}
+              >
+                <Box sx={{ flex: 1 }}>
+                  <UploadFormLabel>Seller Email</UploadFormLabel>
+                  <UploadFormReadInput
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    value={sale.sale_seller_email}
+                    placeholder="Listing Street"
+                  />
+                </Box>
+                <Box sx={{ flex: 1 }}>
+                  <UploadFormLabel>Seller Phone Number</UploadFormLabel>
+                  <UploadFormReadInput
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    value={sale.sale_seller_phone}
+                    placeholder="Listing City"
+                  />
+                </Box>
+              </Box>
+
               <Box
                 sx={{
                   width: "100%",
@@ -382,92 +495,11 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
                   InputProps={{
                     readOnly: true,
                   }}
-                  value={getBrokerFullnames(listing.broker_users)}
+                  value={getBrokerFullnames(sale.broker_users)}
                   placeholder="Listing Street"
                 />
               </Box>
-              <Box
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: { xs: "column", sm: "row", xl: "row" },
-                  gap: "10px",
-                  marginTop: "5px",
-                }}
-              >
-                <Box sx={{ flex: 1 }}>
-                  <UploadFormLabel>Listing Agreement</UploadFormLabel>
-                  <Box
-                    sx={{
-                      width: "100%",
-                      backgroundColor: "#EBEEF7",
-                      height: "41px",
-                      border: "solid 1px #b5b7be",
-                      borderRadius: "5px",
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      paddingLeft: "15px",
-                    }}
-                  >
-                    <Typography sx={{ flex: 1, color: "#95979d" }}>
-                      {listing.listing_agreement_file_id
-                        ? formatShortDocumentName(
-                            listing.listing_agreement_file_id
-                          )
-                        : "File Not Uploaded"}
-                    </Typography>
-                    {listing.listing_agreement_file_id && (
-                      <IconButton
-                        onClick={(e: React.MouseEvent) =>
-                          handleDownloadButton(
-                            e,
-                            listing.listing_agreement_file_id
-                          )
-                        }
-                      >
-                        <DownloadIcon />
-                      </IconButton>
-                    )}
-                  </Box>
-                </Box>
-                <Box sx={{ flex: 1 }}>
-                  <UploadFormLabel>Listing Amendment</UploadFormLabel>
-                  <Box
-                    sx={{
-                      width: "100%",
-                      backgroundColor: "#EBEEF7",
-                      height: "41px",
-                      border: "solid 1px #b5b7be",
-                      borderRadius: "5px",
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      paddingLeft: "15px",
-                    }}
-                  >
-                    <Typography sx={{ flex: 1, color: "#95979d" }}>
-                      {listing.listing_amendment_file_id
-                        ? formatShortDocumentName(
-                            listing.listing_amendment_file_id
-                          )
-                        : "File Not Uploaded"}
-                    </Typography>
-                    {listing.listing_amendment_file_id && (
-                      <IconButton
-                        onClick={(e: React.MouseEvent) =>
-                          handleDownloadButton(
-                            e,
-                            listing.listing_amendment_file_id
-                          )
-                        }
-                      >
-                        <DownloadIcon />
-                      </IconButton>
-                    )}
-                  </Box>
-                </Box>
-              </Box>
+
               <Box
                 sx={{
                   width: "100%",
@@ -476,7 +508,7 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
               >
                 <UploadFormLabel>Notes</UploadFormLabel>
                 <UploadFormReadInput
-                  value={listing.listing_notes}
+                  value={sale.sale_notes}
                   multiline
                   rows={3}
                   InputProps={{
@@ -517,4 +549,4 @@ const ListingDetail: React.FC<ListingDetailProps> = ({
   );
 };
 
-export default ListingDetail;
+export default SaleDetail;

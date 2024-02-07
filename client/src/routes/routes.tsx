@@ -8,6 +8,7 @@ import LoadingImg from "@/assets/images/loading.svg";
 
 const Home = lazy(() => import("@/pages/Home"));
 const Listing = lazy(() => import("@/pages/Listing"));
+const Sales = lazy(() => import("@/pages/Sales"));
 const Login = lazy(() => import("@/pages/Auth/Login"));
 const Register = lazy(() => import("@/pages/Auth/Register"));
 
@@ -49,6 +50,14 @@ const routes: RouteObject[] = [
                 element: (
                     <Suspense fallback={<LoadingView />}>
                         <Listing />
+                    </Suspense>
+                ),
+            },
+            {
+                path: "/sales",
+                element: (
+                    <Suspense fallback={<LoadingView />}>
+                        <Sales />
                     </Suspense>
                 ),
             },

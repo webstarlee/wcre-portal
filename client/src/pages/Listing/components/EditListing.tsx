@@ -1022,6 +1022,7 @@ const EditListing: React.FC<EditListingProps> = ({
         open={errorOpen}
         onClose={handleErrorClose}
         message={errMessage}
+        autoHideDuration={2000}
       >
         <Alert
           onClose={handleErrorClose}

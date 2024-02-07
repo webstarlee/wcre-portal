@@ -1,75 +1,74 @@
 import React from "react";
 import axios from "axios";
 import { Typography, InputBase, Grid } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import {
   PageHeader,
   PageFooter,
   PageBody,
   SearchBox,
   SearchBoxContainer,
-  HeaderCustomButton
+  HeaderCustomButton,
+  LoadingContainer,
 } from "@/components/StyledComponents";
-import {
-  ListingFooter,
-  NavigationBtn,
-} from "./components/StyledComponents";
-import ListingCard from "./components/ListingCard";
+import { SaleProps, UserProps } from "@/utils/interfaces";
+import { ListingFooter, NavigationBtn } from "./components/StyledComponents";
+import { makePageNavigation } from "@/utils/format";
+import { convertApiUrl } from "@/utils/urls";
+import { useAuth } from "@/hooks/AuthContext";
+import { useEffectOnce } from "@/hooks/useEffectOnce";
+import SaleCard from "./components/SaleCard";
+import SaleDetail from "./components/SaleDetail";
+import UploadSale from "./components/UploadSale";
+import EditSale from "./components/EditSale";
+import DeleteSale from "./components/DeleteSale";
+
+import SearchIcon from "@mui/icons-material/Search";
 import UploadIcon from "@mui/icons-material/Upload";
 import PinDropIcon from "@mui/icons-material/PinDrop";
 import SortIcon from "@mui/icons-material/Sort";
-import { LoadingContainer } from "@/components/StyledComponents";
-import { ListingProps, UserProps } from "@/utils/interfaces";
-import { useEffectOnce } from "@/hooks/useEffectOnce";
-import { convertApiUrl } from "@/utils/urls";
-import { makePageNavigation } from "@/utils/format";
-import { useAuth } from "@/hooks/AuthContext";
-import UploadListing from "./components/UploadListing";
-import ListingDetail from "./components/ListingDetail";
-import EditListing from "./components/EditListing";
-import DeleteListing from "./components/DeleteListing";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+
 import LoadingImg from "@/assets/images/loading.svg";
 
-const Listing: React.FC = (): JSX.Element => {
+const Sales: React.FC = (): JSX.Element => {
   const { authToken } = useAuth();
-  const [listings, setListings] = React.useState<ListingProps[] | []>([]);
+  const [page, setPage] = React.useState<number>(1);
+  const [count, setCount] = React.useState<number>(0);
+  const [sales, setSales] = React.useState<SaleProps[] | []>([]);
   const [brokers, setBrokers] = React.useState<UserProps[] | []>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [pageLoading, setPageLoading] = React.useState<boolean>(false);
-  const [page, setPage] = React.useState<number>(1);
-  const [count, setCount] = React.useState<number>(0);
-  const [uploadListingOpen, setUploadListingOpen] =
-    React.useState<boolean>(false);
-  const [listingDetailOpen, setListingDetailOpen] =
-    React.useState<boolean>(false);
-  const [listingData, setListingData] = React.useState<ListingProps | null>(
-    null
-  );
-  const [listingEditOpen, setListingEditOpen] = React.useState<boolean>(false);
-  const [listingEditData, setListingEditData] =
-    React.useState<ListingProps | null>(null);
+  const [detailOpen, setDetailOpen] = React.useState<boolean>(false);
+  const [saleData, setSaleData] = React.useState<SaleProps | null>(null);
 
-  const [listingDeleteOpen, setListingDeleteOpen] =
-    React.useState<boolean>(false);
-  const [listingDeleteData, setListingDeleteData] =
-    React.useState<ListingProps | null>(null);
+  const [uploadOpen, setUploadOpen] = React.useState<boolean>(false);
 
-  const fetchListings = async (page: number) => {
+  const [editOpen, setEditOpen] = React.useState<boolean>(false);
+  const [editData, setEditData] = React.useState<SaleProps | null>(null);
+
+  const [deleteOpen, setDeleteOpen] = React.useState<boolean>(false);
+  const [deleteData, setDeleteData] = React.useState<SaleProps | null>(null);
+
+  useEffectOnce(() => {
+    setLoading(true);
+    fetchSales(1);
+  });
+
+  const fetchSales = async (page: number) => {
     try {
-      const response = await axios.get(convertApiUrl(`listings/${page}`), {
+      const response = await axios.get(convertApiUrl(`sales/${page}`), {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       setLoading(false);
       setPageLoading(false);
 
       const result: {
-        listings: ListingProps[];
+        sales: SaleProps[];
         total: number;
         brokers: UserProps[];
       } = response.data;
-      setListings(result.listings);
+      setSales(result.sales);
       setBrokers(result.brokers);
       setCount(result.total);
     } catch (error) {
@@ -78,24 +77,6 @@ const Listing: React.FC = (): JSX.Element => {
       console.log(error);
     }
   };
-
-  const reloadListing = () => {
-    setPageLoading(true);
-    fetchListings(1);
-  };
-
-  const handlePageNavigation = (_page: number) => {
-    if (page !== _page) {
-      setPage(_page);
-      setPageLoading(true);
-      fetchListings(_page);
-    }
-  };
-
-  useEffectOnce(() => {
-    setLoading(true);
-    fetchListings(1);
-  });
 
   const handlePrevPage = () => {
     if (page > 1) {
@@ -109,46 +90,57 @@ const Listing: React.FC = (): JSX.Element => {
     }
   };
 
-  const uploadListingModalClose = () => {
-    setUploadListingOpen(false);
+  const handlePageNavigation = (_page: number) => {
+    if (page !== _page) {
+      setPage(_page);
+      setPageLoading(true);
+      fetchSales(_page);
+    }
   };
 
-  const editListingModalClose = () => {
-    setListingEditOpen(false);
-    setListingEditData(null);
-  };
-
-  const handleListingDetail = (_listing: ListingProps) => {
-    setListingData(_listing);
-    setListingDetailOpen(true);
+  const handleSaleDetail = (_sale: SaleProps) => {
+    setSaleData(_sale);
+    setDetailOpen(true);
   };
 
   const handleDetailClose = () => {
-    setListingData(null);
-    setListingDetailOpen(false);
+    setSaleData(null);
+    setDetailOpen(false);
   };
 
-  const handleSetEditListing = (_listing: ListingProps) => {
-    setListingEditData(_listing);
-    setListingEditOpen(true);
+  const uploadModalClose = () => {
+    setUploadOpen(false);
+  };
+
+  const reloadSales = () => {
+    setPageLoading(true);
+    fetchSales(1);
+  };
+
+  const handleSetEditSale = (_sale: SaleProps) => {
+    setEditData(_sale);
+    setEditOpen(true);
+  };
+
+  const editModalClose = () => {
+    setEditOpen(false);
+    setEditData(null);
+  };
+
+  const updateSalesData = (_sale: SaleProps) => {
+    setSales((prevSales) => {
+      return prevSales.map((sale) => (sale.id === _sale.id ? _sale : sale));
+    });
+  };
+
+  const handleSetDelete = (_sale: SaleProps) => {
+    setDeleteData(_sale);
+    setDeleteOpen(true);
   };
 
   const handleDeleteClose = () => {
-    setListingDeleteData(null);
-    setListingDeleteOpen(false);
-  };
-
-  const handleSetDeleteListing = (_listing: ListingProps) => {
-    setListingDeleteData(_listing);
-    setListingDeleteOpen(true);
-  };
-
-  const updateListingData = (_listing: ListingProps) => {
-    setListings((prevListings) => {
-      return prevListings.map((listing) =>
-        listing.id === _listing.id ? _listing : listing
-      );
-    });
+    setDeleteData(null);
+    setDeleteOpen(false);
   };
 
   return (
@@ -167,7 +159,7 @@ const Listing: React.FC = (): JSX.Element => {
                 display: { sm: "none", xs: "none", md: "block" },
               }}
             >
-              Total Listings ({count})
+              Total Sales ({count})
             </Typography>
             <Typography
               sx={{
@@ -192,20 +184,20 @@ const Listing: React.FC = (): JSX.Element => {
                       },
                     },
                   }}
-                  placeholder="Search Listings"
+                  placeholder="Search Sales"
                 />
               </SearchBox>
               <HeaderCustomButton
+                onClick={() => setUploadOpen(true)}
                 variant="contained"
                 color="primary"
-                onClick={() => setUploadListingOpen(true)}
               >
                 <UploadIcon />
-                <Typography>Upload Listing</Typography>
+                <Typography>Upload Sales</Typography>
               </HeaderCustomButton>
               <HeaderCustomButton variant="contained" color="secondary">
                 <PinDropIcon />
-                <Typography>Listings Map</Typography>
+                <Typography>Sales Map</Typography>
               </HeaderCustomButton>
             </SearchBoxContainer>
             <HeaderCustomButton variant="contained" color="warning">
@@ -220,8 +212,8 @@ const Listing: React.FC = (): JSX.Element => {
               </LoadingContainer>
             ) : (
               <>
-                {listings.length === 0 ? (
-                  <Typography>No Listing</Typography>
+                {sales.length === 0 ? (
+                  <Typography>No Sales</Typography>
                 ) : (
                   <Grid
                     container
@@ -233,13 +225,13 @@ const Listing: React.FC = (): JSX.Element => {
                       paddingTop: "5px",
                     }}
                   >
-                    {listings.map((listing, index) => (
+                    {sales.map((sale, index) => (
                       <Grid key={index} item xs={12} sm={6} md={4} lg={2.4}>
-                        <ListingCard
-                          listing={listing}
-                          openDetail={handleListingDetail}
-                          openEdit={handleSetEditListing}
-                          openDelete={handleSetDeleteListing}
+                        <SaleCard
+                          sale={sale}
+                          openDetail={handleSaleDetail}
+                          openEdit={handleSetEditSale}
+                          openDelete={handleSetDelete}
                         />
                       </Grid>
                     ))}
@@ -300,36 +292,39 @@ const Listing: React.FC = (): JSX.Element => {
             </PageFooter>
           )}
 
-          {uploadListingOpen && (
-            <UploadListing
-              open={uploadListingOpen}
-              onClose={uploadListingModalClose}
-              allBrokers={brokers}
-              reload={reloadListing}
-            />
-          )}
-          {listingDeleteOpen && listingDeleteData && (
-            <DeleteListing
-              listing={listingDeleteData}
-              open={listingDeleteOpen}
-              onClose={handleDeleteClose}
-              reload={reloadListing}
-            />
-          )}
-          {listingDetailOpen && listingData && (
-            <ListingDetail
-              listing={listingData}
-              open={listingDetailOpen}
+          {detailOpen && saleData && (
+            <SaleDetail
+              sale={saleData}
+              open={detailOpen}
               onCloseDetail={handleDetailClose}
             />
           )}
-          {listingEditOpen && listingEditData && (
-            <EditListing
-              listing={listingEditData}
-              open={listingEditOpen}
-              onClose={editListingModalClose}
+
+          {editOpen && editData && (
+            <EditSale
+              sale={editData}
+              open={editOpen}
+              onClose={editModalClose}
+              update={updateSalesData}
               allBrokers={brokers}
-              update={updateListingData}
+            />
+          )}
+
+          {uploadOpen && (
+            <UploadSale
+              open={uploadOpen}
+              onClose={uploadModalClose}
+              allBrokers={brokers}
+              reload={reloadSales}
+            />
+          )}
+
+          {deleteOpen && deleteData && (
+            <DeleteSale
+              sale={deleteData}
+              open={deleteOpen}
+              onClose={handleDeleteClose}
+              reload={reloadSales}
             />
           )}
         </>
@@ -338,4 +333,4 @@ const Listing: React.FC = (): JSX.Element => {
   );
 };
 
-export default Listing;
+export default Sales;

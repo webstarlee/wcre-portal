@@ -1,5 +1,4 @@
 import { styled, Box, Drawer, ListItemButton, ListItemText } from "@mui/material";
-import BgImage from "@/assets/images/auth-bg-dark.jpg";
 
 export const AuthContainer = styled(Box)(({ theme }) => ({
   width: "100%",
@@ -8,10 +7,7 @@ export const AuthContainer = styled(Box)(({ theme }) => ({
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
-  backgroundImage: `url(${BgImage})`,
-  backgroundPosition: "center",
-  backgroundSize: "cover",
-  backgroundRepeat: "no-repeat",
+  backgroundColor: "#fff",
   [theme.breakpoints.down("sm")]: {
     padding: "20px",
   },
